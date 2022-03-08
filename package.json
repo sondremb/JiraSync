@@ -1,0 +1,49 @@
+{
+	"name": "tkjirasync",
+	"version": "1.0.0",
+	"description": "CLI for syncing hours between jira and timekeeper",
+	"source": "index.html",
+	"scripts": {
+		"start": "parcel index.html",
+		"build:function": "netlify functions:build --src functions",
+		"build:app": "parcel build index.html",
+		"build": "npm run-all build:function build:app",
+		"dev": "npm run build:function && netlify dev"
+	},
+	"keywords": [
+		"Jira",
+		"Timekeeper"
+	],
+	"author": "Thor Kristian Valderhaug",
+	"license": "ISC",
+	"dependencies": {
+		"@parcel/transformer-react-refresh-wrap": "^2.3.1",
+		"@udir/lisa": "^1.9.2",
+		"axios": "^0.21.4",
+		"dotenv": "^10.0.0",
+		"moment": "^2.29.1",
+		"react": "^16.13.1",
+		"react-dom": "^16.13.1",
+		"react-loading": "^2.0.3"
+	},
+	"devDependencies": {
+		"@netlify/functions": "^1.0.0",
+		"@parcel/config-default": "^2.2.1",
+		"@parcel/core": "^2.2.1",
+		"@parcel/transformer-sass": "^2.3.1",
+		"@types/node": "^13.9.5",
+		"@types/react": "^16.9.32",
+		"@types/react-dom": "^17.0.13",
+		"@types/styled-components": "^5.1.22",
+		"express": "^4.17.1",
+		"netlify-cli": "^9.13.0",
+		"netlify-lambda": "^2.0.14",
+		"parcel": "^2.2.1",
+		"react-datepicker": "^4.7.0",
+		"react-hook-form": "^7.27.1",
+		"sass": "^1.39.2",
+		"styled-components": "^5.3.3",
+		"ts-node": "^10.2.1",
+		"typescript": "^4.4.2"
+	}
+}
