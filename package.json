@@ -7,7 +7,7 @@
 		"start": "parcel index.html",
 		"build:function": "netlify functions:build --src functions",
 		"build:app": "parcel build index.html",
-		"build": "npm run-all build:function build:app",
+		"build": "npm run build:function && npm run build:app",
 		"dev": "npm run build:function && netlify dev"
 	},
 	"keywords": [
