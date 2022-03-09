@@ -3,7 +3,6 @@ import "../style.scss";
 
 import ReactLoading from "react-loading";
 import { Moment } from "moment";
-import { loadPassword, loadUserName } from "./Utils/localstorageUtils";
 import {
 	dayRange,
 	getNextWeek,
@@ -25,20 +24,16 @@ import {
 import { Weekpicker } from "./components/Weekpicker";
 import { TextButton } from "./components/TextButton";
 import { useCombinedState } from "./state";
+import { useStore } from "./store/store";
 
 export const App: React.FC = () => {
+	const { state } = useStore();
 	const [startOfWeek, endOfWeek] = getStartAndEndOfWeek();
 
-	const [jiraUsername, setJiraUsername] = useState<string>(
-		loadUserName() ?? ""
-	);
-	const [jiraPassword, setJiraPassword] = useState<string>(
-		loadPassword() ?? ""
-	);
 	const [fromDate, setFromDate] = useState(startOfWeek);
 	const [toDate, setToDate] = useState(endOfWeek);
 
-	const hasCredentials = !!jiraUsername && !!jiraPassword;
+	const hasCredentials = !!state.jiraUsername && !!state.jiraPassword;
 
 	const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
@@ -101,10 +96,6 @@ export const App: React.FC = () => {
 				}
 			>
 				<JiraLogin
-					username={jiraUsername}
-					setUsername={setJiraUsername}
-					password={jiraPassword}
-					setPassword={setJiraPassword}
 					isOpen={isLoginModalOpen}
 					close={() => setIsLoginModalOpen(false)}
 				/>

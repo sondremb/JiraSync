@@ -2,7 +2,8 @@ import moment, { Moment } from "moment";
 import { useEffect, useState } from "react";
 import { BekkClient } from "./bekk-client";
 import { useCallableRequest } from "./client-utils";
-import { JiraClient } from "./netlify-client";
+import { NetlifyClient } from "./netlify-client";
+import { useStore } from "./store/store";
 import {
 	bekkIdFromJiraTimecode,
 	knownBekkTimecodes,
@@ -28,6 +29,7 @@ interface FetchAllDataParams {
 }
 
 export const useCombinedState = () => {
+	const { state } = useStore();
 	const [bekkTimecodes, setBekkTimecodes] =
 		useState<BekkTimecodeMap>(knownBekkTimecodes);
 	const [jiraTimecodes, setJiraTimecodes] = useState<JiraTimecodeMap>({});
@@ -35,7 +37,13 @@ export const useCombinedState = () => {
 	const [lockDate, setLockDate] = useState<Moment>();
 
 	const jiraRequest = useCallableRequest({
-		requestFunction: JiraClient.getData,
+		requestFunction: (params: FetchAllDataParams) =>
+			NetlifyClient.getData({
+				fromDate: params.fromDate,
+				toDate: params.toDate,
+				username: state.jiraUsername,
+				password: state.jiraPassword,
+			}),
 	});
 
 	const bekkRequest = useCallableRequest({
