@@ -1,21 +1,25 @@
 import React, { useState } from "react";
 import { Checkbox, ConfirmModal, InputField } from "@udir/lisa";
 import { clearCredentials, storeCredentials } from "../Utils/localstorageUtils";
+import { useStore } from "../store/store";
+import { setPasswordAction, setUsernameAction } from "../store/actions";
 
 interface Props {
-	username: string;
-	setUsername: (userName: string) => void;
-	password: string;
-	setPassword: (password: string) => void;
 	isOpen: boolean;
 	close: () => void;
 }
 
 export const JiraLogin: React.FC<Props> = (props) => {
-	const [save, setSave] = useState(!!props.username && !!props.password);
+	const { state, dispatch } = useStore();
+	const [username, setUsername] = useState(state.jiraUsername);
+	const [password, setPassword] = useState(state.jiraPassword);
+	const [save, setSave] = useState(!!username && !!password);
+
 	const handleSubmit = () => {
+		dispatch(setUsernameAction(username));
+		dispatch(setPasswordAction(password));
 		if (save) {
-			storeCredentials(props.username, props.password);
+			storeCredentials(username, password);
 		}
 	};
 
@@ -25,6 +29,7 @@ export const JiraLogin: React.FC<Props> = (props) => {
 		}
 		setSave(newValue);
 	};
+
 	return (
 		<ConfirmModal
 			title="Logg inn i Jira"
@@ -41,15 +46,15 @@ export const JiraLogin: React.FC<Props> = (props) => {
 			<InputField
 				id="username"
 				label="Brukernavn"
-				value={props.username}
-				handleChange={(e) => props.setUsername(e.target.value)}
+				value={username}
+				handleChange={(e) => setUsername(e.target.value)}
 			/>
 			<InputField
 				id="password"
 				label="Passord"
 				type="password"
-				value={props.password}
-				handleChange={(e) => props.setPassword(e.target.value)}
+				value={password}
+				handleChange={(e) => setPassword(e.target.value)}
 			/>
 			<Checkbox
 				label="Husk meg"
