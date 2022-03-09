@@ -6,6 +6,7 @@ import moment from "moment";
 import "moment/locale/nb";
 import { LisaProvider } from "@udir/lisa";
 import "dotenv/config";
+import { Store } from "./src/store/store";
 
 moment.locale("nb");
 
@@ -17,8 +18,10 @@ if (!isAuthenticated()) {
 	}
 }
 ReactDOM.render(
-	<LisaProvider includeGlobalStyling>
-		<App />
-	</LisaProvider>,
+	<Store>
+		<LisaProvider includeGlobalStyling>
+			<App />
+		</LisaProvider>
+	</Store>,
 	document.getElementById("root")
 );
