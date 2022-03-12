@@ -94,11 +94,6 @@ export const TimeTable: React.FC<Props> = (props) => {
 
 	return (
 		<div>
-			{allGood && (
-				<span>
-					<span>✓</span> Alle dager stemmer!
-				</span>
-			)}
 			<Table
 				columns={[
 					{
@@ -118,6 +113,11 @@ export const TimeTable: React.FC<Props> = (props) => {
 				numberOfRowVisible={7}
 				rowColor={() => colors.utvidetPrimærpalett.stålblå98}
 			/>
+			{allGood && (
+				<span>
+					<span>✓</span> Alle dager stemmer!
+				</span>
+			)}
 		</div>
 	);
 };

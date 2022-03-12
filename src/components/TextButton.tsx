@@ -1,4 +1,4 @@
-import { colors, Icon, IconType, spacing, Text } from "@udir/lisa";
+import { colors, ColorType, Icon, IconType, spacing, Text } from "@udir/lisa";
 import React from "react";
 import styled from "styled-components";
 
@@ -11,11 +11,13 @@ interface Props {
 	disabled?: boolean;
 	id?: string;
 	type?: "submit" | "reset" | "button";
+	// TODO skulle gjerne importert ColorTheme fra Lisa
+	colorTheme?: "dark" | "light";
 }
 
-const StyledButton = styled.button`
+const StyledButton = styled.button<{ isDarkTheme: boolean }>`
 	margin: 0;
-	padding: ${spacing(8)} ${spacing(20)};
+	padding: ${spacing(4)} ${spacing(12)};
 	border: none;
 	background-color: inherit;
 	display: flex;
@@ -26,12 +28,18 @@ const StyledButton = styled.button`
 	transition: transform 0.1s ease-out;
 
 	&:hover {
-		border-color: ${colors.støttefarge.svart10.hex};
+		border-color: ${(props) =>
+			props.isDarkTheme
+				? colors.støttefarge.grå98.hex
+				: colors.støttefarge.svart10.hex};
 		transform: translateY(-0.1rem);
 		box-shadow: 0 0.4rem 0.8rem rgba(0, 0, 0, 0.1);
 	}
 	&:active {
-		border-color: ${colors.støttefarge.svart10.hex};
+		border-color: ${(props) =>
+			props.isDarkTheme
+				? colors.støttefarge.grå98.hex
+				: colors.støttefarge.svart10.hex};
 		transform: translateY(0.2rem);
 		box-shadow: 0 0.2rem 0.3rem rgba(0, 0, 0, 0.1);
 	}
@@ -48,6 +56,7 @@ export const StyledIconContainer = styled.span<Pick<Props, "iconPlacement">>`
 `;
 
 export const TextButton: React.FC<Props> = (props) => {
+	const isDarkTheme = props.colorTheme === "dark";
 	let content = props.children;
 	if (props.icon && props.iconPlacement) {
 		const iconContainer = (
@@ -68,7 +77,15 @@ export const TextButton: React.FC<Props> = (props) => {
 		);
 	}
 	return (
-		<Text textStyle="Brødtekst uthevet" as={StyledButton} {...props}>
+		<Text
+			textStyle="Brødtekst uthevet"
+			as={StyledButton}
+			getColor={(c: ColorType) =>
+				isDarkTheme ? c.støttefarge.grå98 : c.støttefarge.svart19
+			}
+			isDarkTheme={isDarkTheme}
+			{...props}
+		>
 			{content}
 		</Text>
 	);
@@ -76,4 +93,5 @@ export const TextButton: React.FC<Props> = (props) => {
 
 TextButton.defaultProps = {
 	iconPlacement: "left",
+	colorTheme: "light",
 };

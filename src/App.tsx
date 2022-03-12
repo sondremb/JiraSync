@@ -11,7 +11,17 @@ import {
 import { JiraLogin } from "./components/JiraLogin";
 import { TimeTable } from "./components/TimeTable/TimeTable";
 import { DevAuthModal } from "./components/DevAuthModal";
-import { FlexColumn, FlexRow, H1, Icon, PageLayout, Text } from "@udir/lisa";
+import {
+	colors,
+	ColorType,
+	FlexColumn,
+	FlexRow,
+	H1,
+	Icon,
+	PageLayout,
+	spacing,
+	Text,
+} from "@udir/lisa";
 import { useCombinedState } from "./state";
 import { useStore } from "./store/store";
 import styled from "styled-components";
@@ -19,6 +29,11 @@ import { TextButton } from "./components/TextButton";
 
 const CenteredText = styled(Text)`
 	text-align: center;
+`;
+
+const ColoredRow = styled(FlexRow)`
+	background-color: ${colors.utvidetPrimærpalett.skifer35.hex};
+	padding: ${spacing(8)};
 `;
 
 export const App: React.FC = () => {
@@ -72,23 +87,33 @@ export const App: React.FC = () => {
 				isOpen={isLoginModalOpen}
 				close={() => setIsLoginModalOpen(false)}
 			/>
-			<DevAuthModal />
-			<FlexRow halign="space-between" valign="end">
-				<TextButton onClick={() => setIsLoginModalOpen(true)} icon="userFilled">
+			<ColoredRow halign="space-between" valign="center">
+				<TextButton
+					onClick={() => setIsLoginModalOpen(true)}
+					icon="userFilled"
+					colorTheme="dark"
+				>
 					Logg inn i Jira
 				</TextButton>
 				<FlexRow>
 					<TextButton
 						onClick={onPreviousWeekClick}
 						icon={<Icon type="arrow" direction="left" />}
+						colorTheme="dark"
 					>
 						Forrige
 					</TextButton>
-					<FlexColumn halign="center" className="mx-40">
-						<CenteredText textStyle="Brødtekst uthevet">
+					<FlexColumn halign="center" className="mx-40" width={`${55 / 16}rem`}>
+						<CenteredText
+							textStyle="Brødtekst uthevet"
+							getColor={(c: ColorType) => c.støttefarge.grå98}
+						>
 							UKE {fromDate.week()}
 						</CenteredText>
-						<CenteredText textStyle="Brødtekst uthevet">
+						<CenteredText
+							textStyle="Brødtekst uthevet"
+							getColor={(c: ColorType) => c.støttefarge.grå98}
+						>
 							{fromDate.year()}
 						</CenteredText>
 					</FlexColumn>
@@ -96,20 +121,26 @@ export const App: React.FC = () => {
 						onClick={onNextWeekClick}
 						icon={<Icon type="arrow" direction="right" />}
 						iconPlacement="right"
+						colorTheme="dark"
 					>
 						Neste
 					</TextButton>
 				</FlexRow>
-				<TextButton icon="refresh" onClick={onGetTimesheetsClick}>
+				<TextButton
+					icon="refresh"
+					onClick={onGetTimesheetsClick}
+					colorTheme="dark"
+				>
 					Oppdater
 				</TextButton>
-			</FlexRow>
+			</ColoredRow>
 			{!stateManager.pending && (
 				<TimeTable
 					entries={stateManager.state.entries}
 					days={dayRange(fromDate, toDate)}
 				/>
 			)}
+			<DevAuthModal />
 		</PageLayout>
 	);
 };
