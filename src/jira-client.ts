@@ -43,9 +43,5 @@ export const getJiraTimesheet = async (
 			},
 		})
 		.then((res) => ({ statusCode: 200, body: JSON.stringify(res.data) }))
-		.catch(() => ({
-			// TODO feilhåndtering
-			statusCode: 500,
-			body: "An error occured call to Jira API",
-		}));
+		.catch((err) => err);
 };
