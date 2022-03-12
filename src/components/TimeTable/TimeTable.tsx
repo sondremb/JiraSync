@@ -1,6 +1,6 @@
 import { colors, FlexColumn, Table, Text } from "@udir/lisa";
 import { Moment } from "moment";
-import React from "react";
+import React, { useMemo } from "react";
 import styled from "styled-components";
 import { useStore } from "../../store/store";
 import { BekkId, BekkTimecodeEntry, Day } from "../../types";
@@ -92,6 +92,27 @@ export const TimeTable: React.FC<Props> = (props) => {
 
 	const allGood = props.entries.every(timecodeAllGood);
 
+	// Todelt sortering:
+	//  1. Udir-timekoder først
+	//  2. Alfabetisk på timekode
+	const items = useMemo(
+		() =>
+			props.entries
+				.sort((a, b) =>
+					state.bekkTimecodes[a.id].code.localeCompare(
+						state.bekkTimecodes[b.id].code
+					)
+				)
+				.sort((a, b) => {
+					const isAUdir = state.bekkTimecodes[a.id].isUdir;
+					const isBUdir = state.bekkTimecodes[b.id].isUdir;
+					if (isAUdir && !isBUdir) return -1;
+					if (!isAUdir && isBUdir) return 1;
+					return 0;
+				}),
+		[props.entries]
+	);
+
 	return (
 		<div>
 			<Table
@@ -109,7 +130,7 @@ export const TimeTable: React.FC<Props> = (props) => {
 						},
 					})),
 				]}
-				items={props.entries}
+				items={items}
 				numberOfRowVisible={7}
 				rowColor={() => colors.utvidetPrimærpalett.stålblå98}
 			/>
