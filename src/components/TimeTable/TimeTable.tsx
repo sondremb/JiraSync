@@ -116,6 +116,7 @@ export const TimeTable: React.FC<Props> = (props) => {
 				]}
 				items={props.entries}
 				numberOfRowVisible={7}
+				rowColor={() => colors.utvidetPrimærpalett.stålblå98}
 			/>
 		</div>
 	);

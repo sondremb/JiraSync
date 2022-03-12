@@ -1,4 +1,4 @@
-import { Icon, IconType, spacing, Text } from "@udir/lisa";
+import { colors, Icon, IconType, spacing, Text } from "@udir/lisa";
 import React from "react";
 import styled from "styled-components";
 
@@ -15,12 +15,26 @@ interface Props {
 
 const StyledButton = styled.button`
 	margin: 0;
-	padding: 0;
+	padding: ${spacing(8)} ${spacing(20)};
 	border: none;
 	background-color: inherit;
 	display: flex;
 	align-items: center;
 	cursor: pointer;
+	border-radius: 3px;
+	border: 1px solid transparent;
+	transition: transform 0.1s ease-out;
+
+	&:hover {
+		border-color: ${colors.støttefarge.svart10.hex};
+		transform: translateY(-0.1rem);
+		box-shadow: 0 0.4rem 0.8rem rgba(0, 0, 0, 0.1);
+	}
+	&:active {
+		border-color: ${colors.støttefarge.svart10.hex};
+		transform: translateY(0.2rem);
+		box-shadow: 0 0.2rem 0.3rem rgba(0, 0, 0, 0.1);
+	}
 `;
 
 export const StyledIconContainer = styled.span<Pick<Props, "iconPlacement">>`
