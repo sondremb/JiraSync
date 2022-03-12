@@ -5,17 +5,27 @@ interface TAction<TKey extends string, TPayload> {
 	payload: TPayload;
 }
 
+interface TEmptyAction<TKey extends string> {
+	kind: TKey;
+}
+
 type ActionCreator<TKey extends string, TPayload> = (
 	payload: TPayload
 ) => TAction<TKey, TPayload>;
 
-function createAction<TKey extends string>(key: TKey) {
+export function createAction<TKey extends string>(key: TKey) {
 	return function <TPayload>(): ActionCreator<TKey, TPayload> {
 		return (payload: TPayload) => ({
 			kind: key,
 			payload,
 		});
 	};
+}
+
+export function createEmptyAction<TKey extends string>(
+	key: TKey
+): TEmptyAction<TKey> {
+	return { kind: key };
 }
 
 export const setPasswordAction = createAction("SET_PASSWORD")<string>();

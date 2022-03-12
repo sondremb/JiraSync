@@ -7,21 +7,24 @@ import "moment/locale/nb";
 import { LisaProvider } from "@udir/lisa";
 import "dotenv/config";
 import { Store } from "./src/store/store";
+import { ErrorStore } from "./src/errorstore/store";
+import { ErrorModal } from "./src/errorstore/error-modal";
 
 moment.locale("nb");
 
 if (!isAuthenticated()) {
-	if (process.env.ENV === "DEV") {
-		alert("Bruk fake bekk auth");
-	} else {
+	if (process.env.ENV !== "DEV") {
 		authenticate();
 	}
 }
 ReactDOM.render(
-	<Store>
-		<LisaProvider includeGlobalStyling>
-			<App />
-		</LisaProvider>
-	</Store>,
+	<ErrorStore>
+		<Store>
+			<LisaProvider includeGlobalStyling>
+				<ErrorModal />
+				<App />
+			</LisaProvider>
+		</Store>
+	</ErrorStore>,
 	document.getElementById("root")
 );
