@@ -76,7 +76,7 @@ const RenderError: React.FC<ErrorProps> = ({ error }) => {
 					<H2>Tomt brukernavn eller passord</H2>
 					<Text>
 						Kallet til Jira-proxien manglet brukernavn og/eller passord.
-						Kontroller at du har oppgitt verdier disse og prøv igjen.
+						Kontroller at du har oppgitt verdier for disse og prøv igjen.
 					</Text>
 				</>
 			);
@@ -86,7 +86,8 @@ const RenderError: React.FC<ErrorProps> = ({ error }) => {
 					<H2>Det har oppstått en feil</H2>
 					<Text>
 						Jira-proxien manglet enten fra- eller til-dato. Ta gjerne kontakt og
-						fortell hvordan denne feilen kan reproduseres slik at den kan fikses
+						fortell hvordan denne feilen kan reproduseres slik at den kan
+						fikses.
 					</Text>
 				</>
 			);

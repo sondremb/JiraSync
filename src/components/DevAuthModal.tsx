@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { ConfirmModal, SecondaryButton, TextArea } from "@udir/lisa";
+import { ConfirmModal, TextArea } from "@udir/lisa";
 import { storeUserToken } from "../Utils/localstorageUtils";
 import styled from "styled-components";
+import { TextButton } from "./TextButton";
 
 const StyledDiv = styled.div`
 	textarea {
@@ -16,13 +17,15 @@ export const DevAuthModal: React.FC = () => {
 	const [token, setToken] = useState("");
 	return (
 		<div>
-			<SecondaryButton
+			<TextButton
 				onClick={() => {
 					setOpen(true);
 				}}
+				colorTheme="dark"
+				icon="user"
 			>
-				Åpne
-			</SecondaryButton>
+				Sett userToken
+			</TextButton>
 			<ConfirmModal
 				title={"Lagre userToken"}
 				confirmLabel={"Lagre"}

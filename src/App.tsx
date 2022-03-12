@@ -58,7 +58,7 @@ export const App: React.FC = () => {
 
 	useEffect(() => {
 		if (hasCredentials) stateManager.fetchJiraData({ fromDate, toDate });
-	}, [hasCredentials]);
+	}, [state.jiraUsername, state.jiraPassword]);
 
 	const setDates = (from: Moment, to: Moment) => {
 		setFromDate(from);
@@ -80,6 +80,8 @@ export const App: React.FC = () => {
 		stateManager.fetchAllData({ fromDate, toDate });
 	}
 
+	const isDevelopment = process.env.ENV === "DEV";
+
 	return (
 		<PageLayout>
 			<H1>Jirasync</H1>
@@ -88,13 +90,16 @@ export const App: React.FC = () => {
 				close={() => setIsLoginModalOpen(false)}
 			/>
 			<ColoredRow halign="space-between" valign="center">
-				<TextButton
-					onClick={() => setIsLoginModalOpen(true)}
-					icon="userFilled"
-					colorTheme="dark"
-				>
-					Logg inn i Jira
-				</TextButton>
+				<FlexRow>
+					<TextButton
+						onClick={() => setIsLoginModalOpen(true)}
+						icon="userFilled"
+						colorTheme="dark"
+					>
+						Logg inn i Jira
+					</TextButton>
+					{isDevelopment && <DevAuthModal />}
+				</FlexRow>
 				<FlexRow>
 					<TextButton
 						onClick={onPreviousWeekClick}
@@ -140,7 +145,6 @@ export const App: React.FC = () => {
 					days={dayRange(fromDate, toDate)}
 				/>
 			)}
-			<DevAuthModal />
 		</PageLayout>
 	);
 };
