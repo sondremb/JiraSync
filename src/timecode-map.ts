@@ -6,6 +6,7 @@ export enum UdirBekkIds {
 	PASPrøver = 1000890,
 	Pålogging = 1000854,
 	Systemoversikt = 1002326,
+	UBAS = 1002497,
 }
 
 export const knownBekkTimecodes: BekkTimecodeMap = {
@@ -37,6 +38,12 @@ export const knownBekkTimecodes: BekkTimecodeMap = {
 		id: UdirBekkIds.Systemoversikt,
 		code: "UTA1092",
 		name: "Systemoversikten",
+		isUdir: true,
+	},
+	[UdirBekkIds.UBAS]: {
+		id: UdirBekkIds.UBAS,
+		code: "UTA1097",
+		name: "UBAS",
 		isUdir: true,
 	},
 };
@@ -78,6 +85,12 @@ const jiraToTimecodeMap: TimecodeSelector[] = [
 			return /SO.*/.test(jiraIssue.key);
 		},
 		timecodeId: UdirBekkIds.Systemoversikt,
+	},
+	{
+		selector: (jiraIssue) => {
+			return /UBAS.*/.test(jiraIssue.key);
+		},
+		timecodeId: UdirBekkIds.UBAS,
 	},
 ];
 
