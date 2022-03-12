@@ -3,23 +3,19 @@ import { useEffect, useState } from "react";
 import { BekkClient } from "./bekk-client";
 import { useCallableRequest } from "./client-utils";
 import { NetlifyClient } from "./netlify-client";
-import { useStore } from "./store/store";
 import {
-	bekkIdFromJiraTimecode,
-	knownBekkTimecodes,
-	UdirBekkIds,
-} from "./timecode-map";
+	addBekkTimecodesAction,
+	addJiraTimecodesAction,
+} from "./store/actions";
+import { useStore } from "./store/store";
+import { bekkIdFromJiraTimecode, UdirBekkIds } from "./timecode-map";
 import {
 	Bekk,
 	BekkId,
-	BekkTimecode,
 	BekkTimecodeEntry,
-	BekkTimecodeMap,
 	DateString,
 	Day,
 	Jira,
-	JiraTimecode,
-	JiraTimecodeMap,
 } from "./types.d";
 import { secondsToHours, toDateString } from "./Utils/dateUtils";
 
@@ -29,10 +25,7 @@ interface FetchAllDataParams {
 }
 
 export const useCombinedState = () => {
-	const { state } = useStore();
-	const [bekkTimecodes, setBekkTimecodes] =
-		useState<BekkTimecodeMap>(knownBekkTimecodes);
-	const [jiraTimecodes, setJiraTimecodes] = useState<JiraTimecodeMap>({});
+	const { state, dispatch } = useStore();
 	const [entries, setEntries] = useState<BekkTimecodeEntry[]>([]);
 	const [lockDate, setLockDate] = useState<Moment>();
 
@@ -77,29 +70,28 @@ export const useCombinedState = () => {
 	}, [bekkRequest.data]);
 
 	const updateJiraTimecodesFromData = (data: Jira.DTO) => {
-		let newTimecodes: Record<Jira.Timecode["key"], JiraTimecode> = {};
-		for (const timecode of data.worklog) {
-			newTimecodes[timecode.key] = {
-				key: timecode.key,
-				summary: timecode.summary,
-				bekkTimecodeId: bekkIdFromJiraTimecode(timecode),
-			};
-		}
-		setJiraTimecodes({ ...jiraTimecodes, ...newTimecodes });
+		dispatch(
+			addJiraTimecodesAction(
+				data.worklog.map((timecode) => ({
+					key: timecode.key,
+					summary: timecode.summary,
+					bekkTimecodeId: bekkIdFromJiraTimecode(timecode),
+				}))
+			)
+		);
 	};
 
 	const updateBekkTimecodesFromData = (data: Bekk.DTO) => {
-		let newTimecodes: Record<BekkId, BekkTimecode> = {};
-		for (const timecode of data.timecodeTimeEntries) {
-			const id = timecode.timecode.id;
-			newTimecodes[id] = {
-				id,
-				code: timecode.timecode.code,
-				name: timecode.timecode.name,
-				isUdir: id in UdirBekkIds,
-			};
-		}
-		setBekkTimecodes({ ...bekkTimecodes, ...newTimecodes });
+		dispatch(
+			addBekkTimecodesAction(
+				data.timecodeTimeEntries.map((timecode) => ({
+					id: timecode.timecode.id,
+					code: timecode.timecode.code,
+					name: timecode.timecode.name,
+					isUdir: timecode.timecode.id in UdirBekkIds,
+				}))
+			)
+		);
 	};
 
 	const updateEntries = (bekkData: Bekk.DTO, jiraData: Jira.DTO) => {
@@ -170,8 +162,6 @@ export const useCombinedState = () => {
 
 	return {
 		state: {
-			bekkTimecodes,
-			jiraTimecodes,
 			lockDate,
 			entries,
 		},

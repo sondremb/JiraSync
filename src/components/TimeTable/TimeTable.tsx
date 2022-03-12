@@ -2,11 +2,12 @@ import { colors, FlexColumn, Table, Text } from "@udir/lisa";
 import { Moment } from "moment";
 import React from "react";
 import styled from "styled-components";
-import { BekkTimecodeEntry, Day, State } from "../../types";
+import { useStore } from "../../store/store";
+import { BekkId, BekkTimecodeEntry, Day } from "../../types";
 import { toDateString } from "../../Utils/dateUtils";
 
 interface Props {
-	data: State;
+	entries: BekkTimecodeEntry[];
 	days: Moment[];
 }
 
@@ -42,10 +43,9 @@ const CornerDiv = styled.div`
 `;
 
 export const TimeTable: React.FC<Props> = (props) => {
-	const { entries, bekkTimecodes } = props.data;
-
+	const { state } = useStore();
 	const displayTimecode = (timecodeEntry: BekkTimecodeEntry) => {
-		const timecode = bekkTimecodes[timecodeEntry.id];
+		const timecode = state.bekkTimecodes[timecodeEntry.id];
 		return (
 			<FlexColumn>
 				<Text>{timecode.code}</Text>
@@ -67,12 +67,11 @@ export const TimeTable: React.FC<Props> = (props) => {
 		);
 	};
 
-	const displayDay = (day: Day | undefined) => {
+	const displayDay = (day: Day | undefined, timecodeId: BekkId) => {
+		const timecode = state.bekkTimecodes[timecodeId];
+		const correct = !timecode.isUdir || day?.bekkHours === day?.totalJiraHours;
 		return (
-			<ContainerDiv
-				textStyle="Overskrift 4"
-				correct={day?.bekkHours === day?.totalJiraHours}
-			>
+			<ContainerDiv textStyle="Overskrift 4" correct={correct}>
 				{day !== undefined && (
 					<>
 						{day.bekkHours}
@@ -86,12 +85,12 @@ export const TimeTable: React.FC<Props> = (props) => {
 	};
 
 	const timecodeAllGood = (timecode: BekkTimecodeEntry) =>
-		!bekkTimecodes[timecode.id].isUdir ||
+		!state.bekkTimecodes[timecode.id].isUdir ||
 		Object.values(timecode.days).every(
 			(day) => day.bekkHours === day.totalJiraHours
 		);
 
-	const allGood = entries.every(timecodeAllGood);
+	const allGood = props.entries.every(timecodeAllGood);
 
 	return (
 		<div>
@@ -111,11 +110,11 @@ export const TimeTable: React.FC<Props> = (props) => {
 						headerName: dateHeader(day),
 						displayFunction: (i: BekkTimecodeEntry) => {
 							const thing = i.days[toDateString(day)];
-							return displayDay(thing);
+							return displayDay(thing, i.id);
 						},
 					})),
 				]}
-				items={entries}
+				items={props.entries}
 				numberOfRowVisible={7}
 			/>
 		</div>

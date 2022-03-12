@@ -127,7 +127,7 @@ export const App: React.FC = () => {
 				</FlexRow>
 				{!stateManager.pending && (
 					<TimeTable
-						data={stateManager.state}
+						entries={stateManager.state.entries}
 						days={dayRange(fromDate, toDate)}
 					/>
 				)}

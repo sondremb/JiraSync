@@ -107,7 +107,7 @@ interface BekkTimecodeEntry {
 }
 
 type BekkTimecodeMap = Record<BekkId, BekkTimecode>;
-type JiraTimecodeMap = Record<BekkId, JiraTimecode>;
+type JiraTimecodeMap = Record<JiraId, JiraTimecode>;
 
 interface State {
 	lockDate: Moment | undefined;
