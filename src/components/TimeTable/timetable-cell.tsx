@@ -156,3 +156,42 @@ export const SumColumnCell: React.FC<{ row: Row }> = ({ row }) => {
 			return <></>;
 	}
 };
+
+const AbsoluteDiv = styled(Text)`
+	position: absolute;
+	right: 10%;
+	top: 10%;
+	transform: translateX(100%);
+	width: 200px;
+	display: flex;
+	align-items: center;
+`;
+
+export const Example: React.FC = () => {
+	const correct = false;
+	return (
+		<ContainerDiv
+			textStyle={correct ? "Overskrift 3" : "Overskrift 2"}
+			correct={correct}
+			border
+		>
+			<>
+				0
+				<AbsoluteDiv>
+					<Icon className="mr-8" type="arrowThick" direction="left" />
+					Timekeeper-timer
+				</AbsoluteDiv>
+				<CornerDiv
+					correct={correct}
+					textStyle={correct ? "Tabelltekst" : "Tabelltekst uthevet"}
+				>
+					7.5
+					<AbsoluteDiv>
+						<Icon type="arrowThick" direction="left" className="mr-8" />
+						Jira-timer
+					</AbsoluteDiv>
+				</CornerDiv>
+			</>
+		</ContainerDiv>
+	);
+};

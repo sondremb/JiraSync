@@ -1,5 +1,5 @@
-import { Alert, colors, FlexColumn, Table, Text } from "@udir/lisa";
-import moment, { Moment } from "moment";
+import { Alert, colors, FlexColumn, FlexRow, Table, Text } from "@udir/lisa";
+import { Moment } from "moment";
 import React, { useMemo } from "react";
 import styled from "styled-components";
 import { useStore } from "../../store/store";
@@ -108,7 +108,11 @@ export const TimeTable: React.FC<Props> = (props) => {
 						: colors.utvidetPrimærpalett.skifer35
 				}
 			/>
-			{allGood && <Alert showAlert type="success" text="Alle dager stemmer!" />}
+			<FlexRow halign="center">
+				{allGood && (
+					<Alert showAlert type="success" text="Alle dager stemmer!" />
+				)}
+			</FlexRow>
 		</div>
 	);
 };

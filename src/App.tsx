@@ -26,6 +26,7 @@ import { useCombinedState } from "./state";
 import { useStore } from "./store/store";
 import styled from "styled-components";
 import { TextButton } from "./components/TextButton";
+import { Example } from "./components/TimeTable/timetable-cell";
 
 const CenteredText = styled(Text)`
 	text-align: center;
@@ -84,11 +85,12 @@ export const App: React.FC = () => {
 
 	return (
 		<PageLayout>
-			<H1>Jirasync</H1>
-			<JiraLogin
-				isOpen={isLoginModalOpen}
-				close={() => setIsLoginModalOpen(false)}
-			/>
+			<FlexRow valign="center" className="mb-20">
+				<H1 style={{ marginBottom: "0" }} className="mr-40">
+					Jirasync
+				</H1>
+				<Example />
+			</FlexRow>
 			<ColoredRow halign="space-between" valign="center">
 				<FlexRow>
 					<TextButton
@@ -146,6 +148,10 @@ export const App: React.FC = () => {
 					lockDate={stateManager.state.lockDate}
 				/>
 			)}
+			<JiraLogin
+				isOpen={isLoginModalOpen}
+				close={() => setIsLoginModalOpen(false)}
+			/>
 		</PageLayout>
 	);
 };
