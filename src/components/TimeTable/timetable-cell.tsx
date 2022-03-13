@@ -127,22 +127,30 @@ export const SumColumnCell: React.FC<{ row: Row }> = ({ row }) => {
 	switch (row.kind) {
 		case "entry":
 			return (
-				<>
+				<OtherDiv textStyle="Overskrift 3">
 					{Object.values(row.entry.days)
 						.map((day) => day.bekkHours)
 						.reduce((prev, curr) => prev + curr, 0)}
-				</>
+				</OtherDiv>
 			);
 		case "sum":
+			const totalBekkHoursAllWeek = row.entries
+				.filter((entry) => entry.id !== FrivilligKompetanseByggingId)
+				.flatMap((entry) =>
+					Object.values(entry.days).map((day) => day.bekkHours)
+				)
+				.reduce((prev, curr) => prev + curr, 0);
 			return (
-				<>
-					{row.entries
-						.filter((entry) => entry.id !== FrivilligKompetanseByggingId)
-						.flatMap((entry) =>
-							Object.values(entry.days).map((day) => day.bekkHours)
-						)
-						.reduce((prev, curr) => prev + curr, 0)}
-				</>
+				<OtherDiv
+					textStyle="Overskrift 3"
+					getColor={(c: ColorType) =>
+						totalBekkHoursAllWeek === 37.5
+							? c.støttefarge.grå98
+							: c.utvidetPrimærpalett.fersken65
+					}
+				>
+					{totalBekkHoursAllWeek ?? 0}
+				</OtherDiv>
 			);
 		case "lock":
 			return <></>;
