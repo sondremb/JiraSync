@@ -139,10 +139,11 @@ export const App: React.FC = () => {
 					Oppdater
 				</TextButton>
 			</ColoredRow>
-			{!stateManager.pending && (
+			{!stateManager.pending && stateManager.state.lockDate !== undefined && (
 				<TimeTable
 					entries={stateManager.state.entries}
 					days={dayRange(fromDate, toDate)}
+					lockDate={stateManager.state.lockDate}
 				/>
 			)}
 		</PageLayout>

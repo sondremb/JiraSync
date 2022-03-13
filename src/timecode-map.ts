@@ -1,5 +1,7 @@
 import { BekkId, BekkTimecodeMap, Jira } from "./types";
 
+export const FrivilligKompetanseByggingId = 1786;
+
 export enum UdirBekkIds {
 	NyGjennomføring = 1001498,
 	PASEksamen = 1000752,
