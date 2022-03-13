@@ -78,7 +78,7 @@ export const TimeTable: React.FC<Props> = (props) => {
 			.map((entry) => ({ kind: "entry", entry }));
 		return mappedEntries.concat(
 			{ kind: "sum", entries: props.entries },
-			{ kind: "lock", lockDate: moment() }
+			{ kind: "lock", lockDate: props.lockDate }
 		);
 	}, [props.entries]);
 
