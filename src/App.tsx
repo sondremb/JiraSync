@@ -58,6 +58,11 @@ export const App: React.FC = () => {
 	}, []);
 
 	useEffect(() => {
+		// skulle gjerne bare satt isLoginModalOpen som useState(!hasCredentials) i starten, men Lisa takler ikke at modaler er åpne ved første render
+		if (!hasCredentials) setIsLoginModalOpen(true);
+	}, []);
+
+	useEffect(() => {
 		if (hasCredentials) stateManager.fetchJiraData({ fromDate, toDate });
 	}, [state.jiraUsername, state.jiraPassword]);
 
