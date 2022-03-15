@@ -45,9 +45,10 @@ export const JiraLogin: React.FC<Props> = (props) => {
 		>
 			<InputField
 				id="username"
-				label="Brukernavn"
+				label="E-postadresse"
 				value={username}
 				handleChange={(e) => setUsername(e.target.value)}
+				placeholder="ditt.navn@udir.no"
 			/>
 			<InputField
 				id="password"
