@@ -54,7 +54,9 @@ export const TimetableCell: React.FC<Props> = (props) => {
 				<OtherDiv>
 					<Icon
 						type={
-							props.day.isBefore(props.row.lockDate) ? "locked" : "unlocked"
+							props.day.isSameOrBefore(props.row.lockDate)
+								? "locked"
+								: "unlocked"
 						}
 						getColor={(c: ColorType) => c.støttefarge.grå98}
 					/>
