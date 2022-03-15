@@ -1,7 +1,7 @@
 import moment, { Moment } from "moment";
 import { useEffect, useState } from "react";
 import { BekkClient } from "./bekk-client";
-import { useCallableRequest } from "./client-utils";
+import { useCallableStatefulRequest } from "./client-utils";
 import { NetlifyClient } from "./netlify-client";
 import {
 	addBekkTimecodesAction,
@@ -29,7 +29,7 @@ export const useCombinedState = () => {
 	const [entries, setEntries] = useState<BekkTimecodeEntry[]>([]);
 	const [lockDate, setLockDate] = useState<Moment>();
 
-	const jiraRequest = useCallableRequest({
+	const jiraRequest = useCallableStatefulRequest({
 		requestFunction: (params: FetchAllDataParams) =>
 			NetlifyClient.getData({
 				fromDate: params.fromDate,
@@ -39,7 +39,7 @@ export const useCombinedState = () => {
 			}),
 	});
 
-	const bekkRequest = useCallableRequest({
+	const bekkRequest = useCallableStatefulRequest({
 		requestFunction: BekkClient.getData,
 	});
 

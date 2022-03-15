@@ -20,15 +20,20 @@ interface CallableRequestInput<TReturn, TParams> {
 	onSuccess?: (response: TReturn, requestData: TParams) => void;
 }
 
-interface CallableRequestReturn<TReturn, TParams> {
+interface CallableStatefulRequestReturn<TReturn, TParams> {
 	data: TReturn | undefined;
 	loading: boolean;
 	execute: (body: TParams) => void;
 }
 
-export function useCallableRequest<TReturn, TParams>(
+interface CallableStatelessRequestReturn<TParams> {
+	loading: boolean;
+	execute: (body: TParams) => Promise<boolean>;
+}
+
+export function useCallableStatefulRequest<TReturn, TParams>(
 	input: CallableRequestInput<TReturn, TParams>
-): CallableRequestReturn<TReturn, TParams> {
+): CallableStatefulRequestReturn<TReturn, TParams> {
 	const { dispatch } = useErrorStore();
 	const [data, setData] = useState<TReturn>();
 	const [loading, setLoading] = useState(false);
@@ -70,6 +75,34 @@ export function useCallableRequest<TReturn, TParams>(
 	}
 	return {
 		data,
+		loading,
+		execute,
+	};
+}
+
+export function useCallableStatelessRequest<TReturn, TParams>(
+	input: CallableRequestInput<TReturn, TParams>
+): CallableStatelessRequestReturn<TParams> {
+	const { dispatch } = useErrorStore();
+	const [loading, setLoading] = useState(false);
+	function execute(body: TParams): Promise<boolean> {
+		setLoading(false);
+		return input
+			.requestFunction(body)
+			.then((res: AxiosResponse<TReturn>) => {
+				if (input.onSuccess) input.onSuccess(res.data, body);
+				return true;
+			})
+			.catch((err: AxiosError) => {
+				// vi er ute i totalt ukjent farvann
+				// dump feilmelding til console.error og gi generisk feilmelding i modalen
+				handleUnknownError(err);
+				dispatch(unknownError);
+				return false;
+			})
+			.finally(() => setLoading(false));
+	}
+	return {
 		loading,
 		execute,
 	};

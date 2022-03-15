@@ -88,17 +88,18 @@ export const TimetableCell: React.FC<Props> = (props) => {
 					correct={correct}
 					border
 				>
-					{day !== undefined && (
-						<>
-							{day.bekkHours}
-							<CornerDiv
-								correct={correct}
-								textStyle={correct ? "Tabelltekst" : "Tabelltekst uthevet"}
-							>
-								{jiraHours}
-							</CornerDiv>
-						</>
-					)}
+					{day !== undefined &&
+						(day.bekkHours !== 0 || day.totalJiraHours !== 0) && (
+							<>
+								{day.bekkHours}
+								<CornerDiv
+									correct={correct}
+									textStyle={correct ? "Tabelltekst" : "Tabelltekst uthevet"}
+								>
+									{jiraHours}
+								</CornerDiv>
+							</>
+						)}
 				</ContainerDiv>
 			);
 	}

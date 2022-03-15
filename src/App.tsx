@@ -19,6 +19,8 @@ import {
 	H1,
 	Icon,
 	PageLayout,
+	PrimaryButton,
+	SecondaryButton,
 	spacing,
 	Text,
 } from "@udir/lisa";
@@ -27,6 +29,8 @@ import { useStore } from "./store/store";
 import styled from "styled-components";
 import { TextButton } from "./components/TextButton";
 import { Example } from "./components/TimeTable/timetable-cell";
+import { useCallableStatelessRequest } from "./client-utils";
+import { BekkClient } from "./bekk-client";
 
 const CenteredText = styled(Text)`
 	text-align: center;
@@ -88,13 +92,46 @@ export const App: React.FC = () => {
 
 	const isDevelopment = process.env.ENV === "DEV";
 
+	const putRequest = useCallableStatelessRequest({
+		requestFunction: BekkClient.updateTimesheet,
+	});
+
+	const synchronize = () => {
+		const udirEntries = stateManager.state.entries.filter(
+			(entry) => state.bekkTimecodes[entry.id].isUdir
+		);
+		const udirDays = udirEntries.flatMap((entry) =>
+			Object.entries(entry.days).map(([dateString, day]) => ({
+				...day,
+				dateString,
+				id: entry.id,
+			}))
+		);
+		const daysWithDifference = udirDays.filter(
+			(day) => day.bekkHours !== day.totalJiraHours
+		);
+		const promises = daysWithDifference.map((day) =>
+			putRequest.execute({
+				timecodeId: day.id,
+				hours: day.totalJiraHours,
+				dateString: day.dateString,
+			})
+		);
+		Promise.all(promises).then(() =>
+			stateManager.fetchAllData({ fromDate, toDate })
+		);
+	};
+
 	return (
 		<PageLayout>
-			<FlexRow valign="center" className="mb-20">
-				<H1 style={{ marginBottom: "0" }} className="mr-40">
-					Jirasync
-				</H1>
-				<Example />
+			<FlexRow valign="center" halign="space-between" className="mb-20">
+				<FlexRow>
+					<H1 style={{ marginBottom: "0" }} className="mr-40">
+						Jirasync
+					</H1>
+					<Example />
+				</FlexRow>
+				<SecondaryButton onClick={synchronize}>Synkroniser</SecondaryButton>
 			</FlexRow>
 			<ColoredRow halign="space-between" valign="center">
 				<FlexRow>

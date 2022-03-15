@@ -2,12 +2,18 @@ import axios, { AxiosResponse } from "axios";
 import { Moment } from "moment";
 import { getAuthorizationHeader } from "./Timekeeper";
 import { getEmployeeIdFromToken } from "./Timekeeper/auth";
-import { Bekk } from "./types";
+import { Bekk, BekkId, DateString } from "./types";
 import { toDateString } from "./Utils/dateUtils";
 
 export interface BekkRequestParams {
 	fromDate: Moment;
 	toDate: Moment;
+}
+
+export interface PutTimesheetParams {
+	timecodeId: BekkId;
+	dateString: DateString;
+	hours: number;
 }
 
 const BASE_URL = "https://api.bekk.no/timekeeper-svc";
@@ -21,5 +27,21 @@ export const BekkClient = {
 		return axios.get(url, {
 			headers: { authorization: getAuthorizationHeader() },
 		});
+	},
+	updateTimesheet: (params: PutTimesheetParams) => {
+		const employeeId = getEmployeeIdFromToken();
+		const url = `${BASE_URL}/timesheets/employee/${employeeId}`;
+		return axios.put(
+			url,
+			{
+				timecodeId: params.timecodeId,
+				hours: params.hours,
+				date: params.dateString,
+				employeeId,
+			},
+			{
+				headers: { authorization: getAuthorizationHeader() },
+			}
+		);
 	},
 };
