@@ -1,5 +1,5 @@
 import moment, { Moment } from "moment";
-import { Responses, Day, TKEntry, JiraEntry, TKTimecode } from "../types_OLD";
+import { Responses, Day, TKEntry, JiraEntry } from "../types_OLD";
 import { jiraIssueToTimecodeId } from "../Jira/constants";
 import { toDateString } from "./dateUtils";
 import { timeCodeFromId } from "../Timekeeper/constants";
