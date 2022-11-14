@@ -1,6 +1,7 @@
 ﻿node_modules
 .env
 /dist
+/dist_functions
 .cache
 .parcel-cache
 .netlify
