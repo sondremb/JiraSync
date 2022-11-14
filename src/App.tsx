@@ -19,7 +19,6 @@ import {
 	H1,
 	Icon,
 	PageLayout,
-	PrimaryButton,
 	SecondaryButton,
 	spacing,
 	Text,
@@ -31,6 +30,7 @@ import { TextButton } from "./components/TextButton";
 import { Example } from "./components/TimeTable/timetable-cell";
 import { useCallableStatelessRequest } from "./client-utils";
 import { BekkClient } from "./bekk-client";
+import { isDevelopment } from "./Utils/envUtils";
 
 const CenteredText = styled(Text)`
 	text-align: center;
@@ -89,9 +89,6 @@ export const App: React.FC = () => {
 	async function onGetTimesheetsClick() {
 		stateManager.fetchAllData({ fromDate, toDate });
 	}
-
-	const isDevelopment = process.env.ENV === "DEV";
-
 	const putRequest = useCallableStatelessRequest({
 		requestFunction: BekkClient.updateTimesheet,
 	});
@@ -142,7 +139,7 @@ export const App: React.FC = () => {
 					>
 						Logg inn i Jira
 					</TextButton>
-					{isDevelopment && <DevAuthModal />}
+					{isDevelopment() && <DevAuthModal />}
 				</FlexRow>
 				<FlexRow>
 					<TextButton

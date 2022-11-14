@@ -4,11 +4,11 @@
 	"description": "CLI for syncing hours between jira and timekeeper",
 	"source": "index.html",
 	"scripts": {
-		"start": "parcel index.html",
+		"start": "vite --port 3001",
+		"start:function": "netlify dev",
+		"build:app": "tsc && vite build",
 		"build:function": "netlify functions:build --src functions",
-		"build:app": "parcel build index.html",
-		"build": "npm run build:function && npm run build:app",
-		"dev": "npm run build:function && netlify dev"
+		"build": "yarn build:function && yarn build:app"
 	},
 	"keywords": [
 		"Jira",
@@ -17,22 +17,19 @@
 	"author": "Thor Kristian Valderhaug",
 	"license": "ISC",
 	"dependencies": {
-		"@parcel/transformer-react-refresh-wrap": "^2.3.1",
 		"@udir/lisa": "^1.9.2",
+		"@vitejs/plugin-react": "^2.2.0",
 		"axios": "^0.21.4",
-		"dotenv": "^10.0.0",
 		"moment": "^2.29.1",
 		"react": "^16.13.1",
 		"react-dom": "^16.13.1",
-		"react-loading": "^2.0.3"
+		"react-loading": "^2.0.3",
+		"vite": "^3.2.3",
+		"vite-plugin-svgr": "^2.2.2",
+		"vite-tsconfig-paths": "^3.5.2"
 	},
 	"devDependencies": {
 		"@netlify/functions": "^1.0.0",
-		"@parcel/config-default": "^2.2.1",
-		"@parcel/core": "^2.2.1",
-		"@parcel/packager-raw-url": "^2.3.2",
-		"@parcel/transformer-sass": "^2.3.1",
-		"@parcel/transformer-webmanifest": "^2.3.2",
 		"@types/node": "^13.9.5",
 		"@types/react": "^16.9.32",
 		"@types/react-dom": "^17.0.13",
@@ -40,7 +37,7 @@
 		"express": "^4.17.1",
 		"netlify-cli": "^9.13.0",
 		"netlify-lambda": "^2.0.14",
-		"parcel": "^2.2.1",
+		"path-browserify": "^1.0.1",
 		"react-datepicker": "^4.7.0",
 		"react-hook-form": "^7.27.1",
 		"sass": "^1.39.2",

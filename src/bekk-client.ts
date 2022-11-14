@@ -4,6 +4,7 @@ import { getAuthorizationHeader } from "./Timekeeper";
 import { getEmployeeIdFromToken } from "./Timekeeper/auth";
 import { Bekk, BekkId, DateString } from "./types";
 import { toDateString } from "./Utils/dateUtils";
+import { isDevelopment } from "./Utils/envUtils";
 
 export interface BekkRequestParams {
 	fromDate: Moment;
@@ -16,7 +17,9 @@ export interface PutTimesheetParams {
 	hours: number;
 }
 
-const BASE_URL = "https://api.bekk.no/timekeeper-svc";
+const BASE_URL = isDevelopment()
+	? "https://api.bekk.dev/timekeeper-svc"
+	: "https://api.bekk.no/timekeeper-svc";
 
 export const BekkClient = {
 	getData: (params: BekkRequestParams): Promise<AxiosResponse<Bekk.DTO>> => {

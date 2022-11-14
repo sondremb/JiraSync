@@ -5,15 +5,15 @@ import { authenticate, isAuthenticated } from "./src/Timekeeper/auth";
 import moment from "moment";
 import "moment/locale/nb";
 import { LisaProvider } from "@udir/lisa";
-import "dotenv/config";
 import { Store } from "./src/store/store";
 import { ErrorStore } from "./src/errorstore/store";
 import { ErrorModal } from "./src/errorstore/error-modal";
+import { isDevelopment } from "./src/Utils/envUtils";
 
 moment.locale("nb");
 
 if (!isAuthenticated()) {
-	if (process.env.ENV !== "DEV") {
+	if (isDevelopment()) {
 		authenticate();
 	}
 }

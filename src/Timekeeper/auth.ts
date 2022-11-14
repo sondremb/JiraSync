@@ -1,13 +1,15 @@
+import { isDevelopment } from "../Utils/envUtils";
+
 function getScopes() {
 	return "openid name groups";
 }
 
 function getIssuerDomain() {
-	return "bekk.eu.auth0.com";
+	return isDevelopment() ? "bekk-dev.eu.auth0.com" : "bekk.eu.auth0.com";
 }
 
 function getAudience() {
-	return process.env.BEKK_CLIENT_ID;
+	return import.meta.env.VITE_BEKK_CLIENT_ID;
 }
 
 function parseHash(hash: string): any {

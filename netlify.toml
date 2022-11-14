@@ -1,4 +1,10 @@
 [build]
-    command = "npm run build" # the command you run to build this file
+    command = "yarn build" # the command you run to build this file
     functions = "dist/functions" # netlify-lambda builds to this folder AND Netlify reads functions from here
     publish = "dist" # create-react-app builds to this folder, Netlify should serve all these files statically
+
+[dev]
+    command = "yarn start" # the command you run to build this file
+    framework = "#auto"
+    port = 3000 # The port that the netlify dev will be accessible on
+    targetPort = 3001
