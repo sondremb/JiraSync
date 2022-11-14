@@ -8,14 +8,11 @@ import { LisaProvider } from "@udir/lisa";
 import { Store } from "./src/store/store";
 import { ErrorStore } from "./src/errorstore/store";
 import { ErrorModal } from "./src/errorstore/error-modal";
-import { isDevelopment } from "./src/Utils/envUtils";
 
 moment.locale("nb");
 
 if (!isAuthenticated()) {
-	if (isDevelopment()) {
-		authenticate();
-	}
+	authenticate();
 }
 ReactDOM.render(
 	<ErrorStore>
