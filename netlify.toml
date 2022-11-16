@@ -4,7 +4,6 @@
     publish = "dist" 
 
 [dev]
-    command = "yarn start" # the command you run to build this file
+    command = "yarn start:app" # the command you run to build this file
     framework = "#auto"
     port = 3000 # The port that the netlify dev will be accessible on
-    targetPort = 3001

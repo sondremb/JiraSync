@@ -4,10 +4,11 @@
 	"description": "CLI for syncing hours between jira and timekeeper",
 	"source": "index.html",
 	"scripts": {
-		"start": "vite --port 3001",
-		"start:function": "netlify dev",
+		"start:app": "vite",
+		"start": "yarn build:function && yarn unzip_functions && netlify dev",
 		"build:app": "tsc && vite build",
 		"build:function": "netlify functions:build --src functions",
+		"unzip_functions": "unzip dist_functions/*.zip -d dist_functions",
 		"build": "yarn build:function && yarn build:app"
 	},
 	"keywords": [
