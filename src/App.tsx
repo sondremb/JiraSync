@@ -12,14 +12,13 @@ import { JiraLogin } from "./components/JiraLogin";
 import { TimeTable } from "./components/TimeTable/TimeTable";
 import { DevAuthModal } from "./components/DevAuthModal";
 import {
+	Button,
 	colors,
-	ColorType,
 	FlexColumn,
 	FlexRow,
 	H1,
 	Icon,
 	PageLayout,
-	SecondaryButton,
 	spacing,
 	Text,
 } from "@udir/lisa";
@@ -128,7 +127,9 @@ export const App: React.FC = () => {
 					</H1>
 					<Example />
 				</FlexRow>
-				<SecondaryButton onClick={synchronize}>Synkroniser</SecondaryButton>
+				<Button variant="outlined" onClick={synchronize}>
+					Synkroniser
+				</Button>
 			</FlexRow>
 			<ColoredRow halign="space-between" valign="center">
 				<FlexRow>
@@ -152,13 +153,13 @@ export const App: React.FC = () => {
 					<FlexColumn halign="center" className="mx-40" width={`${55 / 16}rem`}>
 						<CenteredText
 							textStyle="Brødtekst uthevet"
-							getColor={(c: ColorType) => c.støttefarge.grå98}
+							textColor={colors.støttefarge.grå98}
 						>
 							UKE {fromDate.week()}
 						</CenteredText>
 						<CenteredText
 							textStyle="Brødtekst uthevet"
-							getColor={(c: ColorType) => c.støttefarge.grå98}
+							textColor={colors.støttefarge.grå98}
 						>
 							{fromDate.year()}
 						</CenteredText>

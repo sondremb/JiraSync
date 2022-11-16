@@ -39,8 +39,6 @@ export const DevAuthModal: React.FC = () => {
 					setToken("");
 					setOpen(false);
 				}}
-				id="usertoken-modal"
-				bottomPadding
 			>
 				<StyledDiv className="mb-20">
 					<TextArea

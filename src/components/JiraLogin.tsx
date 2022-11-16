@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Checkbox, ConfirmModal, InputField } from "@udir/lisa";
+import { Checkbox, ConfirmModal, Container, InputField } from "@udir/lisa";
 import { clearCredentials, storeCredentials } from "../Utils/localstorageUtils";
 import { useStore } from "../store/store";
 import { setPasswordAction, setUsernameAction } from "../store/actions";
@@ -41,29 +41,33 @@ export const JiraLogin: React.FC<Props> = (props) => {
 			}}
 			showModal={props.isOpen}
 			onCancel={props.close}
-			id="jira-login-modal"
+			maxWidth="900px"
 		>
-			<InputField
-				id="username"
-				label="E-postadresse"
-				value={username}
-				handleChange={(e) => setUsername(e.target.value)}
-				placeholder="ditt.navn@udir.no"
-			/>
-			<InputField
-				id="password"
-				label="Passord"
-				type="password"
-				value={password}
-				handleChange={(e) => setPassword(e.target.value)}
-			/>
-			<Checkbox
-				label="Husk meg"
-				onChange={handleRememberMeChange}
-				checked={save}
-				id="remember-me"
-				className="mb-20"
-			/>
+			<Container width="400px" maxWidth="100%" minWidth="0">
+				<InputField
+					id="username"
+					label="E-postadresse"
+					value={username}
+					handleChange={(e) => setUsername(e.target.value)}
+					placeholder="ditt.navn@udir.no"
+					className="my-20"
+				/>
+				<InputField
+					id="password"
+					label="Passord"
+					type="password"
+					value={password}
+					handleChange={(e) => setPassword(e.target.value)}
+					className="mb-12"
+				/>
+				<Checkbox
+					label="Husk meg"
+					onChange={handleRememberMeChange}
+					checked={save}
+					id="remember-me"
+					className="mb-40"
+				/>
+			</Container>
 		</ConfirmModal>
 	);
 };

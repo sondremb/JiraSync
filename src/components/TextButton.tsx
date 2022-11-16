@@ -1,4 +1,4 @@
-import { colors, ColorType, Icon, IconType, spacing, Text } from "@udir/lisa";
+import { colors, Icon, IconType, spacing, Text } from "@udir/lisa";
 import React from "react";
 import styled from "styled-components";
 
@@ -80,8 +80,8 @@ export const TextButton: React.FC<Props> = (props) => {
 		<Text
 			textStyle="Brødtekst uthevet"
 			as={StyledButton}
-			getColor={(c: ColorType) =>
-				isDarkTheme ? c.støttefarge.grå98 : c.støttefarge.svart19
+			textColor={
+				isDarkTheme ? colors.støttefarge.grå98 : colors.støttefarge.svart19
 			}
 			isDarkTheme={isDarkTheme}
 			{...props}

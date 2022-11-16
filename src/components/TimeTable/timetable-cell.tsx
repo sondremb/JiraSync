@@ -1,5 +1,5 @@
 import React from "react";
-import { colors, ColorType, FlexColumn, Icon, spacing, Text } from "@udir/lisa";
+import { colors, FlexColumn, Icon, spacing, Text } from "@udir/lisa";
 import styled from "styled-components";
 import { Row } from "./TimeTable";
 import { useStore } from "../../store/store";
@@ -58,16 +58,13 @@ export const TimetableCell: React.FC<Props> = (props) => {
 								? "locked"
 								: "unlocked"
 						}
-						getColor={(c: ColorType) => c.støttefarge.grå98}
+						iconColor={colors.støttefarge.grå98}
 					/>
 				</OtherDiv>
 			);
 		case "sum":
 			return (
-				<OtherDiv
-					textStyle="Overskrift 3"
-					getColor={(c: ColorType) => c.støttefarge.grå98}
-				>
+				<OtherDiv textStyle="Overskrift 3" textColor={colors.støttefarge.grå98}>
 					{props.row.entries
 						// frivillig kompetansebygging teller ikke mot kravet om 37.5 timer i uka
 						.filter((entry) => entry.id !== FrivilligKompetanseByggingId)
@@ -109,10 +106,7 @@ export const FirstColumnCell: React.FC<{ row: Row }> = ({ row }) => {
 	const { state } = useStore();
 	if (row.kind === "sum")
 		return (
-			<Text
-				textStyle="Overskrift 4"
-				getColor={(c: ColorType) => c.støttefarge.grå98}
-			>
+			<Text textStyle="Overskrift 4" textColor={colors.støttefarge.grå98}>
 				Totalt
 			</Text>
 		);
@@ -146,10 +140,10 @@ export const SumColumnCell: React.FC<{ row: Row }> = ({ row }) => {
 			return (
 				<OtherDiv
 					textStyle="Overskrift 3"
-					getColor={(c: ColorType) =>
+					textColor={
 						totalBekkHoursAllWeek === 37.5
-							? c.støttefarge.grå98
-							: c.utvidetPrimærpalett.fersken65
+							? colors.støttefarge.grå98
+							: colors.utvidetPrimærpalett.fersken65
 					}
 				>
 					{totalBekkHoursAllWeek ?? 0}

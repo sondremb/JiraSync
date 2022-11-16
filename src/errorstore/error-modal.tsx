@@ -9,7 +9,6 @@ export const ErrorModal: React.FC = () => {
 		<Modal
 			showModal={state.error !== null}
 			onCancel={() => dispatch(resetErrorAction)}
-			id={"error-modal"}
 		>
 			<RenderError error={state.error} />
 		</Modal>
@@ -45,10 +44,10 @@ const RenderError: React.FC<ErrorProps> = ({ error }) => {
 					<Text>
 						Gå først til{" "}
 						<Link
-							external
 							url="https://jira.udir.no/login.jsp"
 							icon="externalLink"
 							iconPlacement="right"
+							openInNewTab
 						>
 							Jiras login-side
 						</Link>{" "}

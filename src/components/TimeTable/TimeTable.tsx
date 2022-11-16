@@ -101,7 +101,6 @@ export const TimeTable: React.FC<Props> = (props) => {
 					},
 				]}
 				items={items}
-				numberOfRowVisible={7}
 				rowColor={(row) =>
 					row.kind === "entry"
 						? colors.utvidetPrimærpalett.stålblå98
@@ -109,9 +108,7 @@ export const TimeTable: React.FC<Props> = (props) => {
 				}
 			/>
 			<FlexRow halign="center">
-				{allGood && (
-					<Alert showAlert type="success" text="Alle dager stemmer!" />
-				)}
+				{allGood && <Alert type="success">Alle dager stemmer!</Alert>}
 			</FlexRow>
 		</div>
 	);
