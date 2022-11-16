@@ -8,7 +8,7 @@
 		"start": "yarn build:function && yarn unzip_functions && netlify dev",
 		"build:app": "tsc && vite build",
 		"build:function": "netlify functions:build --src functions",
-		"unzip_functions": "unzip dist_functions/*.zip -d dist_functions",
+		"unzip_functions": "unzip -u dist_functions/*.zip -d dist_functions",
 		"build": "yarn build:function && yarn build:app"
 	},
 	"keywords": [
