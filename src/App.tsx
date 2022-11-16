@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import "../style.scss";
 
 import { Moment } from "moment";
 import {

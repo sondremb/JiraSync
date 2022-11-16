@@ -85,6 +85,7 @@ export const TimeTable: React.FC<Props> = (props) => {
 	return (
 		<div>
 			<Table
+				headerColor={colors.utvidetPrimærpalett.stålblå98}
 				columns={[
 					{
 						headerName: "Kode",

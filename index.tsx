@@ -8,6 +8,7 @@ import { LisaProvider } from "@udir/lisa";
 import { Store } from "./src/store/store";
 import { ErrorStore } from "./src/errorstore/store";
 import { ErrorModal } from "./src/errorstore/error-modal";
+import { GlobalStyle } from "./src/global-style";
 
 moment.locale("nb");
 
@@ -18,6 +19,7 @@ ReactDOM.render(
 	<ErrorStore>
 		<Store>
 			<LisaProvider includeGlobalStyling>
+				<GlobalStyle />
 				<ErrorModal />
 				<App />
 			</LisaProvider>
