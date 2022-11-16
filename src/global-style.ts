@@ -2,10 +2,6 @@ import { colors } from "@udir/lisa";
 import { createGlobalStyle } from "styled-components";
 
 export const GlobalStyle = createGlobalStyle`
-	${() => {
-		console.log("AAA");
-		return "";
-	}};
 	html {
 		background-color: ${colors.utvidetPrimærpalett.stålblå98.hex};
 	}
