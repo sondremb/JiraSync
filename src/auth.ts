@@ -1,4 +1,4 @@
-import { isDevelopment } from "../Utils/envUtils";
+import { isDevelopment } from "./Utils/envUtils";
 
 function getScopes() {
 	return "openid name groups";
@@ -132,4 +132,12 @@ export function authenticate(): void {
 	} else {
 		redirectToAuth0();
 	}
+}
+
+export function getAuthorizationHeader() {
+	const bearer_token = getIdToken();
+	if (!bearer_token) {
+		throw new Error("Brukeren er ikke autentisert");
+	}
+	return "Bearer " + bearer_token;
 }

@@ -1,7 +1,6 @@
 import axios, { AxiosResponse } from "axios";
 import { Moment } from "moment";
-import { getAuthorizationHeader } from "./Timekeeper";
-import { getEmployeeIdFromToken } from "./Timekeeper/auth";
+import { getAuthorizationHeader, getEmployeeIdFromToken } from "./auth";
 import { Bekk, BekkId, DateString } from "./types";
 import { toDateString } from "./Utils/dateUtils";
 import { isDevelopment } from "./Utils/envUtils";
