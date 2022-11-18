@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 import { App } from "./src/App";
 import { authenticate, isAuthenticated } from "./src/auth";
 import moment from "moment";
-import "moment/locale/nb";
+import "moment/dist/locale/nb";
 import { LisaProvider } from "@udir/lisa";
 import { Store } from "./src/store/store";
 import { ErrorStore } from "./src/errorstore/store";
