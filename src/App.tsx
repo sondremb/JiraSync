@@ -24,7 +24,6 @@ import {
 import { useCombinedState } from "./state";
 import { useStore } from "./store/store";
 import styled from "styled-components";
-import { TextButton } from "./components/TextButton";
 import { Example } from "./components/TimeTable/timetable-cell";
 import { useCallableStatelessRequest } from "./client-utils";
 import { BekkClient } from "./bekk-client";
@@ -132,23 +131,25 @@ export const App: React.FC = () => {
 			</FlexRow>
 			<ColoredRow halign="space-between" valign="center">
 				<FlexRow>
-					<TextButton
+					<Button
+						variant="text"
 						onClick={() => setIsLoginModalOpen(true)}
 						icon="userFilled"
 						colorTheme="dark"
 					>
 						Logg inn i Jira
-					</TextButton>
+					</Button>
 					{isDevelopment() && <DevAuthModal />}
 				</FlexRow>
 				<FlexRow>
-					<TextButton
+					<Button
+						variant="text"
 						onClick={onPreviousWeekClick}
 						icon={<Icon type="arrow" direction="left" />}
 						colorTheme="dark"
 					>
 						Forrige
-					</TextButton>
+					</Button>
 					<FlexColumn halign="center" className="mx-40" width={`${55 / 16}rem`}>
 						<CenteredText
 							textStyle="Brødtekst uthevet"
@@ -163,22 +164,24 @@ export const App: React.FC = () => {
 							{fromDate.year()}
 						</CenteredText>
 					</FlexColumn>
-					<TextButton
+					<Button
+						variant="text"
 						onClick={onNextWeekClick}
 						icon={<Icon type="arrow" direction="right" />}
 						iconPlacement="right"
 						colorTheme="dark"
 					>
 						Neste
-					</TextButton>
+					</Button>
 				</FlexRow>
-				<TextButton
+				<Button
+					variant="text"
 					icon="refresh"
 					onClick={onGetTimesheetsClick}
 					colorTheme="dark"
 				>
 					Oppdater
-				</TextButton>
+				</Button>
 			</ColoredRow>
 			{!stateManager.pending && stateManager.state.lockDate !== undefined && (
 				<TimeTable
