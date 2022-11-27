@@ -172,23 +172,21 @@ export const Example: React.FC = () => {
 			correct={correct}
 			border
 		>
-			<>
-				0
+			0
+			<AbsoluteDiv>
+				<Icon className="mr-8" type="arrowThick" direction="left" />
+				Timekeeper-timer
+			</AbsoluteDiv>
+			<CornerDiv
+				correct={correct}
+				textStyle={correct ? "Tabelltekst" : "Tabelltekst uthevet"}
+			>
+				7.5
 				<AbsoluteDiv>
-					<Icon className="mr-8" type="arrowThick" direction="left" />
-					Timekeeper-timer
+					<Icon type="arrowThick" direction="left" className="mr-8" />
+					Jira-timer
 				</AbsoluteDiv>
-				<CornerDiv
-					correct={correct}
-					textStyle={correct ? "Tabelltekst" : "Tabelltekst uthevet"}
-				>
-					7.5
-					<AbsoluteDiv>
-						<Icon type="arrowThick" direction="left" className="mr-8" />
-						Jira-timer
-					</AbsoluteDiv>
-				</CornerDiv>
-			</>
+			</CornerDiv>
 		</ContainerDiv>
 	);
 };
