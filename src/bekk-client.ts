@@ -16,6 +16,11 @@ export interface PutTimesheetParams {
 	hours: number;
 }
 
+export interface GetLockdateReturn {
+	employeeId: number;
+	lockDate: DateString;
+}
+
 const BASE_URL = isDevelopment()
 	? "https://api.bekk.dev/timekeeper-svc"
 	: "https://api.bekk.no/timekeeper-svc";
@@ -45,5 +50,12 @@ export const BekkClient = {
 				headers: { authorization: getAuthorizationHeader() },
 			}
 		);
+	},
+	getLockDate: (): Promise<AxiosResponse<GetLockdateReturn>> => {
+		const employeeId = getEmployeeIdFromToken();
+		const url = `${BASE_URL}/timesheets/lockdates/${employeeId}`;
+		return axios.get(url, {
+			headers: { authorization: getAuthorizationHeader() },
+		});
 	},
 };

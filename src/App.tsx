@@ -28,6 +28,7 @@ import { Example } from "./components/TimeTable/timetable-cell";
 import { useCallableStatelessRequest } from "./client-utils";
 import { BekkClient } from "./bekk-client";
 import { isDevelopment } from "./Utils/envUtils";
+import { useLockDate } from "./data/useLockDate";
 
 const CenteredText = styled(Text)`
 	text-align: center;
@@ -90,6 +91,8 @@ export const App: React.FC = () => {
 		requestFunction: BekkClient.updateTimesheet,
 	});
 
+	const { lockDate } = useLockDate();
+
 	const synchronize = () => {
 		const udirEntries = stateManager.state.entries.filter(
 			(entry) => state.bekkTimecodes[entry.id].isUdir
@@ -120,9 +123,7 @@ export const App: React.FC = () => {
 		<PageLayout>
 			<FlexRow valign="center" halign="space-between" className="mb-20">
 				<FlexRow>
-					<H1 style={{ marginBottom: "0" }} className="mr-40">
-						Jirasync
-					</H1>
+					<H1 className="mb-0 mr-40">Jirasync</H1>
 					<Example />
 				</FlexRow>
 				<Button variant="outlined" onClick={synchronize}>
@@ -183,11 +184,11 @@ export const App: React.FC = () => {
 					Oppdater
 				</Button>
 			</ColoredRow>
-			{!stateManager.pending && stateManager.state.lockDate !== undefined && (
+			{!stateManager.pending && lockDate !== undefined && (
 				<TimeTable
 					entries={stateManager.state.entries}
 					days={dayRange(fromDate, toDate)}
-					lockDate={stateManager.state.lockDate}
+					lockDate={lockDate}
 				/>
 			)}
 			<JiraLogin
