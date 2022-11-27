@@ -27,7 +27,6 @@ interface FetchAllDataParams {
 export const useCombinedState = () => {
 	const { state, dispatch } = useStore();
 	const [entries, setEntries] = useState<BekkTimecodeEntry[]>([]);
-	const [lockDate, setLockDate] = useState<Moment>();
 
 	const jiraRequest = useCallableStatefulRequest({
 		requestFunction: (params: FetchAllDataParams) =>
@@ -62,7 +61,6 @@ export const useCombinedState = () => {
 		const bekkData = bekkRequest.data;
 		if (bekkData !== undefined) {
 			updateBekkTimecodesFromData(bekkData);
-			setLockDate(moment(bekkData.lockDate));
 			if (!jiraRequest.loading && jiraRequest.data !== undefined) {
 				updateEntries(bekkData, jiraRequest.data);
 			}
@@ -162,7 +160,6 @@ export const useCombinedState = () => {
 
 	return {
 		state: {
-			lockDate,
 			entries,
 		},
 		fetchBekkData: bekkRequest.execute,
