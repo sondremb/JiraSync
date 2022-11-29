@@ -107,10 +107,8 @@ interface BekkTimecodeEntry {
 }
 
 type BekkTimecodeMap = Record<BekkId, BekkTimecode>;
-type JiraTimecodeMap = Record<JiraId, JiraTimecode>;
 
 interface State {
 	entries: BekkTimecodeEntry[];
 	bekkTimecodes: BekkTimecodeMap;
-	jiraTimecodes: JiraTimecodeMap;
 }

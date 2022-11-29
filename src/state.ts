@@ -3,10 +3,7 @@ import { useEffect, useState } from "react";
 import { BekkClient } from "./bekk-client";
 import { useCallableStatefulRequest } from "./client-utils";
 import { NetlifyClient } from "./netlify-client";
-import {
-	addBekkTimecodesAction,
-	addJiraTimecodesAction,
-} from "./store/actions";
+import { addBekkTimecodesAction } from "./store/actions";
 import { useStore } from "./store/store";
 import { bekkIdFromJiraTimecode, UdirBekkIds } from "./timecode-map";
 import {
@@ -50,7 +47,6 @@ export const useCombinedState = () => {
 	useEffect(() => {
 		const jiraData = jiraRequest.data;
 		if (jiraData !== undefined) {
-			updateJiraTimecodesFromData(jiraData);
 			if (!bekkRequest.loading && bekkRequest.data !== undefined) {
 				updateEntries(bekkRequest.data, jiraData);
 			}
@@ -66,18 +62,6 @@ export const useCombinedState = () => {
 			}
 		}
 	}, [bekkRequest.data]);
-
-	const updateJiraTimecodesFromData = (data: Jira.DTO) => {
-		dispatch(
-			addJiraTimecodesAction(
-				data.worklog.map((timecode) => ({
-					key: timecode.key,
-					summary: timecode.summary,
-					bekkTimecodeId: bekkIdFromJiraTimecode(timecode),
-				}))
-			)
-		);
-	};
 
 	const updateBekkTimecodesFromData = (data: Bekk.DTO) => {
 		dispatch(

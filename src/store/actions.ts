@@ -1,4 +1,4 @@
-import { BekkTimecode, JiraTimecode } from "../types";
+import { BekkTimecode } from "../types";
 
 interface TAction<TKey extends string, TPayload> {
 	kind: TKey;
@@ -32,11 +32,8 @@ export const setPasswordAction = createAction("SET_PASSWORD")<string>();
 export const setUsernameAction = createAction("SET_USERNAME")<string>();
 export const addBekkTimecodesAction =
 	createAction("ADD_BEKK_TIMECODES")<BekkTimecode[]>();
-export const addJiraTimecodesAction =
-	createAction("ADD_JIRA_TIMECODES")<JiraTimecode[]>();
 
 export type Action =
 	| ReturnType<typeof setPasswordAction>
 	| ReturnType<typeof setUsernameAction>
-	| ReturnType<typeof addBekkTimecodesAction>
-	| ReturnType<typeof addJiraTimecodesAction>;
+	| ReturnType<typeof addBekkTimecodesAction>;
