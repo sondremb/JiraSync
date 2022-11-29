@@ -1,10 +1,16 @@
 import moment from "moment";
 import useSWR from "swr";
-import { BekkClient } from "../bekk-client";
+import { getEmployeeIdFromToken } from "../auth";
+import { Timesheets } from "../bekk-api/Timesheets";
+import { createClient } from "../Utils/bekkClientUtils";
 
 export const useLockDate = () => {
-	const { data, error } = useSWR("lockdate", () => BekkClient.getLockDate());
+	const client = createClient(Timesheets);
+	const { data, error } = useSWR("lockdate", () =>
+		client.lockdatesDetail(getEmployeeIdFromToken())
+	);
 
+	// TODO error handling
 	return {
 		lockDate: data ? moment(data?.data.lockDate) : undefined,
 		error,
