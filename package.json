@@ -9,7 +9,8 @@
 		"build:app": "tsc && vite build",
 		"build:function": "netlify functions:build --src functions",
 		"unzip_functions": "unzip -u dist_functions/*.zip -d dist_functions",
-		"build": "yarn build:function && yarn build:app"
+		"build": "yarn build:function && yarn build:app",
+		"generate": "rm -rf src/bekk-api && swagger-typescript-api -p https://api.bekk.no/timekeeper-svc/swagger/v1/swagger.json -o src/bekk-api --modular"
 	},
 	"keywords": [
 		"Jira",
@@ -40,6 +41,7 @@
 		"react-datepicker": "^4.7.0",
 		"react-hook-form": "^7.27.1",
 		"styled-components": "^5.3.3",
+		"swagger-typescript-api": "^12.0.2",
 		"typescript": "^4.4.2"
 	}
 }
