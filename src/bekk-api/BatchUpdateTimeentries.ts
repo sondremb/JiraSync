@@ -9,7 +9,7 @@
  * ---------------------------------------------------------------
  */
 
-import { BatchUpdateTimesheetWriteModel, TimeEntryDbModel } from "./data-contracts";
+import { BatchUpdateTimesheetWriteModelDTO, TimeEntryDbModelDTO } from "./data-contracts";
 import { ContentType, HttpClient, RequestParams } from "./http-client";
 
 export class BatchUpdateTimeentries<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
@@ -23,10 +23,10 @@ export class BatchUpdateTimeentries<SecurityDataType = unknown> extends HttpClie
 	 */
 	batchUpdateTimeentriesCreate = (
 		employeeId: number,
-		data: BatchUpdateTimesheetWriteModel,
+		data: BatchUpdateTimesheetWriteModelDTO,
 		params: RequestParams = {},
 	) =>
-		this.request<TimeEntryDbModel[], any>({
+		this.request<TimeEntryDbModelDTO[], any>({
 			path: `/batch-update-timeentries/${employeeId}`,
 			method: "POST",
 			body: data,

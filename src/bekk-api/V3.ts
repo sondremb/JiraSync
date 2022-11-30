@@ -10,10 +10,10 @@
  */
 
 import {
-	CustomerTimesheetViewModel,
-	EmployeeTimesheetViewModel,
-	TimecodeTimesheetsWrapper,
-	TimecodeTimesheetViewModel,
+	CustomerTimesheetViewModelDTO,
+	EmployeeTimesheetViewModelDTO,
+	TimecodeTimesheetsWrapperDTO,
+	TimecodeTimesheetViewModelDTO,
 } from "./data-contracts";
 import { HttpClient, RequestParams } from "./http-client";
 
@@ -36,7 +36,7 @@ export class V3<SecurityDataType = unknown> extends HttpClient<SecurityDataType>
 		},
 		params: RequestParams = {},
 	) =>
-		this.request<EmployeeTimesheetViewModel, any>({
+		this.request<EmployeeTimesheetViewModelDTO, any>({
 			path: `/v3/timesheets/employees/${employeeId}`,
 			method: "GET",
 			query: query,
@@ -65,7 +65,7 @@ export class V3<SecurityDataType = unknown> extends HttpClient<SecurityDataType>
 		},
 		params: RequestParams = {},
 	) =>
-		this.request<EmployeeTimesheetViewModel[], any>({
+		this.request<EmployeeTimesheetViewModelDTO[], any>({
 			path: `/v3/timesheets/employees`,
 			method: "GET",
 			query: query,
@@ -91,7 +91,7 @@ export class V3<SecurityDataType = unknown> extends HttpClient<SecurityDataType>
 		},
 		params: RequestParams = {},
 	) =>
-		this.request<CustomerTimesheetViewModel, any>({
+		this.request<CustomerTimesheetViewModelDTO, any>({
 			path: `/v3/timesheets/customers/${customerId}`,
 			method: "GET",
 			query: query,
@@ -126,7 +126,7 @@ export class V3<SecurityDataType = unknown> extends HttpClient<SecurityDataType>
 		},
 		params: RequestParams = {},
 	) =>
-		this.request<TimecodeTimesheetsWrapper, any>({
+		this.request<TimecodeTimesheetsWrapperDTO, any>({
 			path: `/v3/timesheets/timecodes`,
 			method: "GET",
 			query: query,
@@ -152,7 +152,7 @@ export class V3<SecurityDataType = unknown> extends HttpClient<SecurityDataType>
 		},
 		params: RequestParams = {},
 	) =>
-		this.request<TimecodeTimesheetViewModel, any>({
+		this.request<TimecodeTimesheetViewModelDTO, any>({
 			path: `/v3/timesheets/timecodes/${timecodeId}`,
 			method: "GET",
 			query: query,

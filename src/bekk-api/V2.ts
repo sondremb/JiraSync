@@ -9,7 +9,7 @@
  * ---------------------------------------------------------------
  */
 
-import { TimecodeViewModelV3, TimesheetViewModel } from "./data-contracts";
+import { TimecodeViewModelV3DTO, TimesheetViewModelDTO } from "./data-contracts";
 import { HttpClient, RequestParams } from "./http-client";
 
 export class V2<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
@@ -29,7 +29,7 @@ export class V2<SecurityDataType = unknown> extends HttpClient<SecurityDataType>
 		},
 		params: RequestParams = {},
 	) =>
-		this.request<TimecodeViewModelV3[], any>({
+		this.request<TimecodeViewModelV3DTO[], any>({
 			path: `/v2/timecodes`,
 			method: "GET",
 			query: query,
@@ -56,7 +56,7 @@ export class V2<SecurityDataType = unknown> extends HttpClient<SecurityDataType>
 		},
 		params: RequestParams = {},
 	) =>
-		this.request<TimesheetViewModel, any>({
+		this.request<TimesheetViewModelDTO, any>({
 			path: `/v2/timesheets/employees/${employeeId}`,
 			method: "GET",
 			query: query,

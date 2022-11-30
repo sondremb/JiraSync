@@ -10,10 +10,10 @@
  */
 
 import {
-	TimeEntryViewModel,
-	TimeEntryWriteModel,
-	TimesheetLockDateViewModel,
-	TimesheetLockViewModel,
+	TimeEntryViewModelDTO,
+	TimeEntryWriteModelDTO,
+	TimesheetLockDateViewModelDTO,
+	TimesheetLockViewModelDTO,
 } from "./data-contracts";
 import { ContentType, HttpClient, RequestParams } from "./http-client";
 
@@ -27,7 +27,7 @@ export class Timesheets<SecurityDataType = unknown> extends HttpClient<SecurityD
 	 * @deprecated
 	 * @secure
 	 */
-	timeentriesUpdate = (employeeId: number, data: TimeEntryWriteModel[], params: RequestParams = {}) =>
+	timeentriesUpdate = (employeeId: number, data: TimeEntryWriteModelDTO[], params: RequestParams = {}) =>
 		this.request<void, any>({
 			path: `/timesheets/timeentries/${employeeId}`,
 			method: "PUT",
@@ -44,8 +44,8 @@ export class Timesheets<SecurityDataType = unknown> extends HttpClient<SecurityD
 	 * @request PUT:/timesheets/employee/{employeeId}
 	 * @secure
 	 */
-	employeeUpdate = (employeeId: number, data: TimeEntryWriteModel, params: RequestParams = {}) =>
-		this.request<TimeEntryViewModel, any>({
+	employeeUpdate = (employeeId: number, data: TimeEntryWriteModelDTO, params: RequestParams = {}) =>
+		this.request<TimeEntryViewModelDTO, any>({
 			path: `/timesheets/employee/${employeeId}`,
 			method: "PUT",
 			body: data,
@@ -62,7 +62,7 @@ export class Timesheets<SecurityDataType = unknown> extends HttpClient<SecurityD
 	 * @request DELETE:/timesheets/employee/{employeeId}
 	 * @secure
 	 */
-	employeeDelete = (employeeId: number, data: TimeEntryWriteModel, params: RequestParams = {}) =>
+	employeeDelete = (employeeId: number, data: TimeEntryWriteModelDTO, params: RequestParams = {}) =>
 		this.request<void, any>({
 			path: `/timesheets/employee/${employeeId}`,
 			method: "DELETE",
@@ -88,7 +88,7 @@ export class Timesheets<SecurityDataType = unknown> extends HttpClient<SecurityD
 		},
 		params: RequestParams = {},
 	) =>
-		this.request<TimesheetLockDateViewModel, any>({
+		this.request<TimesheetLockDateViewModelDTO, any>({
 			path: `/timesheets/lockhours`,
 			method: "PUT",
 			query: query,
@@ -133,7 +133,7 @@ export class Timesheets<SecurityDataType = unknown> extends HttpClient<SecurityD
 		},
 		params: RequestParams = {},
 	) =>
-		this.request<TimesheetLockViewModel[], any>({
+		this.request<TimesheetLockViewModelDTO[], any>({
 			path: `/timesheets/lockdates`,
 			method: "GET",
 			query: query,
@@ -150,7 +150,7 @@ export class Timesheets<SecurityDataType = unknown> extends HttpClient<SecurityD
 	 * @secure
 	 */
 	lockdatesDetail = (employeeId: number, params: RequestParams = {}) =>
-		this.request<TimesheetLockViewModel, any>({
+		this.request<TimesheetLockViewModelDTO, any>({
 			path: `/timesheets/lockdates/${employeeId}`,
 			method: "GET",
 			secure: true,
@@ -167,7 +167,7 @@ export class Timesheets<SecurityDataType = unknown> extends HttpClient<SecurityD
 	 * @secure
 	 */
 	lockdateDetail = (employeeId: number, params: RequestParams = {}) =>
-		this.request<TimesheetLockViewModel, any>({
+		this.request<TimesheetLockViewModelDTO, any>({
 			path: `/timesheets/lockdate/${employeeId}`,
 			method: "GET",
 			secure: true,
@@ -193,7 +193,7 @@ export class Timesheets<SecurityDataType = unknown> extends HttpClient<SecurityD
 		},
 		params: RequestParams = {},
 	) =>
-		this.request<TimeEntryViewModel[], any>({
+		this.request<TimeEntryViewModelDTO[], any>({
 			path: `/timesheets/customers/${customerId}`,
 			method: "GET",
 			query: query,
@@ -220,7 +220,7 @@ export class Timesheets<SecurityDataType = unknown> extends HttpClient<SecurityD
 		},
 		params: RequestParams = {},
 	) =>
-		this.request<TimeEntryViewModel[], any>({
+		this.request<TimeEntryViewModelDTO[], any>({
 			path: `/timesheets/employees/${employeeId}`,
 			method: "GET",
 			query: query,
@@ -247,7 +247,7 @@ export class Timesheets<SecurityDataType = unknown> extends HttpClient<SecurityD
 		},
 		params: RequestParams = {},
 	) =>
-		this.request<TimeEntryViewModel[], any>({
+		this.request<TimeEntryViewModelDTO[], any>({
 			path: `/timesheets/projects/${projectId}`,
 			method: "GET",
 			query: query,
@@ -273,7 +273,7 @@ export class Timesheets<SecurityDataType = unknown> extends HttpClient<SecurityD
 		},
 		params: RequestParams = {},
 	) =>
-		this.request<TimeEntryViewModel[], any>({
+		this.request<TimeEntryViewModelDTO[], any>({
 			path: `/timesheets/me`,
 			method: "GET",
 			query: query,

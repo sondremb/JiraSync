@@ -9,7 +9,7 @@
  * ---------------------------------------------------------------
  */
 
-import { Patch, TimecodeCategoryViewModel, TimecodeViewModel, TimecodeWriteModel } from "./data-contracts";
+import { PatchDTO, TimecodeCategoryViewModelDTO, TimecodeViewModelDTO, TimecodeWriteModelDTO } from "./data-contracts";
 import { ContentType, HttpClient, RequestParams } from "./http-client";
 
 export class Timecodes<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
@@ -32,7 +32,7 @@ export class Timecodes<SecurityDataType = unknown> extends HttpClient<SecurityDa
 		},
 		params: RequestParams = {},
 	) =>
-		this.request<TimecodeViewModel[], any>({
+		this.request<TimecodeViewModelDTO[], any>({
 			path: `/timecodes`,
 			method: "GET",
 			query: query,
@@ -48,8 +48,8 @@ export class Timecodes<SecurityDataType = unknown> extends HttpClient<SecurityDa
 	 * @request POST:/timecodes
 	 * @secure
 	 */
-	timecodesCreate = (data: TimecodeWriteModel, params: RequestParams = {}) =>
-		this.request<TimecodeViewModel, any>({
+	timecodesCreate = (data: TimecodeWriteModelDTO, params: RequestParams = {}) =>
+		this.request<TimecodeViewModelDTO, any>({
 			path: `/timecodes`,
 			method: "POST",
 			body: data,
@@ -66,7 +66,7 @@ export class Timecodes<SecurityDataType = unknown> extends HttpClient<SecurityDa
 	 * @request PATCH:/timecodes
 	 * @secure
 	 */
-	timecodesPartialUpdate = (data: Patch[], params: RequestParams = {}) =>
+	timecodesPartialUpdate = (data: PatchDTO[], params: RequestParams = {}) =>
 		this.request<void, any>({
 			path: `/timecodes`,
 			method: "PATCH",
@@ -84,7 +84,7 @@ export class Timecodes<SecurityDataType = unknown> extends HttpClient<SecurityDa
 	 * @secure
 	 */
 	standardTimecodesList = (params: RequestParams = {}) =>
-		this.request<TimecodeViewModel[], any>({
+		this.request<TimecodeViewModelDTO[], any>({
 			path: `/timecodes/standard-timecodes`,
 			method: "GET",
 			secure: true,
@@ -100,7 +100,7 @@ export class Timecodes<SecurityDataType = unknown> extends HttpClient<SecurityDa
 	 * @secure
 	 */
 	timecodesDetail = (timecodeId: number, params: RequestParams = {}) =>
-		this.request<TimecodeViewModel, any>({
+		this.request<TimecodeViewModelDTO, any>({
 			path: `/timecodes/${timecodeId}`,
 			method: "GET",
 			secure: true,
@@ -115,8 +115,8 @@ export class Timecodes<SecurityDataType = unknown> extends HttpClient<SecurityDa
 	 * @request PUT:/timecodes/{timecodeId}
 	 * @secure
 	 */
-	timecodesUpdate = (timecodeId: number, data: TimecodeWriteModel, params: RequestParams = {}) =>
-		this.request<TimecodeViewModel, any>({
+	timecodesUpdate = (timecodeId: number, data: TimecodeWriteModelDTO, params: RequestParams = {}) =>
+		this.request<TimecodeViewModelDTO, any>({
 			path: `/timecodes/${timecodeId}`,
 			method: "PUT",
 			body: data,
@@ -157,7 +157,7 @@ export class Timecodes<SecurityDataType = unknown> extends HttpClient<SecurityDa
 	 * @secure
 	 */
 	categoriesList = (params: RequestParams = {}) =>
-		this.request<TimecodeCategoryViewModel[], any>({
+		this.request<TimecodeCategoryViewModelDTO[], any>({
 			path: `/timecodes/categories`,
 			method: "GET",
 			secure: true,

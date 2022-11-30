@@ -9,7 +9,7 @@
  * ---------------------------------------------------------------
  */
 
-import { MonthlyHoursLockedStatus, TimesheetLockAndHours } from "./data-contracts";
+import { MonthlyHoursLockedStatusDTO, TimesheetLockAndHoursDTO } from "./data-contracts";
 import { ContentType, HttpClient, RequestParams } from "./http-client";
 
 export class Projects<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
@@ -31,7 +31,7 @@ export class Projects<SecurityDataType = unknown> extends HttpClient<SecurityDat
 		},
 		params: RequestParams = {},
 	) =>
-		this.request<MonthlyHoursLockedStatus[], any>({
+		this.request<MonthlyHoursLockedStatusDTO[], any>({
 			path: `/projects/lock-status`,
 			method: "POST",
 			query: query,
@@ -59,7 +59,7 @@ export class Projects<SecurityDataType = unknown> extends HttpClient<SecurityDat
 		},
 		params: RequestParams = {},
 	) =>
-		this.request<TimesheetLockAndHours[], any>({
+		this.request<TimesheetLockAndHoursDTO[], any>({
 			path: `/projects/${projectId}/lockhours`,
 			method: "GET",
 			query: query,

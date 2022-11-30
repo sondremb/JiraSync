@@ -10,10 +10,10 @@
  */
 
 import {
-	DepartmentBillingRatio,
-	DivisionDepartmentBillingRatioWeek,
-	EmployeeBillingRatio,
-	EmployeeBillingRatioWeek,
+	DepartmentBillingRatioDTO,
+	DivisionDepartmentBillingRatioWeekDTO,
+	EmployeeBillingRatioDTO,
+	EmployeeBillingRatioWeekDTO,
 } from "./data-contracts";
 import { HttpClient, RequestParams } from "./http-client";
 
@@ -36,7 +36,7 @@ export class Billingratio<SecurityDataType = unknown> extends HttpClient<Securit
 		},
 		params: RequestParams = {},
 	) =>
-		this.request<EmployeeBillingRatio, any>({
+		this.request<EmployeeBillingRatioDTO, any>({
 			path: `/billingratio/employee/${id}`,
 			method: "GET",
 			query: query,
@@ -62,7 +62,7 @@ export class Billingratio<SecurityDataType = unknown> extends HttpClient<Securit
 		},
 		params: RequestParams = {},
 	) =>
-		this.request<DepartmentBillingRatio, any>({
+		this.request<DepartmentBillingRatioDTO, any>({
 			path: `/billingratio/department/${id}`,
 			method: "GET",
 			query: query,
@@ -87,7 +87,7 @@ export class Billingratio<SecurityDataType = unknown> extends HttpClient<Securit
 		},
 		params: RequestParams = {},
 	) =>
-		this.request<EmployeeBillingRatio, any>({
+		this.request<EmployeeBillingRatioDTO, any>({
 			path: `/billingratio/employees/period`,
 			method: "GET",
 			query: query,
@@ -104,7 +104,7 @@ export class Billingratio<SecurityDataType = unknown> extends HttpClient<Securit
 	 * @secure
 	 */
 	employeesList = (params: RequestParams = {}) =>
-		this.request<EmployeeBillingRatio[], any>({
+		this.request<EmployeeBillingRatioDTO[], any>({
 			path: `/billingratio/employees`,
 			method: "GET",
 			secure: true,
@@ -148,7 +148,7 @@ export class Billingratio<SecurityDataType = unknown> extends HttpClient<Securit
 		},
 		params: RequestParams = {},
 	) =>
-		this.request<EmployeeBillingRatioWeek[], any>({
+		this.request<EmployeeBillingRatioWeekDTO[], any>({
 			path: `/billingratio/employees/weekly`,
 			method: "GET",
 			query: query,
@@ -193,7 +193,7 @@ export class Billingratio<SecurityDataType = unknown> extends HttpClient<Securit
 		},
 		params: RequestParams = {},
 	) =>
-		this.request<DivisionDepartmentBillingRatioWeek[], any>({
+		this.request<DivisionDepartmentBillingRatioWeekDTO[], any>({
 			path: `/billingratio/departments/weekly`,
 			method: "GET",
 			query: query,

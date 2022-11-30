@@ -9,7 +9,7 @@
  * ---------------------------------------------------------------
  */
 
-import { SumOfHoursProject } from "./data-contracts";
+import { SumOfHoursProjectDTO } from "./data-contracts";
 import { HttpClient, RequestParams } from "./http-client";
 
 export class Hours<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
@@ -30,7 +30,7 @@ export class Hours<SecurityDataType = unknown> extends HttpClient<SecurityDataTy
 		},
 		params: RequestParams = {},
 	) =>
-		this.request<SumOfHoursProject[], any>({
+		this.request<SumOfHoursProjectDTO[], any>({
 			path: `/hours/projects/sum`,
 			method: "GET",
 			query: query,

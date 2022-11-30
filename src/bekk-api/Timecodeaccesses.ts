@@ -9,7 +9,7 @@
  * ---------------------------------------------------------------
  */
 
-import { TimecodeAccessViewModel, TimecodeEssentials, TimecodeViewModel } from "./data-contracts";
+import { TimecodeAccessViewModelDTO, TimecodeEssentialsDTO, TimecodeViewModelDTO } from "./data-contracts";
 import { ContentType, HttpClient, RequestParams } from "./http-client";
 
 export class Timecodeaccesses<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
@@ -22,7 +22,7 @@ export class Timecodeaccesses<SecurityDataType = unknown> extends HttpClient<Sec
 	 * @secure
 	 */
 	timecodeaccessesList = (params: RequestParams = {}) =>
-		this.request<TimecodeAccessViewModel[], any>({
+		this.request<TimecodeAccessViewModelDTO[], any>({
 			path: `/timecodeaccesses`,
 			method: "GET",
 			secure: true,
@@ -44,7 +44,7 @@ export class Timecodeaccesses<SecurityDataType = unknown> extends HttpClient<Sec
 		},
 		params: RequestParams = {},
 	) =>
-		this.request<TimecodeEssentials[], any>({
+		this.request<TimecodeEssentialsDTO[], any>({
 			path: `/timecodeaccesses/employee/${employeeId}`,
 			method: "GET",
 			query: query,
@@ -61,7 +61,7 @@ export class Timecodeaccesses<SecurityDataType = unknown> extends HttpClient<Sec
 	 * @secure
 	 */
 	employeeUpdate = (employeeId: number, data: number[], params: RequestParams = {}) =>
-		this.request<TimecodeViewModel[], any>({
+		this.request<TimecodeViewModelDTO[], any>({
 			path: `/timecodeaccesses/employee/${employeeId}`,
 			method: "PUT",
 			body: data,

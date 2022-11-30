@@ -9,7 +9,7 @@
  * ---------------------------------------------------------------
  */
 
-import { EmployeeTimecodeHours, FavoriteTimecodeViewModel, TimecodeViewModel } from "./data-contracts";
+import { EmployeeTimecodeHoursDTO, FavoriteTimecodeViewModelDTO, TimecodeViewModelDTO } from "./data-contracts";
 import { HttpClient, RequestParams } from "./http-client";
 
 export class Employees<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
@@ -22,7 +22,7 @@ export class Employees<SecurityDataType = unknown> extends HttpClient<SecurityDa
 	 * @secure
 	 */
 	favoritetimecodesDetail = (employeeId: number, params: RequestParams = {}) =>
-		this.request<TimecodeViewModel[], any>({
+		this.request<TimecodeViewModelDTO[], any>({
 			path: `/employees/${employeeId}/favoritetimecodes`,
 			method: "GET",
 			secure: true,
@@ -38,7 +38,7 @@ export class Employees<SecurityDataType = unknown> extends HttpClient<SecurityDa
 	 * @secure
 	 */
 	favoriteTimecodesUpdate = (employeeId: number, timecodeId: number, params: RequestParams = {}) =>
-		this.request<FavoriteTimecodeViewModel, any>({
+		this.request<FavoriteTimecodeViewModelDTO, any>({
 			path: `/employees/${employeeId}/favoriteTimecodes/${timecodeId}`,
 			method: "PUT",
 			secure: true,
@@ -77,7 +77,7 @@ export class Employees<SecurityDataType = unknown> extends HttpClient<SecurityDa
 		},
 		params: RequestParams = {},
 	) =>
-		this.request<EmployeeTimecodeHours, any>({
+		this.request<EmployeeTimecodeHoursDTO, any>({
 			path: `/employees/timecode-hours`,
 			method: "GET",
 			query: query,

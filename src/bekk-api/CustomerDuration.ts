@@ -9,7 +9,7 @@
  * ---------------------------------------------------------------
  */
 
-import { CustomerDurationModel } from "./data-contracts";
+import { CustomerDurationModelDTO } from "./data-contracts";
 import { HttpClient, RequestParams } from "./http-client";
 
 export class CustomerDuration<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
@@ -22,7 +22,7 @@ export class CustomerDuration<SecurityDataType = unknown> extends HttpClient<Sec
 	 * @secure
 	 */
 	employeesList = (params: RequestParams = {}) =>
-		this.request<CustomerDurationModel[], any>({
+		this.request<CustomerDurationModelDTO[], any>({
 			path: `/customer-duration/employees`,
 			method: "GET",
 			secure: true,

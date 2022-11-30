@@ -9,7 +9,7 @@
  * ---------------------------------------------------------------
  */
 
-import { YearlyTimeOffModelViewModel } from "./data-contracts";
+import { YearlyTimeOffModelViewModelDTO } from "./data-contracts";
 import { HttpClient, RequestParams } from "./http-client";
 
 export class YearlyTimeOff<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
@@ -30,7 +30,7 @@ export class YearlyTimeOff<SecurityDataType = unknown> extends HttpClient<Securi
 		},
 		params: RequestParams = {},
 	) =>
-		this.request<YearlyTimeOffModelViewModel[], any>({
+		this.request<YearlyTimeOffModelViewModelDTO[], any>({
 			path: `/yearly-time-off/employees`,
 			method: "GET",
 			query: query,
@@ -56,7 +56,7 @@ export class YearlyTimeOff<SecurityDataType = unknown> extends HttpClient<Securi
 		},
 		params: RequestParams = {},
 	) =>
-		this.request<YearlyTimeOffModelViewModel, any>({
+		this.request<YearlyTimeOffModelViewModelDTO, any>({
 			path: `/yearly-time-off/employees/${employeeId}`,
 			method: "GET",
 			query: query,

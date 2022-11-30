@@ -9,7 +9,7 @@
  * ---------------------------------------------------------------
  */
 
-import { EmployeeBillingRatio } from "./data-contracts";
+import { EmployeeBillingRatioDTO } from "./data-contracts";
 import { HttpClient, RequestParams } from "./http-client";
 
 export class Utilizationrate<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
@@ -22,7 +22,7 @@ export class Utilizationrate<SecurityDataType = unknown> extends HttpClient<Secu
 	 * @secure
 	 */
 	employeesList = (params: RequestParams = {}) =>
-		this.request<EmployeeBillingRatio[], any>({
+		this.request<EmployeeBillingRatioDTO[], any>({
 			path: `/utilizationrate/employees`,
 			method: "GET",
 			secure: true,

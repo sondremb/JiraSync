@@ -9,7 +9,7 @@
  * ---------------------------------------------------------------
  */
 
-import { EmployeeTimesheetViewModel } from "./data-contracts";
+import { EmployeeTimesheetViewModelDTO } from "./data-contracts";
 import { HttpClient, RequestParams } from "./http-client";
 
 export class V4<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
@@ -38,7 +38,7 @@ export class V4<SecurityDataType = unknown> extends HttpClient<SecurityDataType>
 		},
 		params: RequestParams = {},
 	) =>
-		this.request<EmployeeTimesheetViewModel[], any>({
+		this.request<EmployeeTimesheetViewModelDTO[], any>({
 			path: `/v4/timesheets/employees`,
 			method: "GET",
 			query: query,

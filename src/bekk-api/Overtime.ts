@@ -9,7 +9,7 @@
  * ---------------------------------------------------------------
  */
 
-import { OvertimeTimeViewModel } from "./data-contracts";
+import { OvertimeTimeViewModelDTO } from "./data-contracts";
 import { HttpClient, RequestParams } from "./http-client";
 
 export class Overtime<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
@@ -30,7 +30,7 @@ export class Overtime<SecurityDataType = unknown> extends HttpClient<SecurityDat
 		},
 		params: RequestParams = {},
 	) =>
-		this.request<OvertimeTimeViewModel[], any>({
+		this.request<OvertimeTimeViewModelDTO[], any>({
 			path: `/overtime/employees`,
 			method: "GET",
 			query: query,
@@ -56,7 +56,7 @@ export class Overtime<SecurityDataType = unknown> extends HttpClient<SecurityDat
 		},
 		params: RequestParams = {},
 	) =>
-		this.request<OvertimeTimeViewModel, any>({
+		this.request<OvertimeTimeViewModelDTO, any>({
 			path: `/overtime/employees/${employeeId}`,
 			method: "GET",
 			query: query,

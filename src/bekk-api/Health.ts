@@ -9,7 +9,7 @@
  * ---------------------------------------------------------------
  */
 
-import { HealthzResponse } from "./data-contracts";
+import { HealthzResponseDTO } from "./data-contracts";
 import { HttpClient, RequestParams } from "./http-client";
 
 export class Health<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
@@ -22,7 +22,7 @@ export class Health<SecurityDataType = unknown> extends HttpClient<SecurityDataT
 	 * @secure
 	 */
 	healthList = (params: RequestParams = {}) =>
-		this.request<HealthzResponse, any>({
+		this.request<HealthzResponseDTO, any>({
 			path: `/health`,
 			method: "GET",
 			secure: true,

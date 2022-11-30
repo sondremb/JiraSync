@@ -9,7 +9,7 @@
  * ---------------------------------------------------------------
  */
 
-import { EgenmeldingerModel } from "./data-contracts";
+import { EgenmeldingerModelDTO } from "./data-contracts";
 import { HttpClient, RequestParams } from "./http-client";
 
 export class Egenmeldinger<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
@@ -22,7 +22,7 @@ export class Egenmeldinger<SecurityDataType = unknown> extends HttpClient<Securi
 	 * @secure
 	 */
 	employeesList = (params: RequestParams = {}) =>
-		this.request<EgenmeldingerModel[], any>({
+		this.request<EgenmeldingerModelDTO[], any>({
 			path: `/egenmeldinger/employees`,
 			method: "GET",
 			secure: true,
@@ -38,7 +38,7 @@ export class Egenmeldinger<SecurityDataType = unknown> extends HttpClient<Securi
 	 * @secure
 	 */
 	employeesDetail = (employeeId: number, params: RequestParams = {}) =>
-		this.request<EgenmeldingerModel, any>({
+		this.request<EgenmeldingerModelDTO, any>({
 			path: `/egenmeldinger/employees/${employeeId}`,
 			method: "GET",
 			secure: true,

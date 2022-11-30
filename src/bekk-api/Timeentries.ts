@@ -9,7 +9,7 @@
  * ---------------------------------------------------------------
  */
 
-import { TimeEntryViewModel } from "./data-contracts";
+import { TimeEntryViewModelDTO } from "./data-contracts";
 import { HttpClient, RequestParams } from "./http-client";
 
 export class Timeentries<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
@@ -32,7 +32,7 @@ export class Timeentries<SecurityDataType = unknown> extends HttpClient<Security
 		},
 		params: RequestParams = {},
 	) =>
-		this.request<TimeEntryViewModel[], any>({
+		this.request<TimeEntryViewModelDTO[], any>({
 			path: `/timeentries`,
 			method: "GET",
 			query: query,
