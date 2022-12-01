@@ -53,7 +53,7 @@ export const TimeTable: React.FC<Props> = (props) => {
 	};
 
 	const timecodeAllGood = (timecode: BekkTimecodeEntry) =>
-		isUdir(bekkTimecodes[timecode.id]) ||
+		!isUdir(bekkTimecodes[timecode.id]) ||
 		Object.values(timecode.days).every(
 			(day) => day.bekkHours === day.totalJiraHours
 		);
