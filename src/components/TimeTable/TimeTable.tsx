@@ -1,6 +1,6 @@
 import { Alert, colors, FlexColumn, FlexRow, Table, Text } from "@udir/lisa";
 import { Moment } from "moment";
-import React, { useMemo } from "react";
+import React from "react";
 import styled from "styled-components";
 import { useBekkTimecodes } from "../../data/useBekkTimecodes";
 import { isUdir } from "../../timecode-map";
@@ -86,16 +86,15 @@ export const TimeTable: React.FC<Props> = (props) => {
 	// Todelt sortering:
 	//  1. Udir-timekoder først
 	//  2. Alfabetisk på timekode
-	const items: Row[] = useMemo(() => {
-		const mappedEntries: Row[] = [...props.entries]
-			.sort(compareTimecodesByCode)
-			.sort(compareTimecodesByUdir)
-			.map((entry) => ({ kind: "entry", entry }));
-		return mappedEntries.concat(
-			{ kind: "sum", entries: props.entries },
-			{ kind: "lock", lockDate: props.lockDate }
-		);
-	}, [props.entries]);
+	const rows: Row[] = props.entries
+		.sort(compareTimecodesByCode)
+		.sort(compareTimecodesByUdir)
+		.map((entry) => ({ kind: "entry", entry }));
+	const items: Row[] = [
+		...rows,
+		{ kind: "sum", entries: props.entries },
+		{ kind: "lock", lockDate: props.lockDate },
+	];
 
 	return (
 		<div>
