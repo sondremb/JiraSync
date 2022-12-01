@@ -1,5 +1,3 @@
-import { BekkTimecode } from "../types";
-
 interface TAction<TKey extends string, TPayload> {
 	kind: TKey;
 	payload: TPayload;
@@ -30,10 +28,7 @@ export function createEmptyAction<TKey extends string>(
 
 export const setPasswordAction = createAction("SET_PASSWORD")<string>();
 export const setUsernameAction = createAction("SET_USERNAME")<string>();
-export const addBekkTimecodesAction =
-	createAction("ADD_BEKK_TIMECODES")<BekkTimecode[]>();
 
 export type Action =
 	| ReturnType<typeof setPasswordAction>
-	| ReturnType<typeof setUsernameAction>
-	| ReturnType<typeof addBekkTimecodesAction>;
+	| ReturnType<typeof setUsernameAction>;
