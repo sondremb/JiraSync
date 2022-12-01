@@ -1,4 +1,26 @@
-import { createAction, createEmptyAction } from "../store/actions";
+interface TAction<TKey extends string, TPayload> {
+	kind: TKey;
+	payload: TPayload;
+}
+interface TEmptyAction<TKey extends string> {
+	kind: TKey;
+}
+type ActionCreator<TKey extends string, TPayload> = (
+	payload: TPayload
+) => TAction<TKey, TPayload>;
+export function createAction<TKey extends string>(key: TKey) {
+	return function <TPayload>(): ActionCreator<TKey, TPayload> {
+		return (payload: TPayload) => ({
+			kind: key,
+			payload,
+		});
+	};
+}
+export function createEmptyAction<TKey extends string>(
+	key: TKey
+): TEmptyAction<TKey> {
+	return { kind: key };
+}
 
 export const JIRA_CAPTCHA = "JIRA_CAPTCHA";
 export const JIRA_LOGIN = "JIRA_LOGIN";
