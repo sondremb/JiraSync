@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Button, ConfirmModal, TextArea } from "@udir/lisa";
-import { storeUserToken } from "../Utils/localstorageUtils";
 import styled from "styled-components";
 
 const StyledDiv = styled.div`
@@ -10,6 +9,10 @@ const StyledDiv = styled.div`
 			monospace;
 	}
 `;
+
+const storeUserToken = (token: string) => {
+	localStorage.setItem("userToken", token);
+};
 
 export const DevAuthModal: React.FC = () => {
 	const [open, setOpen] = useState(false);
