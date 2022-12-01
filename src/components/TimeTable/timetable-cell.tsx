@@ -2,10 +2,10 @@ import React from "react";
 import { colors, FlexColumn, Icon, spacing, Text } from "@udir/lisa";
 import styled from "styled-components";
 import { Row } from "./TimeTable";
-import { useStore } from "../../store/store";
 import { Moment } from "moment";
 import { toDateString } from "../../Utils/dateUtils";
-import { FrivilligKompetanseByggingId } from "../../timecode-map";
+import { FrivilligKompetanseByggingId, isUdir } from "../../timecode-map";
+import { useBekkTimecodes } from "../../data/useBekkTimecodes";
 
 const ContainerDiv = styled(Text)<{ correct: boolean; border: boolean }>`
 	border-radius: 5px;
@@ -46,7 +46,7 @@ interface Props {
 }
 
 export const TimetableCell: React.FC<Props> = (props) => {
-	const { state } = useStore();
+	const { bekkTimecodes } = useBekkTimecodes();
 	const dateString = toDateString(props.day);
 	switch (props.row.kind) {
 		case "lock":
@@ -75,10 +75,11 @@ export const TimetableCell: React.FC<Props> = (props) => {
 		case "entry":
 			const entry = props.row.entry;
 			const day = entry.days[dateString];
-			const timecode = state.bekkTimecodes[entry.id];
+			if (bekkTimecodes === undefined) return null;
+			const timecode = bekkTimecodes[entry.id];
 			const correct =
-				!timecode.isUdir || day?.bekkHours === day?.totalJiraHours;
-			const jiraHours = day?.totalJiraHours || (timecode.isUdir ? 0 : "");
+				!isUdir(timecode) || day?.bekkHours === day?.totalJiraHours;
+			const jiraHours = day?.totalJiraHours || (isUdir(timecode) ? 0 : "");
 			return (
 				<ContainerDiv
 					textStyle={correct ? "Overskrift 3" : "Overskrift 2"}
@@ -103,7 +104,8 @@ export const TimetableCell: React.FC<Props> = (props) => {
 };
 
 export const FirstColumnCell: React.FC<{ row: Row }> = ({ row }) => {
-	const { state } = useStore();
+	const { bekkTimecodes } = useBekkTimecodes();
+	if (bekkTimecodes === undefined) return null;
 	if (row.kind === "sum")
 		return (
 			<Text textStyle="Overskrift 4" textColor={colors.støttefarge.grå98}>
@@ -111,7 +113,7 @@ export const FirstColumnCell: React.FC<{ row: Row }> = ({ row }) => {
 			</Text>
 		);
 	if (row.kind === "lock") return <></>;
-	const timecode = state.bekkTimecodes[row.entry.id];
+	const timecode = bekkTimecodes[row.entry.id];
 	return (
 		<FlexColumn>
 			<Text>{timecode.code}</Text>

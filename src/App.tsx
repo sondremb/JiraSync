@@ -29,6 +29,8 @@ import { useCallableStatelessRequest } from "./client-utils";
 import { BekkClient } from "./bekk-client";
 import { isDevelopment } from "./Utils/envUtils";
 import { useLockDate } from "./data/useLockDate";
+import { useBekkTimecodes } from "./data/useBekkTimecodes";
+import { isUdir } from "./timecode-map";
 
 const CenteredText = styled(Text)`
 	text-align: center;
@@ -41,6 +43,7 @@ const ColoredRow = styled(FlexRow)`
 
 export const App: React.FC = () => {
 	const { state } = useStore();
+	const { bekkTimecodes } = useBekkTimecodes();
 	const [startOfWeek, endOfWeek] = getStartAndEndOfWeek();
 
 	const [fromDate, setFromDate] = useState(startOfWeek);
@@ -94,8 +97,9 @@ export const App: React.FC = () => {
 	const { lockDate } = useLockDate();
 
 	const synchronize = () => {
-		const udirEntries = stateManager.state.entries.filter(
-			(entry) => state.bekkTimecodes[entry.id].isUdir
+		if (bekkTimecodes === undefined) return;
+		const udirEntries = stateManager.state.entries.filter((entry) =>
+			isUdir(bekkTimecodes[entry.id])
 		);
 		const udirDays = udirEntries.flatMap((entry) =>
 			Object.entries(entry.days).map(([dateString, day]) => ({

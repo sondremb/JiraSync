@@ -2,7 +2,8 @@ import { Alert, colors, FlexColumn, FlexRow, Table, Text } from "@udir/lisa";
 import { Moment } from "moment";
 import React, { useMemo } from "react";
 import styled from "styled-components";
-import { useStore } from "../../store/store";
+import { useBekkTimecodes } from "../../data/useBekkTimecodes";
+import { isUdir } from "../../timecode-map";
 import { BekkTimecodeEntry } from "../../types";
 import {
 	FirstColumnCell,
@@ -35,7 +36,8 @@ export type Row =
 	  };
 
 export const TimeTable: React.FC<Props> = (props) => {
-	const { state } = useStore();
+	const { bekkTimecodes } = useBekkTimecodes();
+	if (bekkTimecodes === undefined) return null;
 
 	const dateHeader = (date: Moment) => {
 		return (
@@ -51,30 +53,43 @@ export const TimeTable: React.FC<Props> = (props) => {
 	};
 
 	const timecodeAllGood = (timecode: BekkTimecodeEntry) =>
-		!state.bekkTimecodes[timecode.id].isUdir ||
+		isUdir(bekkTimecodes[timecode.id]) ||
 		Object.values(timecode.days).every(
 			(day) => day.bekkHours === day.totalJiraHours
 		);
 
 	const allGood = props.entries.every(timecodeAllGood);
 
+	const compareTimecodesByCode = (
+		a: BekkTimecodeEntry,
+		b: BekkTimecodeEntry
+	): number => {
+		const timecodeA = bekkTimecodes[a.id];
+		const timecodeB = bekkTimecodes[b.id];
+		if (!!timecodeA.code && !!timecodeB.code) {
+			return timecodeA.code?.localeCompare(timecodeB.code);
+		}
+		return 0;
+	};
+
+	const compareTimecodesByUdir = (
+		a: BekkTimecodeEntry,
+		b: BekkTimecodeEntry
+	): number => {
+		const isAUdir = isUdir(bekkTimecodes[a.id]);
+		const isBUdir = isUdir(bekkTimecodes[b.id]);
+		if (isAUdir && !isBUdir) return -1;
+		if (!isAUdir && isBUdir) return 1;
+		return 0;
+	};
+
 	// Todelt sortering:
 	//  1. Udir-timekoder først
 	//  2. Alfabetisk på timekode
 	const items: Row[] = useMemo(() => {
 		const mappedEntries: Row[] = [...props.entries]
-			.sort((a, b) =>
-				state.bekkTimecodes[a.id].code.localeCompare(
-					state.bekkTimecodes[b.id].code
-				)
-			)
-			.sort((a, b) => {
-				const isAUdir = state.bekkTimecodes[a.id].isUdir;
-				const isBUdir = state.bekkTimecodes[b.id].isUdir;
-				if (isAUdir && !isBUdir) return -1;
-				if (!isAUdir && isBUdir) return 1;
-				return 0;
-			})
+			.sort(compareTimecodesByCode)
+			.sort(compareTimecodesByUdir)
 			.map((entry) => ({ kind: "entry", entry }));
 		return mappedEntries.concat(
 			{ kind: "sum", entries: props.entries },

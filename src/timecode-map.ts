@@ -1,3 +1,4 @@
+import { TimecodeEssentialsDTO } from "./bekk-api/data-contracts";
 import { BekkId, BekkTimecodeMap, Jira } from "./types";
 
 export const FrivilligKompetanseByggingId = 1786;
@@ -104,3 +105,6 @@ export const bekkIdFromJiraTimecode = (jiraIssue: Jira.Timecode) => {
 	console.error("Fant ingen Bekk-timekode tilsvarende:", jiraIssue);
 	return -1;
 };
+
+export const isUdir = (timecode: TimecodeEssentialsDTO): boolean =>
+	timecode.id !== undefined && timecode.id in UdirBekkIds;
