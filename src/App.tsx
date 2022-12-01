@@ -22,7 +22,6 @@ import {
 	Text,
 } from "@udir/lisa";
 import { useCombinedState } from "./state";
-import { useStore } from "./store/store";
 import styled from "styled-components";
 import { Example } from "./components/TimeTable/timetable-cell";
 import { useCallableStatelessRequest } from "./client-utils";
@@ -31,6 +30,7 @@ import { isDevelopment } from "./Utils/envUtils";
 import { useLockDate } from "./data/useLockDate";
 import { useBekkTimecodes } from "./data/useBekkTimecodes";
 import { isUdir } from "./timecode-map";
+import { getJiraCredentials } from "./jiraCredentials";
 
 const CenteredText = styled(Text)`
 	text-align: center;
@@ -42,14 +42,14 @@ const ColoredRow = styled(FlexRow)`
 `;
 
 export const App: React.FC = () => {
-	const { state } = useStore();
 	const { bekkTimecodes } = useBekkTimecodes();
 	const [startOfWeek, endOfWeek] = getStartAndEndOfWeek();
 
 	const [fromDate, setFromDate] = useState(startOfWeek);
 	const [toDate, setToDate] = useState(endOfWeek);
 
-	const hasCredentials = !!state.jiraUsername && !!state.jiraPassword;
+	const jiraCredentials = getJiraCredentials();
+	const hasCredentials = jiraCredentials !== null;
 
 	const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
@@ -69,7 +69,7 @@ export const App: React.FC = () => {
 
 	useEffect(() => {
 		if (hasCredentials) stateManager.fetchJiraData({ fromDate, toDate });
-	}, [state.jiraUsername, state.jiraPassword]);
+	}, [hasCredentials]);
 
 	const setDates = (from: Moment, to: Moment) => {
 		setFromDate(from);

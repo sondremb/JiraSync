@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { BekkClient } from "./bekk-client";
 import { useCallableStatefulRequest } from "./client-utils";
 import { NetlifyClient } from "./netlify-client";
-import { useStore } from "./store/store";
 import { bekkIdFromJiraTimecode } from "./timecode-map";
 import {
 	Bekk,
@@ -13,6 +12,7 @@ import {
 	Day,
 	Jira,
 } from "./types.d";
+import { getJiraCredentials } from "./jiraCredentials";
 import { secondsToHours, toDateString } from "./Utils/dateUtils";
 
 interface FetchAllDataParams {
@@ -21,16 +21,17 @@ interface FetchAllDataParams {
 }
 
 export const useCombinedState = () => {
-	const { state } = useStore();
 	const [entries, setEntries] = useState<BekkTimecodeEntry[]>([]);
+	const jiraCredentials = getJiraCredentials();
 
 	const jiraRequest = useCallableStatefulRequest({
 		requestFunction: (params: FetchAllDataParams) =>
 			NetlifyClient.getData({
 				fromDate: params.fromDate,
 				toDate: params.toDate,
-				username: state.jiraUsername,
-				password: state.jiraPassword,
+				// TODO dette er klovn
+				username: jiraCredentials?.username ?? "",
+				password: jiraCredentials?.password ?? "",
 			}),
 	});
 

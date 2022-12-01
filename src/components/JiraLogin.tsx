@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { Checkbox, ConfirmModal, Container, InputField } from "@udir/lisa";
-import { clearCredentials, storeCredentials } from "../Utils/localstorageUtils";
-import { useStore } from "../store/store";
-import { setPasswordAction, setUsernameAction } from "../store/actions";
+import {
+	clearJiraCredentials,
+	getJiraCredentials,
+	setJiraCredentials,
+} from "../jiraCredentials";
 
 interface Props {
 	isOpen: boolean;
@@ -10,22 +12,18 @@ interface Props {
 }
 
 export const JiraLogin: React.FC<Props> = (props) => {
-	const { state, dispatch } = useStore();
-	const [username, setUsername] = useState(state.jiraUsername);
-	const [password, setPassword] = useState(state.jiraPassword);
+	const savedCredentials = getJiraCredentials();
+	const [username, setUsername] = useState(savedCredentials?.username ?? "");
+	const [password, setPassword] = useState(savedCredentials?.password ?? "");
 	const [save, setSave] = useState(!!username && !!password);
 
 	const handleSubmit = () => {
-		dispatch(setUsernameAction(username));
-		dispatch(setPasswordAction(password));
-		if (save) {
-			storeCredentials(username, password);
-		}
+		setJiraCredentials({ username, password }, save);
 	};
 
 	const handleRememberMeChange = (newValue: boolean) => {
 		if (!newValue) {
-			clearCredentials();
+			clearJiraCredentials();
 		}
 		setSave(newValue);
 	};
