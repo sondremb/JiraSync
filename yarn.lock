@@ -2388,10 +2388,10 @@
     "@typescript-eslint/types" "5.43.0"
     eslint-visitor-keys "^3.3.0"
 
-"@udir/lisa@^3.5.2":
-  version "3.5.2"
-  resolved "https://www.myget.org/F/pas2/auth/fe999998-2e29-4361-8697-7e166660051e/npm/@udir/lisa/-/@udir/lisa-3.5.2.tgz#25c1ad6fed1e8b048dc26c1d601a1d09f8a12cfa"
-  integrity sha1-JcGtb+0eiwSNwmwdYBodCfihLPo=
+"@udir/lisa@^3.7.2":
+  version "3.7.2"
+  resolved "https://www.myget.org/F/pas2/auth/fe999998-2e29-4361-8697-7e166660051e/npm/@udir/lisa/-/@udir/lisa-3.7.2.tgz#dba6d025b534811de046badf50ab7523278ee932"
+  integrity sha1-26bQJbU0gR3gRrrfUKt1IyeO6TI=
   dependencies:
     "@popperjs/core" "^2.11.5"
     focus-trap-react "^9.0.2"
@@ -10859,7 +10859,7 @@ typedarray@^0.0.6:
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
   integrity sha512-/aCDEGatGvZ2BIk+HmLf4ifCJFwvKFNb9/JeZPMulfgFracn9QFcAf5GO8B/mweUjSoblS5In0cWhqpfs/5PQA==
 
-typescript@4.8.4, typescript@^4.4.2, typescript@^4.5.4, typescript@^4.5.5:
+typescript@4.8.4, typescript@^4.5.4, typescript@^4.5.5:
   version "4.8.4"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.8.4.tgz#c464abca159669597be5f96b8943500b238e60e6"
   integrity sha512-QCh+85mCy+h0IGff8r5XWzOVSbBO+KfeYrMQh7NJ58QujwcE22u+NUSmUxqF+un70P9GXKxa2HCNiTTMJknyjQ==
@@ -10868,6 +10868,11 @@ typescript@^3.9.10:
   version "3.9.10"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.9.10.tgz#70f3910ac7a51ed6bef79da7800690b19bf778b8"
   integrity sha512-w6fIxVE/H1PkLKcCPsFqKE7Kv7QUwhU8qQY2MueZXWx5cPZdwFupLgKK3vntcK98BtNHZtAF4LA/yl2a7k8R6Q==
+
+typescript@^4.4.2:
+  version "4.9.3"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.9.3.tgz#3aea307c1746b8c384435d8ac36b8a2e580d85db"
+  integrity sha512-CIfGzTelbKNEnLpLdGFgdyKhG23CKdKgQPOBc+OUNrkJ2vr+KSzsSV5kq5iWhEQbok+quxgGzrAtGWCyU7tHnA==
 
 uid-safe@2.1.5:
   version "2.1.5"
