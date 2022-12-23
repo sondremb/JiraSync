@@ -35,3 +35,44 @@ export function dayRange(fromDate: Moment, toDate: Moment) {
 	}
 	return days;
 }
+
+export class WeekAndYear {
+	year: number;
+	week: number;
+	constructor(year: number, week: number) {
+		this.year = year;
+		this.week = week;
+	}
+
+	static fromMoment(m: Moment): WeekAndYear {
+		return new WeekAndYear(m.year(), m.week());
+	}
+
+	static now(): WeekAndYear {
+		return WeekAndYear.fromMoment(moment());
+	}
+
+	toMoment(): Moment {
+		return moment().year(this.year).week(this.week);
+	}
+
+	next(): WeekAndYear {
+		return WeekAndYear.fromMoment(this.toMoment().add(1, "week"));
+	}
+
+	previous(): WeekAndYear {
+		return WeekAndYear.fromMoment(this.toMoment().subtract(1, "week"));
+	}
+
+	start(): Moment {
+		return getStartOfWeek(this.toMoment());
+	}
+
+	end(): Moment {
+		return getEndOfWeek(this.toMoment());
+	}
+
+	days(): Moment[] {
+		return dayRange(this.start(), this.end());
+	}
+}

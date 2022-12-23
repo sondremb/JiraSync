@@ -1,12 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import { Moment } from "moment";
-import {
-	dayRange,
-	getNextWeek,
-	getPreviousWeek,
-	getStartAndEndOfWeek,
-} from "./Utils/dateUtils";
+import { WeekAndYear } from "./Utils/dateUtils";
 import { JiraLogin } from "./components/JiraLogin";
 import { TimeTable } from "./components/TimeTable/TimeTable";
 import { DevAuthModal } from "./components/DevAuthModal";
@@ -31,6 +25,7 @@ import { useLockDate } from "./data/useLockDate";
 import { useBekkTimecodes } from "./data/useBekkTimecodes";
 import { isUdir } from "./timecode-map";
 import { getJiraCredentials } from "./jiraCredentials";
+import { useWeek } from "./data/useWeek";
 
 const CenteredText = styled(Text)`
 	text-align: center;
@@ -43,62 +38,38 @@ const ColoredRow = styled(FlexRow)`
 
 export const App: React.FC = () => {
 	const { bekkTimecodes } = useBekkTimecodes();
-	const [startOfWeek, endOfWeek] = getStartAndEndOfWeek();
+	const [weekAndYear, setWeekAndYear] = useState<WeekAndYear>(
+		WeekAndYear.now()
+	);
 
-	const [fromDate, setFromDate] = useState(startOfWeek);
-	const [toDate, setToDate] = useState(endOfWeek);
+	const { lockDate } = useLockDate();
+	const { state: entries, timestamp } = useWeek(weekAndYear);
 
 	const jiraCredentials = getJiraCredentials();
 	const hasCredentials = jiraCredentials !== null;
 
 	const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
-	const stateManager = useCombinedState();
-
-	useEffect(() => {
-		stateManager.fetchBekkData({ fromDate, toDate });
-		if (hasCredentials) {
-			stateManager.fetchJiraData({ fromDate, toDate });
-		}
-	}, []);
-
 	useEffect(() => {
 		// skulle gjerne bare satt isLoginModalOpen som useState(!hasCredentials) i starten, men Lisa takler ikke at modaler er åpne ved første render
 		if (!hasCredentials) setIsLoginModalOpen(true);
 	}, []);
 
-	useEffect(() => {
-		if (hasCredentials) stateManager.fetchJiraData({ fromDate, toDate });
-	}, [hasCredentials]);
-
-	const setDates = (from: Moment, to: Moment) => {
-		setFromDate(from);
-		setToDate(to);
-		stateManager.fetchAllData({ fromDate: from, toDate: to });
-	};
-
 	const onNextWeekClick = () => {
-		const [from, to] = getNextWeek(fromDate);
-		setDates(from, to);
+		setWeekAndYear((old) => old.next());
 	};
 
 	const onPreviousWeekClick = () => {
-		const [from, to] = getPreviousWeek(fromDate);
-		setDates(from, to);
+		setWeekAndYear((old) => old.previous());
 	};
 
-	async function onGetTimesheetsClick() {
-		stateManager.fetchAllData({ fromDate, toDate });
-	}
 	const putRequest = useCallableStatelessRequest({
 		requestFunction: BekkClient.updateTimesheet,
 	});
 
-	const { lockDate } = useLockDate();
-
 	const synchronize = () => {
-		if (bekkTimecodes === undefined) return;
-		const udirEntries = stateManager.state.entries.filter((entry) =>
+		if (bekkTimecodes === undefined || entries === undefined) return;
+		const udirEntries = entries.filter((entry) =>
 			isUdir(bekkTimecodes[entry.id])
 		);
 		const udirDays = udirEntries.flatMap((entry) =>
@@ -118,9 +89,9 @@ export const App: React.FC = () => {
 				dateString: day.dateString,
 			})
 		);
-		Promise.all(promises).then(() =>
+		/* Promise.all(promises).then(() =>
 			stateManager.fetchAllData({ fromDate, toDate })
-		);
+		); */
 	};
 
 	return (
@@ -160,13 +131,13 @@ export const App: React.FC = () => {
 							textStyle="Brødtekst uthevet"
 							textColor={colors.støttefarge.grå98}
 						>
-							UKE {fromDate.week()}
+							UKE {weekAndYear.week}
 						</CenteredText>
 						<CenteredText
 							textStyle="Brødtekst uthevet"
 							textColor={colors.støttefarge.grå98}
 						>
-							{fromDate.year()}
+							{weekAndYear.year}
 						</CenteredText>
 					</FlexColumn>
 					<Button
@@ -182,19 +153,20 @@ export const App: React.FC = () => {
 				<Button
 					variant="text"
 					icon="refresh"
-					onClick={onGetTimesheetsClick}
+					onClick={() => null}
 					colorTheme="dark"
 				>
 					Oppdater
 				</Button>
 			</ColoredRow>
-			{!stateManager.pending && lockDate !== undefined && (
+			{entries !== undefined && lockDate !== undefined && (
 				<TimeTable
-					entries={stateManager.state.entries}
-					days={dayRange(fromDate, toDate)}
+					entries={entries}
+					days={weekAndYear.days()}
 					lockDate={lockDate}
 				/>
 			)}
+			<Text>Sist lastet ned: {timestamp?.toISOString()}</Text>
 			<JiraLogin
 				isOpen={isLoginModalOpen}
 				close={() => setIsLoginModalOpen(false)}
