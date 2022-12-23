@@ -1,6 +1,6 @@
 import moment from "moment";
 import useSWR from "swr";
-import { BekkClient } from "../bekk-client";
+import { BekkClient, PutTimesheetParams } from "../bekk-client";
 import { NetlifyClient } from "../netlify-client";
 import { WeekAndYear } from "../Utils/dateUtils";
 import { updateEntries } from "../Utils/stateUtils";
@@ -15,7 +15,7 @@ export const useWeek = (weekAndYear: WeekAndYear) => {
 			})
 	);
 
-	const { data: bekkData } = useSWR(
+	const { data: bekkData, mutate: mutateBekkData } = useSWR(
 		`bekk/week/${weekAndYear.year}/${weekAndYear.week}`,
 		() =>
 			BekkClient.getData({
@@ -29,9 +29,15 @@ export const useWeek = (weekAndYear: WeekAndYear) => {
 		() => moment()
 	);
 
+	const updateBekkHours = (params: PutTimesheetParams) =>
+		mutateBekkData(async (old) => {
+			await BekkClient.updateTimesheet(params);
+			return old;
+		});
+
 	const combinedData =
 		bekkData && jiraData
 			? updateEntries(bekkData.data, jiraData.data)
 			: undefined;
-	return { state: combinedData, timestamp };
+	return { state: combinedData, timestamp, updateBekkHours };
 };

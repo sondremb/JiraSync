@@ -24,7 +24,6 @@ export const DevAuthModal: React.FC = () => {
 				onClick={() => {
 					setOpen(true);
 				}}
-				colorTheme="dark"
 				icon="user"
 			>
 				Sett userToken

@@ -15,17 +15,16 @@ import {
 	spacing,
 	Text,
 } from "@udir/lisa";
-import { useCombinedState } from "./state";
 import styled from "styled-components";
 import { Example } from "./components/TimeTable/timetable-cell";
-import { useCallableStatelessRequest } from "./client-utils";
-import { BekkClient } from "./bekk-client";
 import { isDevelopment } from "./Utils/envUtils";
 import { useLockDate } from "./data/useLockDate";
 import { useBekkTimecodes } from "./data/useBekkTimecodes";
 import { isUdir } from "./timecode-map";
 import { getJiraCredentials } from "./jiraCredentials";
 import { useWeek } from "./data/useWeek";
+import { AltStemmerAlert } from "./components/AltStemmerAlert";
+import { DownloadTimestamp } from "./components/DownloadTimestamp";
 
 const CenteredText = styled(Text)`
 	text-align: center;
@@ -43,7 +42,7 @@ export const App: React.FC = () => {
 	);
 
 	const { lockDate } = useLockDate();
-	const { state: entries, timestamp } = useWeek(weekAndYear);
+	const { state: entries, timestamp, updateBekkHours } = useWeek(weekAndYear);
 
 	const jiraCredentials = getJiraCredentials();
 	const hasCredentials = jiraCredentials !== null;
@@ -63,10 +62,6 @@ export const App: React.FC = () => {
 		setWeekAndYear((old) => old.previous());
 	};
 
-	const putRequest = useCallableStatelessRequest({
-		requestFunction: BekkClient.updateTimesheet,
-	});
-
 	const synchronize = () => {
 		if (bekkTimecodes === undefined || entries === undefined) return;
 		const udirEntries = entries.filter((entry) =>
@@ -82,16 +77,13 @@ export const App: React.FC = () => {
 		const daysWithDifference = udirDays.filter(
 			(day) => day.bekkHours !== day.totalJiraHours
 		);
-		const promises = daysWithDifference.map((day) =>
-			putRequest.execute({
+		daysWithDifference.forEach((day) =>
+			updateBekkHours({
 				timecodeId: day.id,
 				hours: day.totalJiraHours,
 				dateString: day.dateString,
 			})
 		);
-		/* Promise.all(promises).then(() =>
-			stateManager.fetchAllData({ fromDate, toDate })
-		); */
 	};
 
 	return (
@@ -101,62 +93,49 @@ export const App: React.FC = () => {
 					<H1 className="mb-0 mr-40">Jirasync</H1>
 					<Example />
 				</FlexRow>
-				<Button variant="outlined" onClick={synchronize}>
-					Synkroniser
-				</Button>
-			</FlexRow>
-			<ColoredRow halign="space-between" valign="center">
 				<FlexRow>
+					{isDevelopment() && <DevAuthModal />}
 					<Button
 						variant="text"
 						onClick={() => setIsLoginModalOpen(true)}
 						icon="userFilled"
-						colorTheme="dark"
 					>
 						Logg inn i Jira
 					</Button>
-					{isDevelopment() && <DevAuthModal />}
 				</FlexRow>
-				<FlexRow>
-					<Button
-						variant="text"
-						onClick={onPreviousWeekClick}
-						icon={<Icon type="arrow" direction="left" />}
-						colorTheme="dark"
-					>
-						Forrige
-					</Button>
-					<FlexColumn halign="center" className="mx-40" width={`${55 / 16}rem`}>
-						<CenteredText
-							textStyle="Brødtekst uthevet"
-							textColor={colors.støttefarge.grå98}
-						>
-							UKE {weekAndYear.week}
-						</CenteredText>
-						<CenteredText
-							textStyle="Brødtekst uthevet"
-							textColor={colors.støttefarge.grå98}
-						>
-							{weekAndYear.year}
-						</CenteredText>
-					</FlexColumn>
-					<Button
-						variant="text"
-						onClick={onNextWeekClick}
-						icon={<Icon type="arrow" direction="right" />}
-						iconPlacement="right"
-						colorTheme="dark"
-					>
-						Neste
-					</Button>
-				</FlexRow>
+			</FlexRow>
+			{timestamp && <DownloadTimestamp timestamp={timestamp} />}
+			<ColoredRow halign="center" valign="center">
 				<Button
 					variant="text"
-					icon="refresh"
-					onClick={() => null}
+					onClick={onPreviousWeekClick}
+					icon={<Icon type="arrow" direction="left" />}
 					colorTheme="dark"
 				>
-					Oppdater
+					Forrige
+				</Button>
+				<FlexColumn halign="center" className="mx-40" width={`${55 / 16}rem`}>
+					<CenteredText
+						textStyle="Brødtekst uthevet"
+						textColor={colors.støttefarge.grå98}
+					>
+						UKE {weekAndYear.week}
+					</CenteredText>
+					<CenteredText
+						textStyle="Brødtekst uthevet"
+						textColor={colors.støttefarge.grå98}
+					>
+						{weekAndYear.year}
+					</CenteredText>
+				</FlexColumn>
+				<Button
+					variant="text"
+					onClick={onNextWeekClick}
+					icon={<Icon type="arrow" direction="right" />}
+					iconPlacement="right"
+					colorTheme="dark"
+				>
+					Neste
 				</Button>
 			</ColoredRow>
 			{entries !== undefined && lockDate !== undefined && (
@@ -166,7 +145,7 @@ export const App: React.FC = () => {
 					lockDate={lockDate}
 				/>
 			)}
-			<Text>Sist lastet ned: {timestamp?.toISOString()}</Text>
+			<AltStemmerAlert entries={entries} onSynchronize={synchronize} />
 			<JiraLogin
 				isOpen={isLoginModalOpen}
 				close={() => setIsLoginModalOpen(false)}

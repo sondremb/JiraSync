@@ -1,4 +1,4 @@
-import { Alert, colors, FlexColumn, FlexRow, Table, Text } from "@udir/lisa";
+import { colors, FlexColumn, Table, Text } from "@udir/lisa";
 import { Moment } from "moment";
 import React from "react";
 import styled from "styled-components";
@@ -52,14 +52,6 @@ export const TimeTable: React.FC<Props> = (props) => {
 		);
 	};
 
-	const timecodeAllGood = (timecode: BekkTimecodeEntry) =>
-		!isUdir(bekkTimecodes[timecode.id]) ||
-		Object.values(timecode.days).every(
-			(day) => day.bekkHours === day.totalJiraHours
-		);
-
-	const allGood = props.entries.every(timecodeAllGood);
-
 	const compareTimecodesByCode = (
 		a: BekkTimecodeEntry,
 		b: BekkTimecodeEntry
@@ -97,34 +89,29 @@ export const TimeTable: React.FC<Props> = (props) => {
 	];
 
 	return (
-		<div>
-			<Table
-				headerColor={colors.utvidetPrimærpalett.stålblå98}
-				columns={[
-					{
-						headerName: "Kode",
-						displayFunction: (row) => <FirstColumnCell row={row} />,
-						width: "25%",
-					},
-					...props.days.map((day: Moment) => ({
-						headerName: dateHeader(day),
-						displayFunction: (i: Row) => <TimetableCell day={day} row={i} />,
-					})),
-					{
-						headerName: "Sum",
-						displayFunction: (row) => <SumColumnCell row={row} />,
-					},
-				]}
-				items={items}
-				rowColor={(row) =>
-					row.kind === "entry"
-						? colors.utvidetPrimærpalett.stålblå98
-						: colors.utvidetPrimærpalett.skifer35
-				}
-			/>
-			<FlexRow halign="center">
-				{allGood && <Alert type="success">Alle dager stemmer!</Alert>}
-			</FlexRow>
-		</div>
+		<Table
+			headerColor={colors.utvidetPrimærpalett.stålblå98}
+			columns={[
+				{
+					headerName: "Kode",
+					displayFunction: (row) => <FirstColumnCell row={row} />,
+					width: "25%",
+				},
+				...props.days.map((day: Moment) => ({
+					headerName: dateHeader(day),
+					displayFunction: (i: Row) => <TimetableCell day={day} row={i} />,
+				})),
+				{
+					headerName: "Sum",
+					displayFunction: (row) => <SumColumnCell row={row} />,
+				},
+			]}
+			items={items}
+			rowColor={(row) =>
+				row.kind === "entry"
+					? colors.utvidetPrimærpalett.stålblå98
+					: colors.utvidetPrimærpalett.skifer35
+			}
+		/>
 	);
 };
