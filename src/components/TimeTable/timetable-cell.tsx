@@ -154,7 +154,7 @@ export const SumColumnCell: React.FC<{ row: Row }> = ({ row }) => {
 				<OtherDiv
 					fontSize={24}
 					bold
-					textColor={totalBekkHoursAllWeek === 37.5 ? "grå100" : "fersken500"}
+					textColor={totalBekkHoursAllWeek >= 37.5 ? "grå100" : "fersken500"}
 				>
 					{totalBekkHoursAllWeek ?? 0}
 				</OtherDiv>
