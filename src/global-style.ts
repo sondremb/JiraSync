@@ -1,9 +1,9 @@
-import { colors } from "@udir/lisa";
+import { colors } from "@udir/lisa-tokens";
 import { createGlobalStyle } from "styled-components";
 
 export const GlobalStyle = createGlobalStyle`
 	html {
-		background-color: ${colors.utvidetPrimærpalett.stålblå98.hex};
+		background-color: ${colors.stålblå200};
 	}
 
 	// Hentet fra Josh W. Comeau's CSS reset:

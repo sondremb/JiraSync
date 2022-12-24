@@ -1,13 +1,34 @@
 import React from "react";
-import { colors, FlexColumn, Icon, spacing, Text } from "@udir/lisa";
-import styled from "styled-components";
+import { FlexColumn, Icon, Text } from "@udir/lisa";
+import styled, { css } from "styled-components";
 import { Row } from "./TimeTable";
 import { Moment } from "moment";
 import { toDateString } from "../../Utils/dateUtils";
 import { FrivilligKompetanseByggingId, isUdir } from "../../timecode-map";
 import { useBekkTimecodes } from "../../data/useBekkTimecodes";
+import {
+	colors,
+	ColorType,
+	colorTypeToHex,
+	rem,
+	spacing,
+	Weight,
+} from "@udir/lisa-tokens";
 
-const ContainerDiv = styled(Text)<{ correct: boolean; border: boolean }>`
+const CustomText = styled.div<{
+	fontSize?: number;
+	bold?: boolean;
+	textColor?: ColorType;
+}>`
+	font-family: Roboto, Arial, Helvetica, sans-serif;
+	font-size: ${(props) => rem(props.fontSize ?? 16)};
+	line-height: 1.5;
+	font-weight: ${(props) => (props.bold ? Weight.Semibold : Weight.Regular)};
+	color: ${(props) =>
+		props.textColor ? colorTypeToHex(props.textColor) : colors.svart};
+`;
+
+const ContainerDiv = styled(CustomText)<{ correct: boolean; border: boolean }>`
 	border-radius: 5px;
 	position: relative;
 	height: 50px;
@@ -15,29 +36,26 @@ const ContainerDiv = styled(Text)<{ correct: boolean; border: boolean }>`
 	line-height: 40px;
 	${(props) =>
 		props.border &&
-		`border: 1px solid
-		${
-			props.correct
-				? colors.utvidetPrimærpalett.stålblå91.hex
-				: colors.semantisk.rød.hex
-		}`};
-	${(props) => !props.correct && `color: ${colors.semantisk.rød.hex}`};
+		css`
+			border: 1px solid ${props.correct ? colors.stålblå300 : colors.rød600};
+		`};
+	${(props) => !props.correct && `color: ${colors.rød600}`};
 	text-align: center;
 `;
 
-const OtherDiv = styled(Text)`
+const OtherDiv = styled(CustomText)`
 	width: 50px;
 	text-align: center;
 `;
 
-const CornerDiv = styled(Text)<{ correct: boolean }>`
+const CornerDiv = styled(CustomText)<{ correct: boolean }>`
 	position: absolute;
 	bottom: 0;
 	right: 0;
 	padding-right: ${spacing(4)};
 	border-color: inherit;
 	text-align: right;
-	${(props) => !props.correct && `color: ${colors.semantisk.rød.hex}`};
+	${(props) => !props.correct && `color: ${colors.rød600}`};
 `;
 
 interface Props {
@@ -58,13 +76,13 @@ export const TimetableCell: React.FC<Props> = (props) => {
 								? "locked"
 								: "unlocked"
 						}
-						iconColor={colors.støttefarge.grå98}
+						iconColor={"grå100"}
 					/>
 				</OtherDiv>
 			);
 		case "sum":
 			return (
-				<OtherDiv textStyle="Overskrift 3" textColor={colors.støttefarge.grå98}>
+				<OtherDiv fontSize={24} textColor={"grå100"}>
 					{props.row.entries
 						// frivillig kompetansebygging teller ikke mot kravet om 37.5 timer i uka
 						.filter((entry) => entry.id !== FrivilligKompetanseByggingId)
@@ -81,19 +99,12 @@ export const TimetableCell: React.FC<Props> = (props) => {
 				!isUdir(timecode) || day?.bekkHours === day?.totalJiraHours;
 			const jiraHours = day?.totalJiraHours || (isUdir(timecode) ? 0 : "");
 			return (
-				<ContainerDiv
-					textStyle={correct ? "Overskrift 3" : "Overskrift 2"}
-					correct={correct}
-					border
-				>
+				<ContainerDiv fontSize={24} bold={!correct} correct={correct} border>
 					{day !== undefined &&
 						(day.bekkHours !== 0 || day.totalJiraHours !== 0) && (
 							<>
 								{day.bekkHours}
-								<CornerDiv
-									correct={correct}
-									textStyle={correct ? "Tabelltekst" : "Tabelltekst uthevet"}
-								>
+								<CornerDiv correct={correct} fontSize={14} bold={!correct}>
 									{jiraHours}
 								</CornerDiv>
 							</>
@@ -108,16 +119,16 @@ export const FirstColumnCell: React.FC<{ row: Row }> = ({ row }) => {
 	if (bekkTimecodes === undefined) return null;
 	if (row.kind === "sum")
 		return (
-			<Text textStyle="Overskrift 4" textColor={colors.støttefarge.grå98}>
+			<CustomText fontSize={20} bold textColor={"grå100"}>
 				Totalt
-			</Text>
+			</CustomText>
 		);
 	if (row.kind === "lock") return <></>;
 	const timecode = bekkTimecodes[row.entry.id];
 	return (
 		<FlexColumn>
 			<Text>{timecode.code}</Text>
-			<Text textStyle="Tabelltekst">{timecode.name}</Text>
+			<Text textStyle="label">{timecode.name}</Text>
 		</FlexColumn>
 	);
 };
@@ -126,7 +137,7 @@ export const SumColumnCell: React.FC<{ row: Row }> = ({ row }) => {
 	switch (row.kind) {
 		case "entry":
 			return (
-				<OtherDiv textStyle="Overskrift 3">
+				<OtherDiv fontSize={24} bold>
 					{Object.values(row.entry.days)
 						.map((day) => day.bekkHours)
 						.reduce((prev, curr) => prev + curr, 0)}
@@ -141,12 +152,9 @@ export const SumColumnCell: React.FC<{ row: Row }> = ({ row }) => {
 				.reduce((prev, curr) => prev + curr, 0);
 			return (
 				<OtherDiv
-					textStyle="Overskrift 3"
-					textColor={
-						totalBekkHoursAllWeek === 37.5
-							? colors.støttefarge.grå98
-							: colors.utvidetPrimærpalett.fersken65
-					}
+					fontSize={24}
+					bold
+					textColor={totalBekkHoursAllWeek === 37.5 ? "grå100" : "fersken500"}
 				>
 					{totalBekkHoursAllWeek ?? 0}
 				</OtherDiv>
@@ -169,20 +177,13 @@ const AbsoluteDiv = styled(Text)`
 export const Example: React.FC = () => {
 	const correct = false;
 	return (
-		<ContainerDiv
-			textStyle={correct ? "Overskrift 3" : "Overskrift 2"}
-			correct={correct}
-			border
-		>
+		<ContainerDiv fontSize={24} bold={!correct} correct={correct} border>
 			0
 			<AbsoluteDiv>
 				<Icon className="mr-8" type="arrowThick" direction="left" />
 				Timekeeper-timer
 			</AbsoluteDiv>
-			<CornerDiv
-				correct={correct}
-				textStyle={correct ? "Tabelltekst" : "Tabelltekst uthevet"}
-			>
+			<CornerDiv correct={correct} fontSize={14} bold={!correct}>
 				7.5
 				<AbsoluteDiv>
 					<Icon type="arrowThick" direction="left" className="mr-8" />

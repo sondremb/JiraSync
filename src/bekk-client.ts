@@ -1,7 +1,9 @@
 import axios, { AxiosResponse } from "axios";
 import { Moment } from "moment";
 import { getAuthorizationHeader, getEmployeeIdFromToken } from "./auth";
+import { Timesheets } from "./bekk-api/Timesheets";
 import { Bekk, BekkId, DateString } from "./types";
+import { createClient } from "./Utils/bekkClientUtils";
 import { toDateString } from "./Utils/dateUtils";
 import { isDevelopment } from "./Utils/envUtils";
 
@@ -50,5 +52,12 @@ export const BekkClient = {
 				headers: { authorization: getAuthorizationHeader() },
 			}
 		);
+	},
+	setLockDate: (lockDate: DateString) => {
+		const client = createClient(Timesheets);
+		return client.lockhoursUpdate({
+			employeeId: getEmployeeIdFromToken(),
+			lockDate,
+		});
 	},
 };

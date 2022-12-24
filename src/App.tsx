@@ -6,13 +6,11 @@ import { TimeTable } from "./components/TimeTable/TimeTable";
 import { DevAuthModal } from "./components/DevAuthModal";
 import {
 	Button,
-	colors,
 	FlexColumn,
 	FlexRow,
 	H1,
 	Icon,
 	PageLayout,
-	spacing,
 	Text,
 } from "@udir/lisa";
 import styled from "styled-components";
@@ -25,13 +23,14 @@ import { getJiraCredentials } from "./jiraCredentials";
 import { useWeek } from "./data/useWeek";
 import { AltStemmerAlert } from "./components/AltStemmerAlert";
 import { DownloadTimestamp } from "./components/DownloadTimestamp";
+import { colors, spacing } from "@udir/lisa-tokens";
 
 const CenteredText = styled(Text)`
 	text-align: center;
 `;
 
 const ColoredRow = styled(FlexRow)`
-	background-color: ${colors.utvidetPrimærpalett.skifer35.hex};
+	background-color: ${colors.skifer500};
 	padding: ${spacing(8)};
 `;
 
@@ -90,7 +89,9 @@ export const App: React.FC = () => {
 		<PageLayout>
 			<FlexRow valign="center" halign="space-between" className="mb-20">
 				<FlexRow>
-					<H1 className="mb-0 mr-40">Jirasync</H1>
+					<H1 textStyle="display" className="mb-0 mr-40">
+						Jirasync
+					</H1>
 					<Example />
 				</FlexRow>
 				<FlexRow>
@@ -115,16 +116,10 @@ export const App: React.FC = () => {
 					Forrige
 				</Button>
 				<FlexColumn halign="center" className="mx-40" width={`${55 / 16}rem`}>
-					<CenteredText
-						textStyle="Brødtekst uthevet"
-						textColor={colors.støttefarge.grå98}
-					>
+					<CenteredText textStyle="bodyBold" textColor="grå100">
 						UKE {weekAndYear.week}
 					</CenteredText>
-					<CenteredText
-						textStyle="Brødtekst uthevet"
-						textColor={colors.støttefarge.grå98}
-					>
+					<CenteredText textStyle="bodyBold" textColor="grå100">
 						{weekAndYear.year}
 					</CenteredText>
 				</FlexColumn>

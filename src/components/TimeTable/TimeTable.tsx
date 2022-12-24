@@ -1,4 +1,4 @@
-import { colors, FlexColumn, Table, Text } from "@udir/lisa";
+import { FlexColumn, Table, Text } from "@udir/lisa";
 import { Moment } from "moment";
 import React from "react";
 import styled from "styled-components";
@@ -42,10 +42,8 @@ export const TimeTable: React.FC<Props> = (props) => {
 	const dateHeader = (date: Moment) => {
 		return (
 			<FlexColumn>
-				<CapitalText textStyle="Tabelltekst uthevet">
-					{date.format("dddd")}
-				</CapitalText>
-				<CapitalText textStyle="Tabelltekst uthevet">
+				<CapitalText textStyle="labelBold">{date.format("dddd")}</CapitalText>
+				<CapitalText textStyle="labelBold">
 					{date.format("D. MMMM")}
 				</CapitalText>
 			</FlexColumn>
@@ -90,7 +88,7 @@ export const TimeTable: React.FC<Props> = (props) => {
 
 	return (
 		<Table
-			headerColor={colors.utvidetPrimærpalett.stålblå98}
+			headerColor="stålblå200"
 			columns={[
 				{
 					headerName: "Kode",
@@ -107,11 +105,7 @@ export const TimeTable: React.FC<Props> = (props) => {
 				},
 			]}
 			items={items}
-			rowColor={(row) =>
-				row.kind === "entry"
-					? colors.utvidetPrimærpalett.stålblå98
-					: colors.utvidetPrimærpalett.skifer35
-			}
+			rowColor={(row) => (row.kind === "entry" ? "stålblå200" : "skifer500")}
 		/>
 	);
 };
