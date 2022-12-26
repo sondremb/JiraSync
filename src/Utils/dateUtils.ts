@@ -76,3 +76,75 @@ export class WeekAndYear {
 		return dayRange(this.start(), this.end());
 	}
 }
+
+export class MonthAndYear {
+	year: number;
+	month: number;
+	constructor(year: number, month: number) {
+		this.year = year;
+		this.month = month;
+	}
+
+	static fromMoment(m: Moment): MonthAndYear {
+		return new MonthAndYear(m.year(), m.month());
+	}
+
+	static now(): MonthAndYear {
+		return MonthAndYear.fromMoment(moment());
+	}
+
+	get monthName(): string {
+		return this.toMoment().format("MMMM");
+	}
+
+	toMoment(): Moment {
+		return moment().year(this.year).month(this.month);
+	}
+
+	next(): MonthAndYear {
+		return MonthAndYear.fromMoment(this.toMoment().add(1, "month"));
+	}
+
+	previous(): MonthAndYear {
+		return MonthAndYear.fromMoment(this.toMoment().subtract(1, "month"));
+	}
+
+	start(): Moment {
+		return this.toMoment().startOf("month");
+	}
+
+	end(): Moment {
+		return this.toMoment().endOf("month");
+	}
+
+	startOfFirstWeek(): Moment {
+		return this.start().startOf("week");
+	}
+
+	endOfLastWeek(): Moment {
+		return this.end().endOf("week");
+	}
+
+	weeks(): WeekAndYear[] {
+		let week = WeekAndYear.fromMoment(this.start());
+		const weeks = [week];
+		const endWeek = this.end().week();
+		while (week.week !== endWeek) {
+			week = week.next();
+			weeks.push(week);
+		}
+		return weeks;
+	}
+
+	days(): Moment[] {
+		return dayRange(this.start(), this.end());
+	}
+
+	daysFullWeeks(): Moment[] {
+		return dayRange(this.startOfFirstWeek(), this.endOfLastWeek());
+	}
+
+	contains(day: Moment): boolean {
+		return day.year() === this.year && day.month() === this.month;
+	}
+}

@@ -1,4 +1,4 @@
-import { Icon, Text } from "@udir/lisa";
+import { Text } from "@udir/lisa";
 import { Moment } from "moment";
 import React, { useEffect, useState } from "react";
 
@@ -21,12 +21,12 @@ export const DownloadTimestamp: React.FC<Props> = (props) => {
 	}, [props.timestamp]);
 
 	return (
-		<>
+		<div>
 			<Text>Sist lasted ned: {timeSince}</Text>
 			<Text textStyle="label">
 				{props.timestamp.format("Do Mo YY")} kl.{" "}
 				{props.timestamp.format("HH:mm:ss")}
 			</Text>
-		</>
+		</div>
 	);
 };

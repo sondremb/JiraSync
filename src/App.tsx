@@ -24,6 +24,7 @@ import { useWeek } from "./data/useWeek";
 import { AltStemmerAlert } from "./components/AltStemmerAlert";
 import { DownloadTimestamp } from "./components/DownloadTimestamp";
 import { colors, spacing } from "@udir/lisa-tokens";
+import { MonthModal } from "./components/MonthModal";
 
 const CenteredText = styled(Text)`
 	text-align: center;
@@ -105,7 +106,10 @@ export const App: React.FC = () => {
 					</Button>
 				</FlexRow>
 			</FlexRow>
-			{timestamp && <DownloadTimestamp timestamp={timestamp} />}
+			<FlexRow halign="space-between" className="mb-12">
+				{timestamp && <DownloadTimestamp timestamp={timestamp} />}
+				<MonthModal />
+			</FlexRow>
 			<ColoredRow halign="center" valign="center">
 				<Button
 					variant="text"

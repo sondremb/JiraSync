@@ -10,7 +10,10 @@ import {
 } from "../types";
 import { toDateString, secondsToHours } from "./dateUtils";
 
-export const updateEntries = (bekkData: Bekk.DTO, jiraData: Jira.DTO) => {
+export const updateEntries = (
+	bekkData: Bekk.DTO,
+	jiraData: Jira.DTO
+): BekkTimecodeEntry[] => {
 	const entries = createEntriesFromBekkData(bekkData);
 	enrichEntriesWithJiraData(entries, jiraData);
 	return entries;
