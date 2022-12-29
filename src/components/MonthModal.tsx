@@ -79,41 +79,50 @@ export const MonthModal: React.FC = () => {
 						Månedsvisning
 					</H1>
 					<Table>
-						<tr>
-							<th className="pb-8"></th>
-							<th className="pb-8">Ma</th>
-							<th className="pb-8">Ti</th>
-							<th className="pb-8">On</th>
-							<th className="pb-8">To</th>
-							<th className="pb-8">Fr</th>
-							<th className="pb-8">Lø</th>
-							<th className="pb-8">Sø</th>
-							<th className="pb-8 pl-20">Sum</th>
-						</tr>
-						{monthAndYear.weeks().map((week) => (
+						<thead>
 							<tr>
-								<th scope="row" className="pr-12">
-									{week.week}
-								</th>
-								{week.days().map((day) => (
-									<Td
-										textColor={monthAndYear.contains(day) ? "svart" : "grå700"}
-										backgroundColor={dayAllGood(day) ? "stålblå200" : "rød300"}
-									>
-										<FlexColumn valign="center">
-											{day.date()}
-											{day.isSameOrBefore(lockDate) && <Icon type="locked" />}
-										</FlexColumn>
-									</Td>
-								))}
-								<Td className="pl-20" style={{ textAlign: "right" }}>
-									{week
-										.days()
-										.reduce((prev, curr) => prev + sumForDay(curr), 0)}
-									t
-								</Td>
+								<th className="pb-8"></th>
+								<th className="pb-8">Ma</th>
+								<th className="pb-8">Ti</th>
+								<th className="pb-8">On</th>
+								<th className="pb-8">To</th>
+								<th className="pb-8">Fr</th>
+								<th className="pb-8">Lø</th>
+								<th className="pb-8">Sø</th>
+								<th className="pb-8 pl-20">Sum</th>
 							</tr>
-						))}
+						</thead>
+						<tbody>
+							{monthAndYear.weeks().map((week) => (
+								<tr key={week.week}>
+									<th scope="row" className="pr-12">
+										{week.week}
+									</th>
+									{week.days().map((day) => (
+										<Td
+											key={day.month() + day.date()}
+											textColor={
+												monthAndYear.contains(day) ? "svart" : "grå700"
+											}
+											backgroundColor={
+												dayAllGood(day) ? "stålblå200" : "rød300"
+											}
+										>
+											<FlexColumn valign="center">
+												{day.date()}
+												{day.isSameOrBefore(lockDate) && <Icon type="locked" />}
+											</FlexColumn>
+										</Td>
+									))}
+									<Td className="pl-20" style={{ textAlign: "right" }}>
+										{week
+											.days()
+											.reduce((prev, curr) => prev + sumForDay(curr), 0)}
+										t
+									</Td>
+								</tr>
+							))}
+						</tbody>
 					</Table>
 				</Container>
 				<Container

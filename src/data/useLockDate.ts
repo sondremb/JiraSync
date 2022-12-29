@@ -1,3 +1,4 @@
+import { useNotification } from "@udir/lisa";
 import moment, { Moment } from "moment";
 import useSWR from "swr";
 import { getEmployeeIdFromToken } from "../auth";
@@ -11,11 +12,25 @@ export const useLockDate = () => {
 	const { data, mutate, error } = useSWR("lockdate", () =>
 		client.lockdatesDetail(getEmployeeIdFromToken())
 	);
+	const showNotification = useNotification();
 
 	const updateLockDate = (lockDate: Moment) =>
 		mutate(async (old) => {
 			const lockDateAsString = toDateString(lockDate);
-			await BekkClient.setLockDate(lockDateAsString);
+			await BekkClient.setLockDate(lockDateAsString)
+				.then(() =>
+					showNotification({
+						type: "success",
+						content: `Låste timer frem til ${lockDate.format("Do MMMM YYYY")}`,
+					})
+				)
+				.catch((error: any) => {
+					showNotification({
+						type: "error",
+						title: "Kunne ikke låse timer",
+						content: error?.error?.userMessage ?? "Ingen detaljer",
+					});
+				});
 			return old;
 		});
 

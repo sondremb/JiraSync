@@ -14,6 +14,7 @@ import {
 	spacing,
 	Weight,
 } from "@udir/lisa-tokens";
+import { LockDateButton } from "./LockDateButton";
 
 const CustomText = styled.div<{
 	fontSize?: number;
@@ -61,6 +62,7 @@ const CornerDiv = styled(CustomText)<{ correct: boolean }>`
 interface Props {
 	row: Row;
 	day: Moment;
+	onLockClicked: (day: Moment) => void;
 }
 
 export const TimetableCell: React.FC<Props> = (props) => {
@@ -69,16 +71,10 @@ export const TimetableCell: React.FC<Props> = (props) => {
 	switch (props.row.kind) {
 		case "lock":
 			return (
-				<OtherDiv>
-					<Icon
-						type={
-							props.day.isSameOrBefore(props.row.lockDate)
-								? "locked"
-								: "unlocked"
-						}
-						iconColor={"grå100"}
-					/>
-				</OtherDiv>
+				<LockDateButton
+					day={props.day}
+					onClick={() => props.onLockClicked(props.day)}
+				/>
 			);
 		case "sum":
 			return (
