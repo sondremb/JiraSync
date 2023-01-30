@@ -2388,12 +2388,18 @@
     "@typescript-eslint/types" "5.43.0"
     eslint-visitor-keys "^3.3.0"
 
-"@udir/lisa@^3.7.2":
-  version "3.7.2"
-  resolved "https://www.myget.org/F/pas2/auth/fe999998-2e29-4361-8697-7e166660051e/npm/@udir/lisa/-/@udir/lisa-3.7.2.tgz#dba6d025b534811de046badf50ab7523278ee932"
-  integrity sha1-26bQJbU0gR3gRrrfUKt1IyeO6TI=
+"@udir/lisa-tokens@1.0.0", "@udir/lisa-tokens@^4.0.2":
+  version "1.0.0"
+  resolved "https://www.myget.org/F/pas2/auth/fe999998-2e29-4361-8697-7e166660051e/npm/@udir/lisa-tokens/-/@udir/lisa-tokens-1.0.0.tgz#aac1274c4c2a715e7c55b6517258b5baa800a775"
+  integrity sha1-qsEnTEwqcV58VbZRcli1uqgAp3U=
+
+"@udir/lisa@^4.0.2":
+  version "4.0.2"
+  resolved "https://www.myget.org/F/pas2/auth/fe999998-2e29-4361-8697-7e166660051e/npm/@udir/lisa/-/@udir/lisa-4.0.2.tgz#f44104474abe2c34211ea889bb9e662901c4bac8"
+  integrity sha1-9EEER0q+LDQhHqiJu55mKQHEusg=
   dependencies:
     "@popperjs/core" "^2.11.5"
+    "@udir/lisa-tokens" "1.0.0"
     focus-trap-react "^9.0.2"
     react-loading-skeleton "^3.1.0"
     react-popper "^2.3.0"
