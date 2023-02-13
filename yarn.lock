@@ -2388,18 +2388,18 @@
     "@typescript-eslint/types" "5.43.0"
     eslint-visitor-keys "^3.3.0"
 
-"@udir/lisa-tokens@1.0.0", "@udir/lisa-tokens@^4.0.2":
-  version "1.0.0"
-  resolved "https://www.myget.org/F/pas2/auth/fe999998-2e29-4361-8697-7e166660051e/npm/@udir/lisa-tokens/-/@udir/lisa-tokens-1.0.0.tgz#aac1274c4c2a715e7c55b6517258b5baa800a775"
-  integrity sha1-qsEnTEwqcV58VbZRcli1uqgAp3U=
+"@udir/lisa-tokens@1.1.0", "@udir/lisa-tokens@^1.1.0":
+  version "1.1.0"
+  resolved "https://www.myget.org/F/pas2/auth/fe999998-2e29-4361-8697-7e166660051e/npm/@udir/lisa-tokens/-/@udir/lisa-tokens-1.1.0.tgz#0cc4bb110c2010313565c9ba886d7c9315e5e1b2"
+  integrity sha1-DMS7EQwgEDE1Zcm6iG18kxXl4bI=
 
-"@udir/lisa@^4.0.2":
-  version "4.0.2"
-  resolved "https://www.myget.org/F/pas2/auth/fe999998-2e29-4361-8697-7e166660051e/npm/@udir/lisa/-/@udir/lisa-4.0.2.tgz#f44104474abe2c34211ea889bb9e662901c4bac8"
-  integrity sha1-9EEER0q+LDQhHqiJu55mKQHEusg=
+"@udir/lisa@^4.3.0":
+  version "4.3.0"
+  resolved "https://www.myget.org/F/pas2/auth/fe999998-2e29-4361-8697-7e166660051e/npm/@udir/lisa/-/@udir/lisa-4.3.0.tgz#1fd1d15b0e6f6c1ec9af0a7a06ef46af52ab231a"
+  integrity sha1-H9HRWw5vbB7Jrwp6Bu9Gr1KrIxo=
   dependencies:
     "@popperjs/core" "^2.11.5"
-    "@udir/lisa-tokens" "1.0.0"
+    "@udir/lisa-tokens" "1.1.0"
     focus-trap-react "^9.0.2"
     react-loading-skeleton "^3.1.0"
     react-popper "^2.3.0"

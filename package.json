@@ -20,8 +20,8 @@
 	"author": "Thor Kristian Valderhaug",
 	"license": "ISC",
 	"dependencies": {
-		"@udir/lisa": "^4.0.2",
-		"@udir/lisa-tokens": "^1.0.0",
+		"@udir/lisa": "^4.3.0",
+		"@udir/lisa-tokens": "^1.1.0",
 		"@vitejs/plugin-react": "^2.2.0",
 		"axios": "^0.21.4",
 		"moment": "^2.29.1",
