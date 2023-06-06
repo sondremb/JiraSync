@@ -47,6 +47,7 @@ export const BekkClient = {
 				hours: params.hours,
 				date: params.dateString,
 				employeeId,
+				comment: "",
 			},
 			{
 				headers: { authorization: getAuthorizationHeader() },
