@@ -4,7 +4,6 @@ import { BekkId, Jira } from "./types";
 export const FrivilligKompetanseByggingId = 1786;
 
 export enum UdirBekkIds {
-	NyGjennomføring = 1001498,
 	PASEksamen = 1000752,
 	PASPrøver = 1000890,
 	Pålogging = 1000854,
@@ -18,14 +17,6 @@ interface TimecodeSelector {
 }
 
 const jiraToTimecodeMap: TimecodeSelector[] = [
-	{
-		selector: (jiraIssue) => {
-			const nyttGjennomforingssystemLabel = "EPS felles";
-			const deliveryField = jiraIssue.fields.find((item) => item.value);
-			return deliveryField?.label === nyttGjennomforingssystemLabel;
-		},
-		timecodeId: UdirBekkIds.NyGjennomføring,
-	},
 	{
 		selector: (jiraIssue) => {
 			return /PASX.*/.test(jiraIssue.key);
