@@ -9,6 +9,7 @@ export enum UdirBekkIds {
 	Pålogging = 1000854,
 	Systemoversikt = 1002326,
 	UBAS = 1002497,
+	BistandTilHelhetligDesign = 1002899,
 }
 
 interface TimecodeSelector {
@@ -46,6 +47,12 @@ const jiraToTimecodeMap: TimecodeSelector[] = [
 			return /UBAS.*/.test(jiraIssue.key);
 		},
 		timecodeId: UdirBekkIds.UBAS,
+	},
+	{
+		selector: (jiraIssue) => {
+			return /DESIGN.*/.test(jiraIssue.key);
+		},
+		timecodeId: UdirBekkIds.BistandTilHelhetligDesign,
 	},
 ];
 
