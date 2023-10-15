@@ -51,7 +51,7 @@ export const JiraLogin: React.FC<Props> = ({ children }) => {
 	if (isFirstLoad) {
 		return (
 			<FlexRow height="80vh" halign="center" valign="center">
-				<Loading pending size="extraLarge" />;
+				<Loading pending size="extraLarge" />
 			</FlexRow>
 		);
 	}
