@@ -1,11 +1,5 @@
 import { Response } from "@netlify/functions/dist/function/response";
 import axios, { AxiosError } from "axios";
-import {
-	JIRA_CAPTCHA,
-	JIRA_LOGIN,
-	NETLIFY_MISSING_AUTH,
-	UNKNOWN_NETLIFY_ERROR,
-} from "./errorstore/errors";
 import { DateString } from "./types";
 
 interface JiraRequestParams {
@@ -38,7 +32,7 @@ export const getJiraTimesheet = async (
 	const { fromDate, toDate, username, password } = body;
 	if (!username || !password) {
 		return {
-			body: NETLIFY_MISSING_AUTH,
+			body: ERRORS.NETLIFY_MISSING_AUTH,
 			statusCode: StatusCode.UNAUTHORIZED_401,
 		};
 	}
@@ -65,7 +59,10 @@ const handleError = (error: AxiosError, eventId: string): Response => {
 			error.response.status === StatusCode.UNAUTHORIZED_401 &&
 			error.response.headers["x-seraph-loginreason"] === "AUTHENTICATED_FAILED"
 		) {
-			return { statusCode: StatusCode.UNAUTHORIZED_401, body: JIRA_LOGIN };
+			return {
+				statusCode: StatusCode.UNAUTHORIZED_401,
+				body: ERRORS.JIRA_LOGIN,
+			};
 		} else if (
 			error.response.status === StatusCode.FORBIDDEN_403 &&
 			error.response.headers["x-seraph-loginreason"] ===
@@ -74,7 +71,10 @@ const handleError = (error: AxiosError, eventId: string): Response => {
 				"CAPTCHA_CHALLENGE"
 			)
 		) {
-			return { statusCode: StatusCode.FORBIDDEN_403, body: JIRA_CAPTCHA };
+			return {
+				statusCode: StatusCode.FORBIDDEN_403,
+				body: ERRORS.JIRA_CAPTCHA,
+			};
 		}
 		console.error("An unhandled error response was received from Jira");
 		console.error("Status code: " + error.response.status);
@@ -90,6 +90,13 @@ const handleError = (error: AxiosError, eventId: string): Response => {
 	// TODO send med event id
 	return {
 		statusCode: StatusCode.INTERNAL_SERVER_ERROR_500,
-		body: UNKNOWN_NETLIFY_ERROR + " " + eventId,
+		body: ERRORS.UNKNOWN_NETLIFY_ERROR + " " + eventId,
 	};
+};
+
+const ERRORS = {
+	UNKNOWN_NETLIFY_ERROR: "UNKOWN_NETLIFY_ERROR",
+	NETLIFY_MISSING_AUTH: "NETLIFY_MISSING_AUTH",
+	JIRA_LOGIN: "JIRA_LOGIN",
+	JIRA_CAPTCHA: "JIRA_CAPTCHA",
 };

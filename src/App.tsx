@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import { WeekAndYear } from "./Utils/dateUtils";
 import { JiraLogin } from "./components/JiraLogin";
 import { TimeTable } from "./components/TimeTable/TimeTable";
-import { DevAuthModal } from "./components/DevAuthModal";
 import {
 	Button,
 	FlexColumn,
@@ -15,7 +14,6 @@ import {
 } from "@udir/lisa";
 import styled from "styled-components";
 import { Example } from "./components/TimeTable/timetable-cell";
-import { isDevelopment } from "./Utils/envUtils";
 import { useLockDate } from "./data/useLockDate";
 import { useBekkTimecodes } from "./data/useBekkTimecodes";
 import { isUdir } from "./timecode-map";
@@ -96,7 +94,6 @@ export const App: React.FC = () => {
 					<Example />
 				</FlexRow>
 				<FlexRow>
-					{isDevelopment() && <DevAuthModal />}
 					<Button
 						variant="text"
 						onClick={() => setIsLoginModalOpen(true)}
