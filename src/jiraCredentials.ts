@@ -27,6 +27,8 @@ const setSessionStorage = (credentials: JiraCredentials): void => {
 };
 
 export const clearJiraCredentials = (): void => {
+	sessionStorage.removeItem(usernameKey);
+	sessionStorage.removeItem(passwordKey);
 	localStorage.removeItem(usernameKey);
 	localStorage.removeItem(passwordKey);
 };

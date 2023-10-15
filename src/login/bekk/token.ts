@@ -158,3 +158,7 @@ export function getAuthorizationHeader() {
 	}
 	return "Bearer " + bearer_token;
 }
+
+export function clearBekkToken() {
+	localStorage.removeItem("userToken");
+}

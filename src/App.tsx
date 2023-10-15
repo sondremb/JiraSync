@@ -23,6 +23,7 @@ import { AltStemmerAlert } from "./components/AltStemmerAlert";
 import { DownloadTimestamp } from "./components/DownloadTimestamp";
 import { colors, spacing } from "@udir/lisa-tokens";
 import { MonthModal } from "./components/MonthModal";
+import { LoginStatus } from "./login/LoginStatus";
 
 const CenteredText = styled(Text)`
 	text-align: center;
@@ -93,15 +94,7 @@ export const App: React.FC = () => {
 					</H1>
 					<Example />
 				</FlexRow>
-				<FlexRow>
-					<Button
-						variant="text"
-						onClick={() => setIsLoginModalOpen(true)}
-						icon="userFilled"
-					>
-						Logg inn i Jira
-					</Button>
-				</FlexRow>
+				<LoginStatus />
 			</FlexRow>
 			<FlexRow halign="space-between" className="mb-12">
 				{timestamp && <DownloadTimestamp timestamp={timestamp} />}
