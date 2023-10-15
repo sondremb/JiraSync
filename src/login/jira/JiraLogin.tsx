@@ -1,4 +1,4 @@
-import { Loading } from "@udir/lisa";
+import { FlexRow, Loading } from "@udir/lisa";
 import { AxiosError, AxiosResponse } from "axios";
 import React, { useEffect, useState } from "react";
 import { StatusCode } from "../../jira-client";
@@ -49,7 +49,11 @@ export const JiraLogin: React.FC<Props> = ({ children }) => {
 	}, []);
 
 	if (isFirstLoad) {
-		return <Loading pending size="extraLarge" />;
+		return (
+			<FlexRow height="80vh" halign="center" valign="center">
+				<Loading pending size="extraLarge" />;
+			</FlexRow>
+		);
 	}
 
 	if (!credentials || loginResult?.status !== StatusCode.OK_200) {
