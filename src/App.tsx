@@ -1,9 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 import { WeekAndYear } from "./Utils/dateUtils";
-import { JiraLogin } from "./components/JiraLogin";
 import { TimeTable } from "./components/TimeTable/TimeTable";
-import { DevAuthModal } from "./components/DevAuthModal";
 import {
 	Button,
 	FlexColumn,
@@ -15,16 +13,15 @@ import {
 } from "@udir/lisa";
 import styled from "styled-components";
 import { Example } from "./components/TimeTable/timetable-cell";
-import { isDevelopment } from "./Utils/envUtils";
 import { useLockDate } from "./data/useLockDate";
 import { useBekkTimecodes } from "./data/useBekkTimecodes";
 import { isUdir } from "./timecode-map";
-import { getJiraCredentials } from "./jiraCredentials";
 import { useWeek } from "./data/useWeek";
 import { AltStemmerAlert } from "./components/AltStemmerAlert";
 import { DownloadTimestamp } from "./components/DownloadTimestamp";
 import { colors, spacing } from "@udir/lisa-tokens";
 import { MonthModal } from "./components/MonthModal";
+import { LoginStatus } from "./login/LoginStatus";
 
 const CenteredText = styled(Text)`
 	text-align: center;
@@ -43,16 +40,6 @@ export const App: React.FC = () => {
 
 	const { lockDate } = useLockDate();
 	const { state: entries, timestamp, updateBekkHours } = useWeek(weekAndYear);
-
-	const jiraCredentials = getJiraCredentials();
-	const hasCredentials = jiraCredentials !== null;
-
-	const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
-
-	useEffect(() => {
-		// skulle gjerne bare satt isLoginModalOpen som useState(!hasCredentials) i starten, men Lisa takler ikke at modaler er åpne ved første render
-		if (!hasCredentials) setIsLoginModalOpen(true);
-	}, []);
 
 	const onNextWeekClick = () => {
 		setWeekAndYear((old) => old.next());
@@ -95,16 +82,7 @@ export const App: React.FC = () => {
 					</H1>
 					<Example />
 				</FlexRow>
-				<FlexRow>
-					{isDevelopment() && <DevAuthModal />}
-					<Button
-						variant="text"
-						onClick={() => setIsLoginModalOpen(true)}
-						icon="userFilled"
-					>
-						Logg inn i Jira
-					</Button>
-				</FlexRow>
+				<LoginStatus />
 			</FlexRow>
 			<FlexRow halign="space-between" className="mb-12">
 				{timestamp && <DownloadTimestamp timestamp={timestamp} />}
@@ -145,10 +123,6 @@ export const App: React.FC = () => {
 				/>
 			)}
 			<AltStemmerAlert entries={entries} onSynchronize={synchronize} />
-			<JiraLogin
-				isOpen={isLoginModalOpen}
-				close={() => setIsLoginModalOpen(false)}
-			/>
 		</PageLayout>
 	);
 };

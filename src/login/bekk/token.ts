@@ -1,4 +1,16 @@
-import { isDevelopment } from "./Utils/envUtils";
+import { isDevelopment } from "../../Utils/envUtils";
+
+interface Token {
+	"https://api.bekk.no/claims/permission": string[];
+	"https://api.bekk.no/claims/employeeId": number;
+	name: string;
+	groups: string[];
+	iss: string;
+	sub: string;
+	aud: string;
+	iat: number;
+	exp: number;
+}
 
 function getScopes() {
 	return "openid name groups";
@@ -12,13 +24,12 @@ function getAudience() {
 	return import.meta.env.VITE_BEKK_CLIENT_ID;
 }
 
-function parseHash(hash: string): any {
-	// tslint:disable-next-line:no-any
-	const params: any = {};
+function parseHash(hash: string): Record<string, string> {
+	const params: Record<string, string> = {};
 	const hashes = hash.replace("#", "").split("&");
 	for (const h of hashes) {
-		const param = h.split("=");
-		params[param[0]] = param[1];
+		const [key, value] = h.split("=");
+		params[key] = value;
 	}
 	return params;
 }
@@ -33,25 +44,19 @@ function saveToken(token: string): void {
 	}
 }
 
-export function getIdToken(): string {
+export function getIdToken(): string | null {
 	try {
-		return localStorage.getItem("userToken") || "";
+		return localStorage.getItem("userToken");
 	} catch (e) {
 		alert(
 			"Fikk ikke hentet ut userToken fra localStorage. Om du bruker safari i privat mode skru av dette for at siden skal laste :)"
 		);
-		return "";
+		return null;
 	}
 }
 
 function base64ToUtf8(str: string): string {
 	return decodeURIComponent(window.atob(str));
-}
-
-function getClaimsFromToken(jwt: string): any {
-	const encoded = jwt && jwt.split(".")[1];
-	const jsonString = base64ToUtf8(encoded);
-	return JSON.parse(jsonString);
 }
 
 function getApplicationRoot(): string {
@@ -82,7 +87,9 @@ function getStateFromHash(): string {
 
 function redirectToState(): void {
 	const state = getStateFromHash();
-	window.location.replace(getApplicationRoot() + state);
+	if (state) {
+		window.location.replace(getApplicationRoot() + state);
+	}
 }
 
 function hashIsPresent(): boolean {
@@ -97,41 +104,51 @@ function tryParseToken(): string | null {
 	return null;
 }
 
-export function isExpired(jwt: string): boolean {
-	const claims = getClaimsFromToken(jwt);
-	const epochNow = new Date().getTime() / 1000;
-	return claims.exp <= epochNow - 10;
+export function isExpired(token: Token): boolean {
+	const epochNow = Date.now() / 1_000;
+	return token.exp <= epochNow - 10;
 }
 
-function parseToken(jwt: string) {
-	const encoded = jwt && jwt.split(".")[1];
-	const jsonString = base64ToUtf8(encoded);
+function parseToken(jwt: string): Token {
+	const [_header, payload, _signature] = jwt.split(".");
+	const jsonString = base64ToUtf8(payload);
+	// TODO validation here? To ensure token matches expected schema
 	return JSON.parse(jsonString);
+}
+
+export function getToken(): Token | null {
+	const tokenString = getIdToken();
+	if (tokenString === null) {
+		return null;
+	}
+	return parseToken(tokenString);
 }
 
 export function getEmployeeIdFromToken() {
 	if (!isAuthenticated) {
 		throw new Error("Brukeren er ikke autentisert");
 	}
-	return parseToken(getIdToken())["https://api.bekk.no/claims/employeeId"];
+	return parseToken(getIdToken()!)["https://api.bekk.no/claims/employeeId"];
 }
 
 export function isAuthenticated(): boolean {
-	const userToken = getIdToken();
+	const userToken = getToken();
 	if (userToken) {
 		return !isExpired(userToken);
 	}
 	return false;
 }
 
-export function authenticate(): void {
+export function checkAuthentication(): void {
 	const token = tryParseToken();
 	if (token) {
 		saveToken(token);
 		redirectToState();
-	} else {
-		redirectToAuth0();
 	}
+}
+
+export function authenticate(): void {
+	redirectToAuth0();
 }
 
 export function getAuthorizationHeader() {
@@ -140,4 +157,8 @@ export function getAuthorizationHeader() {
 		throw new Error("Brukeren er ikke autentisert");
 	}
 	return "Bearer " + bearer_token;
+}
+
+export function clearBekkToken() {
+	localStorage.removeItem("userToken");
 }

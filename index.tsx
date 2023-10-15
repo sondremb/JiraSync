@@ -1,26 +1,23 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { App } from "./src/App";
-import { authenticate, isAuthenticated } from "./src/auth";
 import moment from "moment";
 import "moment/dist/locale/nb";
 import { LisaProvider } from "@udir/lisa";
-import { ErrorStore } from "./src/errorstore/store";
-import { ErrorModal } from "./src/errorstore/error-modal";
 import { GlobalStyle } from "./src/global-style";
+import { BekkLogin } from "./src/login/bekk/BekkLogin";
+import { App } from "./src/App";
+import { JiraLogin } from "./src/login/jira/JiraLogin";
 
 moment.locale("nb");
 
-if (!isAuthenticated()) {
-	authenticate();
-}
 ReactDOM.render(
-	<ErrorStore>
-		<LisaProvider includeGlobalStyling>
-			<GlobalStyle />
-			<ErrorModal />
-			<App />
-		</LisaProvider>
-	</ErrorStore>,
+	<LisaProvider includeGlobalStyling>
+		<GlobalStyle />
+		<BekkLogin>
+			<JiraLogin>
+				<App />
+			</JiraLogin>
+		</BekkLogin>
+	</LisaProvider>,
 	document.getElementById("root")
 );
