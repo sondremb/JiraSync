@@ -1,4 +1,4 @@
-interface JiraCredentials {
+export interface JiraCredentials {
 	username: string;
 	password: string;
 }

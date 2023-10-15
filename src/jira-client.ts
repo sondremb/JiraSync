@@ -4,7 +4,6 @@ import {
 	JIRA_CAPTCHA,
 	JIRA_LOGIN,
 	NETLIFY_MISSING_AUTH,
-	NETLIFY_MISSING_DATES,
 	UNKNOWN_NETLIFY_ERROR,
 } from "./errorstore/errors";
 import { DateString } from "./types";
@@ -41,12 +40,6 @@ export const getJiraTimesheet = async (
 		return {
 			body: NETLIFY_MISSING_AUTH,
 			statusCode: StatusCode.UNAUTHORIZED_401,
-		};
-	}
-	if (!fromDate || !toDate) {
-		return {
-			body: NETLIFY_MISSING_DATES,
-			statusCode: StatusCode.BAD_REQUEST_400,
 		};
 	}
 

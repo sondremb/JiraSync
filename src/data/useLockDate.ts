@@ -1,9 +1,9 @@
 import { useNotification } from "@udir/lisa";
 import moment, { Moment } from "moment";
 import useSWR from "swr";
-import { getEmployeeIdFromToken } from "../auth";
 import { Timesheets } from "../bekk-api/Timesheets";
 import { BekkClient } from "../bekk-client";
+import { getEmployeeIdFromToken } from "../login/bekk/token";
 import { createClient } from "../Utils/bekkClientUtils";
 import { toDateString } from "../Utils/dateUtils";
 

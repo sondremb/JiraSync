@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from "axios";
 import { Moment } from "moment";
-import { getJiraCredentials } from "./jiraCredentials";
+import { getJiraCredentials, JiraCredentials } from "./jiraCredentials";
 import { Jira } from "./types";
 import { toDateString } from "./Utils/dateUtils";
 
@@ -19,6 +19,14 @@ export const NetlifyClient = {
 		return axios.post(".netlify/functions/jira-timer", {
 			fromDate: toDateString(params.fromDate),
 			toDate: toDateString(params.toDate),
+			username: credentials.username,
+			password: credentials.password,
+		});
+	},
+	authenticate: (
+		credentials: JiraCredentials
+	): Promise<AxiosResponse<Jira.DTO>> => {
+		return axios.post(".netlify/functions/jira-timer", {
 			username: credentials.username,
 			password: credentials.password,
 		});

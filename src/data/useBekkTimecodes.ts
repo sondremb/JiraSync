@@ -1,7 +1,7 @@
 import useSWRImmutable from "swr/immutable";
-import { getEmployeeIdFromToken } from "../auth";
 import { TimecodeEssentialsDTO } from "../bekk-api/data-contracts";
 import { Timecodeaccesses } from "../bekk-api/Timecodeaccesses";
+import { getEmployeeIdFromToken } from "../login/bekk/token";
 import { createClient } from "../Utils/bekkClientUtils";
 
 type BekkTimecodeRecord = Record<

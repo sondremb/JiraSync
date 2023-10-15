@@ -1,7 +1,10 @@
 import axios, { AxiosResponse } from "axios";
 import { Moment } from "moment";
-import { getAuthorizationHeader, getEmployeeIdFromToken } from "./auth";
 import { Timesheets } from "./bekk-api/Timesheets";
+import {
+	getAuthorizationHeader,
+	getEmployeeIdFromToken,
+} from "./login/bekk/token";
 import { Bekk, BekkId, DateString } from "./types";
 import { createClient } from "./Utils/bekkClientUtils";
 import { toDateString } from "./Utils/dateUtils";

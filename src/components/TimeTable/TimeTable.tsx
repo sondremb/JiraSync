@@ -40,9 +40,9 @@ export type Row =
 export const TimeTable: React.FC<Props> = (props) => {
 	const { bekkTimecodes } = useBekkTimecodes();
 	const { lockDate, updateLockDate } = useLockDate();
-	if (bekkTimecodes === undefined || lockDate === undefined) return null;
-
 	const [dateToLock, setDateToLock] = useState<Moment | undefined>();
+
+	if (bekkTimecodes === undefined || lockDate === undefined) return null;
 
 	const dateHeader = (date: Moment) => {
 		return (

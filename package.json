@@ -8,7 +8,7 @@
 		"start": "yarn build:function && yarn unzip_functions && netlify dev",
 		"build:app": "tsc && vite build",
 		"build:function": "netlify functions:build --src functions",
-		"unzip_functions": "unzip -u dist_functions/*.zip -d dist_functions",
+		"unzip_functions": "unzip -u \"dist_functions/*.zip\" -d dist_functions",
 		"build": "yarn build:function && yarn build:app",
 		"generate": "rm -rf src/bekk-api && swagger-typescript-api -p https://api.bekk.no/timekeeper-svc/swagger/v1/swagger.json -o src/bekk-api --modular --type-suffix DTO",
 		"clean": "rm -rf node_modules"
