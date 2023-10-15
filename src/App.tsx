@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 import { WeekAndYear } from "./Utils/dateUtils";
-import { JiraLogin } from "./components/JiraLogin";
 import { TimeTable } from "./components/TimeTable/TimeTable";
 import {
 	Button,
@@ -17,7 +16,6 @@ import { Example } from "./components/TimeTable/timetable-cell";
 import { useLockDate } from "./data/useLockDate";
 import { useBekkTimecodes } from "./data/useBekkTimecodes";
 import { isUdir } from "./timecode-map";
-import { getJiraCredentials } from "./jiraCredentials";
 import { useWeek } from "./data/useWeek";
 import { AltStemmerAlert } from "./components/AltStemmerAlert";
 import { DownloadTimestamp } from "./components/DownloadTimestamp";
@@ -42,16 +40,6 @@ export const App: React.FC = () => {
 
 	const { lockDate } = useLockDate();
 	const { state: entries, timestamp, updateBekkHours } = useWeek(weekAndYear);
-
-	const jiraCredentials = getJiraCredentials();
-	const hasCredentials = jiraCredentials !== null;
-
-	const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
-
-	useEffect(() => {
-		// skulle gjerne bare satt isLoginModalOpen som useState(!hasCredentials) i starten, men Lisa takler ikke at modaler er åpne ved første render
-		if (!hasCredentials) setIsLoginModalOpen(true);
-	}, []);
 
 	const onNextWeekClick = () => {
 		setWeekAndYear((old) => old.next());
@@ -135,10 +123,6 @@ export const App: React.FC = () => {
 				/>
 			)}
 			<AltStemmerAlert entries={entries} onSynchronize={synchronize} />
-			<JiraLogin
-				isOpen={isLoginModalOpen}
-				close={() => setIsLoginModalOpen(false)}
-			/>
 		</PageLayout>
 	);
 };
