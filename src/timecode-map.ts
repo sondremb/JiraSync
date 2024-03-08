@@ -1,4 +1,5 @@
 import { TimecodeEssentialsDTO } from "./bekk-api/data-contracts";
+import { CUSTOM_FIELDS } from "./jira-client";
 import { BekkId, Jira } from "./types";
 
 export const FrivilligKompetanseByggingId = 1786;
@@ -10,6 +11,7 @@ export enum UdirBekkIds {
 	Systemoversikt = 1002326,
 	UBAS = 1002497,
 	BistandTilHelhetligDesign = 1002899,
+	HFLDataPlattform = 1002302,
 	HFL = 1003011,
 	HSS = 1003012,
 }
@@ -55,6 +57,16 @@ const jiraToTimecodeMap: TimecodeSelector[] = [
 			return /DESIGN.*/.test(jiraIssue.key);
 		},
 		timecodeId: UdirBekkIds.BistandTilHelhetligDesign,
+	},
+	{
+		selector: (jiraIssue) => {
+			if (!/HFL.*/.test(jiraIssue.key)) return false;
+			const epicName = jiraIssue.fields.find(
+				(field) => field.value === CUSTOM_FIELDS.epicName
+			);
+			return /Data Plattform/.test(epicName?.label ?? "");
+		},
+		timecodeId: UdirBekkIds.HFLDataPlattform,
 	},
 	{
 		selector: (jiraIssue) => {

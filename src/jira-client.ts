@@ -18,6 +18,10 @@ export enum StatusCode {
 }
 
 const delivery_field_name = "customfield_10702";
+export const CUSTOM_FIELDS = {
+	epicLink: "customfield_10001",
+	epicName: "customfield_10003",
+};
 
 export const getJiraTimesheet = async (
 	body: Partial<JiraRequestParams> | null,
@@ -37,7 +41,7 @@ export const getJiraTimesheet = async (
 		};
 	}
 
-	const url = `https://jira.udir.no/rest/timesheet-gadget/1.0/raw-timesheet.json?startDate=${fromDate}&endDate=${toDate}&moreFields=${delivery_field_name}`;
+	const url = `https://jira.udir.no/rest/timesheet-gadget/1.0/raw-timesheet.json?startDate=${fromDate}&endDate=${toDate}&moreFields=${delivery_field_name}&moreFields=${CUSTOM_FIELDS.epicLink}&moreFields=${CUSTOM_FIELDS.epicName}`;
 	return axios
 		.get(url, {
 			auth: {
