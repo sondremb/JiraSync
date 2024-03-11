@@ -63,8 +63,9 @@ const jiraToTimecodeMap: TimecodeSelector[] = [
 			if (!/HFL.*/.test(jiraIssue.key)) return false;
 			const epicName = jiraIssue.fields.find(
 				(field) => field.value === CUSTOM_FIELDS.epicName
-			);
-			return /Data Plattform/.test(epicName?.label ?? "");
+			)?.label;
+			if (epicName === undefined) return false;
+			return /Data Plattform/.test(epicName) || /Tilda/.test(epicName);
 		},
 		timecodeId: UdirBekkIds.HFLDataPlattform,
 	},
