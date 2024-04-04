@@ -14,6 +14,7 @@ export enum UdirBekkIds {
 	HFLDataPlattform = 1002302,
 	HFL = 1003011,
 	HSS = 1003012,
+	DIT = 1003026,
 }
 
 interface TimecodeSelector {
@@ -60,14 +61,25 @@ const jiraToTimecodeMap: TimecodeSelector[] = [
 	},
 	{
 		selector: (jiraIssue) => {
-			if (!/HFL.*/.test(jiraIssue.key)) return false;
-			const epicName = jiraIssue.fields.find(
-				(field) => field.value === CUSTOM_FIELDS.epicName
-			)?.label;
-			if (epicName === undefined) return false;
-			return /Data Plattform/.test(epicName) || /Tilda/.test(epicName);
+			if (!/HFL.*/.test(jiraIssue.key)) {
+				return false;
+			}
+			const epicName = getEpicName(jiraIssue);
+			if (epicName === undefined) {
+				return false;
+			}
+			return /data ?plattform/i.test(epicName) || /Tilda/i.test(epicName);
 		},
 		timecodeId: UdirBekkIds.HFLDataPlattform,
+	},
+	{
+		selector: (jiraIssue) => {
+			if (!/HFL.*/.test(jiraIssue.key)) {
+				return false;
+			}
+			return getLabels(jiraIssue).includes("DIT");
+		},
+		timecodeId: UdirBekkIds.DIT,
 	},
 	{
 		selector: (jiraIssue) => {
@@ -94,3 +106,28 @@ export const bekkIdFromJiraTimecode = (jiraIssue: Jira.Timecode) => {
 
 export const isUdir = (timecode: TimecodeEssentialsDTO): boolean =>
 	timecode.id !== undefined && timecode.id in UdirBekkIds;
+
+function getField(
+	jiraIssue: Jira.Timecode,
+	fieldName: string
+): string | undefined {
+	const fieldValue = jiraIssue.fields.find(
+		(field) => field.value === fieldName
+	)?.label;
+	if (fieldValue === "NoValueForFieldOnIssue") {
+		return undefined;
+	}
+	return fieldValue;
+}
+
+function getEpicName(jiraIssue: Jira.Timecode): string | undefined {
+	return getField(jiraIssue, CUSTOM_FIELDS.epicName);
+}
+
+function getLabels(jiraIssue: Jira.Timecode): string[] {
+	const labelsString = getField(jiraIssue, CUSTOM_FIELDS.labels);
+	if (labelsString === undefined) {
+		return [];
+	}
+	return labelsString.split(",").map((label) => label.trim());
+}

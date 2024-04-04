@@ -21,6 +21,7 @@ const delivery_field_name = "customfield_10702";
 export const CUSTOM_FIELDS = {
 	epicLink: "customfield_10001",
 	epicName: "customfield_10003",
+	labels: "labels",
 };
 
 export const getJiraTimesheet = async (
@@ -41,7 +42,12 @@ export const getJiraTimesheet = async (
 		};
 	}
 
-	const url = `https://jira.udir.no/rest/timesheet-gadget/1.0/raw-timesheet.json?startDate=${fromDate}&endDate=${toDate}&moreFields=${delivery_field_name}&moreFields=${CUSTOM_FIELDS.epicLink}&moreFields=${CUSTOM_FIELDS.epicName}`;
+	const url = buildJiraUrl(fromDate, toDate, [
+		delivery_field_name,
+		CUSTOM_FIELDS.epicLink,
+		CUSTOM_FIELDS.epicName,
+		CUSTOM_FIELDS.labels,
+	]);
 	return axios
 		.get(url, {
 			auth: {
@@ -52,6 +58,20 @@ export const getJiraTimesheet = async (
 		.then((res) => ({ statusCode: 200, body: JSON.stringify(res.data) }))
 		.catch((err: AxiosError) => handleError(err, eventId));
 };
+
+function buildJiraUrl(
+	fromDate: string | undefined,
+	toDate: string | undefined,
+	fields: string[]
+): string {
+	const url = new URL(
+		"https://jira.udir.no/rest/timesheet-gadget/1.0/raw-timesheet.json"
+	);
+	url.searchParams.set("startDate", fromDate ?? "");
+	url.searchParams.set("endDate", toDate ?? "");
+	fields.forEach((field) => url.searchParams.append("moreFields", field));
+	return url.toString();
+}
 
 const handleError = (error: AxiosError, eventId: string): Response => {
 	// error.config.auth holder authorization-headeren som sendes til Jira, inkludert passord i plaintext
