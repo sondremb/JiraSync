@@ -78,11 +78,11 @@ const jiraToTimecodeMap: TimecodeSelector[] = [
 			if (!/HFL.*/.test(jiraIssue.key)) {
 				return false;
 			}
-			const epicName = getEpicName(jiraIssue);
-			if (epicName === undefined) {
+			const epicLink = getEpicLink(jiraIssue);
+			if (epicLink === undefined) {
 				return false;
 			}
-			return /Innsamlingsløsning for årsregnskap/i.test(epicName);
+			return /HFL-6270/.test(epicLink);
 		},
 		timecodeId: UdirBekkIds.HFLInnsamlingsløsning,
 	},
@@ -136,6 +136,10 @@ function getField(
 
 function getEpicName(jiraIssue: Jira.Timecode): string | undefined {
 	return getField(jiraIssue, CUSTOM_FIELDS.epicName);
+}
+
+function getEpicLink(jiraIssue: Jira.Timecode): string | undefined {
+	return getField(jiraIssue, CUSTOM_FIELDS.epicLink);
 }
 
 function getLabels(jiraIssue: Jira.Timecode): string[] {
