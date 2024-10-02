@@ -16,6 +16,7 @@ export enum UdirBekkIds {
 	HFL = 1003011,
 	HSS = 1003012,
 	DIT = 1003026,
+	HFLNy = 1003185,
 }
 
 interface TimecodeSelector {
@@ -99,7 +100,7 @@ const jiraToTimecodeMap: TimecodeSelector[] = [
 		selector: (jiraIssue) => {
 			return /HFL.*/.test(jiraIssue.key);
 		},
-		timecodeId: UdirBekkIds.HFL,
+		timecodeId: UdirBekkIds.HFLNy,
 	},
 	{
 		selector: (jiraIssue) => {
