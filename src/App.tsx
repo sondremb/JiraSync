@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import { WeekAndYear } from "./Utils/dateUtils";
+import { toDateString, WeekAndYear } from "./Utils/dateUtils";
 import { TimeTable } from "./components/TimeTable/TimeTable";
 import {
 	Button,
@@ -50,7 +50,12 @@ export const App: React.FC = () => {
 	};
 
 	const synchronize = () => {
-		if (bekkTimecodes === undefined || entries === undefined) return;
+		if (
+			bekkTimecodes === undefined ||
+			entries === undefined ||
+			lockDate === undefined
+		)
+			return;
 		const udirEntries = entries.filter((entry) =>
 			isUdir(bekkTimecodes[entry.id])
 		);
@@ -61,9 +66,9 @@ export const App: React.FC = () => {
 				id: entry.id,
 			}))
 		);
-		const daysWithDifference = udirDays.filter(
-			(day) => day.bekkHours !== day.totalJiraHours
-		);
+		const daysWithDifference = udirDays
+			.filter((day) => day.bekkHours !== day.totalJiraHours)
+			.filter((day) => day.dateString > toDateString(lockDate));
 		daysWithDifference.forEach((day) =>
 			updateBekkHours({
 				timecodeId: day.id,
