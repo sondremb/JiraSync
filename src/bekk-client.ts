@@ -42,20 +42,13 @@ export const BekkClient = {
 	},
 	updateTimesheet: (params: PutTimesheetParams) => {
 		const employeeId = getEmployeeIdFromToken();
-		const url = `${BASE_URL}/timesheets/employee/${employeeId}`;
-		return axios.put(
-			url,
-			{
-				timecodeId: params.timecodeId,
-				hours: params.hours,
-				date: params.dateString,
-				employeeId,
-				comment: "",
-			},
-			{
-				headers: { authorization: getAuthorizationHeader() },
-			}
-		);
+		const client = createClient(Timesheets);
+		return client.employeeUpdate(employeeId, {
+			timecodeId: params.timecodeId,
+			hours: params.hours,
+			date: params.dateString,
+			comment: "",
+		});
 	},
 	setLockDate: (lockDate: DateString) => {
 		const client = createClient(Timesheets);
