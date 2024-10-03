@@ -4,48 +4,6 @@ type DateString = string;
 type UnixTimestamp = number;
 type Seconds = number;
 
-declare namespace Bekk {
-	interface Employee {
-		divisionId: number;
-		departmentId: number;
-		id: number;
-		name: string;
-		mobilePhone: string;
-		department: string;
-	}
-
-	interface Timecode {
-		id: number;
-		code: string;
-		name: string;
-		billable: boolean;
-		workPerformed: boolean;
-		projectId: number;
-		timecodeCategoryId: number;
-	}
-
-	interface Entry {
-		employeeId: number;
-		comment: string;
-		hours: number;
-		date: DateString;
-		timecodeId: number;
-		billable: boolean;
-		projectId: number;
-	}
-
-	interface TimecodeWithEntries {
-		timecode: Timecode;
-		entries: Entry[];
-	}
-
-	interface DTO {
-		employee: Employee;
-		lockDate: DateString;
-		timecodeTimeEntries: TimecodeWithEntries[];
-	}
-}
-
 declare namespace Jira {
 	interface DTO {
 		startDate: UnixTimestamp;
@@ -80,9 +38,9 @@ declare namespace Jira {
 }
 
 // STATE
-type BekkId = Bekk.Timecode["id"];
+type BekkId = TimecodeViewModelV2DTO["id"];
 type JiraId = Jira.Timecode["key"];
-type BekkTimecode = Pick<Bekk.Timecode, "id" | "code" | "name"> & {
+type BekkTimecode = Pick<TimecodeViewModelV2DTO, "id" | "code" | "name"> & {
 	isUdir: boolean;
 };
 interface JiraTimecode extends Pick<Jira.Timecode, "key" | "summary"> {
@@ -106,7 +64,7 @@ interface BekkTimecodeEntry {
 	days: DateEntryMap;
 }
 
-type BekkTimecodeMap = Record<BekkId, BekkTimecode>;
+type BekkTimecodeMap = Record<BekkId, TimecodeViewModelV2DTO>;
 
 interface State {
 	entries: BekkTimecodeEntry[];
