@@ -20,6 +20,8 @@
 	"author": "Thor Kristian Valderhaug",
 	"license": "ISC",
 	"dependencies": {
+		"@azure/msal-browser": "^3.25.0",
+		"@azure/msal-react": "^2.1.1",
 		"@udir/lisa": "^4.3.0",
 		"@udir/lisa-tokens": "^1.1.0",
 		"@vitejs/plugin-react": "^2.2.0",
