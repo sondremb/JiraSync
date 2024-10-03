@@ -4,20 +4,20 @@ import moment from "moment";
 import "moment/dist/locale/nb";
 import { LisaProvider } from "@udir/lisa";
 import { GlobalStyle } from "./src/global-style";
-import { BekkLogin } from "./src/login/bekk/BekkLogin";
 import { App } from "./src/App";
 import { JiraLogin } from "./src/login/jira/JiraLogin";
+import { BekkEntraLogin } from "./src/login/bekk/example";
 
 moment.locale("nb");
 
 ReactDOM.render(
 	<LisaProvider includeGlobalStyling>
 		<GlobalStyle />
-		<BekkLogin>
+		<BekkEntraLogin>
 			<JiraLogin>
 				<App />
 			</JiraLogin>
-		</BekkLogin>
+		</BekkEntraLogin>
 	</LisaProvider>,
 	document.getElementById("root")
 );
