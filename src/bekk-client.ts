@@ -1,11 +1,8 @@
-import axios, { AxiosResponse } from "axios";
 import { Moment } from "moment";
 import { Timesheets } from "./bekk-api/Timesheets";
-import {
-	getAuthorizationHeader,
-	getEmployeeIdFromToken,
-} from "./login/bekk/token";
-import { Bekk, BekkId, DateString } from "./types";
+import { V3 } from "./bekk-api/V3";
+import { getEmployeeIdFromToken } from "./login/bekk/token";
+import { BekkId, DateString } from "./types";
 import { createClient } from "./Utils/bekkClientUtils";
 import { toDateString } from "./Utils/dateUtils";
 import { isDevelopment } from "./Utils/envUtils";
@@ -31,31 +28,23 @@ export const BASE_URL = isDevelopment()
 	: "https://api.bekk.no/timekeeper-svc";
 
 export const BekkClient = {
-	getData: (params: BekkRequestParams): Promise<AxiosResponse<Bekk.DTO>> => {
+	getData: (params: BekkRequestParams) => {
 		const employeeId = getEmployeeIdFromToken();
-		const url = `${BASE_URL}/v3/timesheets/employees/${employeeId}?from=${toDateString(
-			params.fromDate
-		)}&to=${toDateString(params.toDate)}`;
-		return axios.get(url, {
-			headers: { authorization: getAuthorizationHeader() },
+		const client = createClient(V3);
+		return client.timesheetsEmployeesDetail(employeeId, {
+			From: toDateString(params.fromDate),
+			To: toDateString(params.toDate),
 		});
 	},
 	updateTimesheet: (params: PutTimesheetParams) => {
 		const employeeId = getEmployeeIdFromToken();
-		const url = `${BASE_URL}/timesheets/employee/${employeeId}`;
-		return axios.put(
-			url,
-			{
-				timecodeId: params.timecodeId,
-				hours: params.hours,
-				date: params.dateString,
-				employeeId,
-				comment: "",
-			},
-			{
-				headers: { authorization: getAuthorizationHeader() },
-			}
-		);
+		const client = createClient(Timesheets);
+		return client.employeeUpdate(employeeId, {
+			timecodeId: params.timecodeId,
+			hours: params.hours,
+			date: params.dateString,
+			comment: "",
+		});
 	},
 	setLockDate: (lockDate: DateString) => {
 		const client = createClient(Timesheets);
