@@ -1,3 +1,4 @@
+import { useMsal } from "@azure/msal-react";
 import {
 	Alert,
 	Button,
@@ -20,7 +21,6 @@ import React, { useState } from "react";
 import { P } from "../../components/P";
 import { StatusCode } from "../../jira-client";
 import { JiraCredentials } from "../../jiraCredentials";
-import { getBekkLoginStatus } from "../bekk/useBekkUser";
 
 interface Props {
 	initialCredentials?: JiraCredentials | null;
@@ -45,7 +45,8 @@ export const LoginForm: React.FC<Props> = ({
 		initialCredentials !== null
 	);
 
-	const bekkLoginStatus = getBekkLoginStatus();
+	const { instance } = useMsal();
+	const name = instance.getActiveAccount()?.name;
 	const errorMessage =
 		loginStatus?.status === StatusCode.UNAUTHORIZED_401 ||
 		loginStatus?.status === StatusCode.FORBIDDEN_403
@@ -67,7 +68,7 @@ export const LoginForm: React.FC<Props> = ({
 				margin={{ x: "auto" }}
 			>
 				<H2 textStyle="headline" className="mb-0">
-					Velkommen, {bekkLoginStatus.user?.name}!
+					Velkommen, {name}!
 				</H2>
 				<H3 textStyle="title" className="mb-20">
 					Autentiser mot Jira
