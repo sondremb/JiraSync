@@ -8,11 +8,12 @@ export const LoginStatus: React.FC = () => {
 	const onClick = () => {
 		instance.logoutRedirect();
 	};
+	const navn = instance.getActiveAccount()?.name;
 	return (
 		<FlexRow halign="end">
 			<FixedFlexColumn>
 				<Text textStyle="label">
-					<em>Fornavn Etternavn</em>
+					<em>{navn}</em>
 				</Text>
 				<Link onClick={onClick}>Logg ut</Link>
 			</FixedFlexColumn>
