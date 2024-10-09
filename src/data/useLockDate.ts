@@ -3,14 +3,15 @@ import moment, { Moment } from "moment";
 import useSWR from "swr";
 import { Timesheets } from "../bekk-api/Timesheets";
 import { useBekkClient } from "../bekk-client";
-import { getEmployeeIdFromToken } from "../login/bekk/token";
+import { useEmployeeId } from "../login/bekk/example2";
 import { useClient } from "../Utils/bekkClientUtils";
 import { toDateString } from "../Utils/dateUtils";
 
 export const useLockDate = () => {
 	const client = useClient(Timesheets);
+	const employeeId = useEmployeeId();
 	const { data, mutate, error } = useSWR("lockdate", () =>
-		client.lockdatesDetail(getEmployeeIdFromToken())
+		client.lockdatesDetail(employeeId)
 	);
 	const showNotification = useNotification();
 

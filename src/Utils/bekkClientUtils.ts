@@ -24,7 +24,6 @@ export function useClientFactory() {
 		return new ClientClass({
 			baseUrl: BASE_URL,
 			securityWorker: async () => {
-
 				return {
 					headers: { Authorization: `Bearer ${await getAccessToken()}` },
 				};

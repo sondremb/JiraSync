@@ -1,7 +1,7 @@
 import { Moment } from "moment";
 import { Timesheets } from "./bekk-api/Timesheets";
 import { V3 } from "./bekk-api/V3";
-import { getEmployeeIdFromToken } from "./login/bekk/token";
+import { useEmployeeId } from "./login/bekk/example2";
 import { BekkId, DateString } from "./types";
 import { useClientFactory } from "./Utils/bekkClientUtils";
 import { toDateString } from "./Utils/dateUtils";
@@ -29,9 +29,9 @@ export const BASE_URL = isDevelopment()
 
 export const useBekkClient = () => {
 	const createClient = useClientFactory();
+	const employeeId = useEmployeeId();
 	return {
 		getData: (params: BekkRequestParams) => {
-			const employeeId = getEmployeeIdFromToken();
 			const client = createClient(V3);
 			return client.timesheetsEmployeesDetail(employeeId, {
 				From: toDateString(params.fromDate),
@@ -39,7 +39,6 @@ export const useBekkClient = () => {
 			});
 		},
 		updateTimesheet: (params: PutTimesheetParams) => {
-			const employeeId = getEmployeeIdFromToken();
 			const client = createClient(Timesheets);
 			return client.employeeUpdate(employeeId, {
 				timecodeId: params.timecodeId,
@@ -51,7 +50,7 @@ export const useBekkClient = () => {
 		setLockDate: (lockDate: DateString) => {
 			const client = createClient(Timesheets);
 			return client.lockhoursUpdate({
-				employeeId: getEmployeeIdFromToken(),
+				employeeId,
 				lockDate,
 			});
 		},

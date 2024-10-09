@@ -1,7 +1,7 @@
 import useSWRImmutable from "swr/immutable";
 import { TimecodeEssentialsDTO } from "../bekk-api/data-contracts";
 import { Timecodeaccesses } from "../bekk-api/Timecodeaccesses";
-import { getEmployeeIdFromToken } from "../login/bekk/token";
+import { useEmployeeId } from "../login/bekk/example2";
 import { useClient } from "../Utils/bekkClientUtils";
 
 type BekkTimecodeRecord = Record<
@@ -11,8 +11,9 @@ type BekkTimecodeRecord = Record<
 
 export const useBekkTimecodes = () => {
 	const client = useClient(Timecodeaccesses);
+	const employeeId = useEmployeeId();
 	const { data } = useSWRImmutable("bekk-timecodes", () =>
-		client.employeeDetail(getEmployeeIdFromToken())
+		client.employeeDetail(employeeId)
 	);
 	// TODO error handling
 

@@ -124,14 +124,6 @@ export function getToken(): Token | null {
 	return parseToken(tokenString);
 }
 
-export function getEmployeeIdFromToken() {
-	return 1545;
-	if (!isAuthenticated) {
-		throw new Error("Brukeren er ikke autentisert");
-	}
-	return parseToken(getIdToken()!)["https://api.bekk.no/claims/employeeId"];
-}
-
 export function isAuthenticated(): boolean {
 	const userToken = getToken();
 	if (userToken) {
