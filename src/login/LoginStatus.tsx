@@ -2,10 +2,12 @@ import { useMsal } from "@azure/msal-react";
 import { FlexColumn, FlexRow, Link, Pictogram, Text } from "@udir/lisa";
 import React from "react";
 import styled from "styled-components";
+import { clearJiraCredentials } from "../jiraCredentials";
 
 export const LoginStatus: React.FC = () => {
 	const { instance } = useMsal();
 	const onClick = () => {
+		clearJiraCredentials();
 		instance.logoutRedirect();
 	};
 	const navn = instance.getActiveAccount()?.name;
