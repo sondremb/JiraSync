@@ -2,22 +2,24 @@ import { useNotification } from "@udir/lisa";
 import moment, { Moment } from "moment";
 import useSWR from "swr";
 import { Timesheets } from "../bekk-api/Timesheets";
-import { BekkClient } from "../bekk-client";
+import { useBekkClient } from "../bekk-client";
 import { getEmployeeIdFromToken } from "../login/bekk/token";
-import { createClient } from "../Utils/bekkClientUtils";
+import { useClient } from "../Utils/bekkClientUtils";
 import { toDateString } from "../Utils/dateUtils";
 
 export const useLockDate = () => {
-	const client = createClient(Timesheets);
+	const client = useClient(Timesheets);
 	const { data, mutate, error } = useSWR("lockdate", () =>
 		client.lockdatesDetail(getEmployeeIdFromToken())
 	);
 	const showNotification = useNotification();
 
+	const bekkClient = useBekkClient();
 	const updateLockDate = (lockDate: Moment) =>
 		mutate(async (old) => {
 			const lockDateAsString = toDateString(lockDate);
-			await BekkClient.setLockDate(lockDateAsString)
+			await bekkClient
+				.setLockDate(lockDateAsString)
 				.then(() =>
 					showNotification({
 						type: "success",

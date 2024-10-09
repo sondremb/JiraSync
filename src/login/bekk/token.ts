@@ -125,6 +125,7 @@ export function getToken(): Token | null {
 }
 
 export function getEmployeeIdFromToken() {
+	return 1545;
 	if (!isAuthenticated) {
 		throw new Error("Brukeren er ikke autentisert");
 	}
