@@ -1,12 +1,12 @@
 import { useMsal } from "@azure/msal-react";
-import { scope } from "./example";
+import { config } from "../../Utils/envUtils";
 
 // Hente access token for prating med Bekk-apier
 export const useGetAccessToken = (): (() => Promise<string>) => {
 	const msalContext = useMsal();
 	return () =>
 		msalContext.instance
-			.acquireTokenSilent({ scopes: [scope] })
+			.acquireTokenSilent({ scopes: [config.bekk.scope] })
 			.then((res) => res.accessToken);
 };
 
@@ -14,7 +14,7 @@ export const useGetAccessToken = (): (() => Promise<string>) => {
 export const useAccessToken = (): Promise<string> => {
 	const msalContext = useMsal();
 	return msalContext.instance
-		.acquireTokenSilent({ scopes: [scope] })
+		.acquireTokenSilent({ scopes: [config.bekk.scope] })
 		.then((res) => res.accessToken);
 };
 

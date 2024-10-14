@@ -5,7 +5,6 @@ import { useEmployeeId } from "./login/bekk/example2";
 import { BekkId, DateString } from "./types";
 import { useClientFactory } from "./Utils/bekkClientUtils";
 import { toDateString } from "./Utils/dateUtils";
-import { isDevelopment } from "./Utils/envUtils";
 
 export interface BekkRequestParams {
 	fromDate: Moment;
@@ -22,10 +21,6 @@ export interface GetLockdateReturn {
 	employeeId: number;
 	lockDate: DateString;
 }
-
-export const BASE_URL = isDevelopment()
-	? "https://api.bekk.dev/timekeeper-svc"
-	: "https://api.bekk.no/timekeeper-svc";
 
 export const useBekkClient = () => {
 	const createClient = useClientFactory();

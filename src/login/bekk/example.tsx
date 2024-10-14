@@ -7,16 +7,13 @@ import {
 } from "@azure/msal-browser";
 import { MsalProvider, MsalAuthenticationTemplate } from "@azure/msal-react";
 import React from "react";
-
-const tenantId = "lol";
-const clientId = "nope";
-const scope = "sekurity 🧠";
+import { config } from "../../Utils/envUtils";
 
 // Konfigurer og opprett MSAL-instans
 export const msalInstance = new PublicClientApplication({
 	auth: {
-		clientId,
-		authority: `https://login.microsoftonline.com/${tenantId}`,
+		clientId: config.bekk.clientId,
+		authority: `https://login.microsoftonline.com/${config.bekk.tenantId}`,
 	},
 	cache: {
 		cacheLocation: BrowserCacheLocation.LocalStorage,
@@ -45,7 +42,7 @@ export const BekkEntraLogin = ({ children }: React.PropsWithChildren<{}>) => {
 
 	// Scope er kun nødvendig dersom appen prater med Bekk-apier
 	const authRequest = {
-		scopes: [scope],
+		scopes: [config.bekk.scope],
 	};
 
 	return (

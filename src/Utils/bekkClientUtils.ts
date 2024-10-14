@@ -1,6 +1,6 @@
 import { ApiConfig, HttpClient } from "../bekk-api/http-client";
-import { BASE_URL } from "../bekk-client";
 import { useGetAccessToken } from "../login/bekk/example2";
+import { config } from "./envUtils";
 
 type ClientConstructor<T extends HttpClient> = new (config: ApiConfig) => T;
 
@@ -9,7 +9,7 @@ export function useClient<T extends HttpClient>(
 ): T {
 	const getAccessToken = useGetAccessToken();
 	return new ClientClass({
-		baseUrl: BASE_URL,
+		baseUrl: config.bekk.baseUrl,
 		securityWorker: async () => ({
 			headers: { Authorization: `Bearer ${await getAccessToken()}` },
 		}),
@@ -22,7 +22,7 @@ export function useClientFactory() {
 		ClientClass: ClientConstructor<T>
 	): T {
 		return new ClientClass({
-			baseUrl: BASE_URL,
+			baseUrl: config.bekk.baseUrl,
 			securityWorker: async () => {
 				return {
 					headers: { Authorization: `Bearer ${await getAccessToken()}` },
