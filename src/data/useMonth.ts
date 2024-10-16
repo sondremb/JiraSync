@@ -1,6 +1,6 @@
 import moment from "moment";
 import useSWR from "swr";
-import { BekkClient, PutTimesheetParams } from "../bekk-client";
+import { useBekkClient, PutTimesheetParams } from "../bekk-client";
 import { NetlifyClient } from "../netlify-client";
 import { MonthAndYear } from "../Utils/dateUtils";
 import { updateEntries } from "../Utils/stateUtils";
@@ -15,10 +15,11 @@ export const useMonth = (monthAndYear: MonthAndYear) => {
 			})
 	);
 
+	const bekkClient = useBekkClient();
 	const { data: bekkData, mutate: mutateBekkData } = useSWR(
 		`bekk/month/${monthAndYear.year}/${monthAndYear.month}`,
 		() =>
-			BekkClient.getData({
+			bekkClient.getData({
 				fromDate: monthAndYear.startOfFirstWeek(),
 				toDate: monthAndYear.endOfLastWeek(),
 			})
@@ -31,7 +32,7 @@ export const useMonth = (monthAndYear: MonthAndYear) => {
 
 	const updateBekkHours = (params: PutTimesheetParams) =>
 		mutateBekkData(async (old) => {
-			await BekkClient.updateTimesheet(params);
+			await bekkClient.updateTimesheet(params);
 			return old;
 		});
 
