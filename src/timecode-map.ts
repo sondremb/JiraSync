@@ -1,4 +1,3 @@
-import { TimecodeEssentialsDTO } from "./bekk-api/data-contracts";
 import { CUSTOM_FIELDS } from "./jira-client";
 import { BekkId, Jira } from "./types";
 
