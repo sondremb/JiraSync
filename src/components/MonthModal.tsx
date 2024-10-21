@@ -40,7 +40,7 @@ export const MonthModal: React.FC = () => {
 		return state.every((entry) => {
 			const entryDay = entry.days[dateString];
 			return (
-				!isUdir(bekkTimecodes[entry.id]) ||
+				!isUdir(entry.id) ||
 				entryDay === undefined ||
 				entryDay.bekkHours === entryDay.totalJiraHours
 			);

@@ -56,9 +56,7 @@ export const App: React.FC = () => {
 			lockDate === undefined
 		)
 			return;
-		const udirEntries = entries.filter((entry) =>
-			isUdir(bekkTimecodes[entry.id])
-		);
+		const udirEntries = entries.filter((entry) => isUdir(entry.id));
 		const udirDays = udirEntries.flatMap((entry) =>
 			Object.entries(entry.days).map(([dateString, day]) => ({
 				...day,

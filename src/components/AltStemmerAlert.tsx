@@ -15,7 +15,7 @@ export const AltStemmerAlert: React.FC<Props> = (props) => {
 	if (props.entries === undefined || bekkTimecodes === undefined) return null;
 
 	const timecodeAllGood = (timecode: BekkTimecodeEntry) =>
-		!isUdir(bekkTimecodes[timecode.id]) ||
+		!isUdir(timecode.id) ||
 		Object.values(timecode.days).every(
 			(day) => day.bekkHours === day.totalJiraHours
 		);

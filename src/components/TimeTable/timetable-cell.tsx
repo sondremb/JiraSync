@@ -92,8 +92,8 @@ export const TimetableCell: React.FC<Props> = (props) => {
 			if (bekkTimecodes === undefined) return null;
 			const timecode = bekkTimecodes[entry.id];
 			const correct =
-				!isUdir(timecode) || day?.bekkHours === day?.totalJiraHours;
-			const jiraHours = day?.totalJiraHours || (isUdir(timecode) ? 0 : "");
+				!isUdir(timecode.id) || day?.bekkHours === day?.totalJiraHours;
+			const jiraHours = day?.totalJiraHours || (isUdir(timecode.id) ? 0 : "");
 			return (
 				<ContainerDiv fontSize={24} bold={!correct} correct={correct} border>
 					{day !== undefined &&

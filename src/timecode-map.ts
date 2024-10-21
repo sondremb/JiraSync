@@ -119,8 +119,8 @@ export const bekkIdFromJiraTimecode = (jiraIssue: Jira.Timecode) => {
 	return -1;
 };
 
-export const isUdir = (timecode: TimecodeEssentialsDTO): boolean =>
-	timecode.id !== undefined && timecode.id in UdirBekkIds;
+export const isUdir = (timecodeId: number | undefined): boolean =>
+	timecodeId !== undefined && timecodeId in UdirBekkIds;
 
 function getField(
 	jiraIssue: Jira.Timecode,

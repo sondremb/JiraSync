@@ -71,8 +71,8 @@ export const TimeTable: React.FC<Props> = (props) => {
 		a: BekkTimecodeEntry,
 		b: BekkTimecodeEntry
 	): number => {
-		const isAUdir = isUdir(bekkTimecodes[a.id]);
-		const isBUdir = isUdir(bekkTimecodes[b.id]);
+		const isAUdir = isUdir(a.id);
+		const isBUdir = isUdir(b.id);
 		if (isAUdir && !isBUdir) return -1;
 		if (!isAUdir && isBUdir) return 1;
 		return 0;
@@ -94,7 +94,7 @@ export const TimeTable: React.FC<Props> = (props) => {
 	const dayAllGood = (day: Moment) => {
 		const dateString = toDateString(day);
 		return props.entries.every((entry) => {
-			if (!isUdir(bekkTimecodes[entry.id])) {
+			if (!isUdir(entry.id)) {
 				return true;
 			}
 			const entryDay = entry.days[dateString];
