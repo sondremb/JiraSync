@@ -82,7 +82,9 @@ const jiraToTimecodeMap: TimecodeSelector[] = [
 			if (epicLink === undefined) {
 				return false;
 			}
-			return /HFL-6270/.test(epicLink);
+			if (/HFL-6270/.test(epicLink)) return true;
+			if (/HFL-6244/.test(epicLink)) return true;
+			return false;
 		},
 		timecodeId: UdirBekkIds.HFLInnsamlingsløsning,
 	},
