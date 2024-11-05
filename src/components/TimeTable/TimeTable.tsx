@@ -61,7 +61,7 @@ export const TimeTable: React.FC<Props> = (props) => {
 	): number => {
 		const timecodeA = bekkTimecodes[a.id];
 		const timecodeB = bekkTimecodes[b.id];
-		if (!!timecodeA.code && !!timecodeB.code) {
+		if (!!timecodeA?.code && !!timecodeB?.code) {
 			return timecodeA.code?.localeCompare(timecodeB.code);
 		}
 		return 0;
