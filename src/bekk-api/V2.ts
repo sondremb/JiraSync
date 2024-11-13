@@ -9,34 +9,10 @@
  * ---------------------------------------------------------------
  */
 
-import { TimecodeViewModelV3DTO, TimesheetViewModelDTO } from "./data-contracts";
+import { TimesheetViewModelDTO } from "./data-contracts";
 import { HttpClient, RequestParams } from "./http-client";
 
 export class V2<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
-	/**
-	 * No description
-	 *
-	 * @tags Timecode
-	 * @name TimecodesList
-	 * @request GET:/v2/timecodes
-	 * @secure
-	 */
-	timecodesList = (
-		query?: {
-			/** @format int32 */
-			ProjectId?: number;
-			Fields?: string;
-		},
-		params: RequestParams = {},
-	) =>
-		this.request<TimecodeViewModelV3DTO[], any>({
-			path: `/v2/timecodes`,
-			method: "GET",
-			query: query,
-			secure: true,
-			format: "json",
-			...params,
-		});
 	/**
 	 * No description
 	 *
