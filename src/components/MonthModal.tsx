@@ -20,7 +20,6 @@ import {
 } from "@udir/lisa-tokens";
 import { Moment } from "moment";
 import { FrivilligKompetanseByggingId, isUdir } from "../timecode-map";
-import { useBekkTimecodes } from "../data/useBekkTimecodes";
 import { useLockDate } from "../data/useLockDate";
 import styled, { css } from "styled-components";
 import { DateString } from "../types";
@@ -31,11 +30,10 @@ export const MonthModal: React.FC = () => {
 		MonthAndYear.now()
 	);
 	const { state } = useMonth(monthAndYear);
-	const { bekkTimecodes } = useBekkTimecodes();
 	const { lockDate } = useLockDate();
 
 	const dayAllGood = (day: Moment): boolean => {
-		if (state === undefined || bekkTimecodes === undefined) return true;
+		if (state === undefined) return true;
 		const dateString = toDateString(day);
 		return state.every((entry) => {
 			const entryDay = entry.days[dateString];
@@ -48,7 +46,7 @@ export const MonthModal: React.FC = () => {
 	};
 
 	const sumForDay = (day: Moment): number => {
-		if (state === undefined || bekkTimecodes === undefined) return 0;
+		if (state === undefined) return 0;
 		const dateString: DateString = toDateString(day);
 		return state.reduce((prev, entry) => {
 			const entryDay = entry.days[dateString];
