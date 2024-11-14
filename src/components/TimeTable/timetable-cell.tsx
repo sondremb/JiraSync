@@ -5,7 +5,6 @@ import { Row } from "./TimeTable";
 import { Moment } from "moment";
 import { toDateString } from "../../Utils/dateUtils";
 import { FrivilligKompetanseByggingId, isUdir } from "../../timecode-map";
-import { useBekkTimecodes } from "../../data/useBekkTimecodes";
 import {
 	colors,
 	ColorType,
@@ -15,6 +14,9 @@ import {
 	Weight,
 } from "@udir/lisa-tokens";
 import { LockDateButton } from "./LockDateButton";
+import { useBekkTimecode } from "../../data/useBekkTimecode";
+import { BekkTimecodeEntry, DateString } from "../../types";
+import { SkeletonLoader } from "../SkeletonLoader";
 
 const CustomText = styled.div<{
 	fontSize?: number;
@@ -66,7 +68,6 @@ interface Props {
 }
 
 export const TimetableCell: React.FC<Props> = (props) => {
-	const { bekkTimecodes } = useBekkTimecodes();
 	const dateString = toDateString(props.day);
 	switch (props.row.kind) {
 		case "lock":
@@ -87,40 +88,68 @@ export const TimetableCell: React.FC<Props> = (props) => {
 				</OtherDiv>
 			);
 		case "entry":
-			const entry = props.row.entry;
-			const day = entry.days[dateString];
-			if (bekkTimecodes === undefined) return null;
-			const timecode = bekkTimecodes[entry.id];
-			const correct =
-				!isUdir(timecode.id) || day?.bekkHours === day?.totalJiraHours;
-			const jiraHours = day?.totalJiraHours || (isUdir(timecode.id) ? 0 : "");
-			return (
-				<ContainerDiv fontSize={24} bold={!correct} correct={correct} border>
-					{day !== undefined &&
-						(day.bekkHours !== 0 || day.totalJiraHours !== 0) && (
-							<>
-								{day.bekkHours}
-								<CornerDiv correct={correct} fontSize={14} bold={!correct}>
-									{jiraHours}
-								</CornerDiv>
-							</>
-						)}
-				</ContainerDiv>
-			);
+			return <EntryCell entry={props.row.entry} dateString={dateString} />;
 	}
 };
 
+const EntryCell: React.FC<{
+	entry: BekkTimecodeEntry;
+	dateString: DateString;
+}> = ({ entry, dateString }) => {
+	const timecode = useBekkTimecode(entry.id);
+	if (timecode === undefined) return null;
+	const day = entry.days[dateString];
+
+	const correct =
+		!isUdir(timecode.id) || day?.bekkHours === day?.totalJiraHours;
+	const jiraHours = day?.totalJiraHours || (isUdir(timecode.id) ? 0 : "");
+	return (
+		<ContainerDiv fontSize={24} bold={!correct} correct={correct} border>
+			{day !== undefined && (day.bekkHours !== 0 || day.totalJiraHours !== 0) && (
+				<>
+					{day.bekkHours}
+					<CornerDiv correct={correct} fontSize={14} bold={!correct}>
+						{jiraHours}
+					</CornerDiv>
+				</>
+			)}
+		</ContainerDiv>
+	);
+};
+
 export const FirstColumnCell: React.FC<{ row: Row }> = ({ row }) => {
-	const { bekkTimecodes } = useBekkTimecodes();
-	if (bekkTimecodes === undefined) return null;
-	if (row.kind === "sum")
+	switch (row.kind) {
+		case "sum":
+			return (
+				<CustomText fontSize={20} bold textColor={"grå100"}>
+					Totalt
+				</CustomText>
+			);
+		case "lock":
+			return <></>;
+		case "entry":
+			return <TimeCodeCell entry={row.entry} />;
+	}
+};
+
+const TimeCodeCell: React.FC<{ entry: BekkTimecodeEntry }> = ({ entry }) => {
+	const timecode = useBekkTimecode(entry.id);
+	if (timecode === undefined) {
 		return (
-			<CustomText fontSize={20} bold textColor={"grå100"}>
-				Totalt
-			</CustomText>
+			<div
+				style={{
+					display: "flex",
+					flexDirection: "column",
+					alignItems: "flex-start",
+				}}
+			>
+				<SkeletonLoader>TEST1001</SkeletonLoader>
+				<SkeletonLoader textStyle="label">
+					Timekoden lastes - Laster nå
+				</SkeletonLoader>
+			</div>
 		);
-	if (row.kind === "lock") return <></>;
-	const timecode = bekkTimecodes[row.entry.id];
+	}
 	return (
 		<FlexColumn>
 			<Text>{timecode.code}</Text>

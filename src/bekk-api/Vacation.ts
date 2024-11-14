@@ -9,8 +9,8 @@
  * ---------------------------------------------------------------
  */
 
-import { VacationModelDTO } from "./data-contracts";
-import { HttpClient, RequestParams } from "./http-client";
+import { ImportVacationViewModelDTO, VacationViewModelDTO } from "./data-contracts";
+import { ContentType, HttpClient, RequestParams } from "./http-client";
 
 export class Vacation<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
 	/**
@@ -24,18 +24,69 @@ export class Vacation<SecurityDataType = unknown> extends HttpClient<SecurityDat
 	vacationDetail = (
 		employeeId: number,
 		query?: {
-			/** @format date-time */
-			startDate?: string;
-			/** @format date-time */
-			endDate?: string;
+			/** @format int32 */
+			year?: number;
 		},
 		params: RequestParams = {},
 	) =>
-		this.request<VacationModelDTO, any>({
+		this.request<VacationViewModelDTO, any>({
 			path: `/vacation/${employeeId}`,
 			method: "GET",
 			query: query,
 			secure: true,
+			format: "json",
+			...params,
+		});
+	/**
+	 * No description
+	 *
+	 * @tags Vacation
+	 * @name VacationList
+	 * @request GET:/vacation
+	 * @secure
+	 */
+	vacationList = (
+		query?: {
+			/** @format int32 */
+			year?: number;
+		},
+		params: RequestParams = {},
+	) =>
+		this.request<VacationViewModelDTO[], any>({
+			path: `/vacation`,
+			method: "GET",
+			query: query,
+			secure: true,
+			format: "json",
+			...params,
+		});
+	/**
+	 * No description
+	 *
+	 * @tags Vacation
+	 * @name ImportPartialUpdate
+	 * @request PATCH:/vacation/import
+	 * @secure
+	 */
+	importPartialUpdate = (
+		data: {
+			"excel-files"?: File[];
+		},
+		query?: {
+			/** @default true */
+			"dry-run"?: boolean;
+			/** @default true */
+			"return-diff"?: boolean;
+		},
+		params: RequestParams = {},
+	) =>
+		this.request<ImportVacationViewModelDTO[], any>({
+			path: `/vacation/import`,
+			method: "PATCH",
+			query: query,
+			body: data,
+			secure: true,
+			type: ContentType.FormData,
 			format: "json",
 			...params,
 		});

@@ -9,31 +9,32 @@
  * ---------------------------------------------------------------
  */
 
+import { MessageResultDTO } from "./data-contracts";
 import { HttpClient, RequestParams } from "./http-client";
 
-export class Lunchdeductions<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
+export class Lockhours<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
 	/**
 	 * No description
 	 *
-	 * @tags LunchDeduction
-	 * @name LunchdeductionsList
-	 * @request GET:/lunchdeductions
+	 * @tags TimesheetLock
+	 * @name SmsReminderCreate
+	 * @request POST:/lockhours/sms-reminder
 	 * @secure
 	 */
-	lunchdeductionsList = (
-		query: {
-			/** @format date-time */
-			From: string;
-			/** @format date-time */
-			To: string;
+	smsReminderCreate = (
+		query?: {
+			period?: string;
+			/** @default true */
+			dryRun?: boolean;
 		},
 		params: RequestParams = {},
 	) =>
-		this.request<void, any>({
-			path: `/lunchdeductions`,
-			method: "GET",
+		this.request<MessageResultDTO, any>({
+			path: `/lockhours/sms-reminder`,
+			method: "POST",
 			query: query,
 			secure: true,
+			format: "json",
 			...params,
 		});
 }

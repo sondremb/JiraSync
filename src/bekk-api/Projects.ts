@@ -16,7 +16,7 @@ export class Projects<SecurityDataType = unknown> extends HttpClient<SecurityDat
 	/**
 	 * No description
 	 *
-	 * @tags LockHours
+	 * @tags TimesheetLock
 	 * @name LockStatusCreate
 	 * @request POST:/projects/lock-status
 	 * @secure
@@ -44,7 +44,7 @@ export class Projects<SecurityDataType = unknown> extends HttpClient<SecurityDat
 	/**
 	 * No description
 	 *
-	 * @tags LockHours
+	 * @tags TimesheetLock
 	 * @name LockhoursDetail
 	 * @request GET:/projects/{projectId}/lockhours
 	 * @secure

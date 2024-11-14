@@ -14,10 +14,36 @@ import {
 	EmployeeTimesheetViewModelDTO,
 	TimecodeTimesheetsWrapperDTO,
 	TimecodeTimesheetViewModelDTO,
+	TimecodeViewModelV3DTO,
 } from "./data-contracts";
 import { HttpClient, RequestParams } from "./http-client";
 
 export class V3<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
+	/**
+	 * No description
+	 *
+	 * @tags Timecode
+	 * @name TimecodesList
+	 * @request GET:/v3/timecodes
+	 * @secure
+	 */
+	timecodesList = (
+		query?: {
+			/** @format int32 */
+			ProjectId?: number;
+			Fields?: string;
+			Ids?: number[];
+		},
+		params: RequestParams = {},
+	) =>
+		this.request<TimecodeViewModelV3DTO[], any>({
+			path: `/v3/timecodes`,
+			method: "GET",
+			query: query,
+			secure: true,
+			format: "json",
+			...params,
+		});
 	/**
 	 * No description
 	 *

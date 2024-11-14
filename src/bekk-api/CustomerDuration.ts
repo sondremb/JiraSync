@@ -29,19 +29,4 @@ export class CustomerDuration<SecurityDataType = unknown> extends HttpClient<Sec
 			format: "json",
 			...params,
 		});
-	/**
-	 * No description
-	 *
-	 * @tags CustomerDuration
-	 * @name RenewCacheList
-	 * @request GET:/customer-duration/renew-cache
-	 * @secure
-	 */
-	renewCacheList = (params: RequestParams = {}) =>
-		this.request<void, any>({
-			path: `/customer-duration/renew-cache`,
-			method: "GET",
-			secure: true,
-			...params,
-		});
 }

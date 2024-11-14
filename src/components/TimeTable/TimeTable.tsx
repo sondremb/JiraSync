@@ -2,7 +2,6 @@ import { ConfirmModal, FlexColumn, Table, Text } from "@udir/lisa";
 import { Moment } from "moment";
 import React, { useState } from "react";
 import styled from "styled-components";
-import { useBekkTimecodes } from "../../data/useBekkTimecodes";
 import { useLockDate } from "../../data/useLockDate";
 import { isUdir } from "../../timecode-map";
 import { BekkTimecodeEntry } from "../../types";
@@ -38,11 +37,10 @@ export type Row =
 	  };
 
 export const TimeTable: React.FC<Props> = (props) => {
-	const { bekkTimecodes } = useBekkTimecodes();
 	const { lockDate, updateLockDate } = useLockDate();
 	const [dateToLock, setDateToLock] = useState<Moment | undefined>();
 
-	if (bekkTimecodes === undefined || lockDate === undefined) return null;
+	if (lockDate === undefined) return null;
 
 	const dateHeader = (date: Moment) => {
 		return (
@@ -53,18 +51,6 @@ export const TimeTable: React.FC<Props> = (props) => {
 				</CapitalText>
 			</FlexColumn>
 		);
-	};
-
-	const compareTimecodesByCode = (
-		a: BekkTimecodeEntry,
-		b: BekkTimecodeEntry
-	): number => {
-		const timecodeA = bekkTimecodes[a.id];
-		const timecodeB = bekkTimecodes[b.id];
-		if (!!timecodeA?.code && !!timecodeB?.code) {
-			return timecodeA.code?.localeCompare(timecodeB.code);
-		}
-		return 0;
 	};
 
 	const compareTimecodesByUdir = (
@@ -78,11 +64,8 @@ export const TimeTable: React.FC<Props> = (props) => {
 		return 0;
 	};
 
-	// Todelt sortering:
-	//  1. Udir-timekoder først
-	//  2. Alfabetisk på timekode
+	// TODO: hadde vært digg å få inn alfabetisk sortering igjen
 	const rows: Row[] = props.entries
-		.sort(compareTimecodesByCode)
 		.sort(compareTimecodesByUdir)
 		.map((entry) => ({ kind: "entry", entry }));
 	const items: Row[] = [

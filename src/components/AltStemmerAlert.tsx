@@ -1,7 +1,6 @@
 import React from "react";
 import { Alert, Button, FlexRow } from "@udir/lisa";
 import { BekkTimecodeEntry } from "../types";
-import { useBekkTimecodes } from "../data/useBekkTimecodes";
 import { isUdir } from "../timecode-map";
 
 interface Props {
@@ -10,9 +9,7 @@ interface Props {
 }
 
 export const AltStemmerAlert: React.FC<Props> = (props) => {
-	const { bekkTimecodes } = useBekkTimecodes();
-
-	if (props.entries === undefined || bekkTimecodes === undefined) return null;
+	if (props.entries === undefined) return null;
 
 	const timecodeAllGood = (timecode: BekkTimecodeEntry) =>
 		!isUdir(timecode.id) ||

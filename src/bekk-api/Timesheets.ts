@@ -10,6 +10,7 @@
  */
 
 import {
+	TimeEntryValidationModelDTO,
 	TimeEntryViewModelDTO,
 	TimeEntryWriteModelDTO,
 	TimesheetLockDateViewModelDTO,
@@ -22,30 +23,12 @@ export class Timesheets<SecurityDataType = unknown> extends HttpClient<SecurityD
 	 * No description
 	 *
 	 * @tags Timesheets
-	 * @name TimeentriesUpdate
-	 * @request PUT:/timesheets/timeentries/{employeeId}
-	 * @deprecated
-	 * @secure
-	 */
-	timeentriesUpdate = (employeeId: number, data: TimeEntryWriteModelDTO[], params: RequestParams = {}) =>
-		this.request<void, any>({
-			path: `/timesheets/timeentries/${employeeId}`,
-			method: "PUT",
-			body: data,
-			secure: true,
-			type: ContentType.Json,
-			...params,
-		});
-	/**
-	 * No description
-	 *
-	 * @tags Timesheets
 	 * @name EmployeeUpdate
 	 * @request PUT:/timesheets/employee/{employeeId}
 	 * @secure
 	 */
 	employeeUpdate = (employeeId: number, data: TimeEntryWriteModelDTO, params: RequestParams = {}) =>
-		this.request<TimeEntryViewModelDTO, any>({
+		this.request<TimeEntryValidationModelDTO, any>({
 			path: `/timesheets/employee/${employeeId}`,
 			method: "PUT",
 			body: data,
@@ -161,23 +144,6 @@ export class Timesheets<SecurityDataType = unknown> extends HttpClient<SecurityD
 	 * No description
 	 *
 	 * @tags Timesheets
-	 * @name LockdateDetail
-	 * @request GET:/timesheets/lockdate/{employeeId}
-	 * @deprecated
-	 * @secure
-	 */
-	lockdateDetail = (employeeId: number, params: RequestParams = {}) =>
-		this.request<TimesheetLockViewModelDTO, any>({
-			path: `/timesheets/lockdate/${employeeId}`,
-			method: "GET",
-			secure: true,
-			format: "json",
-			...params,
-		});
-	/**
-	 * No description
-	 *
-	 * @tags Timesheets
 	 * @name CustomersDetail
 	 * @request GET:/timesheets/customers/{customerId}
 	 * @deprecated
@@ -205,33 +171,6 @@ export class Timesheets<SecurityDataType = unknown> extends HttpClient<SecurityD
 	 * No description
 	 *
 	 * @tags Timesheets
-	 * @name EmployeesDetail
-	 * @request GET:/timesheets/employees/{employeeId}
-	 * @deprecated
-	 * @secure
-	 */
-	employeesDetail = (
-		employeeId: number,
-		query?: {
-			/** @format date-time */
-			from?: string;
-			/** @format date-time */
-			to?: string;
-		},
-		params: RequestParams = {},
-	) =>
-		this.request<TimeEntryViewModelDTO[], any>({
-			path: `/timesheets/employees/${employeeId}`,
-			method: "GET",
-			query: query,
-			secure: true,
-			format: "json",
-			...params,
-		});
-	/**
-	 * No description
-	 *
-	 * @tags Timesheets
 	 * @name ProjectsDetail
 	 * @request GET:/timesheets/projects/{projectId}
 	 * @deprecated
@@ -249,58 +188,6 @@ export class Timesheets<SecurityDataType = unknown> extends HttpClient<SecurityD
 	) =>
 		this.request<TimeEntryViewModelDTO[], any>({
 			path: `/timesheets/projects/${projectId}`,
-			method: "GET",
-			query: query,
-			secure: true,
-			format: "json",
-			...params,
-		});
-	/**
-	 * No description
-	 *
-	 * @tags Timesheets
-	 * @name GetTimesheets
-	 * @request GET:/timesheets/me
-	 * @deprecated
-	 * @secure
-	 */
-	getTimesheets = (
-		query?: {
-			/** @format date-time */
-			from?: string;
-			/** @format date-time */
-			to?: string;
-		},
-		params: RequestParams = {},
-	) =>
-		this.request<TimeEntryViewModelDTO[], any>({
-			path: `/timesheets/me`,
-			method: "GET",
-			query: query,
-			secure: true,
-			format: "json",
-			...params,
-		});
-	/**
-	 * No description
-	 *
-	 * @tags Timesheets
-	 * @name OvertimeDetail
-	 * @request GET:/timesheets/overtime/{employeeId}
-	 * @secure
-	 */
-	overtimeDetail = (
-		employeeId: number,
-		query?: {
-			/** @format date-time */
-			from?: string;
-			/** @format date-time */
-			to?: string;
-		},
-		params: RequestParams = {},
-	) =>
-		this.request<number, any>({
-			path: `/timesheets/overtime/${employeeId}`,
 			method: "GET",
 			query: query,
 			secure: true,

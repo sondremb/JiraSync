@@ -79,22 +79,6 @@ export class Timecodes<SecurityDataType = unknown> extends HttpClient<SecurityDa
 	 * No description
 	 *
 	 * @tags Timecode
-	 * @name StandardTimecodesList
-	 * @request GET:/timecodes/standard-timecodes
-	 * @secure
-	 */
-	standardTimecodesList = (params: RequestParams = {}) =>
-		this.request<TimecodeViewModelDTO[], any>({
-			path: `/timecodes/standard-timecodes`,
-			method: "GET",
-			secure: true,
-			format: "json",
-			...params,
-		});
-	/**
-	 * No description
-	 *
-	 * @tags Timecode
 	 * @name TimecodesDetail
 	 * @request GET:/timecodes/{timecodeId}
 	 * @secure

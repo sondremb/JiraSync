@@ -14,7 +14,6 @@ import {
 import styled from "styled-components";
 import { Example } from "./components/TimeTable/timetable-cell";
 import { useLockDate } from "./data/useLockDate";
-import { useBekkTimecodes } from "./data/useBekkTimecodes";
 import { isUdir } from "./timecode-map";
 import { useWeek } from "./data/useWeek";
 import { AltStemmerAlert } from "./components/AltStemmerAlert";
@@ -33,7 +32,6 @@ const ColoredRow = styled(FlexRow)`
 `;
 
 export const App: React.FC = () => {
-	const { bekkTimecodes } = useBekkTimecodes();
 	const [weekAndYear, setWeekAndYear] = useState<WeekAndYear>(
 		WeekAndYear.now()
 	);
@@ -50,12 +48,7 @@ export const App: React.FC = () => {
 	};
 
 	const synchronize = () => {
-		if (
-			bekkTimecodes === undefined ||
-			entries === undefined ||
-			lockDate === undefined
-		)
-			return;
+		if (entries === undefined || lockDate === undefined) return;
 		const udirEntries = entries.filter((entry) => isUdir(entry.id));
 		const udirDays = udirEntries.flatMap((entry) =>
 			Object.entries(entry.days).map(([dateString, day]) => ({

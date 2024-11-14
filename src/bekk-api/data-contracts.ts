@@ -9,6 +9,11 @@
  * ---------------------------------------------------------------
  */
 
+export interface BatchUpdateTimesheetValidationModelDTO {
+	timeEntries?: TimeEntryDbModelDTO[] | null;
+	validationInfo?: string[] | null;
+}
+
 export interface BatchUpdateTimesheetWriteModelDTO {
 	/** @format int32 */
 	timecodeId: number;
@@ -16,6 +21,8 @@ export interface BatchUpdateTimesheetWriteModelDTO {
 	from: string;
 	/** @format date-time */
 	to: string;
+	/** @format float */
+	hours: number;
 	comment?: string | null;
 }
 
@@ -138,6 +145,8 @@ export interface EmployeeViewModelDTO {
 	name?: string | null;
 	mobilePhone?: string | null;
 	department?: string | null;
+	division?: string | null;
+	seniority?: string | null;
 }
 
 export interface EmployeeWithIdDTO {
@@ -175,6 +184,38 @@ export interface HealthzResponseDTO {
 	type?: string | null;
 }
 
+export interface ImportVacationViewModelDTO {
+	/** @format int32 */
+	employeeId?: number;
+	/** @format int32 */
+	year?: number;
+	/** @format double */
+	balanceTransferred?: number;
+	/** @format double */
+	balanceCorrected?: number;
+	/** @format double */
+	usedCorrected?: number;
+}
+
+export interface MessageResultDTO {
+	/** @format int32 */
+	numberOfMessages?: number;
+	status?: SentStatusDTO;
+}
+
+export interface MinimalTimecodeViewModelDTO {
+	/** @format int32 */
+	id?: number;
+	code?: string | null;
+	name?: string | null;
+	billable?: boolean;
+	workPerformed?: boolean;
+	/** @format int32 */
+	projectId?: number | null;
+	/** @format int32 */
+	timecodeCategoryId?: number | null;
+}
+
 export interface MonthlyHoursLockedStatusDTO {
 	/** @format int32 */
 	projectId?: number;
@@ -208,6 +249,14 @@ export interface ProjectDTO {
 	technicalManagerId?: number;
 }
 
+/** @format int32 */
+export enum SentStatusDTO {
+	Value0 = 0,
+	Value1 = 1,
+	Value2 = 2,
+	Value3 = 3,
+}
+
 export interface StandardEmployeeModelDTO {
 	/** @format int32 */
 	id?: number;
@@ -217,7 +266,7 @@ export interface StandardEmployeeModelDTO {
 export interface SumOfHoursProjectDTO {
 	/** @format int32 */
 	projectId?: number;
-	/** @format double */
+	/** @format float */
 	hours?: number;
 }
 
@@ -259,6 +308,7 @@ export interface TimecodeCategoryViewModelDTO {
 	overtimeIncluded?: boolean;
 	prefix?: string | null;
 	staffable?: boolean;
+	eligibleForBatchUpdate?: boolean;
 }
 
 export interface TimecodeDbModelDTO {
@@ -270,7 +320,6 @@ export interface TimecodeDbModelDTO {
 	name?: string | null;
 	/** @format int32 */
 	responsibleId?: number | null;
-	lunchDeduction?: boolean;
 	standardAccount?: boolean;
 	active?: boolean;
 	description?: string | null;
@@ -280,7 +329,6 @@ export interface TimecodeDbModelDTO {
 	categoryId?: number;
 	/** @format int32 */
 	customerId?: number | null;
-	staffingOnly?: boolean;
 	timecodeCategory?: TimecodeCategoryDbModelDTO;
 	favoriteTimecodes?: FavoriteTimecodesDbModelDTO[] | null;
 	timecodeAccess?: TimecodeAccessDbModelDTO[] | null;
@@ -303,7 +351,7 @@ export interface TimecodeHoursDTO {
 }
 
 export interface TimecodeTimeEntriesViewModelDTO {
-	timecode?: TimecodeViewModelV2DTO;
+	timecode?: MinimalTimecodeViewModelDTO;
 	entries?: TimeEntryViewModelDTO[] | null;
 }
 
@@ -317,7 +365,7 @@ export interface TimecodeTimesheetsWrapperDTO {
 }
 
 export interface TimecodeTimesheetViewModelDTO {
-	timecode?: TimecodeViewModelV2DTO;
+	timecode?: MinimalTimecodeViewModelDTO;
 	project?: ProjectDTO;
 	/** @format date-time */
 	from?: string | null;
@@ -336,33 +384,18 @@ export interface TimecodeViewModelDTO {
 	name?: string | null;
 	category?: TimecodeCategoryViewModelDTO;
 	standardAccount?: boolean;
-	lunchDeduction?: boolean;
 	active?: boolean;
 	description?: string | null;
 	paidWork?: boolean;
 	overtimeIncluded?: boolean;
 	workPerformed?: boolean;
 	billable?: boolean;
-	staffingOnly?: boolean;
 	/** @format int32 */
 	projectId?: number | null;
 	/** @format int32 */
 	customerId?: number | null;
 	/** @format int32 */
 	responsibleId?: number | null;
-}
-
-export interface TimecodeViewModelV2DTO {
-	/** @format int32 */
-	id?: number;
-	code?: string | null;
-	name?: string | null;
-	billable?: boolean;
-	workPerformed?: boolean;
-	/** @format int32 */
-	projectId?: number | null;
-	/** @format int32 */
-	timecodeCategoryId?: number | null;
 }
 
 export interface TimecodeViewModelV3DTO {
@@ -377,7 +410,6 @@ export interface TimecodeViewModelV3DTO {
 	standardAccount?: boolean;
 	/** @format int32 */
 	responsibleId?: number | null;
-	lunchDeduction?: boolean;
 	active?: boolean;
 	description?: string | null;
 	paidWork?: boolean;
@@ -388,13 +420,6 @@ export interface TimecodeViewModelV3DTO {
 	projectId?: number | null;
 	/** @format int32 */
 	customerId?: number | null;
-	staffingOnly?: boolean;
-	/** @format int32 */
-	staffingManagerId?: number;
-	/** @format int32 */
-	technicalManagerId?: number;
-	/** @format int32 */
-	division?: number;
 	staffable?: boolean;
 }
 
@@ -403,8 +428,9 @@ export interface TimecodeWriteModelDTO {
 	name?: string | null;
 	description?: string | null;
 	standardAccount?: boolean;
-	lunchDeduction?: boolean;
 	active?: boolean;
+	/** @format int32 */
+	counter?: number | null;
 	/** @format int32 */
 	categoryId?: number;
 	/** @format int32 */
@@ -413,7 +439,6 @@ export interface TimecodeWriteModelDTO {
 	projectId?: number | null;
 	/** @format int32 */
 	customerId?: number | null;
-	staffingOnly?: boolean;
 }
 
 export interface TimeEntryDbModelDTO {
@@ -428,6 +453,22 @@ export interface TimeEntryDbModelDTO {
 	comment: string;
 	timecode?: TimecodeDbModelDTO;
 	code?: string | null;
+}
+
+export interface TimeEntryValidationModelDTO {
+	/** @format int32 */
+	employeeId?: number;
+	comment?: string | null;
+	/** @format float */
+	hours?: number;
+	/** @format date-time */
+	date?: string;
+	/** @format int32 */
+	timecodeId?: number;
+	billable?: boolean;
+	/** @format int32 */
+	projectId?: number | null;
+	validationInfo?: string[] | null;
 }
 
 export interface TimeEntryViewModelDTO {
@@ -484,7 +525,14 @@ export interface TimesheetViewModelDTO {
 	timesheetLockDate?: string;
 }
 
-export type VacationModelDTO = object;
+export interface VacationViewModelDTO {
+	/** @format int32 */
+	employeeId?: number;
+	/** @format double */
+	usedVacationDays?: number;
+	/** @format double */
+	totalVacationDays?: number;
+}
 
 export interface YearlyTimeOffModelViewModelDTO {
 	employee?: StandardEmployeeModelDTO;
