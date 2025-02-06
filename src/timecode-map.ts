@@ -136,10 +136,10 @@ function getEpicLink(jiraIssue: Jira.Timecode): string | undefined {
 	return getField(jiraIssue, CUSTOM_FIELDS.epicLink);
 }
 
-function getLabels(jiraIssue: Jira.Timecode): string[] {
+/* function getLabels(jiraIssue: Jira.Timecode): string[] {
 	const labelsString = getField(jiraIssue, CUSTOM_FIELDS.labels);
 	if (labelsString === undefined) {
 		return [];
 	}
 	return labelsString.split(",").map((label) => label.trim());
-}
+} */
