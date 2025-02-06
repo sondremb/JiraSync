@@ -11,11 +11,9 @@ export enum UdirBekkIds {
 	UBAS = 1002497,
 	BistandTilHelhetligDesign = 1002899,
 	HFLDataPlattform = 1002302,
-	HFLInnsamlingsløsning = 1003162,
 	HFL = 1003011,
 	HSS = 1003012,
-	DIT = 1003026,
-	HFLNy = 1003185,
+	HFLSkjema = 1003290,
 	UTA1113Design = 1003088,
 }
 
@@ -76,33 +74,20 @@ const jiraToTimecodeMap: TimecodeSelector[] = [
 	},
 	{
 		selector: (jiraIssue) => {
-			if (!/HFL.*/.test(jiraIssue.key)) {
-				return false;
-			}
 			const epicLink = getEpicLink(jiraIssue);
 			if (epicLink === undefined) {
 				return false;
 			}
-			if (/HFL-6270/.test(epicLink)) return true;
-			if (/HFL-6244/.test(epicLink)) return true;
+			if (/HSS-1030/.test(epicLink)) return true;
 			return false;
 		},
-		timecodeId: UdirBekkIds.HFLInnsamlingsløsning,
-	},
-	{
-		selector: (jiraIssue) => {
-			if (!/HFL.*/.test(jiraIssue.key)) {
-				return false;
-			}
-			return getLabels(jiraIssue).includes("DIT");
-		},
-		timecodeId: UdirBekkIds.DIT,
+		timecodeId: UdirBekkIds.HFLSkjema,
 	},
 	{
 		selector: (jiraIssue) => {
 			return /HFL.*/.test(jiraIssue.key);
 		},
-		timecodeId: UdirBekkIds.HFLNy,
+		timecodeId: UdirBekkIds.HFL,
 	},
 	{
 		selector: (jiraIssue) => {
