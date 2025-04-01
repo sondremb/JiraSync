@@ -64,11 +64,16 @@ const jiraToTimecodeMap: TimecodeSelector[] = [
 			if (!/HFL.*/.test(jiraIssue.key)) {
 				return false;
 			}
-			const epicName = getEpicName(jiraIssue);
-			if (epicName === undefined) {
+			const epicLink = getEpicLink(jiraIssue);
+			if (epicLink === undefined) {
 				return false;
 			}
-			return /data ?plattform/i.test(epicName) || /Tilda/i.test(epicName);
+			return (
+				// Tilda
+				/HFL-3068/.test(epicLink) ||
+				// Dataplattform
+				/HFL-3435/.test(epicLink)
+			);
 		},
 		timecodeId: UdirBekkIds.HFLDataPlattform,
 	},
@@ -128,9 +133,9 @@ function getField(
 	return fieldValue;
 }
 
-function getEpicName(jiraIssue: Jira.Timecode): string | undefined {
+/* function getEpicName(jiraIssue: Jira.Timecode): string | undefined {
 	return getField(jiraIssue, CUSTOM_FIELDS.epicName);
-}
+} */
 
 function getEpicLink(jiraIssue: Jira.Timecode): string | undefined {
 	return getField(jiraIssue, CUSTOM_FIELDS.epicLink);
