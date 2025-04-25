@@ -15,6 +15,7 @@ export enum UdirBekkIds {
 	HSS = 1003012,
 	HFLSkjema = 1003290,
 	UTA1113Design = 1003088,
+	UTA1121KILab = 1003373,
 }
 
 interface TimecodeSelector {
@@ -58,6 +59,12 @@ const jiraToTimecodeMap: TimecodeSelector[] = [
 			return /DESIGN.*/.test(jiraIssue.key);
 		},
 		timecodeId: UdirBekkIds.BistandTilHelhetligDesign,
+	},
+	{
+		selector: (jiraIssue) => {
+			return /KIL.*/.test(jiraIssue.key);
+		},
+		timecodeId: UdirBekkIds.UTA1121KILab,
 	},
 	{
 		selector: (jiraIssue) => {
