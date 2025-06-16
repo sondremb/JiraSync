@@ -16,6 +16,7 @@ export enum UdirBekkIds {
 	HFLSkjema = 1003290,
 	UTA1113Design = 1003088,
 	UTA1121KILab = 1003373,
+	UTA1122HFLSommer = 1003386,
 }
 
 interface TimecodeSelector {
@@ -83,6 +84,19 @@ const jiraToTimecodeMap: TimecodeSelector[] = [
 			);
 		},
 		timecodeId: UdirBekkIds.HFLDataPlattform,
+	},
+	{
+		selector: (jiraIssue) => {
+			if (!/HFL.*/.test(jiraIssue.key)) {
+				return false;
+			}
+			const epicLink = getEpicLink(jiraIssue);
+			if (epicLink === undefined) {
+				return false;
+			}
+			return /HFL-7008/.test(epicLink);
+		},
+		timecodeId: UdirBekkIds.UTA1122HFLSommer,
 	},
 	{
 		selector: (jiraIssue) => {
