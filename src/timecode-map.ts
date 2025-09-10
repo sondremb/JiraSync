@@ -1,5 +1,5 @@
-import { CUSTOM_FIELDS } from "./jira-client";
-import { BekkId, Jira } from "./types";
+import { JiraIssue } from "./data/issue";
+import { BekkId } from "./types";
 
 export const FrivilligKompetanseByggingId = 1786;
 
@@ -21,7 +21,7 @@ export enum UdirBekkIds {
 }
 
 interface TimecodeSelector {
-	selector: (jiraIssue: Jira.Timecode) => boolean;
+	selector: (jiraIssue: JiraIssue) => boolean;
 	timecodeId: BekkId;
 }
 
@@ -73,8 +73,8 @@ const jiraToTimecodeMap: TimecodeSelector[] = [
 			if (!/HFL.*/.test(jiraIssue.key)) {
 				return false;
 			}
-			const epicLink = getEpicLink(jiraIssue);
-			if (epicLink === undefined) {
+			const epicLink = jiraIssue.epicLink;
+			if (epicLink === null) {
 				return false;
 			}
 			return (
@@ -91,8 +91,8 @@ const jiraToTimecodeMap: TimecodeSelector[] = [
 			if (!/HFL.*/.test(jiraIssue.key)) {
 				return false;
 			}
-			const epicLink = getEpicLink(jiraIssue);
-			if (epicLink === undefined) {
+			const epicLink = jiraIssue.epicLink;
+			if (epicLink === null) {
 				return false;
 			}
 			return /HFL-7008/.test(epicLink);
@@ -101,8 +101,8 @@ const jiraToTimecodeMap: TimecodeSelector[] = [
 	},
 	{
 		selector: (jiraIssue) => {
-			const epicLink = getEpicLink(jiraIssue);
-			if (epicLink === undefined) {
+			const epicLink = jiraIssue.epicLink;
+			if (epicLink === null) {
 				return false;
 			}
 			if (/HSS-1030/.test(epicLink)) return true;
@@ -112,8 +112,8 @@ const jiraToTimecodeMap: TimecodeSelector[] = [
 	},
 	{
 		selector: (jiraIssue) => {
-			const epicLink = getEpicLink(jiraIssue);
-			if (epicLink === undefined) {
+			const epicLink = jiraIssue.epicLink;
+			if (epicLink === null) {
 				return false;
 			}
 			return (
@@ -145,7 +145,7 @@ const jiraToTimecodeMap: TimecodeSelector[] = [
 	},
 ];
 
-export const bekkIdFromJiraTimecode = (jiraIssue: Jira.Timecode) => {
+export const bekkIdFromJiraTimecode = (jiraIssue: JiraIssue) => {
 	for (const { selector, timecodeId } of jiraToTimecodeMap) {
 		if (selector(jiraIssue)) return timecodeId;
 	}
@@ -157,7 +157,7 @@ export const bekkIdFromJiraTimecode = (jiraIssue: Jira.Timecode) => {
 export const isUdir = (timecodeId: number | undefined): boolean =>
 	timecodeId !== undefined && timecodeId in UdirBekkIds;
 
-function getField(
+/* function getField(
 	jiraIssue: Jira.Timecode,
 	fieldName: string
 ): string | undefined {
@@ -169,14 +169,14 @@ function getField(
 	}
 	return fieldValue;
 }
-
+ */
 /* function getEpicName(jiraIssue: Jira.Timecode): string | undefined {
 	return getField(jiraIssue, CUSTOM_FIELDS.epicName);
 } */
 
-function getEpicLink(jiraIssue: Jira.Timecode): string | undefined {
+/* function getEpicLink(jiraIssue: Jira.Timecode): string | undefined {
 	return getField(jiraIssue, CUSTOM_FIELDS.epicLink);
-}
+} */
 
 /* function getLabels(jiraIssue: Jira.Timecode): string[] {
 	const labelsString = getField(jiraIssue, CUSTOM_FIELDS.labels);

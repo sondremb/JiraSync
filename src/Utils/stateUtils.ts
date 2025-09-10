@@ -3,13 +3,15 @@ import { EmployeeTimesheetViewModelDTO } from "../bekk-api/data-contracts";
 import { bekkIdFromJiraTimecode } from "../timecode-map";
 import { Jira, BekkTimecodeEntry, DateString, Day, BekkId } from "../types";
 import { toDateString, secondsToHours } from "./dateUtils";
+import { JiraIssue } from "../data/issue";
 
 export const updateEntries = (
 	bekkData: EmployeeTimesheetViewModelDTO,
-	jiraData: Jira.DTO
+	jiraData: Jira.DTO,
+	jiraIssues: Record<string, JiraIssue> = {}
 ): BekkTimecodeEntry[] => {
 	const entries = createEntriesFromBekkData(bekkData);
-	enrichEntriesWithJiraData(entries, jiraData);
+	enrichEntriesWithJiraData(entries, jiraData, jiraIssues);
 	return entries;
 };
 
@@ -48,10 +50,11 @@ export const getOrCreateBekkEntry = (
 
 export const enrichEntriesWithJiraData = (
 	entries: BekkTimecodeEntry[],
-	data: Jira.DTO
+	data: Jira.DTO,
+	jiraIssues: Record<string, JiraIssue> = {}
 ) => {
 	for (const timecode of data.worklog) {
-		const bekkId = bekkIdFromJiraTimecode(timecode);
+		const bekkId = bekkIdFromJiraTimecode(jiraIssues[timecode.key]);
 		const bekkEntry = getOrCreateBekkEntry(entries, bekkId);
 		for (const entry of timecode.entries) {
 			const timestring = toDateString(moment(entry.startDate));
