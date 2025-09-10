@@ -22,7 +22,7 @@ export const CUSTOM_FIELDS = {
 	epicLink: "customfield_10001",
 	epicName: "customfield_10003",
 	labels: "labels",
-};
+} as const;
 
 export const getJiraTimesheet = async (
 	body: Partial<JiraRequestParams> | null,
@@ -48,6 +48,66 @@ export const getJiraTimesheet = async (
 		CUSTOM_FIELDS.epicName,
 		CUSTOM_FIELDS.labels,
 	]);
+	return axios
+		.get(url, {
+			auth: {
+				username: username,
+				password: password,
+			},
+		})
+		.then((res) => ({ statusCode: 200, body: JSON.stringify(res.data) }))
+		.catch((err: AxiosError) => handleError(err, eventId));
+};
+
+interface GetJiraIssueParams {
+	username: string;
+	password: string;
+	ticketKey: string;
+}
+
+export interface JiraIssueResult {
+	id: string;
+	key: string;
+	fields: {
+		summary: string;
+		issuetype: {
+			id: string;
+			name: string;
+		};
+		project: {
+			id: string;
+			name: string;
+		};
+		customfield_10001: string | null;
+		labels: string[];
+	};
+}
+
+export const getJiraIssue = async (
+	body: Partial<GetJiraIssueParams> | null,
+	eventId: string
+): Promise<Response> => {
+	if (body === null) {
+		return {
+			body: "Missing request body",
+			statusCode: StatusCode.BAD_REQUEST_400,
+		};
+	}
+	const { ticketKey, username, password } = body;
+	if (!username || !password) {
+		return {
+			body: ERRORS.NETLIFY_MISSING_AUTH,
+			statusCode: StatusCode.UNAUTHORIZED_401,
+		};
+	}
+	if (!ticketKey) {
+		return {
+			body: "Missing ticketKey",
+			statusCode: StatusCode.BAD_REQUEST_400,
+		};
+	}
+
+	const url = `https://jira.udir.no/rest/api/2/issue/${ticketKey}?fields=summary,issuetype,project,labels,customfield_10001`;
 	return axios
 		.get(url, {
 			auth: {
