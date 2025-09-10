@@ -58,7 +58,7 @@ export const useWeek = (weekAndYear: WeekAndYear) => {
 	const combinedData =
 		bekkData &&
 		jiraData &&
-		Object.values(jiraIssues).every((issue) => issue !== undefined)
+		jiraData.data.worklog.every((entry) => jiraIssues[entry.key] !== undefined)
 			? updateEntries(
 					bekkData.data,
 					jiraData.data,
