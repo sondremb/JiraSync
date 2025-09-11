@@ -120,7 +120,8 @@ const jiraToTimecodeMap: TimecodeSelector[] = [
 				// Aktørkjenneren
 				/HFL-7152/.test(epicLink) ||
 				// Ekstretildeling
-				/HFL-6955/.test(epicLink)
+				/HFL-6955/.test(epicLink) ||
+				/HFL-7191/.test(epicLink)
 			);
 		},
 		timecodeId: UdirBekkIds.UTA1124HFLEkstretildeling,
