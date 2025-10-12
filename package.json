@@ -27,7 +27,7 @@
 		"@vitejs/plugin-react": "^2.2.0",
 		"axios": "^0.21.4",
 		"date-fns": "^4.1.0",
-		"moment": "^2.29.1",
+		"date-fns-tz": "^3.2.0",
 		"react": "^16.13.1",
 		"react-dom": "^16.13.1",
 		"react-loading": "^2.0.3",
