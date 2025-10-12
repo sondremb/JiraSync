@@ -81,7 +81,6 @@ export const App: React.FC = () => {
 			</FlexRow>
 			<FlexRow halign="space-between" className="mb-12">
 				{timestamp && <DownloadTimestamp timestamp={timestamp} />}
-				{/* <MonthModal /> */}
 			</FlexRow>
 			<ColoredRow halign="center" valign="center">
 				<Button
