@@ -1,5 +1,5 @@
-import { FlexRow, Icon } from "@udir/lisa";
-import { borderRadius, rem } from "@udir/lisa-tokens";
+import { FlexRow, Icon } from "@utdanningsdirektoratet/lisa";
+import { borderRadius, rem } from "@utdanningsdirektoratet/lisa-tokens";
 import React from "react";
 import styled, { css } from "styled-components";
 import { useLockDate } from "../../data/useLockDate";

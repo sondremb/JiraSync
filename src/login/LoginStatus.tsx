@@ -1,5 +1,11 @@
 import { useMsal } from "@azure/msal-react";
-import { FlexColumn, FlexRow, Link, Pictogram, Text } from "@udir/lisa";
+import {
+	FlexColumn,
+	FlexRow,
+	Link,
+	Pictogram,
+	Text,
+} from "@utdanningsdirektoratet/lisa";
 import React from "react";
 import styled from "styled-components";
 import { clearJiraCredentials } from "../jiraCredentials";

@@ -9,7 +9,7 @@ import {
 	Icon,
 	PageLayout,
 	Text,
-} from "@udir/lisa";
+} from "@utdanningsdirektoratet/lisa";
 import styled from "styled-components";
 import { Example } from "./components/TimeTable/timetable-cell";
 import { useLockDate } from "./data/useLockDate";
@@ -17,7 +17,7 @@ import { isUdir } from "./timecode-map";
 import { useWeek } from "./data/useWeek";
 import { AltStemmerAlert } from "./components/AltStemmerAlert";
 import { DownloadTimestamp } from "./components/DownloadTimestamp";
-import { colors, spacing } from "@udir/lisa-tokens";
+import { colors, spacing } from "@utdanningsdirektoratet/lisa-tokens";
 import { LoginStatus } from "./login/LoginStatus";
 import { IsoWeek } from "./date-time/IsoWeek";
 

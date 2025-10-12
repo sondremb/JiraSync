@@ -1,4 +1,9 @@
-import { ConfirmModal, FlexColumn, Table, Text } from "@udir/lisa";
+import {
+	ConfirmModal,
+	FlexColumn,
+	Table,
+	Text,
+} from "@utdanningsdirektoratet/lisa";
 import React, { useState } from "react";
 import styled from "styled-components";
 import { useLockDate } from "../../data/useLockDate";

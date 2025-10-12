@@ -1,4 +1,4 @@
-import { Text } from "@udir/lisa";
+import { Text } from "@utdanningsdirektoratet/lisa";
 import { format, formatDistanceToNow } from "date-fns";
 import { nb } from "date-fns/locale/nb";
 import React, { useEffect, useState } from "react";
