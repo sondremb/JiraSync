@@ -1,13 +1,12 @@
 import axios, { AxiosResponse } from "axios";
-import { Moment } from "moment";
 import { getJiraCredentials, JiraCredentials } from "./jiraCredentials";
 import { Jira } from "./types";
-import { toDateString } from "./Utils/dateUtils";
 import { JiraIssueResult } from "./jira-client";
+import { IsoDate } from "./date-time/IsoWeek";
 
 export interface NetlifyRequestParams {
-	fromDate: Moment;
-	toDate: Moment;
+	fromDate: IsoDate;
+	toDate: IsoDate;
 }
 
 export const NetlifyClient = {
@@ -18,8 +17,8 @@ export const NetlifyClient = {
 			throw Error("AAA");
 		}
 		return axios.post(".netlify/functions/jira-timer", {
-			fromDate: toDateString(params.fromDate),
-			toDate: toDateString(params.toDate),
+			fromDate: params.fromDate,
+			toDate: params.toDate,
 			username: credentials.username,
 			password: credentials.password,
 		});

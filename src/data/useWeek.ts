@@ -1,24 +1,23 @@
-import moment from "moment";
 import useSWR from "swr";
 import { useBekkClient, PutTimesheetParams } from "../bekk-client";
 import { NetlifyClient } from "../netlify-client";
-import { WeekAndYear } from "../Utils/dateUtils";
 import { updateEntries } from "../Utils/stateUtils";
 import { useState } from "react";
 import { JiraIssue, mapIssue } from "./issue";
+import { IsoWeek } from "../date-time/IsoWeek";
 
-export const useWeek = (weekAndYear: WeekAndYear) => {
+export const useWeek = (week: IsoWeek) => {
 	const bekkClient = useBekkClient();
 	const [jiraIssues, setJiraIssues] = useState<
 		Record<string, JiraIssue | undefined>
 	>({});
-	const { data: jiraData } = useSWR(
-		`jira/week/${weekAndYear.year}/${weekAndYear.week}`,
-		() =>
-			NetlifyClient.getData({
-				fromDate: weekAndYear.start(),
-				toDate: weekAndYear.end(),
-			})
+	const monday = IsoWeek.monday(week);
+	const sunday = IsoWeek.sunday(week);
+	const { data: jiraData } = useSWR(`jira/week/${week}`, () =>
+		NetlifyClient.getData({
+			fromDate: monday,
+			toDate: sunday,
+		})
 	);
 
 	if (jiraData) {
@@ -36,17 +35,17 @@ export const useWeek = (weekAndYear: WeekAndYear) => {
 	}
 
 	const { data: bekkData, mutate: mutateBekkData } = useSWR(
-		`bekk/week/${weekAndYear.year}/${weekAndYear.week}`,
+		`bekk/week/${week}`,
 		() =>
 			bekkClient.getData({
-				fromDate: weekAndYear.start(),
-				toDate: weekAndYear.end(),
+				fromDate: monday,
+				toDate: sunday,
 			})
 	);
 
 	const { data: timestamp } = useSWR(
-		`timestamp/week/${weekAndYear.year}/${weekAndYear.week}`,
-		() => moment()
+		`timestamp/week/${week}`,
+		() => new Date()
 	);
 
 	const updateBekkHours = (params: PutTimesheetParams) =>

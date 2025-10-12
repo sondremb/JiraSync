@@ -1,9 +1,8 @@
-import moment from "moment";
 import { EmployeeTimesheetViewModelDTO } from "../bekk-api/data-contracts";
 import { bekkIdFromJiraTimecode } from "../timecode-map";
 import { Jira, BekkTimecodeEntry, DateString, Day, BekkId } from "../types";
-import { toDateString, secondsToHours } from "./dateUtils";
 import { JiraIssue } from "../data/issue";
+import { IsoDate } from "../date-time/IsoWeek";
 
 export const updateEntries = (
 	bekkData: EmployeeTimesheetViewModelDTO,
@@ -22,7 +21,7 @@ export const createEntriesFromBekkData = (
 	for (const timecode of data.timecodeTimeEntries!) {
 		const days: Record<DateString, Day> = {};
 		for (const entry of timecode.entries!) {
-			days[toDateString(moment(entry.date))] = {
+			days[IsoDate.fromDate(new Date(entry.date!))] = {
 				bekkHours: entry.hours!,
 				totalJiraHours: 0,
 				jiraEntries: [],
@@ -57,7 +56,7 @@ export const enrichEntriesWithJiraData = (
 		const bekkId = bekkIdFromJiraTimecode(jiraIssues[timecode.key]);
 		const bekkEntry = getOrCreateBekkEntry(entries, bekkId);
 		for (const entry of timecode.entries) {
-			const timestring = toDateString(moment(entry.startDate));
+			const timestring = IsoDate.fromDate(new Date(entry.startDate));
 			if (!(timestring in bekkEntry.days)) {
 				bekkEntry.days[timestring] = {
 					bekkHours: 0,
@@ -74,3 +73,7 @@ export const enrichEntriesWithJiraData = (
 		}
 	}
 };
+
+function secondsToHours(seconds: number): number {
+	return seconds / 3600;
+}
