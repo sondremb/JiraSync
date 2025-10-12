@@ -1,11 +1,10 @@
 import { useNotification } from "@udir/lisa";
-import moment, { Moment } from "moment";
 import useSWR from "swr";
 import { Timesheets } from "../bekk-api/Timesheets";
 import { useBekkClient } from "../bekk-client";
 import { useEmployeeId } from "../login/bekk/example2";
 import { useClient } from "../Utils/bekkClientUtils";
-import { toDateString } from "../Utils/dateUtils";
+import { IsoDate } from "../date-time/IsoWeek";
 
 export const useLockDate = () => {
 	const client = useClient(Timesheets);
@@ -16,15 +15,15 @@ export const useLockDate = () => {
 	const showNotification = useNotification();
 
 	const bekkClient = useBekkClient();
-	const updateLockDate = (lockDate: Moment) =>
+	const updateLockDate = (lockDate: IsoDate) =>
 		mutate(async (old) => {
-			const lockDateAsString = toDateString(lockDate);
 			await bekkClient
-				.setLockDate(lockDateAsString)
+				.setLockDate(lockDate)
 				.then(() =>
 					showNotification({
 						type: "success",
-						content: `Låste timer frem til ${lockDate.format("Do MMMM YYYY")}`,
+						// TODO formatter
+						content: `Låste timer frem til ${lockDate}`,
 					})
 				)
 				.catch((error: any) => {
@@ -39,7 +38,9 @@ export const useLockDate = () => {
 
 	// TODO error handling
 	return {
-		lockDate: data ? moment(data?.data.lockDate) : undefined,
+		lockDate: data?.data.lockDate
+			? IsoDate.fromDate(new Date(data.data.lockDate))
+			: undefined,
 		error,
 		isLoading: !error && !data,
 		updateLockDate,

@@ -2,8 +2,6 @@ import React from "react";
 import { FlexColumn, Icon, Text } from "@udir/lisa";
 import styled, { css } from "styled-components";
 import { Row } from "./TimeTable";
-import { Moment } from "moment";
-import { toDateString } from "../../Utils/dateUtils";
 import { FrivilligKompetanseByggingId, isUdir } from "../../timecode-map";
 import {
 	colors,
@@ -17,6 +15,7 @@ import { LockDateButton } from "./LockDateButton";
 import { useBekkTimecode } from "../../data/useBekkTimecode";
 import { BekkTimecodeEntry, DateString } from "../../types";
 import { SkeletonLoader } from "../SkeletonLoader";
+import { IsoDate } from "../../date-time/IsoWeek";
 
 const CustomText = styled.div<{
 	fontSize?: number;
@@ -63,12 +62,11 @@ const CornerDiv = styled(CustomText)<{ correct: boolean }>`
 
 interface Props {
 	row: Row;
-	day: Moment;
-	onLockClicked: (day: Moment) => void;
+	day: IsoDate;
+	onLockClicked: (day: IsoDate) => void;
 }
 
 export const TimetableCell: React.FC<Props> = (props) => {
-	const dateString = toDateString(props.day);
 	switch (props.row.kind) {
 		case "lock":
 			return (
@@ -83,12 +81,12 @@ export const TimetableCell: React.FC<Props> = (props) => {
 					{props.row.entries
 						// frivillig kompetansebygging teller ikke mot kravet om 37.5 timer i uka
 						.filter((entry) => entry.id !== FrivilligKompetanseByggingId)
-						.map((entry) => entry.days[dateString]?.bekkHours ?? 0)
+						.map((entry) => entry.days[props.day]?.bekkHours ?? 0)
 						.reduce((prev, curr) => prev + curr, 0)}
 				</OtherDiv>
 			);
 		case "entry":
-			return <EntryCell entry={props.row.entry} dateString={dateString} />;
+			return <EntryCell entry={props.row.entry} dateString={props.day} />;
 	}
 };
 

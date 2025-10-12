@@ -1,21 +1,22 @@
 import { ConfirmModal, FlexColumn, Table, Text } from "@udir/lisa";
-import { Moment } from "moment";
 import React, { useState } from "react";
 import styled from "styled-components";
 import { useLockDate } from "../../data/useLockDate";
 import { isUdir } from "../../timecode-map";
 import { BekkTimecodeEntry } from "../../types";
-import { dayRange, toDateString } from "../../Utils/dateUtils";
 import {
 	FirstColumnCell,
 	SumColumnCell,
 	TimetableCell,
 } from "./timetable-cell";
+import { IsoDate } from "../../date-time/IsoWeek";
+import { formatDate } from "date-fns";
+import { nb } from "date-fns/locale/nb";
 
 interface Props {
 	entries: BekkTimecodeEntry[];
-	days: Moment[];
-	lockDate: Moment;
+	days: IsoDate[];
+	lockDate: IsoDate;
 }
 
 const CapitalText = styled(Text)`
@@ -33,21 +34,24 @@ export type Row =
 	  }
 	| {
 			kind: "lock";
-			lockDate: Moment;
+			lockDate: IsoDate;
 	  };
 
 export const TimeTable: React.FC<Props> = (props) => {
 	const { lockDate, updateLockDate } = useLockDate();
-	const [dateToLock, setDateToLock] = useState<Moment | undefined>();
+	const [dateToLock, setDateToLock] = useState<IsoDate | undefined>();
 
 	if (lockDate === undefined) return null;
 
-	const dateHeader = (date: Moment) => {
+	const dateHeader = (date: IsoDate) => {
+		const dateAsDate = IsoDate.toDate(date);
 		return (
 			<FlexColumn>
-				<CapitalText textStyle="labelBold">{date.format("dddd")}</CapitalText>
 				<CapitalText textStyle="labelBold">
-					{date.format("D. MMMM")}
+					{formatDate(dateAsDate, "EEEE", { locale: nb })}
+				</CapitalText>
+				<CapitalText textStyle="labelBold">
+					{formatDate(dateAsDate, "d. MMMM", { locale: nb })}
 				</CapitalText>
 			</FlexColumn>
 		);
@@ -74,24 +78,24 @@ export const TimeTable: React.FC<Props> = (props) => {
 		{ kind: "lock", lockDate: props.lockDate },
 	];
 
-	const dayAllGood = (day: Moment) => {
-		const dateString = toDateString(day);
+	const dayAllGood = (day: IsoDate) => {
 		return props.entries.every((entry) => {
 			if (!isUdir(entry.id)) {
 				return true;
 			}
-			const entryDay = entry.days[dateString];
+			const entryDay = entry.days[day];
 			return (
 				entryDay === undefined || entryDay.bekkHours === entryDay.totalJiraHours
 			);
 		});
 	};
 
-	const onLockClicked = (date: Moment) => {
-		if (date.isSameOrBefore(lockDate)) {
+	const onLockClicked = (date: IsoDate) => {
+		if (date <= lockDate) {
 			throw Error("Kan ikke låse en allerede låst dag");
 		}
-		const allGood = dayRange(lockDate.add(1, "day"), date).every(dayAllGood);
+		const range = IsoDate.range(lockDate, date);
+		const allGood = range.every(dayAllGood);
 		if (allGood) {
 			updateLockDate(date);
 		} else {
@@ -109,7 +113,7 @@ export const TimeTable: React.FC<Props> = (props) => {
 						displayFunction: (row) => <FirstColumnCell row={row} />,
 						width: "25%",
 					},
-					...props.days.map((day: Moment) => ({
+					...props.days.map((day: IsoDate) => ({
 						headerName: dateHeader(day),
 						displayFunction: (i: Row) => (
 							<TimetableCell day={day} row={i} onLockClicked={onLockClicked} />

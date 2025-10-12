@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 
-import { toDateString, WeekAndYear } from "./Utils/dateUtils";
 import { TimeTable } from "./components/TimeTable/TimeTable";
 import {
 	Button,
@@ -20,6 +19,7 @@ import { AltStemmerAlert } from "./components/AltStemmerAlert";
 import { DownloadTimestamp } from "./components/DownloadTimestamp";
 import { colors, spacing } from "@udir/lisa-tokens";
 import { LoginStatus } from "./login/LoginStatus";
+import { IsoWeek } from "./date-time/IsoWeek";
 
 const CenteredText = styled(Text)`
 	text-align: center;
@@ -31,19 +31,19 @@ const ColoredRow = styled(FlexRow)`
 `;
 
 export const App: React.FC = () => {
-	const [weekAndYear, setWeekAndYear] = useState<WeekAndYear>(
-		WeekAndYear.now()
+	const [weekAndYear, setWeekAndYear] = useState<IsoWeek>(
+		IsoWeek.fromDate(new Date())
 	);
 
 	const { lockDate } = useLockDate();
 	const { state: entries, timestamp, updateBekkHours } = useWeek(weekAndYear);
 
 	const onNextWeekClick = () => {
-		setWeekAndYear((old) => old.next());
+		setWeekAndYear((old) => IsoWeek.next(old));
 	};
 
 	const onPreviousWeekClick = () => {
-		setWeekAndYear((old) => old.previous());
+		setWeekAndYear((old) => IsoWeek.previous(old));
 	};
 
 	const synchronize = () => {
@@ -58,7 +58,7 @@ export const App: React.FC = () => {
 		);
 		const daysWithDifference = udirDays
 			.filter((day) => day.bekkHours !== day.totalJiraHours)
-			.filter((day) => day.dateString > toDateString(lockDate));
+			.filter((day) => day.dateString > lockDate);
 		daysWithDifference.forEach((day) =>
 			updateBekkHours({
 				timecodeId: day.id,
@@ -81,7 +81,6 @@ export const App: React.FC = () => {
 			</FlexRow>
 			<FlexRow halign="space-between" className="mb-12">
 				{timestamp && <DownloadTimestamp timestamp={timestamp} />}
-				{/* <MonthModal /> */}
 			</FlexRow>
 			<ColoredRow halign="center" valign="center">
 				<Button
@@ -94,10 +93,10 @@ export const App: React.FC = () => {
 				</Button>
 				<FlexColumn halign="center" className="mx-40" width={`${55 / 16}rem`}>
 					<CenteredText textStyle="bodyBold" textColor="grå100">
-						UKE {weekAndYear.week}
+						UKE {IsoWeek.toParts(weekAndYear).week}
 					</CenteredText>
 					<CenteredText textStyle="bodyBold" textColor="grå100">
-						{weekAndYear.year}
+						{IsoWeek.toParts(weekAndYear).year}
 					</CenteredText>
 				</FlexColumn>
 				<Button
@@ -113,7 +112,7 @@ export const App: React.FC = () => {
 			{entries !== undefined && lockDate !== undefined && (
 				<TimeTable
 					entries={entries}
-					days={weekAndYear.days()}
+					days={IsoWeek.days(weekAndYear)}
 					lockDate={lockDate}
 				/>
 			)}

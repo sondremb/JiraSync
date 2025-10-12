@@ -1,8 +1,6 @@
-import { Moment } from "moment";
-
-type DateString = string;
-type UnixTimestamp = number;
-type Seconds = number;
+export type DateString = string;
+export type UnixTimestamp = number;
+export type Seconds = number;
 
 declare namespace Jira {
 	interface DTO {

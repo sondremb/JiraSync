@@ -11,7 +11,8 @@
 		"unzip_functions": "unzip -u \"dist_functions/*.zip\" -d dist_functions",
 		"build": "yarn build:function && yarn build:app",
 		"generate": "rm -rf src/bekk-api && swagger-typescript-api -p https://api.bekk.no/timekeeper-svc/swagger/v1/swagger.json -o src/bekk-api --modular --type-suffix DTO",
-		"clean": "rm -rf node_modules"
+		"clean": "rm -rf node_modules",
+		"test": "vitest"
 	},
 	"keywords": [
 		"Jira",
@@ -26,7 +27,8 @@
 		"@udir/lisa-tokens": "^1.1.0",
 		"@vitejs/plugin-react": "^2.2.0",
 		"axios": "^0.21.4",
-		"moment": "^2.29.1",
+		"date-fns": "^4.1.0",
+		"date-fns-tz": "^3.2.0",
 		"react": "^16.13.1",
 		"react-dom": "^16.13.1",
 		"react-loading": "^2.0.3",
@@ -47,6 +49,7 @@
 		"react-hook-form": "^7.27.1",
 		"styled-components": "^5.3.3",
 		"swagger-typescript-api": "^12.0.2",
-		"typescript": "^4.4.2"
+		"typescript": "^4.4.2",
+		"vitest": "^3.2.4"
 	}
 }

@@ -1,18 +1,21 @@
 import { Text } from "@udir/lisa";
-import { Moment } from "moment";
+import { format, formatDistanceToNow } from "date-fns";
+import { nb } from "date-fns/locale/nb";
 import React, { useEffect, useState } from "react";
 
 interface Props {
-	timestamp: Moment;
+	timestamp: Date;
 }
 
 export const DownloadTimestamp: React.FC<Props> = (props) => {
-	const [timeSince, setTimeSince] = useState(props.timestamp.fromNow());
+	const [timeSince, setTimeSince] = useState(
+		formatDistanceToNow(props.timestamp, { locale: nb })
+	);
 
 	useEffect(() => {
-		setTimeSince(props.timestamp.fromNow());
+		setTimeSince(formatDistanceToNow(props.timestamp, { locale: nb }));
 		const interval = setInterval(() => {
-			setTimeSince(props.timestamp.fromNow());
+			setTimeSince(formatDistanceToNow(props.timestamp, { locale: nb }));
 		}, 1000);
 
 		return function cleanup() {
@@ -22,10 +25,9 @@ export const DownloadTimestamp: React.FC<Props> = (props) => {
 
 	return (
 		<div>
-			<Text>Sist lasted ned: {timeSince}</Text>
+			<Text>Sist lastet ned: {timeSince} siden</Text>
 			<Text textStyle="label">
-				{props.timestamp.format("Do Mo YY")} kl.{" "}
-				{props.timestamp.format("HH:mm:ss")}
+				{format(props.timestamp, "do MMM yy 'kl' HH:mm:ss", { locale: nb })}
 			</Text>
 		</div>
 	);

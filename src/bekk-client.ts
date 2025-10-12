@@ -1,14 +1,13 @@
-import { Moment } from "moment";
 import { Timesheets } from "./bekk-api/Timesheets";
 import { V3 } from "./bekk-api/V3";
 import { useEmployeeId } from "./login/bekk/example2";
 import { BekkId, DateString } from "./types";
 import { useClientFactory } from "./Utils/bekkClientUtils";
-import { toDateString } from "./Utils/dateUtils";
+import { IsoDate } from "./date-time/IsoWeek";
 
 export interface BekkRequestParams {
-	fromDate: Moment;
-	toDate: Moment;
+	fromDate: IsoDate;
+	toDate: IsoDate;
 }
 
 export interface PutTimesheetParams {
@@ -29,8 +28,8 @@ export const useBekkClient = () => {
 		getData: (params: BekkRequestParams) => {
 			const client = createClient(V3);
 			return client.timesheetsEmployeesDetail(employeeId, {
-				From: toDateString(params.fromDate),
-				To: toDateString(params.toDate),
+				From: params.fromDate,
+				To: params.toDate,
 			});
 		},
 		updateTimesheet: (params: PutTimesheetParams) => {

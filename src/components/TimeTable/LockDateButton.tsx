@@ -1,18 +1,18 @@
 import { FlexRow, Icon } from "@udir/lisa";
 import { borderRadius, rem } from "@udir/lisa-tokens";
-import { Moment } from "moment";
 import React from "react";
 import styled, { css } from "styled-components";
 import { useLockDate } from "../../data/useLockDate";
+import { IsoDate } from "../../date-time/IsoWeek";
 
 interface Props {
-	day: Moment;
+	day: IsoDate;
 	onClick: () => void;
 }
 
 export const LockDateButton: React.FC<Props> = (props) => {
 	const { lockDate } = useLockDate();
-	const disabled = lockDate === undefined || props.day.isSameOrBefore(lockDate);
+	const disabled = lockDate === undefined || props.day <= lockDate;
 
 	const onClick = () => {
 		if (!disabled) {
