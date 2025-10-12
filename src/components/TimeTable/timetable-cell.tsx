@@ -1,5 +1,5 @@
 import React from "react";
-import { FlexColumn, Icon, Text } from "@udir/lisa";
+import { FlexColumn, Icon, Text } from "@utdanningsdirektoratet/lisa";
 import styled, { css } from "styled-components";
 import { Row } from "./TimeTable";
 import { FrivilligKompetanseByggingId, isUdir } from "../../timecode-map";
@@ -10,7 +10,7 @@ import {
 	rem,
 	spacing,
 	Weight,
-} from "@udir/lisa-tokens";
+} from "@utdanningsdirektoratet/lisa-tokens";
 import { LockDateButton } from "./LockDateButton";
 import { useBekkTimecode } from "../../data/useBekkTimecode";
 import { BekkTimecodeEntry, DateString } from "../../types";

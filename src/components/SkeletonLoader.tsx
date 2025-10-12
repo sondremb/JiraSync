@@ -1,5 +1,9 @@
-import { Text } from "@udir/lisa";
-import { TextStyle, colors, borderRadius } from "@udir/lisa-tokens";
+import { Text } from "@utdanningsdirektoratet/lisa";
+import {
+	TextStyle,
+	colors,
+	borderRadius,
+} from "@utdanningsdirektoratet/lisa-tokens";
 import React from "react";
 import styled from "styled-components";
 

@@ -1,5 +1,5 @@
 import React from "react";
-import { Alert, Button, FlexRow } from "@udir/lisa";
+import { Alert, Button, FlexRow } from "@utdanningsdirektoratet/lisa";
 import { BekkTimecodeEntry } from "../types";
 import { isUdir } from "../timecode-map";
 

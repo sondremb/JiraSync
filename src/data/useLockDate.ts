@@ -1,4 +1,4 @@
-import { useNotification } from "@udir/lisa";
+import { useNotification } from "@utdanningsdirektoratet/lisa";
 import useSWR from "swr";
 import { Timesheets } from "../bekk-api/Timesheets";
 import { useBekkClient } from "../bekk-client";

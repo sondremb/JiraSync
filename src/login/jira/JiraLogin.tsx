@@ -1,4 +1,4 @@
-import { FlexRow, Loading } from "@udir/lisa";
+import { FlexRow, Loading } from "@utdanningsdirektoratet/lisa";
 import { AxiosError, AxiosResponse } from "axios";
 import React, { useEffect, useState } from "react";
 import { StatusCode } from "../../jira-client";

@@ -1,4 +1,4 @@
-import { colors } from "@udir/lisa-tokens";
+import { colors } from "@utdanningsdirektoratet/lisa-tokens";
 import { createGlobalStyle } from "styled-components";
 
 export const GlobalStyle = createGlobalStyle`

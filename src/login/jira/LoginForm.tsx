@@ -1,21 +1,20 @@
 import { useMsal } from "@azure/msal-react";
 import {
+	Accordion,
 	Alert,
 	Button,
 	Checkbox,
 	Container,
-	Details,
 	FlexRow,
 	H1,
 	H2,
 	H3,
 	InputField,
 	PageLayout,
-	Summary,
 	Text,
 	useScreenSize,
-} from "@udir/lisa";
-import { ScreenSize } from "@udir/lisa-tokens";
+} from "@utdanningsdirektoratet/lisa";
+import { ScreenSize } from "@utdanningsdirektoratet/lisa-tokens";
 import { AxiosResponse } from "axios";
 import React, { useState } from "react";
 import { P } from "../../components/P";
@@ -145,9 +144,8 @@ export const LoginForm: React.FC<Props> = ({
 				>
 					Logg inn
 				</Button>
-				<Details open={false}>
-					<Summary className="mb-12">Jeg har ikke brukt Jirasync før!</Summary>
-					<P>Først og fremst, velkommen!</P>
+				<Accordion title={"Jeg har ikke brukt Jirasync før!"} className="mb-12">
+					<P className="mt-12">Først og fremst, velkommen!</P>
 					<P>
 						Det første du må gjøre er å sette opp et passord i Jira. Som
 						standard har ingen brukere passord, og kan kun logge inn med SSO.
@@ -159,10 +157,9 @@ export const LoginForm: React.FC<Props> = ({
 						<em>&quot;Can't access your account?&quot;</em> - bruk denne til å
 						sette opp et ønskelig passord.
 					</P>
-				</Details>
-				<Details open={false}>
-					<Summary className="mb-12">Jeg er midlertidig utestengt</Summary>
-					<P>
+				</Accordion>
+				<Accordion title="Jeg er midlertidig utestengt">
+					<P className="mt-12">
 						Da må du gå til Jira, logge ut, og logge inn igjen med brukernavn og
 						passord - <em>ikke</em> med SSO. Du burde få opp en CAPTCHA som du
 						må løse før du kan logge inn.
@@ -172,7 +169,7 @@ export const LoginForm: React.FC<Props> = ({
 						burde du gjøre en passord-reset ved å klikke på{" "}
 						<em>&quot;Can't access your account?&quot;</em>
 					</P>
-				</Details>
+				</Accordion>
 			</Container>
 		</PageLayout>
 	);

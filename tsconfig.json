@@ -8,6 +8,7 @@
 		"lib": ["dom", "esnext"],
 		"target": "esnext",
 		"types": ["vite/client"],
+		"typeRoots": ["./node_modules/@types", "./typings"],
 		// stricter type-checking for stronger correctness. Recommended by TS
 		"strict": true,
 		// linter checks for common issues

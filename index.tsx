@@ -1,12 +1,14 @@
 import React from "react";
-import ReactDOM from "react-dom";
-import { LisaProvider } from "@udir/lisa";
+import { createRoot } from "react-dom/client";
+import { LisaProvider } from "@utdanningsdirektoratet/lisa";
 import { GlobalStyle } from "./src/global-style";
 import { App } from "./src/App";
 import { JiraLogin } from "./src/login/jira/JiraLogin";
 import { BekkEntraLogin } from "./src/login/bekk/example";
 
-ReactDOM.render(
+const container = document.getElementById("root");
+const root = createRoot(container as HTMLElement); // createRoot(container!) if you use TypeScript
+root.render(
 	<LisaProvider includeGlobalStyling>
 		<GlobalStyle />
 		<BekkEntraLogin>
@@ -14,6 +16,5 @@ ReactDOM.render(
 				<App />
 			</JiraLogin>
 		</BekkEntraLogin>
-	</LisaProvider>,
-	document.getElementById("root")
+	</LisaProvider>
 );
