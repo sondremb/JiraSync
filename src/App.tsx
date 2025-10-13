@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { TimeTable } from "./components/TimeTable/TimeTable";
 import {
@@ -20,6 +20,7 @@ import { DownloadTimestamp } from "./components/DownloadTimestamp";
 import { colors, spacing } from "@utdanningsdirektoratet/lisa-tokens";
 import { LoginStatus } from "./login/LoginStatus";
 import { IsoWeek } from "./date-time/IsoWeek";
+import { addDays } from "date-fns";
 
 const CenteredText = styled(Text)`
 	text-align: center;
@@ -29,13 +30,22 @@ const ColoredRow = styled(FlexRow)`
 	background-color: ${colors.skifer500};
 	padding: ${spacing(8)};
 `;
+interface Props {
+	initialWeek: IsoWeek;
+}
 
-export const App: React.FC = () => {
-	const [weekAndYear, setWeekAndYear] = useState<IsoWeek>(
-		IsoWeek.fromDate(new Date())
-	);
-
+export const App: React.FC<Props> = ({ initialWeek }) => {
 	const { lockDate } = useLockDate();
+	const [weekAndYear, setWeekAndYear] = useState<IsoWeek>(initialWeek);
+
+	useEffect(() => {
+		if (lockDate === undefined || weekAndYear !== undefined) return;
+
+		const dayAfterLockDate = addDays(new Date(lockDate), 1);
+		const isoWeek = IsoWeek.fromDate(dayAfterLockDate);
+		setWeekAndYear(isoWeek);
+	}, [lockDate]);
+
 	const { state: entries, timestamp, updateBekkHours } = useWeek(weekAndYear);
 
 	const onNextWeekClick = () => {
