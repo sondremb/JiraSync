@@ -121,7 +121,8 @@ const jiraToTimecodeMap: TimecodeSelector[] = [
 				/HFL-7152/.test(epicLink) ||
 				// Ekstretildeling
 				/HFL-6955/.test(epicLink) ||
-				/HFL-7191/.test(epicLink)
+				/HFL-7191/.test(epicLink) ||
+				/HFL-7379/.test(epicLink)
 			);
 		},
 		timecodeId: UdirBekkIds.UTA1124HFLEkstretildeling,
