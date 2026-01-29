@@ -18,6 +18,16 @@ export enum UdirBekkIds {
 	UTA1121KILab = 1003373,
 	UTA1122HFLSommer = 1003386,
 	UTA1124HFLEkstretildeling = 1003471,
+	UTA1127PasxNytuvikling = 1003615,
+	UTA1128PaspNytuvikling = 1003616,
+	UTA1129PasDesignNytuvikling = 1003617,
+	UTA1130UidpNytuvikling = 1003618,
+}
+
+enum ComponentId {
+	PaspNyutvikling = "23600",
+	PasxNyutvikling = "23601",
+	UidpNyutvikling = "23602",
 }
 
 interface TimecodeSelector {
@@ -28,15 +38,42 @@ interface TimecodeSelector {
 const jiraToTimecodeMap: TimecodeSelector[] = [
 	{
 		selector: (jiraIssue) => {
+			if (!/PASX.*/.test(jiraIssue.key)) {
+				return false;
+			}
+			return jiraIssue.components.includes(ComponentId.PasxNyutvikling);
+		},
+		timecodeId: UdirBekkIds.UTA1127PasxNytuvikling,
+	},
+	{
+		selector: (jiraIssue) => {
 			return /PASX.*/.test(jiraIssue.key);
 		},
 		timecodeId: UdirBekkIds.PASEksamen,
 	},
 	{
 		selector: (jiraIssue) => {
+			if (!/PASP.*/.test(jiraIssue.key)) {
+				return false;
+			}
+			return jiraIssue.components.includes(ComponentId.PaspNyutvikling);
+		},
+		timecodeId: UdirBekkIds.UTA1128PaspNytuvikling,
+	},
+	{
+		selector: (jiraIssue) => {
 			return /PASP.*/.test(jiraIssue.key);
 		},
 		timecodeId: UdirBekkIds.PASPrøver,
+	},
+	{
+		selector: (jiraIssue) => {
+			if (!/IDPF.*/.test(jiraIssue.key)) {
+				return false;
+			}
+			return jiraIssue.components.includes(ComponentId.UidpNyutvikling);
+		},
+		timecodeId: UdirBekkIds.UTA1130UidpNytuvikling,
 	},
 	{
 		selector: (jiraIssue) => {
