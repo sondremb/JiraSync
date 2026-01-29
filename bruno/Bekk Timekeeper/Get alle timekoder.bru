@@ -1,0 +1,16 @@
+meta {
+  name: Get alle timekoder
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{BaseAddress}}/v3/timecodes
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
