@@ -1,0 +1,20 @@
+meta {
+  name: Issue
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{BaseAddress}}/api/2/issue/:key
+  body: none
+  auth: inherit
+}
+
+params:path {
+  key: PASP-5839
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
