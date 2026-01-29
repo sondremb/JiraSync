@@ -79,8 +79,15 @@ export interface JiraIssueResult {
 			name: string;
 		};
 		customfield_10001: string | null;
+		components?: JiraComponent[];
 		labels: string[];
 	};
+}
+
+interface JiraComponent {
+	self: string;
+	id: string;
+	name: string;
 }
 
 export const getJiraIssue = async (
@@ -107,7 +114,7 @@ export const getJiraIssue = async (
 		};
 	}
 
-	const url = `https://jira.udir.no/rest/api/2/issue/${ticketKey}?fields=summary,issuetype,project,labels,customfield_10001`;
+	const url = `https://jira.udir.no/rest/api/2/issue/${ticketKey}?fields=summary,issuetype,project,labels,customfield_10001,components`;
 	return axios
 		.get(url, {
 			auth: {

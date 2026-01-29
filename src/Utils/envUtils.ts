@@ -5,6 +5,7 @@ export const config = {
 		clientId: getConfigValue("VITE_BEKK_ENTRA_CLIENT_ID"),
 		scope: getConfigValue("VITE_BEKK_ENTRA_SCOPE"),
 	},
+	debug: import.meta.env["VITE_DEBUG"]?.toLowerCase() === "true",
 };
 
 function getConfigValue(key: string): string {

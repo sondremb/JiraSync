@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "Bekk Timekeeper",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}

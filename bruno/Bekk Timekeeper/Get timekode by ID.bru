@@ -1,0 +1,20 @@
+meta {
+  name: Get timekode by ID
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{BaseAddress}}/v3/timecodes?ids=1000890
+  body: none
+  auth: inherit
+}
+
+params:query {
+  ids: 1000890
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

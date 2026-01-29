@@ -1,0 +1,29 @@
+meta {
+  name: Authenticate
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{BaseAddress}}/billingratio/employee/{{BekkAnsattId}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{?PromptedToken}}
+}
+
+script:post-response {
+  if (res.status !== 200) {
+    console.error("Ikke gyldig token!")
+  }
+  const authHeader = req.headers.Authorization;
+  const token = authHeader.replace(/^Bearer /, "");
+  bru.setVar("BekkAccessToken", token)
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

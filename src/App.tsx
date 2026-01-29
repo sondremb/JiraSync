@@ -21,6 +21,8 @@ import { colors, spacing } from "@utdanningsdirektoratet/lisa-tokens";
 import { LoginStatus } from "./login/LoginStatus";
 import { IsoWeek } from "./date-time/IsoWeek";
 import { addDays } from "date-fns";
+import { CopyTokenButton } from "./login/bekk/CopyTokenButton";
+import { config } from "./Utils/envUtils";
 
 const CenteredText = styled(Text)`
 	text-align: center;
@@ -91,6 +93,7 @@ export const App: React.FC<Props> = ({ initialWeek }) => {
 			</FlexRow>
 			<FlexRow halign="space-between" className="mb-12">
 				{timestamp && <DownloadTimestamp timestamp={timestamp} />}
+				{config.debug && <CopyTokenButton />}
 			</FlexRow>
 			<ColoredRow halign="center" valign="center">
 				<Button
