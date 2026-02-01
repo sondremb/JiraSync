@@ -26,7 +26,7 @@ export const CUSTOM_FIELDS = {
 
 export const getJiraTimesheet = async (
 	body: Partial<JiraRequestParams> | null,
-	eventId: string
+	eventId: string,
 ): Promise<HandlerResponse> => {
 	if (body === null) {
 		return {
@@ -92,7 +92,7 @@ interface JiraComponent {
 
 export const getJiraIssue = async (
 	body: Partial<GetJiraIssueParams> | null,
-	eventId: string
+	eventId: string,
 ): Promise<HandlerResponse> => {
 	if (body === null) {
 		return {
@@ -129,10 +129,10 @@ export const getJiraIssue = async (
 function buildJiraUrl(
 	fromDate: string | undefined,
 	toDate: string | undefined,
-	fields: string[]
+	fields: string[],
 ): string {
 	const url = new URL(
-		"https://jira.udir.no/rest/timesheet-gadget/1.0/raw-timesheet.json"
+		"https://jira.udir.no/rest/timesheet-gadget/1.0/raw-timesheet.json",
 	);
 	url.searchParams.set("startDate", fromDate ?? "");
 	url.searchParams.set("endDate", toDate ?? "");
@@ -143,7 +143,7 @@ function buildJiraUrl(
 const handleError = (error: AxiosError, eventId: string): HandlerResponse => {
 	// error.config.auth holder authorization-headeren som sendes til Jira, inkludert passord i plaintext
 	// vi sletter den før vi gjør noe som helst annet med error, for å unngå noen form for lekkasje til log
-	delete error.config.auth;
+	delete error.config?.auth;
 
 	if (error.response) {
 		if (
@@ -159,7 +159,7 @@ const handleError = (error: AxiosError, eventId: string): HandlerResponse => {
 			error.response.headers["x-seraph-loginreason"] ===
 				"AUTHENTICATION_DENIED" &&
 			error.response.headers["x-authentication-denied-reason"]?.includes(
-				"CAPTCHA_CHALLENGE"
+				"CAPTCHA_CHALLENGE",
 			)
 		) {
 			return {
