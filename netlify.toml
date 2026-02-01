@@ -1,9 +1,4 @@
 [build]
     command = "yarn build" # the command you run to build this file
-    functions = "dist_functions" # netlify-lambda builds to this folder AND Netlify reads functions from here
+    functions = "functions" 
     publish = "dist" 
-
-[dev]
-    command = "yarn start:app" # the command you run to build this file
-    framework = "#auto"
-    port = 3000 # The port that the netlify dev will be accessible on

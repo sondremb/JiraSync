@@ -2,7 +2,7 @@
 	"compilerOptions": {
 		"module": "esnext",
 		"esModuleInterop": true,
-		"moduleResolution": "node",
+		"moduleResolution": "bundler",
 		"outDir": "dist",
 		"jsx": "react",
 		"lib": ["dom", "esnext"],
