@@ -37,11 +37,10 @@
 		"vite-tsconfig-paths": "^3.5.2"
 	},
 	"devDependencies": {
-		"@netlify/functions": "^1.0.0",
+		"@netlify/functions": "^5.1.2",
 		"@types/react": "^18.0.0",
 		"@types/react-dom": "^18.0.0",
 		"@types/styled-components": "^4.0.3",
-		"netlify-cli": "^9.13.0",
 		"path-browserify": "^1.0.1",
 		"react-datepicker": "^4.7.0",
 		"react-hook-form": "^7.27.1",

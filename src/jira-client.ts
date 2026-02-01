@@ -1,4 +1,4 @@
-import { Response } from "@netlify/functions/dist/function/response";
+import { HandlerResponse } from "@netlify/functions";
 import axios, { AxiosError } from "axios";
 import { DateString } from "./types";
 
@@ -27,7 +27,7 @@ export const CUSTOM_FIELDS = {
 export const getJiraTimesheet = async (
 	body: Partial<JiraRequestParams> | null,
 	eventId: string
-): Promise<Response> => {
+): Promise<HandlerResponse> => {
 	if (body === null) {
 		return {
 			body: "Missing request body",
@@ -93,7 +93,7 @@ interface JiraComponent {
 export const getJiraIssue = async (
 	body: Partial<GetJiraIssueParams> | null,
 	eventId: string
-): Promise<Response> => {
+): Promise<HandlerResponse> => {
 	if (body === null) {
 		return {
 			body: "Missing request body",
@@ -140,7 +140,7 @@ function buildJiraUrl(
 	return url.toString();
 }
 
-const handleError = (error: AxiosError, eventId: string): Response => {
+const handleError = (error: AxiosError, eventId: string): HandlerResponse => {
 	// error.config.auth holder authorization-headeren som sendes til Jira, inkludert passord i plaintext
 	// vi sletter den før vi gjør noe som helst annet med error, for å unngå noen form for lekkasje til log
 	delete error.config.auth;
