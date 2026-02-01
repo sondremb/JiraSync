@@ -18,8 +18,8 @@
 	"author": "Thor Kristian Valderhaug",
 	"license": "ISC",
 	"dependencies": {
-		"@azure/msal-browser": "^5.1.0",
-		"@azure/msal-react": "^5.0.3",
+		"@azure/msal-browser": "^3.0.0",
+		"@azure/msal-react": "^3.0.0",
 		"@netlify/vite-plugin": "^2.8.0",
 		"@utdanningsdirektoratet/lisa": "^4.42.0",
 		"@utdanningsdirektoratet/lisa-tokens": "^1.2.0",

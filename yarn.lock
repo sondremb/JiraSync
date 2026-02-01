@@ -2,22 +2,22 @@
 # yarn lockfile v1
 
 
-"@azure/msal-browser@^5.1.0":
-  version "5.1.0"
-  resolved "https://registry.yarnpkg.com/@azure/msal-browser/-/msal-browser-5.1.0.tgz#206daca386b18fc86872bd2ce2ce93d5b51137de"
-  integrity sha512-5tZcp1zcALSLJvnxkmJ8MYxLtZzEyq28wX2jSV4Kz2QaHty4eYIb/Pc44DARLfgHD+G9F82k9nD7J89MbFRQxA==
+"@azure/msal-browser@^3.0.0":
+  version "3.30.0"
+  resolved "https://registry.yarnpkg.com/@azure/msal-browser/-/msal-browser-3.30.0.tgz#887c4417710d375506be041556499a0d92fc62e0"
+  integrity sha512-I0XlIGVdM4E9kYP5eTjgW8fgATdzwxJvQ6bm2PNiHaZhEuUz47NYw1xHthC9R+lXz4i9zbShS0VdLyxd7n0GGA==
   dependencies:
-    "@azure/msal-common" "16.0.3"
+    "@azure/msal-common" "14.16.1"
 
-"@azure/msal-common@16.0.3":
-  version "16.0.3"
-  resolved "https://registry.yarnpkg.com/@azure/msal-common/-/msal-common-16.0.3.tgz#30884832f201a56bf35cf5538d618ed4c8c84977"
-  integrity sha512-3aedNnM0CHVuVZ+BqembdZWgovqe96BJ4YxGoIK0+qhoBZQsAhfwXdhjen72K94pkSQHtzlJ7fAq6w7knFZsng==
+"@azure/msal-common@14.16.1":
+  version "14.16.1"
+  resolved "https://registry.yarnpkg.com/@azure/msal-common/-/msal-common-14.16.1.tgz#d23ecce40823a4d03ad74160dc819d62e0c0a787"
+  integrity sha512-nyxsA6NA4SVKh5YyRpbSXiMr7oQbwark7JU9LMeg6tJYTSPyAGkdx61wPT4gyxZfxlSxMMEyAsWaubBlNyIa1w==
 
-"@azure/msal-react@^5.0.3":
-  version "5.0.3"
-  resolved "https://registry.yarnpkg.com/@azure/msal-react/-/msal-react-5.0.3.tgz#f74d0cb4ad2ad1654812984f31d6f1056cae6077"
-  integrity sha512-zz8USqfunXrZKFFG1tcfSlr+84NFMbePASj8NHB9oL0MIXdoWzADRUXkx+gKdB9dP/yDtfpGPOUgUAYGmpjTuw==
+"@azure/msal-react@^3.0.0":
+  version "3.0.25"
+  resolved "https://registry.yarnpkg.com/@azure/msal-react/-/msal-react-3.0.25.tgz#7ac2cad456f6099d4dbf1673b299e6e059761598"
+  integrity sha512-BtcfBJQrtkfir4mDJ6X/55BT8WL59/QwfEgxGExY/gZLRfjGrqw/VwXiyQRFyLLaVbvKngF0a8rOcFZx1Jr9qQ==
 
 "@babel/code-frame@^7.12.13", "@babel/code-frame@^7.16.0", "@babel/code-frame@^7.24.7", "@babel/code-frame@^7.26.2", "@babel/code-frame@^7.27.1", "@babel/code-frame@^7.28.6", "@babel/code-frame@^7.29.0":
   version "7.29.0"
