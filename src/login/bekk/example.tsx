@@ -42,7 +42,7 @@ export const BekkEntraLogin = ({ children }: React.PropsWithChildren<{}>) => {
 
 	// Scope er kun nødvendig dersom appen prater med Bekk-apier
 	const authRequest = {
-		scopes: [config.bekk.scope],
+		scopes: [config.bekk.scope, "openid", "profile"],
 	};
 
 	return (
