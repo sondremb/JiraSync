@@ -4,20 +4,20 @@ import { BekkId } from "./types";
 export const FrivilligKompetanseByggingId = 1786;
 
 export enum UdirBekkIds {
-	PASEksamen = 1000752,
-	PASPrøver = 1000890,
-	Pålogging = 1000854,
-	Systemoversikt = 1002326,
-	UBAS = 1002497,
-	BistandTilHelhetligDesign = 1002899,
-	HFLDataPlattform = 1002302,
-	HFL = 1003011,
-	HSS = 1003012,
-	HFLSkjema = 1003290,
-	UTA1113Design = 1003088,
-	UTA1121KILab = 1003373,
-	UTA1122HFLSommer = 1003386,
-	UTA1124HFLEkstretildeling = 1003471,
+	UTA1065PasEksamenForvaltning = 1000752,
+	UTA1068PasPrøverForvaltning = 1000890,
+	UTA1067PåloggingssystemetForvaltning = 1000854,
+	UTA1092Systemoversikt = 1002326,
+	UTA1097Ubas = 1002497,
+	UTA1109BistandTilHelhetligDesign = 1002899,
+	UTA1090HflBrisk = 1002302,
+	UTA1110HflForvaltning = 1003011,
+	UTA1111HøringOgUndersøkelser = 1003012,
+	UTA1119HflSkjemaVertikal = 1003290,
+	UTA1113FellesDesignsystemForvaltning = 1003088,
+	UTA1121KiLab = 1003373,
+	UTA1122HflSommerKi = 1003386,
+	UTA1124HflEkstraTildeling = 1003471,
 	UTA1127PasxNytuvikling = 1003615,
 	UTA1128PaspNytuvikling = 1003616,
 	UTA1129PasDesignNytuvikling = 1003617,
@@ -49,7 +49,7 @@ const jiraToTimecodeMap: TimecodeSelector[] = [
 		selector: (jiraIssue) => {
 			return /PASX.*/.test(jiraIssue.key);
 		},
-		timecodeId: UdirBekkIds.PASEksamen,
+		timecodeId: UdirBekkIds.UTA1065PasEksamenForvaltning,
 	},
 	{
 		selector: (jiraIssue) => {
@@ -64,7 +64,7 @@ const jiraToTimecodeMap: TimecodeSelector[] = [
 		selector: (jiraIssue) => {
 			return /PASP.*/.test(jiraIssue.key);
 		},
-		timecodeId: UdirBekkIds.PASPrøver,
+		timecodeId: UdirBekkIds.UTA1068PasPrøverForvaltning,
 	},
 	{
 		selector: (jiraIssue) => {
@@ -79,31 +79,31 @@ const jiraToTimecodeMap: TimecodeSelector[] = [
 		selector: (jiraIssue) => {
 			return /IDPF.*/.test(jiraIssue.key);
 		},
-		timecodeId: UdirBekkIds.Pålogging,
+		timecodeId: UdirBekkIds.UTA1067PåloggingssystemetForvaltning,
 	},
 	{
 		selector: (jiraIssue) => {
 			return /SO.*/.test(jiraIssue.key);
 		},
-		timecodeId: UdirBekkIds.Systemoversikt,
+		timecodeId: UdirBekkIds.UTA1092Systemoversikt,
 	},
 	{
 		selector: (jiraIssue) => {
 			return /UBAS.*/.test(jiraIssue.key);
 		},
-		timecodeId: UdirBekkIds.UBAS,
+		timecodeId: UdirBekkIds.UTA1097Ubas,
 	},
 	{
 		selector: (jiraIssue) => {
 			return /DESIGN.*/.test(jiraIssue.key);
 		},
-		timecodeId: UdirBekkIds.BistandTilHelhetligDesign,
+		timecodeId: UdirBekkIds.UTA1109BistandTilHelhetligDesign,
 	},
 	{
 		selector: (jiraIssue) => {
 			return /KIL.*/.test(jiraIssue.key);
 		},
-		timecodeId: UdirBekkIds.UTA1121KILab,
+		timecodeId: UdirBekkIds.UTA1121KiLab,
 	},
 	{
 		selector: (jiraIssue) => {
@@ -121,7 +121,7 @@ const jiraToTimecodeMap: TimecodeSelector[] = [
 				/HFL-3435/.test(epicLink)
 			);
 		},
-		timecodeId: UdirBekkIds.HFLDataPlattform,
+		timecodeId: UdirBekkIds.UTA1090HflBrisk,
 	},
 	{
 		selector: (jiraIssue) => {
@@ -134,7 +134,7 @@ const jiraToTimecodeMap: TimecodeSelector[] = [
 			}
 			return /HFL-7008/.test(epicLink);
 		},
-		timecodeId: UdirBekkIds.UTA1122HFLSommer,
+		timecodeId: UdirBekkIds.UTA1122HflSommerKi,
 	},
 	{
 		selector: (jiraIssue) => {
@@ -145,7 +145,7 @@ const jiraToTimecodeMap: TimecodeSelector[] = [
 			if (/HSS-1030/.test(epicLink)) return true;
 			return false;
 		},
-		timecodeId: UdirBekkIds.HFLSkjema,
+		timecodeId: UdirBekkIds.UTA1119HflSkjemaVertikal,
 	},
 	{
 		selector: (jiraIssue) => {
@@ -162,25 +162,25 @@ const jiraToTimecodeMap: TimecodeSelector[] = [
 				/HFL-7379/.test(epicLink)
 			);
 		},
-		timecodeId: UdirBekkIds.UTA1124HFLEkstretildeling,
+		timecodeId: UdirBekkIds.UTA1124HflEkstraTildeling,
 	},
 	{
 		selector: (jiraIssue) => {
 			return /HFL.*/.test(jiraIssue.key);
 		},
-		timecodeId: UdirBekkIds.HFL,
+		timecodeId: UdirBekkIds.UTA1110HflForvaltning,
 	},
 	{
 		selector: (jiraIssue) => {
 			return /HSS.*/.test(jiraIssue.key);
 		},
-		timecodeId: UdirBekkIds.HSS,
+		timecodeId: UdirBekkIds.UTA1111HøringOgUndersøkelser,
 	},
 	{
 		selector: (jiraIssue) => {
 			return /DESIGN.*/.test(jiraIssue.key);
 		},
-		timecodeId: UdirBekkIds.UTA1113Design,
+		timecodeId: UdirBekkIds.UTA1113FellesDesignsystemForvaltning,
 	},
 ];
 
