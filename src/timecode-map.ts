@@ -195,32 +195,3 @@ export const bekkIdFromJiraTimecode = (jiraIssue: JiraIssue) => {
 
 export const isUdir = (timecodeId: number | undefined): boolean =>
 	timecodeId !== undefined && timecodeId in UdirBekkIds;
-
-/* function getField(
-	jiraIssue: Jira.Timecode,
-	fieldName: string
-): string | undefined {
-	const fieldValue = jiraIssue.fields.find(
-		(field) => field.value === fieldName
-	)?.label;
-	if (fieldValue === "NoValueForFieldOnIssue") {
-		return undefined;
-	}
-	return fieldValue;
-}
- */
-/* function getEpicName(jiraIssue: Jira.Timecode): string | undefined {
-	return getField(jiraIssue, CUSTOM_FIELDS.epicName);
-} */
-
-/* function getEpicLink(jiraIssue: Jira.Timecode): string | undefined {
-	return getField(jiraIssue, CUSTOM_FIELDS.epicLink);
-} */
-
-/* function getLabels(jiraIssue: Jira.Timecode): string[] {
-	const labelsString = getField(jiraIssue, CUSTOM_FIELDS.labels);
-	if (labelsString === undefined) {
-		return [];
-	}
-	return labelsString.split(",").map((label) => label.trim());
-} */
