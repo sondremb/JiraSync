@@ -22,12 +22,14 @@ export enum UdirBekkIds {
 	UTA1128PaspNytuvikling = 1003616,
 	UTA1129PasDesignNytuvikling = 1003617,
 	UTA1130UidpNytuvikling = 1003618,
+	UTA1131HflBriskNytuvikling = 1003625,
 }
 
 enum ComponentId {
 	PaspNyutvikling = "23600",
 	PasxNyutvikling = "23601",
 	UidpNyutvikling = "23602",
+	HflBriskNyutvikling = "23607",
 }
 
 interface TimecodeSelector {
@@ -104,6 +106,54 @@ const jiraToTimecodeMap: TimecodeSelector[] = [
 			return /DESIGN.*/.test(jiraIssue.key);
 		},
 		timecodeId: UdirBekkIds.UTA1113FellesDesignsystemForvaltning,
+	},
+	{
+		selector: (jiraIssue) => {
+			if (!/HFL.*/.test(jiraIssue.key)) {
+				return false;
+			}
+			return jiraIssue.components.includes(ComponentId.HflBriskNyutvikling);
+		},
+		timecodeId: UdirBekkIds.UTA1131HflBriskNytuvikling,
+	},
+	{
+		selector: (jiraIssue) => {
+			if (!/HFL.*/.test(jiraIssue.key)) {
+				return false;
+			}
+			if (jiraIssue.components.includes(ComponentId.HflBriskNyutvikling)) {
+				return false;
+			}
+			if (jiraIssue.epicLink === null) {
+				return false;
+			}
+			return /HFL-7191/.test(jiraIssue.epicLink);
+		},
+		timecodeId: UdirBekkIds.UTA1090HflBrisk,
+	},
+	{
+		selector: (jiraIssue) => {
+			if (!/HSS.*/.test(jiraIssue.key)) {
+				return false;
+			}
+			if (jiraIssue.epicLink === null) {
+				return false;
+			}
+			return /HSS-1030/.test(jiraIssue.epicLink);
+		},
+		timecodeId: UdirBekkIds.UTA1119HflSkjemaVertikal,
+	},
+	{
+		selector: (jiraIssue) => {
+			return /HSS.*/.test(jiraIssue.key);
+		},
+		timecodeId: UdirBekkIds.UTA1111HøringOgUndersøkelser,
+	},
+	{
+		selector: (jiraIssue) => {
+			return /HFL.*/.test(jiraIssue.key);
+		},
+		timecodeId: UdirBekkIds.UTA1110HflForvaltning,
 	},
 ];
 
