@@ -1,0 +1,16 @@
+meta {
+  name: Projects
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{BaseAddress}}/api/2/project
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
