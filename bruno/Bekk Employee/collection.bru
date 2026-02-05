@@ -1,0 +1,14 @@
+auth {
+  mode: bearer
+}
+
+auth:bearer {
+  token: {{BekkAccessToken}}
+}
+
+script:pre-request {
+  const tokenVariable = bru.getVar("BekkAccessToken");
+  if (tokenVariable === null) {
+    console.error("Ingen Access token - kjør 'Authenticate'-requesten for å sette token!")
+  }
+}

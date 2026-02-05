@@ -1,0 +1,20 @@
+meta {
+  name: Get ansatt by ID
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{BaseAddress}}/v2/employees/:ansattId
+  body: none
+  auth: inherit
+}
+
+params:path {
+  ansattId: 1545
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
