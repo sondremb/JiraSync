@@ -1,0 +1,12 @@
+name: Udir Jira Cloud Prod
+variables:
+  - secret: true
+    name: ClientId
+  - secret: true
+    name: ClientSecret
+  - name: BaseAddress
+    value: https://api.atlassian.com/ex/jira/{{CloudId}}
+  - secret: true
+    name: CloudId
+  - secret: true
+    name: AuthToken
