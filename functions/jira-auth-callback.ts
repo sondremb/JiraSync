@@ -46,7 +46,7 @@ export const handler: Handler = async (event) => {
 					// 90 days, as per https://developer.atlassian.com/cloud/jira/platform/oauth-2-3lo-apps/#use-a-refresh-token-to-get-another-access-token-and-refresh-token-pair
 					maxAge: 60 * 60 * 24 * 90,
 				}),
-				Location: "/auth",
+				Location: "/",
 			},
 		};
 	} catch (err) {
