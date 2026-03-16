@@ -25,7 +25,7 @@ export const handler: Handler = async () => {
 
 	const codeVerifier = client.randomPKCECodeVerifier();
 	const codeChallenge = await client.calculatePKCECodeChallenge(codeVerifier);
-	const scopes = ["read:jira-work"];
+	const scopes = ["read:jira-work", "offline_access"];
 
 	const parameters = {
 		code_challenge: codeChallenge,
