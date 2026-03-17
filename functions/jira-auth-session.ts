@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { Handler } from "@netlify/functions";
 import * as client from "openid-client";
 import { StatusCode } from "../src/Utils/statuscode";
