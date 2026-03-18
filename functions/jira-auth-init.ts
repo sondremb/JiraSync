@@ -12,9 +12,9 @@ const clientSecret = process.env.JIRA_CLIENT_SECRET;
 if (!clientSecret) {
 	throw new Error("JIRA_CLIENT_SECRET must be set");
 }
-const selfBaseUrl = process.env.SELF_BASE_URL;
+const selfBaseUrl = process.env.DEPLOY_URL;
 if (!selfBaseUrl) {
-	throw new Error("SELF_BASE_URL must be set");
+	throw new Error("DEPLOY_URL must be set");
 }
 
 const authBaseUrl = "https://auth.atlassian.com";
