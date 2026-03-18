@@ -29,6 +29,7 @@ const AuthenticationResult = {
 
 export interface JiraAuthContext {
 	getAccessToken: () => Promise<AuthenticationResult>;
+	logout: () => void;
 }
 
 type StoredToken = {
@@ -83,6 +84,7 @@ async function refreshFromServer(): Promise<AuthenticationResult> {
 const accessTokenKey = "atlassian_access_token";
 const expiresAtKey = "atlassian_access_token_expires_at";
 
+// TODO - trenger dette egentlig være en context? Spør AI
 export const jiraAuthenticationContext: JiraAuthContext = {
 	getAccessToken: async () => {
 		const storedToken = getFromStorage();
@@ -91,5 +93,9 @@ export const jiraAuthenticationContext: JiraAuthContext = {
 		}
 
 		return refreshFromServer();
+	},
+	logout: () => {
+		localStorage.removeItem(accessTokenKey);
+		localStorage.removeItem(expiresAtKey);
 	},
 };
