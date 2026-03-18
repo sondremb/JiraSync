@@ -13,7 +13,7 @@ export const handler: Handler = async () => {
 	if (!clientSecret) {
 		throw new Error("JIRA_CLIENT_SECRET must be set");
 	}
-	const selfBaseUrl = process.env.DEPLOY_URL;
+	const selfBaseUrl = process.env.DEPLOY_PRIME_URL ?? process.env.URL;
 	if (!selfBaseUrl) {
 		throw new Error("DEPLOY_URL must be set");
 	}
