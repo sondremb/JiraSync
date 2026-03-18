@@ -22,8 +22,6 @@ export const handler: Handler = async (event) => {
 	const cookies = cookie.parseCookie(event.headers.cookie ?? "");
 	const refreshToken = cookies["refresh_token"];
 
-	console.log("hit jira-auth-session");
-
 	if (!refreshToken) {
 		return {
 			statusCode: StatusCode.Unauthorized401,

@@ -12,17 +12,10 @@ export const Route = createFileRoute("/")({
 		} else if (authResult.kind === "error") {
 			throw redirect({ to: "/error" });
 		}
-		return { accessToken: authResult.accessToken };
-	},
-	loader: ({ context }) => {
-		return { accessToken: context.accessToken };
 	},
 });
 
 function Component() {
-	const { accessToken } = Route.useLoaderData();
-	console.log("Access token in root route:", accessToken);
-
 	return (
 		<BekkEntraLogin>
 			<LockdateWrapper />
