@@ -1,4 +1,7 @@
 import { CUSTOM_FIELDS, JiraIssueResult } from "../jira-client";
+import { Brand } from "../Utils/brandedTypes";
+
+export type JiraIssueKey = Brand<string, "JiraIssueKey">;
 
 export interface JiraIssue {
 	key: string;
