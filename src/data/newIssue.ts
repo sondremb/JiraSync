@@ -2,6 +2,7 @@ import createClient, { Middleware } from "openapi-fetch";
 import { paths } from "../generated/jira-issues";
 import { IsoDate } from "../date-time/IsoWeek";
 import {
+	CUSTOM_FIELDS,
 	JiraAccountId,
 	JiraIssue,
 	JiraIssueId,
@@ -10,7 +11,6 @@ import {
 } from "./issue";
 import { useQueries, useQuery } from "@tanstack/react-query";
 import { jiraAuthenticationContext } from "../login/jira/authContext";
-import { CUSTOM_FIELDS } from "../jira-client";
 
 function getBaseUrl() {
 	const cloudId = import.meta.env.VITE_ATLASSIAN_CLOUD_ID;

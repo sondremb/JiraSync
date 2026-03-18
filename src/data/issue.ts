@@ -1,5 +1,4 @@
 import { IsoDate } from "../date-time/IsoWeek";
-import { CUSTOM_FIELDS, JiraIssueResult } from "../jira-client";
 import { Seconds } from "../types";
 import { Brand } from "../Utils/brandedTypes";
 
@@ -21,10 +20,8 @@ export interface JiraIssue {
 	components: string[];
 }
 
-export function mapIssue(issue: JiraIssueResult): JiraIssue {
-	return {
-		key: issue.key,
-		epicLink: issue.fields[CUSTOM_FIELDS.epicLink] ?? null,
-		components: issue.fields.components?.map((c) => c.id) ?? [],
-	};
-}
+export const CUSTOM_FIELDS = {
+	epicLink: "customfield_10001",
+	epicName: "customfield_10003",
+	labels: "labels",
+} as const;
