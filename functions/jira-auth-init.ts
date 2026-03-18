@@ -13,7 +13,10 @@ export const handler: Handler = async () => {
 	if (!clientSecret) {
 		throw new Error("JIRA_CLIENT_SECRET must be set");
 	}
-	const selfBaseUrl = process.env.DEPLOY_PRIME_URL ?? process.env.URL;
+	const selfBaseUrl =
+		process.env.OVERRIDE_DEPLOY_URL ??
+		process.env.DEPLOY_PRIME_URL ??
+		process.env.URL;
 	if (!selfBaseUrl) {
 		throw new Error("DEPLOY_URL must be set");
 	}
@@ -27,7 +30,7 @@ export const handler: Handler = async () => {
 
 	const codeVerifier = client.randomPKCECodeVerifier();
 	const codeChallenge = await client.calculatePKCECodeChallenge(codeVerifier);
-	const scopes = ["read:jira-work", "offline_access"];
+	const scopes = ["read:jira-work", "read:jira-user", "offline_access"];
 
 	const parameters = {
 		code_challenge: codeChallenge,
