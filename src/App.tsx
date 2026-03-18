@@ -23,7 +23,6 @@ import { IsoWeek } from "./date-time/IsoWeek";
 import { addDays } from "date-fns";
 import { CopyTokenButton } from "./login/bekk/CopyTokenButton";
 import { config } from "./Utils/envUtils";
-import { useWorkedIssues } from "./data/newIssue";
 
 const CenteredText = styled(Text)`
 	text-align: center;
@@ -40,12 +39,6 @@ interface Props {
 export const App: React.FC<Props> = ({ initialWeek }) => {
 	const { lockDate } = useLockDate();
 	const [weekAndYear, setWeekAndYear] = useState<IsoWeek>(initialWeek);
-
-	const issues = useWorkedIssues(
-		IsoWeek.monday(weekAndYear),
-		IsoWeek.sunday(weekAndYear),
-	);
-	console.log("Fetched issues for the week:", JSON.stringify(issues, null, 2));
 
 	useEffect(() => {
 		if (lockDate === undefined || weekAndYear !== undefined) return;

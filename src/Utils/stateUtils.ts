@@ -1,21 +1,21 @@
 import { EmployeeTimesheetViewModelDTO } from "../bekk-api/data-contracts";
 import { bekkIdFromJiraTimecode } from "../timecode-map";
-import { Jira, BekkTimecodeEntry, DateString, Day, BekkId } from "../types";
-import { JiraIssue } from "../data/issue";
+import { BekkTimecodeEntry, DateString, Day, BekkId, Seconds } from "../types";
+import { JiraIssue, JiraIssueId, JiraIssueKey } from "../data/issue";
 import { IsoDate } from "../date-time/IsoWeek";
 
 export const updateEntries = (
 	bekkData: EmployeeTimesheetViewModelDTO,
-	jiraData: Jira.DTO,
-	jiraIssues: Record<string, JiraIssue> = {}
+	worklogs: Worklog[],
+	jiraIssues: Record<string, JiraIssue> = {},
 ): BekkTimecodeEntry[] => {
 	const entries = createEntriesFromBekkData(bekkData);
-	enrichEntriesWithJiraData(entries, jiraData, jiraIssues);
+	enrichEntriesWithJiraData(entries, worklogs, jiraIssues);
 	return entries;
 };
 
 export const createEntriesFromBekkData = (
-	data: EmployeeTimesheetViewModelDTO
+	data: EmployeeTimesheetViewModelDTO,
 ): BekkTimecodeEntry[] => {
 	const entries: BekkTimecodeEntry[] = [];
 	for (const timecode of data.timecodeTimeEntries!) {
@@ -37,7 +37,7 @@ export const createEntriesFromBekkData = (
 
 export const getOrCreateBekkEntry = (
 	entries: BekkTimecodeEntry[],
-	id: BekkId
+	id: BekkId,
 ): BekkTimecodeEntry => {
 	let entry = entries.find((entry) => entry.id === id);
 	if (entry === undefined) {
@@ -47,30 +47,35 @@ export const getOrCreateBekkEntry = (
 	return entry;
 };
 
+interface Worklog {
+	issueId: JiraIssueId;
+	issueKey: JiraIssueKey;
+	startDate: IsoDate;
+	timeSpentSeconds: Seconds;
+}
+
 export const enrichEntriesWithJiraData = (
 	entries: BekkTimecodeEntry[],
-	data: Jira.DTO,
-	jiraIssues: Record<string, JiraIssue> = {}
+	worklogs: Worklog[],
+	jiraIssues: Record<string, JiraIssue> = {},
 ) => {
-	for (const timecode of data.worklog) {
-		const bekkId = bekkIdFromJiraTimecode(jiraIssues[timecode.key]);
+	for (const worklog of worklogs) {
+		const bekkId = bekkIdFromJiraTimecode(jiraIssues[worklog.issueKey]);
 		const bekkEntry = getOrCreateBekkEntry(entries, bekkId);
-		for (const entry of timecode.entries) {
-			const timestring = IsoDate.fromDate(new Date(entry.startDate));
-			if (!(timestring in bekkEntry.days)) {
-				bekkEntry.days[timestring] = {
-					bekkHours: 0,
-					totalJiraHours: 0,
-					jiraEntries: [],
-				};
-			}
-			const hoursSpent = secondsToHours(entry.timeSpent);
-			bekkEntry.days[timestring].totalJiraHours += hoursSpent;
-			bekkEntry.days[timestring].jiraEntries.push({
-				id: timecode.key,
-				hours: hoursSpent,
-			});
+		const timestring = IsoDate.fromDate(new Date(worklog.startDate));
+		if (!(timestring in bekkEntry.days)) {
+			bekkEntry.days[timestring] = {
+				bekkHours: 0,
+				totalJiraHours: 0,
+				jiraEntries: [],
+			};
 		}
+		const hoursSpent = secondsToHours(worklog.timeSpentSeconds);
+		bekkEntry.days[timestring].totalJiraHours += hoursSpent;
+		bekkEntry.days[timestring].jiraEntries.push({
+			id: worklog.issueKey,
+			hours: hoursSpent,
+		});
 	}
 };
 

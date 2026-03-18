@@ -4,8 +4,8 @@ export type Seconds = number;
 
 declare namespace Jira {
 	interface DTO {
-		startDate: UnixTimestamp;
-		endDate: UnixTimestamp;
+		/* 		startDate: UnixTimestamp;
+		endDate: UnixTimestamp; */
 		worklog: Timecode[];
 	}
 
