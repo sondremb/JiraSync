@@ -5,6 +5,7 @@ import { LisaProvider } from "@utdanningsdirektoratet/lisa";
 import { GlobalStyle } from "../global-style";
 import { JiraAuthContext } from "../login/jira/authContext";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { config } from "../Utils/envUtils";
 
 export interface RouterContext {
 	auth: JiraAuthContext;
@@ -21,7 +22,7 @@ function RootComponent() {
 			<LisaProvider includeGlobalStyling>
 				<GlobalStyle />
 				<Outlet />
-				<TanStackRouterDevtools position="bottom-right" />
+				{config.debug && <TanStackRouterDevtools position="bottom-right" />}
 			</LisaProvider>
 		</QueryClientProvider>
 	);
