@@ -1,7 +1,7 @@
 import { EmployeeTimesheetViewModelDTO } from "../bekk-api/data-contracts";
 import { bekkIdFromJiraTimecode } from "../timecode-map";
-import { BekkTimecodeEntry, DateString, Day, BekkId, Seconds } from "../types";
-import { JiraIssue, JiraIssueId, JiraIssueKey } from "../data/issue";
+import { BekkTimecodeEntry, DateString, Day, BekkId } from "../types";
+import { JiraIssue, Worklog } from "../data/issue";
 import { IsoDate } from "../date-time/IsoWeek";
 
 export const updateEntries = (
@@ -46,13 +46,6 @@ export const getOrCreateBekkEntry = (
 	}
 	return entry;
 };
-
-interface Worklog {
-	issueId: JiraIssueId;
-	issueKey: JiraIssueKey;
-	startDate: IsoDate;
-	timeSpentSeconds: Seconds;
-}
 
 export const enrichEntriesWithJiraData = (
 	entries: BekkTimecodeEntry[],
