@@ -2,22 +2,10 @@ import { Handler } from "@netlify/functions";
 import * as client from "openid-client";
 import { StatusCode } from "../src/Utils/statuscode";
 import cookie from "cookie";
-import { cookieNames } from "./cookies";
-
-const clientId = process.env.JIRA_CLIENT_ID;
-if (!clientId) {
-	throw new Error("JIRA_CLIENT_ID must be set");
-}
-const clientSecret = process.env.JIRA_CLIENT_SECRET;
-if (!clientSecret) {
-	throw new Error("JIRA_CLIENT_SECRET must be set");
-}
-
-const authBaseUrl = "https://auth.atlassian.com";
-const dicoveryUrl = new URL(`${authBaseUrl}/.well-known/openid-configuration`);
+import { cookieNames, getOpenidClientConfig } from "./utils";
 
 export const handler: Handler = async (event) => {
-	const config = await client.discovery(dicoveryUrl, clientId, clientSecret);
+	const config = await getOpenidClientConfig();
 
 	const cookies = cookie.parseCookie(event.headers.cookie ?? "");
 	const codeVerifier = cookies[cookieNames.codeVerifier];

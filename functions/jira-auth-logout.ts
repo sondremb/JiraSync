@@ -1,7 +1,7 @@
 import { Handler } from "@netlify/functions";
 import cookie from "cookie";
 import { StatusCode } from "../src/Utils/statuscode";
-import { cookieNames } from "./cookies";
+import { cookieNames } from "./utils";
 
 export const handler: Handler = async () => {
 	return Promise.resolve({
