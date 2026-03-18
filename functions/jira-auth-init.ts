@@ -3,6 +3,7 @@ import { Handler } from "@netlify/functions";
 import * as client from "openid-client";
 import { StatusCode } from "../src/Utils/statuscode";
 import cookie from "cookie";
+import { cookieNames } from "./cookies";
 
 export const handler: Handler = async () => {
 	const clientId = process.env.JIRA_CLIENT_ID;
@@ -43,7 +44,7 @@ export const handler: Handler = async () => {
 	const authorizationUrl = client.buildAuthorizationUrl(config, parameters);
 
 	const setCookieHeader = cookie.stringifySetCookie({
-		name: "code_verifier",
+		name: cookieNames.codeVerifier,
 		value: codeVerifier,
 		httpOnly: true,
 		maxAge: 60 * 5,

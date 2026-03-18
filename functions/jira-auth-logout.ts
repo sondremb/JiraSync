@@ -1,6 +1,7 @@
 import { Handler } from "@netlify/functions";
 import cookie from "cookie";
 import { StatusCode } from "../src/Utils/statuscode";
+import { cookieNames } from "./cookies";
 
 export const handler: Handler = async () => {
 	return Promise.resolve({
@@ -8,7 +9,7 @@ export const handler: Handler = async () => {
 		body: "Logged out",
 		headers: {
 			"Set-Cookie": cookie.stringifySetCookie({
-				name: "refresh_token",
+				name: cookieNames.refreshToken,
 				value: "",
 				httpOnly: true,
 				maxAge: 0,

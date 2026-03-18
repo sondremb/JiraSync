@@ -3,6 +3,7 @@ import { Handler } from "@netlify/functions";
 import * as client from "openid-client";
 import { StatusCode } from "../src/Utils/statuscode";
 import cookie from "cookie";
+import { cookieNames } from "./cookies";
 
 const clientId = process.env.JIRA_CLIENT_ID;
 if (!clientId) {
@@ -20,7 +21,7 @@ export const handler: Handler = async (event) => {
 	const config = await client.discovery(dicoveryUrl, clientId, clientSecret);
 
 	const cookies = cookie.parseCookie(event.headers.cookie ?? "");
-	const refreshToken = cookies["refresh_token"];
+	const refreshToken = cookies[cookieNames.refreshToken];
 
 	if (!refreshToken) {
 		return {
@@ -47,7 +48,7 @@ export const handler: Handler = async (event) => {
 			}),
 			headers: {
 				"Set-Cookie": cookie.stringifySetCookie({
-					name: "refresh_token",
+					name: cookieNames.refreshToken,
 					value: tokens.refresh_token,
 					httpOnly: true,
 					// 90 days, as per https://developer.atlassian.com/cloud/jira/platform/oauth-2-3lo-apps/#use-a-refresh-token-to-get-another-access-token-and-refresh-token-pair
