@@ -103,8 +103,15 @@ export async function getIssueWorklogs(
 	fromDate: IsoDate,
 	toDate: IsoDate,
 ): Promise<Worklog[]> {
-	const startedAfter = IsoDate.toDate(fromDate).getTime();
-	const startedBefore = IsoDate.toDate(toDate).getTime();
+	const startedAfter = IsoDate.toDateAt(fromDate, {
+		hours: 0,
+		minutes: 0,
+	}).getTime();
+	const startedBefore = IsoDate.toDateAt(toDate, {
+		hours: 23,
+		minutes: 59,
+		seconds: 59,
+	}).getTime();
 	const { data, response } = await jiraClient.GET(
 		"/rest/api/3/issue/{issueIdOrKey}/worklog",
 		{
