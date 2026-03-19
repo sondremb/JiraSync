@@ -96,7 +96,7 @@ export const IsoDate = {
 		const end = IsoDate.toDate(to);
 
 		return eachDayOfInterval({ start, end }).map((date) =>
-			IsoDate.fromDate(date)
+			IsoDate.fromDate(date),
 		);
 	},
 	toDate(isoDate: IsoDate): Date {
@@ -108,6 +108,19 @@ export const IsoDate = {
 			milliseconds: 0,
 		});
 		return fromZonedTime(atNoon, NORWAY_TIMEZONE);
+	},
+	toDateAt(
+		isoDate: IsoDate,
+		time: { hours: number; minutes: number; seconds?: number },
+	): Date {
+		const parsed = parseISO(isoDate as string);
+		const atTime = set(parsed, {
+			hours: time.hours,
+			minutes: time.minutes,
+			seconds: time.seconds ?? 0,
+			milliseconds: 0,
+		});
+		return fromZonedTime(atTime, NORWAY_TIMEZONE);
 	},
 	parse(input: string): IsoDate {
 		const parsed = parseISO(input);
