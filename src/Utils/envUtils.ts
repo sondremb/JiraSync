@@ -5,6 +5,9 @@ export const config = {
 		clientId: getConfigValue("VITE_BEKK_ENTRA_CLIENT_ID"),
 		scope: getConfigValue("VITE_BEKK_ENTRA_SCOPE"),
 	},
+	jira: {
+		cloudId: getConfigValue("VITE_ATLASSIAN_CLOUD_ID"),
+	},
 	debug: import.meta.env["VITE_DEBUG"]?.toLowerCase() === "true",
 };
 

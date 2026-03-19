@@ -2,39 +2,6 @@ export type DateString = string;
 export type UnixTimestamp = number;
 export type Seconds = number;
 
-declare namespace Jira {
-	interface DTO {
-		startDate: UnixTimestamp;
-		endDate: UnixTimestamp;
-		worklog: Timecode[];
-	}
-
-	interface Timecode {
-		key: string;
-		summary: string;
-		entries: Entry[];
-		fields: Field[];
-	}
-
-	interface Entry {
-		author: string;
-		authorFullName: string;
-		comment: string;
-		created: UnixTimestamp;
-		id: number;
-		startDate: UnixTimestamp;
-		timeSpent: Seconds;
-		updateAuthor: string;
-		updateAuthorFullName: string;
-		updated: UnixTimestamp;
-	}
-
-	interface Field {
-		label: string;
-		value: string;
-	}
-}
-
 // STATE
 type BekkId = TimecodeViewModelV2DTO["id"];
 type JiraId = Jira.Timecode["key"];

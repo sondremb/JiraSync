@@ -1,20 +1,24 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
-import { LisaProvider } from "@utdanningsdirektoratet/lisa";
-import { GlobalStyle } from "./src/global-style";
-import { JiraLogin } from "./src/login/jira/JiraLogin";
-import { BekkEntraLogin } from "./src/login/bekk/example";
-import { LockdateWrapper } from "./src/LockdateWrapper";
+import { RouterProvider, createRouter } from "@tanstack/react-router";
+import { routeTree } from "./src/routeTree.gen";
+import { jiraAuthenticationContext } from "./src/login/jira/authContext";
+
+const router = createRouter({
+	routeTree,
+	defaultPreload: "intent",
+	scrollRestoration: true,
+	context: {
+		auth: jiraAuthenticationContext,
+	},
+});
+
+declare module "@tanstack/react-router" {
+	interface Register {
+		router: typeof router;
+	}
+}
 
 const container = document.getElementById("root");
-const root = createRoot(container as HTMLElement); // createRoot(container!) if you use TypeScript
-root.render(
-	<LisaProvider includeGlobalStyling>
-		<GlobalStyle />
-		<BekkEntraLogin>
-			<JiraLogin>
-				<LockdateWrapper />
-			</JiraLogin>
-		</BekkEntraLogin>
-	</LisaProvider>
-);
+const root = createRoot(container as HTMLElement);
+root.render(<RouterProvider router={router} />);

@@ -8,12 +8,15 @@ import {
 } from "@utdanningsdirektoratet/lisa";
 import React from "react";
 import styled from "styled-components";
-import { clearJiraCredentials } from "../jiraCredentials";
+import { jiraAuthenticationContext } from "./jira/authContext";
 
 export const LoginStatus: React.FC = () => {
 	const { instance } = useMsal();
 	const onClick = () => {
-		clearJiraCredentials();
+		fetch("/.netlify/functions/jira-auth-logout", {
+			method: "POST",
+		});
+		jiraAuthenticationContext.logout();
 		instance.logoutRedirect();
 	};
 	const navn = instance.getActiveAccount()?.name;

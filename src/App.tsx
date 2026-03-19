@@ -66,7 +66,7 @@ export const App: React.FC<Props> = ({ initialWeek }) => {
 				...day,
 				dateString,
 				id: entry.id,
-			}))
+			})),
 		);
 		const daysWithDifference = udirDays
 			.filter((day) => day.bekkHours !== day.totalJiraHours)
@@ -76,7 +76,7 @@ export const App: React.FC<Props> = ({ initialWeek }) => {
 				timecodeId: day.id,
 				hours: day.totalJiraHours,
 				dateString: day.dateString,
-			})
+			}),
 		);
 	};
 
