@@ -64,6 +64,44 @@ describe("IsoDate.toDate / fromDate round-trips", () => {
 	});
 });
 
+describe("IsoDate.toDateAt", () => {
+	test("Returns correct UTC instant for a given Oslo wall time (winter)", () => {
+		// 2025-01-15 09:00 Oslo = 08:00 UTC (UTC+1)
+		const result = IsoDate.toDateAt("2025-01-15" as IsoDate, { hours: 9, minutes: 0 });
+		expect(result.toISOString()).toBe("2025-01-15T08:00:00.000Z");
+	});
+
+	test("Returns correct UTC instant for a given Oslo wall time (summer)", () => {
+		// 2025-07-15 09:00 Oslo = 07:00 UTC (UTC+2)
+		const result = IsoDate.toDateAt("2025-07-15" as IsoDate, { hours: 9, minutes: 0 });
+		expect(result.toISOString()).toBe("2025-07-15T07:00:00.000Z");
+	});
+
+	test("Accepts optional seconds", () => {
+		// 2025-01-15 08:30:45 Oslo = 07:30:45 UTC
+		const result = IsoDate.toDateAt("2025-01-15" as IsoDate, { hours: 8, minutes: 30, seconds: 45 });
+		expect(result.toISOString()).toBe("2025-01-15T07:30:45.000Z");
+	});
+
+	test("Defaults seconds to 0 when omitted", () => {
+		const result = IsoDate.toDateAt("2025-06-01" as IsoDate, { hours: 0, minutes: 0 });
+		expect(result.getUTCSeconds()).toBe(0);
+	});
+
+	test("fromDate(toDateAt(...)) round-trips back to the same IsoDate", () => {
+		const iso = "2025-06-15" as IsoDate;
+		expect(IsoDate.fromDate(IsoDate.toDateAt(iso, { hours: 8, minutes: 0 }))).toBe(iso);
+		expect(IsoDate.fromDate(IsoDate.toDateAt(iso, { hours: 23, minutes: 59, seconds: 59 }))).toBe(iso);
+	});
+
+	test("DST spring-forward: 2025-03-30 is handled correctly", () => {
+		// Norway springs forward at 02:00 -> 03:00 on 2025-03-30
+		// 08:00 Oslo (CEST, UTC+2) = 06:00 UTC
+		const result = IsoDate.toDateAt("2025-03-30" as IsoDate, { hours: 8, minutes: 0 });
+		expect(result.toISOString()).toBe("2025-03-30T06:00:00.000Z");
+	});
+});
+
 describe("IsoDate.range", () => {
 	test("Inclusive range over normal days", () => {
 		expect(
