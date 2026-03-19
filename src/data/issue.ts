@@ -21,7 +21,5 @@ export interface JiraIssue {
 }
 
 export const CUSTOM_FIELDS = {
-	epicLink: "customfield_10001",
-	epicName: "customfield_10003",
-	labels: "labels",
+	epicLink: "customfield_10014",
 } as const;
