@@ -2,12 +2,10 @@ import { Middleware } from "openapi-fetch";
 import { jiraAuthenticationContext } from "../login/jira/authContext";
 import createClient from "openapi-fetch";
 import { paths } from "../generated/jira-issues";
+import { config } from "../Utils/envUtils";
 
 function getBaseUrl() {
-	const cloudId = import.meta.env.VITE_ATLASSIAN_CLOUD_ID;
-	if (!cloudId) {
-		throw new Error("VITE_ATLASSIAN_CLOUD_ID must be set");
-	}
+	const cloudId = config.jira.cloudId;
 	return `https://api.atlassian.com/ex/jira/${cloudId}`;
 }
 
