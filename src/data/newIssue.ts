@@ -108,11 +108,11 @@ export function useWorklogs(fromDate: IsoDate, toDate: IsoDate): Worklog[] {
 	const loggedInUser = useJiraAccount();
 	const results = useQueries({
 		queries: workedIssues.map((issue) => ({
-			queryKey: ["jira", "worklogs", issue.key],
+			queryKey: ["jira", "issue", issue.key, "worklogs", fromDate, toDate],
 			queryFn: () =>
 				getIssueWorklogs(issue.key as JiraIssueKey, fromDate, toDate),
 			enabled: issue.key !== undefined,
-			staleTime: 1000 * 60,
+			staleTime: 1000 * 5,
 		})),
 	});
 	if (!results.every((result) => result.data !== undefined)) {
