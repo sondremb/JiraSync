@@ -1,4 +1,3 @@
-import createClient, { Middleware } from "openapi-fetch";
 import { paths } from "../generated/jira-issues";
 import { IsoDate } from "../date-time/IsoWeek";
 import {
@@ -10,38 +9,13 @@ import {
 	Worklog,
 } from "./issue";
 import { useQueries, useQuery } from "@tanstack/react-query";
-import { jiraAuthenticationContext } from "../login/jira/authContext";
-
-function getBaseUrl() {
-	const cloudId = import.meta.env.VITE_ATLASSIAN_CLOUD_ID;
-	if (!cloudId) {
-		throw new Error("VITE_ATLASSIAN_CLOUD_ID must be set");
-	}
-	return `https://api.atlassian.com/ex/jira/${cloudId}`;
-}
-
-const authMiddleWare: Middleware = {
-	async onRequest({ request }) {
-		const authResult = await jiraAuthenticationContext.getAccessToken();
-		if (authResult.kind !== "authenticated") {
-			throw new Error("User is not authenticated");
-		}
-
-		request.headers.set("Authorization", `Bearer ${authResult.accessToken}`);
-		return request;
-	},
-};
-
-const client = createClient<paths>({
-	baseUrl: getBaseUrl(),
-});
-client.use(authMiddleWare);
+import { jiraClient } from "./jiraclient";
 
 export function useIssue(issueKey: JiraIssueKey) {
 	const { data } = useQuery({
 		queryKey: ["jira", "issue", issueKey],
 		queryFn: () =>
-			client.GET("/rest/api/3/issue/{issueIdOrKey}", {
+			jiraClient.GET("/rest/api/3/issue/{issueIdOrKey}", {
 				params: {
 					path: {
 						issueIdOrKey: issueKey,
@@ -58,7 +32,7 @@ export function useIssues(issueKeys: JiraIssueKey[]): JiraIssue[] {
 		queries: issueKeys.map((key) => ({
 			queryKey: ["jira", "issue", key],
 			queryFn: () =>
-				client.GET("/rest/api/3/issue/{issueIdOrKey}", {
+				jiraClient.GET("/rest/api/3/issue/{issueIdOrKey}", {
 					params: {
 						path: {
 							issueIdOrKey: key,
@@ -90,7 +64,7 @@ export function useWorkedIssues(fromDate: IsoDate, toDate: IsoDate) {
 	const { data } = useQuery({
 		queryKey: ["worklogs", fromDate, toDate],
 		queryFn: () =>
-			client.GET("/rest/api/3/search/jql", {
+			jiraClient.GET("/rest/api/3/search/jql", {
 				params: {
 					query: {
 						jql: `worklogDate >= "${fromDate}" AND worklogDate <= "${toDate}" AND worklogAuthor = currentUser()`,
@@ -131,7 +105,7 @@ export async function getIssueWorklogs(
 ): Promise<Worklog[]> {
 	const startedAfter = IsoDate.toDate(fromDate).getTime();
 	const startedBefore = IsoDate.toDate(toDate).getTime();
-	const { data, response } = await client.GET(
+	const { data, response } = await jiraClient.GET(
 		"/rest/api/3/issue/{issueIdOrKey}/worklog",
 		{
 			params: {
@@ -160,7 +134,7 @@ export async function getIssueWorklogs(
 export function useJiraAccount() {
 	const { data } = useQuery({
 		queryKey: ["jira", "account"],
-		queryFn: () => client.GET("/rest/api/3/myself"),
+		queryFn: () => jiraClient.GET("/rest/api/3/myself"),
 		staleTime: Infinity,
 	});
 	return data?.data;
