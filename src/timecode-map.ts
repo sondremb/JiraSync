@@ -26,10 +26,10 @@ export enum UdirBekkIds {
 }
 
 enum ComponentId {
-	PaspNyutvikling = "23600",
-	PasxNyutvikling = "23601",
-	UidpNyutvikling = "23602",
-	HflBriskNyutvikling = "23607",
+	PaspNyutvikling = "10290",
+	PasxNyutvikling = "10121",
+	UidpNyutvikling = "10677",
+	HflBriskNyutvikling = "10073",
 }
 
 interface TimecodeSelector {
