@@ -29,7 +29,7 @@ enum ComponentId {
 	PaspNyutvikling = "10290",
 	PasxNyutvikling = "10121",
 	UidpNyutvikling = "10677",
-	HflBriskNyutvikling = "23607",
+	HflBriskNyutvikling = "10073",
 }
 
 interface TimecodeSelector {
