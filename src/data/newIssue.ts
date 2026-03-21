@@ -2,6 +2,7 @@ import { IsoDate } from "../date-time/IsoWeek";
 import {
 	CUSTOM_FIELDS,
 	JiraAccountId,
+	JiraComponentId,
 	JiraIssue,
 	JiraIssueId,
 	JiraIssueKey,

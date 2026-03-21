@@ -1,36 +1,40 @@
-import { JiraIssue } from "./data/issue";
+import { componentId, JiraIssue } from "./data/issue";
 import { BekkId } from "./types";
 
-export const FrivilligKompetanseByggingId = 1786;
+const bekkId = (n: number): BekkId => n as BekkId;
 
-export enum UdirBekkIds {
-	UTA1065PasEksamenForvaltning = 1000752,
-	UTA1068PasPrøverForvaltning = 1000890,
-	UTA1067PåloggingssystemetForvaltning = 1000854,
-	UTA1092Systemoversikt = 1002326,
-	UTA1097Ubas = 1002497,
-	UTA1109BistandTilHelhetligDesign = 1002899,
-	UTA1090HflBrisk = 1002302,
-	UTA1110HflForvaltning = 1003011,
-	UTA1111HøringOgUndersøkelser = 1003012,
-	UTA1119HflSkjemaVertikal = 1003290,
-	UTA1113FellesDesignsystemForvaltning = 1003088,
-	UTA1121KiLab = 1003373,
-	UTA1122HflSommerKi = 1003386,
-	UTA1124HflEkstraTildeling = 1003471,
-	UTA1127PasxNytuvikling = 1003615,
-	UTA1128PaspNytuvikling = 1003616,
-	UTA1129PasDesignNytuvikling = 1003617,
-	UTA1130UidpNytuvikling = 1003618,
-	UTA1131HflBriskNytuvikling = 1003625,
-}
+export const FrivilligKompetanseByggingId = bekkId(1786);
 
-enum ComponentId {
-	PaspNyutvikling = "10290",
-	PasxNyutvikling = "10121",
-	UidpNyutvikling = "10677",
-	HflBriskNyutvikling = "10073",
-}
+export const UdirBekkIds = {
+	UTA1065PasEksamenForvaltning: bekkId(1000752),
+	UTA1068PasPrøverForvaltning: bekkId(1000890),
+	UTA1067PåloggingssystemetForvaltning: bekkId(1000854),
+	UTA1092Systemoversikt: bekkId(1002326),
+	UTA1097Ubas: bekkId(1002497),
+	UTA1109BistandTilHelhetligDesign: bekkId(1002899),
+	UTA1090HflBrisk: bekkId(1002302),
+	UTA1110HflForvaltning: bekkId(1003011),
+	UTA1111HøringOgUndersøkelser: bekkId(1003012),
+	UTA1119HflSkjemaVertikal: bekkId(1003290),
+	UTA1113FellesDesignsystemForvaltning: bekkId(1003088),
+	UTA1121KiLab: bekkId(1003373),
+	UTA1122HflSommerKi: bekkId(1003386),
+	UTA1124HflEkstraTildeling: bekkId(1003471),
+	UTA1127PasxNytuvikling: bekkId(1003615),
+	UTA1128PaspNytuvikling: bekkId(1003616),
+	UTA1129PasDesignNytuvikling: bekkId(1003617),
+	UTA1130UidpNytuvikling: bekkId(1003618),
+	UTA1131HflBriskNytuvikling: bekkId(1003625),
+} as const;
+
+const ComponentIds = {
+	PaspNyutvikling: componentId("10290"),
+	PasxNyutvikling: componentId("10121"),
+	UidpNyutvikling: componentId("10677"),
+	HflBriskNyutvikling: componentId("10073"),
+} as const;
+
+const udirIdSet = new Set<BekkId>(Object.values(UdirBekkIds));
 
 interface TimecodeSelector {
 	selector: (jiraIssue: JiraIssue) => boolean;
@@ -43,7 +47,7 @@ const jiraToTimecodeMap: TimecodeSelector[] = [
 			if (!/PASX.*/.test(jiraIssue.key)) {
 				return false;
 			}
-			return jiraIssue.components.includes(ComponentId.PasxNyutvikling);
+			return jiraIssue.components.includes(ComponentIds.PasxNyutvikling);
 		},
 		timecodeId: UdirBekkIds.UTA1127PasxNytuvikling,
 	},
@@ -58,7 +62,7 @@ const jiraToTimecodeMap: TimecodeSelector[] = [
 			if (!/PASP.*/.test(jiraIssue.key)) {
 				return false;
 			}
-			return jiraIssue.components.includes(ComponentId.PaspNyutvikling);
+			return jiraIssue.components.includes(ComponentIds.PaspNyutvikling);
 		},
 		timecodeId: UdirBekkIds.UTA1128PaspNytuvikling,
 	},
@@ -73,7 +77,7 @@ const jiraToTimecodeMap: TimecodeSelector[] = [
 			if (!/IDPF.*/.test(jiraIssue.key)) {
 				return false;
 			}
-			return jiraIssue.components.includes(ComponentId.UidpNyutvikling);
+			return jiraIssue.components.includes(ComponentIds.UidpNyutvikling);
 		},
 		timecodeId: UdirBekkIds.UTA1130UidpNytuvikling,
 	},
@@ -112,7 +116,7 @@ const jiraToTimecodeMap: TimecodeSelector[] = [
 			if (!/HFL.*/.test(jiraIssue.key)) {
 				return false;
 			}
-			return jiraIssue.components.includes(ComponentId.HflBriskNyutvikling);
+			return jiraIssue.components.includes(ComponentIds.HflBriskNyutvikling);
 		},
 		timecodeId: UdirBekkIds.UTA1131HflBriskNytuvikling,
 	},
@@ -121,7 +125,7 @@ const jiraToTimecodeMap: TimecodeSelector[] = [
 			if (!/HFL.*/.test(jiraIssue.key)) {
 				return false;
 			}
-			if (jiraIssue.components.includes(ComponentId.HflBriskNyutvikling)) {
+			if (jiraIssue.components.includes(ComponentIds.HflBriskNyutvikling)) {
 				return false;
 			}
 			if (jiraIssue.epicLink === null) {
@@ -163,8 +167,8 @@ export const bekkIdFromJiraTimecode = (jiraIssue: JiraIssue) => {
 	}
 	// TODO error-store
 	console.error("Fant ingen Bekk-timekode tilsvarende:", jiraIssue);
-	return -1;
+	return bekkId(-1);
 };
 
-export const isUdir = (timecodeId: number | undefined): boolean =>
-	timecodeId !== undefined && timecodeId in UdirBekkIds;
+export const isUdir = (timecodeId: BekkId | undefined): boolean =>
+	timecodeId !== undefined && udirIdSet.has(timecodeId);
