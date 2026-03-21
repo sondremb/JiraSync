@@ -6,8 +6,9 @@
 	"type": "module",
 	"scripts": {
 		"start": "vite",
-		"build": "yarn generate:jira && tsc && vite build",
-		"generate": "rm -rf src/bekk-api && swagger-typescript-api -p https://api.bekk.no/timekeeper-svc/swagger/v1/swagger.json -o src/bekk-api --modular --type-suffix DTO",
+		"build": "yarn generate && tsc && vite build",
+		"generate": "yarn generate:bekk && yarn generate:jira",
+		"generate:bekk": "openapi-typescript https://api.bekk.no/timekeeper-svc/swagger/v1/swagger.json -o src/generated/bekk-timekeeper.d.ts",
 		"generate:jira": "openapi-typescript https://dac-static.atlassian.com/cloud/jira/platform/swagger-v3.v3.json -o src/generated/jira-issues.d.ts",
 		"clean": "rm -rf node_modules",
 		"test": "vitest"

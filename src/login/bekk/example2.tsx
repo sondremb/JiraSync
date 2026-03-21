@@ -1,5 +1,6 @@
 import { useMsal } from "@azure/msal-react";
 import { config } from "../../Utils/envUtils";
+import { msalInstance } from "./example";
 
 // Hente access token for prating med Bekk-apier
 export const useGetAccessToken = (): (() => Promise<string>) => {
@@ -17,6 +18,16 @@ export const useAccessToken = (): Promise<string> => {
 		.acquireTokenSilent({ scopes: [config.bekk.scope] })
 		.then((res) => res.accessToken);
 };
+
+export function getEmployeeId(): number {
+	const idTokenClaims =
+		msalInstance.getActiveAccount()?.idTokenClaims ?? {};
+	const employeeId = idTokenClaims["employeeId"] as string;
+	if (!employeeId) {
+		throw new Error("No employee ID found!");
+	}
+	return parseInt(employeeId);
+}
 
 export function useEmployeeId(): number {
 	const msalContext = useMsal();
