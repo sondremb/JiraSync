@@ -19,7 +19,7 @@ import { AltStemmerAlert } from "./components/AltStemmerAlert";
 import { DownloadTimestamp } from "./components/DownloadTimestamp";
 import { colors, spacing } from "@utdanningsdirektoratet/lisa-tokens";
 import { LoginStatus } from "./login/LoginStatus";
-import { IsoWeek } from "./date-time/IsoWeek";
+import { IsoDate, IsoWeek } from "./date-time/IsoWeek";
 import { addDays } from "date-fns";
 import { CopyTokenButton } from "./login/bekk/CopyTokenButton";
 import { config } from "./Utils/envUtils";
@@ -75,7 +75,7 @@ export const App: React.FC<Props> = ({ initialWeek }) => {
 			updateBekkHours({
 				timecodeId: day.id,
 				hours: day.totalJiraHours,
-				dateString: day.dateString,
+				date: IsoDate.parse(day.dateString),
 			}),
 		);
 	};

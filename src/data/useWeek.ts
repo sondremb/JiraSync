@@ -1,16 +1,17 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { updateEntries } from "../Utils/stateUtils";
-import { IsoWeek } from "../date-time/IsoWeek";
+import { IsoDate, IsoWeek } from "../date-time/IsoWeek";
 import { useIssues, useWorklogs } from "./newIssue";
 import { toRecord, unique } from "../Utils/arrayUtils";
 import { getEmployeeId } from "../login/bekk/bekkLogin";
 import { bekkClient } from "./bekkclient";
-import { BekkId, DateString } from "../types";
+import { BekkId } from "../types";
 
 export interface PutTimesheetParams {
 	timecodeId: BekkId;
-	dateString: DateString;
+	date: IsoDate;
 	hours: number;
+	comment?: string;
 }
 
 export const useWeek = (week: IsoWeek) => {
@@ -39,18 +40,14 @@ export const useWeek = (week: IsoWeek) => {
 			return data;
 		},
 	});
-
 	const { mutate: updateBekkHours } = useMutation({
-		mutationFn: (params: PutTimesheetParams) =>
-			bekkClient.PUT("/timesheets/employee/{employeeId}", {
-				params: { path: { employeeId: getEmployeeId() } },
-				body: {
-					timecodeId: params.timecodeId,
-					hours: params.hours,
-					date: params.dateString,
-					comment: "",
-				},
-			}),
+		mutationFn: async (params: PutTimesheetParams) =>
+			await doUpdateBekkHours(
+				params.timecodeId,
+				params.date,
+				params.hours,
+				params.comment,
+			),
 		onSuccess: () =>
 			queryClient.invalidateQueries({ queryKey: ["bekk", "week", week] }),
 	});
@@ -68,3 +65,32 @@ export const useWeek = (week: IsoWeek) => {
 
 	return { state: combinedData, timestamp, updateBekkHours };
 };
+
+async function doUpdateBekkHours(
+	timecodeId: BekkId,
+	date: IsoDate,
+	hours: number,
+	comment?: string,
+) {
+	if (hours === 0) {
+		await bekkClient.DELETE("/timesheets/employee/{employeeId}", {
+			params: {
+				path: { employeeId: getEmployeeId() },
+			},
+			body: {
+				timecodeId,
+				date,
+			},
+		});
+	} else {
+		await bekkClient.PUT("/timesheets/employee/{employeeId}", {
+			params: { path: { employeeId: getEmployeeId() } },
+			body: {
+				timecodeId,
+				hours,
+				date,
+				comment: comment ?? "",
+			},
+		});
+	}
+}
