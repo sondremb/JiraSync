@@ -1,8 +1,8 @@
 import { useNotification } from "@utdanningsdirektoratet/lisa";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getEmployeeId } from "../login/bekk/example2";
 import { IsoDate } from "../date-time/IsoWeek";
 import { bekkClient } from "./bekkclient";
+import { getEmployeeId } from "../login/bekk/bekkLogin";
 
 export const useLockDate = () => {
 	const queryClient = useQueryClient();

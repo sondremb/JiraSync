@@ -1,6 +1,6 @@
 import createClient, { Middleware } from "openapi-fetch";
 import { paths } from "../generated/bekk-timekeeper";
-import { msalInstance } from "../login/bekk/example";
+import { msalInstance } from "../login/bekk/bekkLogin";
 import { config } from "../Utils/envUtils";
 
 const authMiddleware: Middleware = {

@@ -3,7 +3,7 @@ import { updateEntries } from "../Utils/stateUtils";
 import { IsoWeek } from "../date-time/IsoWeek";
 import { useIssues, useWorklogs } from "./newIssue";
 import { toRecord, unique } from "../Utils/arrayUtils";
-import { getEmployeeId } from "../login/bekk/example2";
+import { getEmployeeId } from "../login/bekk/bekkLogin";
 import { bekkClient } from "./bekkclient";
 import { BekkId, DateString } from "../types";
 

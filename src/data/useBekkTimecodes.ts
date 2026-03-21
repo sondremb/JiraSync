@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { components } from "../generated/bekk-timekeeper";
-import { getEmployeeId } from "../login/bekk/example2";
 import { bekkClient } from "./bekkclient";
+import { getEmployeeId } from "../login/bekk/bekkLogin";
 
 type BekkTimecode = components["schemas"]["TimecodeEssentials"];
 type BekkTimecodeRecord = Record<number, BekkTimecode>;

@@ -20,6 +20,15 @@ export const msalInstance = new PublicClientApplication({
 	},
 });
 
+export function getEmployeeId(): number {
+	const idTokenClaims = msalInstance.getActiveAccount()?.idTokenClaims ?? {};
+	const employeeId = idTokenClaims["employeeId"] as string;
+	if (!employeeId) {
+		throw new Error("No employee ID found!");
+	}
+	return parseInt(employeeId);
+}
+
 export const BekkEntraLogin = ({ children }: React.PropsWithChildren<{}>) => {
 	// Initialiser instansen (dette bør gjøres så tidlig som mulig)
 	msalInstance.initialize().then(() => {
