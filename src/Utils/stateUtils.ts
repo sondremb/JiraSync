@@ -1,11 +1,14 @@
-import { EmployeeTimesheetViewModelDTO } from "../bekk-api/data-contracts";
+import { components } from "../generated/bekk-timekeeper";
+
+type EmployeeTimesheetViewModel =
+	components["schemas"]["EmployeeTimesheetViewModel"];
 import { bekkIdFromJiraTimecode } from "../timecode-map";
 import { BekkTimecodeEntry, DateString, Day, BekkId } from "../types";
 import { JiraIssue, Worklog } from "../data/issue";
 import { IsoDate } from "../date-time/IsoWeek";
 
 export const updateEntries = (
-	bekkData: EmployeeTimesheetViewModelDTO,
+	bekkData: EmployeeTimesheetViewModel,
 	worklogs: Worklog[],
 	jiraIssues: Record<string, JiraIssue> = {},
 ): BekkTimecodeEntry[] => {
@@ -15,7 +18,7 @@ export const updateEntries = (
 };
 
 export const createEntriesFromBekkData = (
-	data: EmployeeTimesheetViewModelDTO,
+	data: EmployeeTimesheetViewModel,
 ): BekkTimecodeEntry[] => {
 	const entries: BekkTimecodeEntry[] = [];
 	for (const timecode of data.timecodeTimeEntries!) {
