@@ -8,8 +8,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 yarn start           # Start dev server (Vite)
 yarn build           # Build for production
 yarn test            # Run vitest tests
-yarn generate        # Regenerate Bekk API clients from Swagger
+yarn generate:bekk   # Regenerate Bekk API types from OpenAPI schema
 yarn generate:jira   # Regenerate Jira API types from OpenAPI schema
+yarn generate        # Calls generate:bekk and generate:jira
 ```
 
 Always use `yarn`, not `npm` or `npx`.
@@ -37,14 +38,20 @@ This is the core business logic. Jira issues are routed to Bekk timecodes based 
 
 ### API clients
 
-- **Jira**: Type-safe client via `openapi-fetch` with generated types in `src/generated/` (from `yarn generate:jira`)
-- **Bekk**: Generated clients in `src/bekk-api/` (from `yarn generate`), instantiated in `src/bekk-client.ts`
+Both APIs use the same stack: `openapi-typescript` for type generation and `openapi-fetch` for the HTTP client.
+
+- **Jira**: `src/data/jiraclient.ts` — module-level singleton; types in `src/generated/jira-issues.d.ts` (from `yarn generate:jira`)
+- **Bekk**: `src/data/bekkclient.ts` — module-level singleton; types in `src/generated/bekk-timekeeper.d.ts` (from `yarn generate:bekk`)
+
+Auth is injected via middleware on each client. Jira uses a localStorage-backed token context (`src/login/jira/authContext.ts`); Bekk calls `msalInstance.acquireTokenSilent()` directly (the MSAL `PublicClientApplication` instance is a module-level singleton exported from `src/login/bekk/example.tsx`).
+
+`getEmployeeId()` in `src/login/bekk/example2.tsx` reads the employee ID from the active MSAL account — call it inside `queryFn`, not at the hook level.
 
 ### Key patterns
 
 - **Branded types** (`Utils/brandedTypes.ts`): `JiraIssueKey`, `IsoDate`, `IsoWeek`, `AccessToken` — prevent accidental mixing of string values
 - **ISO week** (`src/date-time/IsoWeek.ts`): All date handling uses Norway timezone; format is `YYYY-Www`
-- **Server state**: `@tanstack/react-query` for Jira/Bekk API calls; `swr` used in some places
+- **Server state**: `@tanstack/react-query` for all Jira and Bekk API calls — `useQuery` for fetches, `useMutation` + `invalidateQueries` for writes
 
 ### Serverless functions (`functions/`)
 
