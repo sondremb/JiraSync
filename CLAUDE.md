@@ -5,15 +5,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 ```bash
-yarn start           # Start dev server (Vite)
-yarn build           # Build for production
-yarn test            # Run vitest tests
-yarn generate:bekk   # Regenerate Bekk API types from OpenAPI schema
-yarn generate:jira   # Regenerate Jira API types from OpenAPI schema
-yarn generate        # Calls generate:bekk and generate:jira
+pnpm start           # Start dev server (Vite)
+pnpm build           # Build for production
+pnpm test            # Run vitest tests
+pnpm generate:bekk   # Regenerate Bekk API types from OpenAPI schema
+pnpm generate:jira   # Regenerate Jira API types from OpenAPI schema
+pnpm generate        # Calls generate:bekk and generate:jira
 ```
 
-Always use `yarn`, not `npm` or `npx`.
+Always use `pnpm`, not `npm`, `npx`, or `yarn`.
 
 ## Architecture
 

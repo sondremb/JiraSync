@@ -6,8 +6,8 @@
 	"type": "module",
 	"scripts": {
 		"start": "vite",
-		"build": "yarn generate && tsc && vite build",
-		"generate": "yarn generate:bekk && yarn generate:jira",
+		"build": "pnpm generate && tsc && vite build",
+		"generate": "pnpm generate:bekk && pnpm generate:jira",
 		"generate:bekk": "openapi-typescript https://api.bekk.no/timekeeper-svc/swagger/v1/swagger.json -o src/generated/bekk-timekeeper.d.ts",
 		"generate:jira": "openapi-typescript https://dac-static.atlassian.com/cloud/jira/platform/swagger-v3.v3.json -o src/generated/jira-issues.d.ts",
 		"clean": "rm -rf node_modules",
@@ -19,6 +19,7 @@
 	],
 	"author": "Thor Kristian Valderhaug",
 	"license": "ISC",
+	"packageManager": "pnpm@10.30.3",
 	"dependencies": {
 		"@azure/msal-browser": "^4.28.1",
 		"@azure/msal-react": "^3.0.0",
