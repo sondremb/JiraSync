@@ -1,6 +1,6 @@
 import { Handler } from "@netlify/functions";
 import cookie from "cookie";
-import { StatusCode } from "../src/Utils/statuscode";
+import { StatusCode } from "../Utils/statuscode";
 import { cookieNames } from "./utils";
 
 export const handler: Handler = async () => {

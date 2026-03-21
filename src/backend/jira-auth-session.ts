@@ -1,6 +1,7 @@
+import "dotenv/config";
 import { Handler } from "@netlify/functions";
 import * as client from "openid-client";
-import { StatusCode } from "../src/Utils/statuscode";
+import { StatusCode } from "../Utils/statuscode";
 import cookie from "cookie";
 import { cookieNames, getOpenidClientConfig } from "./utils";
 
@@ -8,29 +9,35 @@ export const handler: Handler = async (event) => {
 	const config = await getOpenidClientConfig();
 
 	const cookies = cookie.parseCookie(event.headers.cookie ?? "");
-	const codeVerifier = cookies[cookieNames.codeVerifier];
+	const refreshToken = cookies[cookieNames.refreshToken];
+
+	if (!refreshToken) {
+		return {
+			statusCode: StatusCode.Unauthorized401,
+			body: "No refresh token found, please log in",
+		};
+	}
 
 	try {
-		const tokens = await client.authorizationCodeGrant(
-			config,
-			new URL(event.rawUrl),
-			{
-				pkceCodeVerifier: codeVerifier,
-			},
-		);
+		const tokens = await client.refreshTokenGrant(config, refreshToken);
 
-		const refreshToken = tokens.refresh_token;
-
-		if (!refreshToken) {
-			throw new Error("No refresh token received");
+		if (!tokens.access_token) {
+			throw new Error("No access token received");
+		}
+		if (!tokens.refresh_token) {
+			throw new Error("No new refresh token received");
 		}
 
 		return {
-			statusCode: StatusCode.Found302,
+			statusCode: StatusCode.Ok200,
+			body: JSON.stringify({
+				accessToken: tokens.access_token,
+				expiresIn: tokens.expires_in,
+			}),
 			headers: {
 				"Set-Cookie": cookie.stringifySetCookie({
 					name: cookieNames.refreshToken,
-					value: refreshToken,
+					value: tokens.refresh_token,
 					httpOnly: true,
 					// 90 days, as per https://developer.atlassian.com/cloud/jira/platform/oauth-2-3lo-apps/#use-a-refresh-token-to-get-another-access-token-and-refresh-token-pair
 					maxAge: 60 * 60 * 24 * 90,
@@ -39,7 +46,7 @@ export const handler: Handler = async (event) => {
 			},
 		};
 	} catch (err) {
-		console.error("Error during authentication callback:", err);
+		console.error("Error during token refresh:", err);
 		return {
 			statusCode: StatusCode.InternalServerError500,
 			body: "Authentication failed",
