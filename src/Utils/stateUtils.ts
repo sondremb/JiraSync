@@ -4,16 +4,15 @@ type EmployeeTimesheetViewModel =
 	components["schemas"]["EmployeeTimesheetViewModel"];
 import { bekkIdFromJiraTimecode } from "../timecode-map";
 import { BekkTimecodeEntry, DateString, Day, BekkId } from "../types";
-import { JiraIssue, Worklog } from "../data/issue";
+import { Worklog } from "../data/issue";
 import { IsoDate } from "../date-time/IsoWeek";
 
 export const updateEntries = (
 	bekkData: EmployeeTimesheetViewModel,
 	worklogs: Worklog[],
-	jiraIssues: Record<string, JiraIssue> = {},
 ): BekkTimecodeEntry[] => {
 	const entries = createEntriesFromBekkData(bekkData);
-	enrichEntriesWithJiraData(entries, worklogs, jiraIssues);
+	enrichEntriesWithJiraData(entries, worklogs);
 	return entries;
 };
 
@@ -53,10 +52,9 @@ export const getOrCreateBekkEntry = (
 export const enrichEntriesWithJiraData = (
 	entries: BekkTimecodeEntry[],
 	worklogs: Worklog[],
-	jiraIssues: Record<string, JiraIssue> = {},
 ) => {
 	for (const worklog of worklogs) {
-		const bekkId = bekkIdFromJiraTimecode(jiraIssues[worklog.issueKey]);
+		const bekkId = bekkIdFromJiraTimecode(worklog.issue);
 		const bekkEntry = getOrCreateBekkEntry(entries, bekkId);
 		const timestring = IsoDate.fromDate(new Date(worklog.startDate));
 		if (!(timestring in bekkEntry.days)) {
@@ -69,7 +67,7 @@ export const enrichEntriesWithJiraData = (
 		const hoursSpent = secondsToHours(worklog.timeSpentSeconds);
 		bekkEntry.days[timestring].totalJiraHours += hoursSpent;
 		bekkEntry.days[timestring].jiraEntries.push({
-			id: worklog.issueKey,
+			id: worklog.issue.key,
 			hours: hoursSpent,
 		});
 	}

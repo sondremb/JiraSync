@@ -1,4 +1,3 @@
-import { paths } from "../generated/jira-issues";
 import { IsoDate } from "../date-time/IsoWeek";
 import {
 	CUSTOM_FIELDS,
@@ -25,6 +24,9 @@ export function useIssue(issueKey: JiraIssueKey) {
 		staleTime: 1000 * 60 * 60, // 1 hour
 	});
 	return data?.data ?? null;
+interface JiraIssueResponse {
+	key?: string;
+	fields?: Record<string, unknown>;
 }
 
 export function useIssues(issueKeys: JiraIssueKey[]): JiraIssue[] {
@@ -49,18 +51,20 @@ export function useIssues(issueKeys: JiraIssueKey[]): JiraIssue[] {
 		.filter((result) => result.data?.data !== undefined)
 		.map((result) => mapIssue(result.data!.data!));
 }
-type JiraIssueResponse =
-	paths["/rest/api/3/issue/{issueIdOrKey}"]["get"]["responses"]["200"]["content"]["application/json"];
 function mapIssue(response: JiraIssueResponse): JiraIssue {
 	const fields = response.fields as unknown as Record<string, any>; // Jira's API is not well-typed, so we have to do some manual type assertions
 	return {
-		key: response.key!,
-		epicLink: fields[CUSTOM_FIELDS.epicLink] ?? null,
-		components: fields.components?.map((c: any) => c.id) ?? [],
+		key: response.key as JiraIssueKey,
+		epicLink: (fields[CUSTOM_FIELDS.epicLink] as JiraIssueKey) ?? null,
+		components:
+			fields.components?.map((c: any) => c.id as JiraComponentId) ?? [],
 	};
 }
 
-export function useWorkedIssues(fromDate: IsoDate, toDate: IsoDate) {
+export function useWorkedIssues(
+	fromDate: IsoDate,
+	toDate: IsoDate,
+): JiraIssue[] {
 	const { data } = useQuery({
 		queryKey: ["worklogs", fromDate, toDate],
 		queryFn: () =>
@@ -68,13 +72,13 @@ export function useWorkedIssues(fromDate: IsoDate, toDate: IsoDate) {
 				params: {
 					query: {
 						jql: `worklogDate >= "${fromDate}" AND worklogDate <= "${toDate}" AND worklogAuthor = currentUser()`,
-						expand: "key",
+						fields: ["key", "components", CUSTOM_FIELDS.epicLink],
 					},
 				},
 			}),
 		staleTime: 1000 * 60, // 1 minute
 	});
-	return data?.data?.issues ?? [];
+	return data?.data?.issues?.map((issue) => mapIssue(issue)) ?? [];
 }
 
 export function useWorklogs(fromDate: IsoDate, toDate: IsoDate): Worklog[] {
@@ -83,8 +87,7 @@ export function useWorklogs(fromDate: IsoDate, toDate: IsoDate): Worklog[] {
 	const results = useQueries({
 		queries: workedIssues.map((issue) => ({
 			queryKey: ["jira", "issue", issue.key, "worklogs", fromDate, toDate],
-			queryFn: () =>
-				getIssueWorklogs(issue.key as JiraIssueKey, fromDate, toDate),
+			queryFn: () => getIssueWorklogs(issue, fromDate, toDate),
 			enabled: issue.key !== undefined,
 			staleTime: 1000 * 5,
 		})),
@@ -99,7 +102,7 @@ export function useWorklogs(fromDate: IsoDate, toDate: IsoDate): Worklog[] {
 }
 
 export async function getIssueWorklogs(
-	issueKey: JiraIssueKey,
+	issue: JiraIssue,
 	fromDate: IsoDate,
 	toDate: IsoDate,
 ): Promise<Worklog[]> {
@@ -116,14 +119,14 @@ export async function getIssueWorklogs(
 		"/rest/api/3/issue/{issueIdOrKey}/worklog",
 		{
 			params: {
-				path: { issueIdOrKey: issueKey },
+				path: { issueIdOrKey: issue.key },
 				query: { startedAfter, startedBefore },
 			},
 		},
 	);
 	if (!response.ok) {
 		console.error(
-			`Failed to fetch worklogs for issue ${issueKey}: ${response.status} ${response.statusText}`,
+			`Failed to fetch worklogs for issue ${issue.key}: ${response.status} ${response.statusText}`,
 		);
 		return [];
 	}
@@ -131,7 +134,7 @@ export async function getIssueWorklogs(
 		data?.worklogs?.map((worklog) => ({
 			authhorAccountId: worklog.author?.accountId as JiraAccountId,
 			issueId: worklog.issueId as JiraIssueId,
-			issueKey,
+			issue,
 			startDate: IsoDate.fromDate(new Date(worklog.started!)),
 			timeSpentSeconds: worklog.timeSpentSeconds ?? 0,
 		})) ?? []

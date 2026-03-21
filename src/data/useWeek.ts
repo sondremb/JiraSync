@@ -1,8 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { updateEntries } from "../Utils/stateUtils";
 import { IsoDate, IsoWeek } from "../date-time/IsoWeek";
-import { useIssues, useWorklogs } from "./newIssue";
-import { toRecord, unique } from "../Utils/arrayUtils";
+import { useWorklogs } from "./newIssue";
 import { getEmployeeId } from "../login/bekk/bekkLogin";
 import { bekkClient } from "./bekkclient";
 import { BekkId } from "../types";
@@ -20,9 +19,6 @@ export const useWeek = (week: IsoWeek) => {
 	const sunday = IsoWeek.sunday(week);
 
 	const worklogs = useWorklogs(monday, sunday);
-	const issueKeys = unique(worklogs.map((worklog) => worklog.issueKey));
-	const issues = useIssues(issueKeys);
-	const issuesByKey = toRecord(issues, (issue) => issue.key);
 
 	const bekkQuery = useQuery({
 		queryKey: ["bekk", "week", week],
@@ -57,11 +53,7 @@ export const useWeek = (week: IsoWeek) => {
 		bekkQuery.dataUpdatedAt > 0 ? new Date(bekkQuery.dataUpdatedAt) : undefined;
 
 	const combinedData =
-		bekkData &&
-		worklogs &&
-		worklogs.every((worklog) => issuesByKey[worklog.issueKey] !== undefined)
-			? updateEntries(bekkData, worklogs, issuesByKey)
-			: undefined;
+		bekkData && worklogs ? updateEntries(bekkData, worklogs) : undefined;
 
 	return { state: combinedData, timestamp, updateBekkHours };
 };

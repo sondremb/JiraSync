@@ -8,16 +8,15 @@ export type JiraAccountId = Brand<string, "JiraAccountId">;
 
 export interface Worklog {
 	authhorAccountId: JiraAccountId;
-	issueId: JiraIssueId;
-	issueKey: JiraIssueKey;
 	startDate: IsoDate;
 	timeSpentSeconds: Seconds;
+	issue: JiraIssue;
 }
 
 export interface JiraIssue {
-	key: string;
-	epicLink: string | null;
 	components: string[];
+	key: JiraIssueKey;
+	epicLink: JiraIssueKey | null;
 }
 
 export const CUSTOM_FIELDS = {
