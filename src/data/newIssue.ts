@@ -10,47 +10,11 @@ import {
 import { useQueries, useQuery } from "@tanstack/react-query";
 import { jiraClient } from "./jiraclient";
 
-export function useIssue(issueKey: JiraIssueKey) {
-	const { data } = useQuery({
-		queryKey: ["jira", "issue", issueKey],
-		queryFn: () =>
-			jiraClient.GET("/rest/api/3/issue/{issueIdOrKey}", {
-				params: {
-					path: {
-						issueIdOrKey: issueKey,
-					},
-				},
-			}),
-		staleTime: 1000 * 60 * 60, // 1 hour
-	});
-	return data?.data ?? null;
 interface JiraIssueResponse {
 	key?: string;
 	fields?: Record<string, unknown>;
 }
 
-export function useIssues(issueKeys: JiraIssueKey[]): JiraIssue[] {
-	const results = useQueries({
-		queries: issueKeys.map((key) => ({
-			queryKey: ["jira", "issue", key],
-			queryFn: () =>
-				jiraClient.GET("/rest/api/3/issue/{issueIdOrKey}", {
-					params: {
-						path: {
-							issueIdOrKey: key,
-						},
-					},
-				}),
-			staleTime: 1000 * 60 * 60, // 1 hour
-		})),
-	});
-	if (!results.every((result) => result.data !== undefined)) {
-		return [];
-	}
-	return results
-		.filter((result) => result.data?.data !== undefined)
-		.map((result) => mapIssue(result.data!.data!));
-}
 function mapIssue(response: JiraIssueResponse): JiraIssue {
 	const fields = response.fields as unknown as Record<string, any>; // Jira's API is not well-typed, so we have to do some manual type assertions
 	return {
