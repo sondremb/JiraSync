@@ -1,48 +1,53 @@
 import { useNotification } from "@utdanningsdirektoratet/lisa";
-import useSWR from "swr";
-import { Timesheets } from "../bekk-api/Timesheets";
-import { useBekkClient } from "../bekk-client";
-import { useEmployeeId } from "../login/bekk/example2";
-import { useClient } from "../Utils/bekkClientUtils";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { IsoDate } from "../date-time/IsoWeek";
+import { bekkClient } from "./bekkclient";
+import { getEmployeeId } from "../login/bekk/bekkLogin";
 
 export const useLockDate = () => {
-	const client = useClient(Timesheets);
-	const employeeId = useEmployeeId();
-	const { data, mutate, error } = useSWR("lockdate", () =>
-		client.lockdatesDetail(employeeId)
-	);
+	const queryClient = useQueryClient();
 	const showNotification = useNotification();
 
-	const bekkClient = useBekkClient();
-	const updateLockDate = (lockDate: IsoDate) =>
-		mutate(async (old) => {
-			await bekkClient
-				.setLockDate(lockDate)
-				.then(() =>
-					showNotification({
-						type: "success",
-						// TODO formatter
-						content: `Låste timer frem til ${lockDate}`,
-					})
-				)
-				.catch((error: any) => {
-					showNotification({
-						type: "error",
-						title: "Kunne ikke låse timer",
-						content: error?.error?.userMessage ?? "Ingen detaljer",
-					});
-				});
-			return old;
-		});
+	const { data, error, isLoading } = useQuery({
+		queryKey: ["bekk", "lockdate"],
+		queryFn: async () => {
+			const { data, response } = await bekkClient.GET(
+				"/timesheets/lockdates/{employeeId}",
+				{ params: { path: { employeeId: getEmployeeId() } } },
+			);
+			if (!response.ok) throw new Error("Failed to fetch lock date");
+			return data;
+		},
+	});
 
-	// TODO error handling
+	const { mutate: updateLockDate } = useMutation({
+		mutationFn: (lockDate: IsoDate) =>
+			bekkClient.PUT("/timesheets/lockhours", {
+				params: { query: { employeeId: getEmployeeId(), lockDate } },
+			}),
+		onSuccess: (_, lockDate) => {
+			queryClient.invalidateQueries({ queryKey: ["bekk", "lockdate"] });
+			showNotification({
+				type: "success",
+				// TODO formatter
+				content: `Låste timer frem til ${lockDate}`,
+			});
+		},
+		onError: (error: any) => {
+			showNotification({
+				type: "error",
+				title: "Kunne ikke låse timer",
+				content: error?.error?.userMessage ?? "Ingen detaljer",
+			});
+		},
+	});
+
 	return {
-		lockDate: data?.data.lockDate
-			? IsoDate.fromDate(new Date(data.data.lockDate))
+		lockDate: data?.lockDate
+			? IsoDate.fromDate(new Date(data.lockDate))
 			: undefined,
 		error,
-		isLoading: !error && !data,
+		isLoading,
 		updateLockDate,
 	};
 };

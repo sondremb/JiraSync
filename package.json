@@ -6,8 +6,9 @@
 	"type": "module",
 	"scripts": {
 		"start": "vite",
-		"build": "yarn generate:jira && tsc && vite build",
-		"generate": "rm -rf src/bekk-api && swagger-typescript-api -p https://api.bekk.no/timekeeper-svc/swagger/v1/swagger.json -o src/bekk-api --modular --type-suffix DTO",
+		"build": "pnpm generate && tsc && vite build",
+		"generate": "pnpm generate:bekk && pnpm generate:jira",
+		"generate:bekk": "openapi-typescript https://api.bekk.no/timekeeper-svc/swagger/v1/swagger.json -o src/generated/bekk-timekeeper.d.ts",
 		"generate:jira": "openapi-typescript https://dac-static.atlassian.com/cloud/jira/platform/swagger-v3.v3.json -o src/generated/jira-issues.d.ts",
 		"clean": "rm -rf node_modules",
 		"test": "vitest"
@@ -18,6 +19,7 @@
 	],
 	"author": "Thor Kristian Valderhaug",
 	"license": "ISC",
+	"packageManager": "pnpm@10.30.3",
 	"dependencies": {
 		"@azure/msal-browser": "^4.28.1",
 		"@azure/msal-react": "^3.0.0",
@@ -28,7 +30,6 @@
 		"@utdanningsdirektoratet/lisa": "^4.42.0",
 		"@utdanningsdirektoratet/lisa-tokens": "^1.2.0",
 		"@vitejs/plugin-react": "^5.1.2",
-		"axios": "^1.13.4",
 		"cookie": "^1.1.1",
 		"date-fns": "^4.1.0",
 		"date-fns-tz": "^3.2.0",
@@ -39,7 +40,6 @@
 		"react-dom": "^18.0.0",
 		"react-loading": "^2.0.3",
 		"styled-components": "^5.3.3",
-		"swr": "^2.4.0",
 		"vite": "^7.3.1",
 		"vite-plugin-checker": "^0.12.0",
 		"vite-tsconfig-paths": "^6.0.5"
@@ -54,7 +54,6 @@
 		"path-browserify": "^1.0.1",
 		"react-datepicker": "^4.7.0",
 		"react-hook-form": "^7.27.1",
-		"swagger-typescript-api": "^13.2.16",
 		"typescript": "^5.9.3",
 		"vitest": "^4.0.18"
 	}

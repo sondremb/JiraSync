@@ -38,8 +38,8 @@ type StoredToken = {
 };
 
 function getFromStorage(): StoredToken | null {
-	const accessToken = localStorage.getItem(accessTokenKey);
-	const expiresAtString = localStorage.getItem(expiresAtKey);
+	const accessToken = sessionStorage.getItem(accessTokenKey);
+	const expiresAtString = sessionStorage.getItem(expiresAtKey);
 	if (!accessToken || !expiresAtString) {
 		return null;
 	}
@@ -75,8 +75,8 @@ async function refreshFromServer(): Promise<AuthenticationResult> {
 	const accessToken = data.accessToken as AccessToken;
 	const expiresAt = Date.now() + data.expiresIn * 1000;
 
-	localStorage.setItem(accessTokenKey, accessToken);
-	localStorage.setItem(expiresAtKey, expiresAt.toString());
+	sessionStorage.setItem(accessTokenKey, accessToken);
+	sessionStorage.setItem(expiresAtKey, expiresAt.toString());
 
 	return AuthenticationResult.Authenticated(accessToken);
 }
@@ -95,7 +95,7 @@ export const jiraAuthenticationContext: JiraAuthContext = {
 		return refreshFromServer();
 	},
 	logout: () => {
-		localStorage.removeItem(accessTokenKey);
-		localStorage.removeItem(expiresAtKey);
+		sessionStorage.removeItem(accessTokenKey);
+		sessionStorage.removeItem(expiresAtKey);
 	},
 };

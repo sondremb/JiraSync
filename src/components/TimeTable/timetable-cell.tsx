@@ -30,7 +30,7 @@ const CustomText = styled.div<{
 		props.textColor ? colorTypeToHex(props.textColor) : colors.svart};
 `;
 
-const ContainerDiv = styled(CustomText)<{ correct: boolean; border: boolean }>`
+const ContainerDiv = styled(CustomText as any)<{ correct: boolean; border: boolean }>`
 	border-radius: 5px;
 	position: relative;
 	height: 50px;
@@ -45,12 +45,12 @@ const ContainerDiv = styled(CustomText)<{ correct: boolean; border: boolean }>`
 	text-align: center;
 `;
 
-const OtherDiv = styled(CustomText)`
+const OtherDiv = styled(CustomText as any)`
 	width: 50px;
 	text-align: center;
 `;
 
-const CornerDiv = styled(CustomText)<{ correct: boolean }>`
+const CornerDiv = styled(CustomText as any)<{ correct: boolean }>`
 	position: absolute;
 	bottom: 0;
 	right: 0;
@@ -103,14 +103,15 @@ const EntryCell: React.FC<{
 	const jiraHours = day?.totalJiraHours || (isUdir(timecode.id) ? 0 : "");
 	return (
 		<ContainerDiv fontSize={24} bold={!correct} correct={correct} border>
-			{day !== undefined && (day.bekkHours !== 0 || day.totalJiraHours !== 0) && (
-				<>
-					{day.bekkHours}
-					<CornerDiv correct={correct} fontSize={14} bold={!correct}>
-						{jiraHours}
-					</CornerDiv>
-				</>
-			)}
+			{day !== undefined &&
+				(day.bekkHours !== 0 || day.totalJiraHours !== 0) && (
+					<>
+						{day.bekkHours}
+						<CornerDiv correct={correct} fontSize={14} bold={!correct}>
+							{jiraHours}
+						</CornerDiv>
+					</>
+				)}
 		</ContainerDiv>
 	);
 };
@@ -170,7 +171,7 @@ export const SumColumnCell: React.FC<{ row: Row }> = ({ row }) => {
 			const totalBekkHoursAllWeek = row.entries
 				.filter((entry) => entry.id !== FrivilligKompetanseByggingId)
 				.flatMap((entry) =>
-					Object.values(entry.days).map((day) => day.bekkHours)
+					Object.values(entry.days).map((day) => day.bekkHours),
 				)
 				.reduce((prev, curr) => prev + curr, 0);
 			return (

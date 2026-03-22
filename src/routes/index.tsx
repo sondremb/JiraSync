@@ -1,6 +1,6 @@
 import React from "react";
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import { BekkEntraLogin } from "../login/bekk/example";
+import { BekkEntraLogin } from "../login/bekk/bekkLogin";
 import { LockdateWrapper } from "../LockdateWrapper";
 
 export const Route = createFileRoute("/")({
