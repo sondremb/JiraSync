@@ -12,6 +12,7 @@ import { useQueries, useQuery } from "@tanstack/react-query";
 import { jiraClient } from "./jiraclient";
 
 interface JiraIssueResponse {
+	id?: string;
 	key?: string;
 	fields?: Record<string, unknown>;
 }
@@ -19,6 +20,7 @@ interface JiraIssueResponse {
 function mapIssue(response: JiraIssueResponse): JiraIssue {
 	const fields = response.fields as unknown as Record<string, any>; // Jira's API is not well-typed, so we have to do some manual type assertions
 	return {
+		id: parseInt(response.id!, 10) as JiraIssueId,
 		key: response.key as JiraIssueKey,
 		epicLink: (fields[CUSTOM_FIELDS.epicLink] as JiraIssueKey) ?? null,
 		components:
@@ -98,7 +100,7 @@ export async function getIssueWorklogs(
 	return (
 		data?.worklogs?.map((worklog) => ({
 			authhorAccountId: worklog.author?.accountId as JiraAccountId,
-			issueId: worklog.issueId as JiraIssueId,
+			issueId: JiraIssueId.create(worklog.issueId!),
 			issue,
 			startDate: IsoDate.fromDate(new Date(worklog.started!)),
 			timeSpentSeconds: worklog.timeSpentSeconds ?? 0,
