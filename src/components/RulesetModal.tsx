@@ -10,8 +10,12 @@ export const RulesetModal: React.FC = () => {
 			<Button onClick={() => setIsModalOpen(true)} variant="outlined">
 				Velg regler
 			</Button>
-			<Modal showModal={isModalOpen} onCancel={() => setIsModalOpen(false)}>
-				<RulesetSelector />
+			<Modal
+				showModal={isModalOpen}
+				title="Velg regler"
+				onCancel={() => setIsModalOpen(false)}
+			>
+				<RulesetSelector className="mt-20" />
 			</Modal>
 		</>
 	);

@@ -1,6 +1,6 @@
 import React from "react";
 import { RulesetSelector } from "./components/RulesetSelector";
-import { FlexRow, H1, PageLayout } from "@utdanningsdirektoratet/lisa";
+import { FlexRow, H1, H2, PageLayout } from "@utdanningsdirektoratet/lisa";
 import { useRuleSet } from "./data/useRuleset";
 import { Example } from "./components/TimeTable/timetable-cell";
 import { LoginStatus } from "./login/LoginStatus";
@@ -21,7 +21,14 @@ export const RulesetWrapper: React.FC<React.PropsWithChildren<{}>> = ({
 				</FlexRow>
 				<LoginStatus />
 			</FlexRow>
-			{selectedRuleset ? children : <RulesetSelector />}
+			{selectedRuleset ? (
+				children
+			) : (
+				<>
+					<H2 textStyle="headline">Velg regler</H2>
+					<RulesetSelector />
+				</>
+			)}
 		</PageLayout>
 	);
 };
