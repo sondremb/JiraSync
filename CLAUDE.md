@@ -33,7 +33,7 @@ This is the core business logic. Jira issues are routed to Bekk timecodes based 
 
 ### Authentication
 
-- **Jira**: OAuth 2.0 tokens stored in `localStorage`; refresh handled by Netlify serverless function `functions/jira-auth-session.ts` using httpOnly cookie refresh tokens
+- **Jira**: OAuth 2.0 tokens stored in `sessionStorage`; refresh handled by Netlify serverless function `functions/jira-auth-session.ts` using httpOnly cookie refresh tokens
 - **Bekk**: Azure Entra ID via `@azure/msal-react`, managed in `src/login/bekk/`
 
 ### API clients
@@ -43,7 +43,7 @@ Both APIs use the same stack: `openapi-typescript` for type generation and `open
 - **Jira**: `src/data/jiraclient.ts` — module-level singleton; types in `src/generated/jira-issues.d.ts` (from `yarn generate:jira`)
 - **Bekk**: `src/data/bekkclient.ts` — module-level singleton; types in `src/generated/bekk-timekeeper.d.ts` (from `yarn generate:bekk`)
 
-Auth is injected via middleware on each client. Jira uses a localStorage-backed token context (`src/login/jira/authContext.ts`); Bekk calls `msalInstance.acquireTokenSilent()` directly (the MSAL `PublicClientApplication` instance is a module-level singleton exported from `src/login/bekk/example.tsx`).
+Auth is injected via middleware on each client. Jira uses a sessionStorage-backed token context (`src/login/jira/authContext.ts`); Bekk calls `msalInstance.acquireTokenSilent()` directly (the MSAL `PublicClientApplication` instance is a module-level singleton exported from `src/login/bekk/example.tsx`).
 
 `getEmployeeId()` in `src/login/bekk/example2.tsx` reads the employee ID from the active MSAL account — call it inside `queryFn`, not at the hook level.
 
