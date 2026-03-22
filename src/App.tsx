@@ -82,16 +82,7 @@ export const App: React.FC<Props> = ({ initialWeek }) => {
 	};
 
 	return (
-		<PageLayout>
-			<FlexRow valign="center" halign="space-between" className="mb-20">
-				<FlexRow>
-					<H1 textStyle="display" className="mb-0 mr-40">
-						Jirasync
-					</H1>
-					<Example />
-				</FlexRow>
-				<LoginStatus />
-			</FlexRow>
+		<>
 			<FlexRow halign="space-between" className="mb-12">
 				{timestamp && <DownloadTimestamp timestamp={timestamp} />}
 				<RulesetModal />
@@ -132,6 +123,6 @@ export const App: React.FC<Props> = ({ initialWeek }) => {
 				/>
 			)}
 			<AltStemmerAlert entries={entries} onSynchronize={synchronize} />
-		</PageLayout>
+		</>
 	);
 };
