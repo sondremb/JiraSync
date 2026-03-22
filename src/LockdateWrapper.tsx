@@ -5,6 +5,7 @@ import { useLockDate } from "./data/useLockDate";
 import { IsoWeek } from "./date-time/IsoWeek";
 import { Loading } from "@utdanningsdirektoratet/lisa";
 import styled from "styled-components";
+import { RulesetWrapper } from "./RulesetWrapper";
 
 export const LockdateWrapper: React.FC = () => {
 	const { lockDate } = useLockDate();
@@ -18,7 +19,11 @@ export const LockdateWrapper: React.FC = () => {
 	}
 	const initialWeek = IsoWeek.fromDate(addDays(new Date(lockDate), 1));
 
-	return <App initialWeek={initialWeek} />;
+	return (
+		<RulesetWrapper>
+			<App initialWeek={initialWeek} />
+		</RulesetWrapper>
+	);
 };
 
 const LoadingContainer = styled.div`
