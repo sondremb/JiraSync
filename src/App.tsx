@@ -5,20 +5,16 @@ import {
 	Button,
 	FlexColumn,
 	FlexRow,
-	H1,
 	Icon,
-	PageLayout,
 	Text,
 } from "@utdanningsdirektoratet/lisa";
 import styled from "styled-components";
-import { Example } from "./components/TimeTable/timetable-cell";
 import { useLockDate } from "./data/useLockDate";
 import { isUdir } from "./timecode-map";
 import { useWeek } from "./data/useWeek";
 import { AltStemmerAlert } from "./components/AltStemmerAlert";
 import { DownloadTimestamp } from "./components/DownloadTimestamp";
 import { colors, spacing } from "@utdanningsdirektoratet/lisa-tokens";
-import { LoginStatus } from "./login/LoginStatus";
 import { IsoDate, IsoWeek } from "./date-time/IsoWeek";
 import { addDays } from "date-fns";
 import { CopyTokenButton } from "./login/bekk/CopyTokenButton";
