@@ -5,6 +5,8 @@ import { useWorklogs } from "./newIssue";
 import { getEmployeeId } from "../login/bekk/bekkLogin";
 import { bekkClient } from "./bekkclient";
 import { BekkId } from "../types";
+import { useIssueMappings } from "./useIssueMappings";
+import { useRuleSet } from "./useRuleset";
 
 export interface PutTimesheetParams {
 	timecodeId: BekkId;
@@ -19,6 +21,14 @@ export const useWeek = (week: IsoWeek) => {
 	const sunday = IsoWeek.sunday(week);
 
 	const worklogs = useWorklogs(monday, sunday);
+	const { selectedRuleset } = useRuleSet();
+	if (!selectedRuleset) {
+		throw new Error("useWeek must only be called when a ruleset is selected");
+	}
+	const mappings = useIssueMappings(
+		worklogs.map((w) => w.issue),
+		selectedRuleset,
+	);
 
 	const bekkQuery = useQuery({
 		queryKey: ["bekk", "week", week],
@@ -53,7 +63,9 @@ export const useWeek = (week: IsoWeek) => {
 		bekkQuery.dataUpdatedAt > 0 ? new Date(bekkQuery.dataUpdatedAt) : undefined;
 
 	const combinedData =
-		bekkData && worklogs ? updateEntries(bekkData, worklogs) : undefined;
+		bekkData && worklogs && mappings
+			? updateEntries(bekkData, worklogs, mappings)
+			: undefined;
 
 	return { state: combinedData, timestamp, updateBekkHours };
 };

@@ -28,6 +28,7 @@ pnpm start
 | Timekode | En kode i Bekk Timekeeper som representerer et prosjekt eller en aktivitet man fører timer på. |
 | Timekode id | En unik numerisk ID for en timekode |
 | Timekode-kode | Unik tekstlig kode for en timekode. Prefikset med forkortelse for prosjekt eller kunde. F.eks. `KOM1000` for kompetansebygging. |
+| Låsedato, lockdate | Dato for låsing av timer i Timekeeper. Timeføringer på låsedatoen eller tidligere kan ikke endres. |
 | Issue | En sak i Jira. Kalles også ticket, lapp, oppgave. |
 | Issue Id | Unik numerisk id for et issue, f.eks. `123`. |
 | Issue Key | Unik betegnelse for et issue. Består av en Project Key og et løpenummer, f.eks. `ITOPS-42`. |

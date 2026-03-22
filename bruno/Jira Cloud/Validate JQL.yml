@@ -1,0 +1,28 @@
+info:
+  name: Validate JQL
+  type: http
+  seq: 9
+
+http:
+  method: POST
+  url: "{{BaseAddress}}/rest/api/3/jql/parse?validation=strict"
+  params:
+    - name: validation
+      value: strict
+      type: query
+    - name: ""
+      value: ""
+      type: query
+  body:
+    type: json
+    data: |-
+      {
+        "queries": ["project = 'PASP' AND component = '1045 Utvikling'"]
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

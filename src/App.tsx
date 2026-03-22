@@ -5,24 +5,21 @@ import {
 	Button,
 	FlexColumn,
 	FlexRow,
-	H1,
 	Icon,
-	PageLayout,
 	Text,
 } from "@utdanningsdirektoratet/lisa";
 import styled from "styled-components";
-import { Example } from "./components/TimeTable/timetable-cell";
 import { useLockDate } from "./data/useLockDate";
 import { isUdir } from "./timecode-map";
 import { useWeek } from "./data/useWeek";
 import { AltStemmerAlert } from "./components/AltStemmerAlert";
 import { DownloadTimestamp } from "./components/DownloadTimestamp";
 import { colors, spacing } from "@utdanningsdirektoratet/lisa-tokens";
-import { LoginStatus } from "./login/LoginStatus";
 import { IsoDate, IsoWeek } from "./date-time/IsoWeek";
 import { addDays } from "date-fns";
 import { CopyTokenButton } from "./login/bekk/CopyTokenButton";
 import { config } from "./Utils/envUtils";
+import { RulesetModal } from "./components/RulesetModal";
 
 const CenteredText = styled(Text)`
 	text-align: center;
@@ -81,18 +78,10 @@ export const App: React.FC<Props> = ({ initialWeek }) => {
 	};
 
 	return (
-		<PageLayout>
-			<FlexRow valign="center" halign="space-between" className="mb-20">
-				<FlexRow>
-					<H1 textStyle="display" className="mb-0 mr-40">
-						Jirasync
-					</H1>
-					<Example />
-				</FlexRow>
-				<LoginStatus />
-			</FlexRow>
+		<>
 			<FlexRow halign="space-between" className="mb-12">
 				{timestamp && <DownloadTimestamp timestamp={timestamp} />}
+				<RulesetModal />
 				{config.debug && <CopyTokenButton />}
 			</FlexRow>
 			<ColoredRow halign="center" valign="center">
@@ -130,6 +119,6 @@ export const App: React.FC<Props> = ({ initialWeek }) => {
 				/>
 			)}
 			<AltStemmerAlert entries={entries} onSynchronize={synchronize} />
-		</PageLayout>
+		</>
 	);
 };

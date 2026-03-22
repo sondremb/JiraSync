@@ -8,7 +8,7 @@ http:
   url: "{{BaseAddress}}/rest/api/3/issue/:issueIdOrKey"
   params:
     - name: issueIdOrKey
-      value: PASP-5074
+      value: PASX-7805
       type: path
   auth: inherit
 

@@ -2,17 +2,17 @@ import { components } from "../generated/bekk-timekeeper";
 
 type EmployeeTimesheetViewModel =
 	components["schemas"]["EmployeeTimesheetViewModel"];
-import { bekkIdFromJiraTimecode } from "../timecode-map";
 import { BekkTimecodeEntry, DateString, Day, BekkId } from "../types";
-import { Worklog } from "../data/issue";
+import { JiraIssueKey, Worklog } from "../data/issue";
 import { IsoDate } from "../date-time/IsoWeek";
 
 export const updateEntries = (
 	bekkData: EmployeeTimesheetViewModel,
 	worklogs: Worklog[],
+	mappings: Record<JiraIssueKey, BekkId>,
 ): BekkTimecodeEntry[] => {
 	const entries = createEntriesFromBekkData(bekkData);
-	enrichEntriesWithJiraData(entries, worklogs);
+	enrichEntriesWithJiraData(entries, worklogs, mappings);
 	return entries;
 };
 
@@ -52,9 +52,10 @@ export const getOrCreateBekkEntry = (
 export const enrichEntriesWithJiraData = (
 	entries: BekkTimecodeEntry[],
 	worklogs: Worklog[],
+	mappings: Record<JiraIssueKey, BekkId>,
 ) => {
 	for (const worklog of worklogs) {
-		const bekkId = bekkIdFromJiraTimecode(worklog.issue);
+		const bekkId = mappings[worklog.issue.key];
 		const bekkEntry = getOrCreateBekkEntry(entries, bekkId);
 		const timestring = IsoDate.fromDate(new Date(worklog.startDate));
 		if (!(timestring in bekkEntry.days)) {
