@@ -1,5 +1,6 @@
 import React from "react";
 import { createFileRoute } from "@tanstack/react-router";
+import emptyStateImg from "../../assets/svg/emptystate.svg";
 import {
 	Button,
 	FlexColumn,
@@ -33,7 +34,7 @@ function RouteComponent() {
 					className={
 						screenSize > ScreenSize.small ? "ml-40 pl-40" : "ml-20 pl-20"
 					}
-					src="/assets/svg/emptyState.svg"
+					src={emptyStateImg}
 					alt="empty state"
 				/>
 				<Button url=".netlify/functions/jira-auth-init">Logg inn</Button>
