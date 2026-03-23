@@ -5,9 +5,9 @@ import { cookieNames } from "./utils";
 
 export const handler: Handler = async () => {
 	return Promise.resolve({
-		statusCode: StatusCode.Ok200,
-		body: "Logged out",
+		statusCode: StatusCode.Found302,
 		headers: {
+			Location: "/",
 			"Set-Cookie": cookie.stringifySetCookie({
 				name: cookieNames.refreshToken,
 				value: "",

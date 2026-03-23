@@ -10,6 +10,7 @@ export const UdirBekkIds = {
 	UTA1065PasEksamenForvaltning: bekkId(1000752),
 	UTA1068PasPrøverForvaltning: bekkId(1000890),
 	UTA1067PåloggingssystemetForvaltning: bekkId(1000854),
+	UTA1081PasForvaltningInteraksjonsdesignere: bekkId(1001717),
 	UTA1092Systemoversikt: bekkId(1002326),
 	UTA1097Ubas: bekkId(1002497),
 	UTA1109BistandTilHelhetligDesign: bekkId(1002899),
@@ -23,7 +24,7 @@ export const UdirBekkIds = {
 	UTA1124HflEkstraTildeling: bekkId(1003471),
 	UTA1127PasEksamenNyutvikling: bekkId(1003615),
 	UTA1128PaspNyutvikling: bekkId(1003616),
-	UTA1129PasDesignNytuvikling: bekkId(1003617),
+	UTA1129PasNytuviklingInteraksjonsdesignere: bekkId(1003617),
 	UTA1130UidpNyutvikling: bekkId(1003618),
 	UTA1131HflBriskNytuvikling: bekkId(1003625),
 	UTA1134VeikartForEksamenOgPrøver: bekkId(1003628),
@@ -258,6 +259,48 @@ export const newPasRuleSet: Ruleset = {
 		{
 			projectKey: ProjectKeys.PASP,
 			timecode: UdirBekkIds.UTA1137PasPrøverForvaltningSSAB,
+		},
+	],
+};
+
+export const oldPasDesignRuleSet: Ruleset = {
+	name: "Gamle PAS-designerregler",
+	description: "For deg som er designer i PASP eller PASX på gammel kontrakt",
+	id: "old-pas-design-rules" as RulesetId,
+	rules: [
+		{
+			projectKey: ProjectKeys.PASP,
+			jql: `component = ${ComponentIds.PaspNyutvikling}` as Jql,
+			timecode: UdirBekkIds.UTA1129PasNytuviklingInteraksjonsdesignere,
+		},
+		{
+			projectKey: ProjectKeys.PASX,
+			jql: `component = ${ComponentIds.PasxNyutvikling}` as Jql,
+			timecode: UdirBekkIds.UTA1129PasNytuviklingInteraksjonsdesignere,
+		},
+		{
+			projectKey: ProjectKeys.PASP,
+			timecode: UdirBekkIds.UTA1081PasForvaltningInteraksjonsdesignere,
+		},
+		{
+			projectKey: ProjectKeys.PASX,
+			timecode: UdirBekkIds.UTA1081PasForvaltningInteraksjonsdesignere,
+		},
+	],
+};
+
+export const newPasDesignRuleSet: Ruleset = {
+	name: "Nye PAS-designerregler",
+	description: "For deg som er designer i PASP eller PASX på ny kontrakt",
+	id: "new-pas-design-rules" as RulesetId,
+	rules: [
+		{
+			projectKey: ProjectKeys.PASP,
+			timecode: UdirBekkIds.UTA1139PasForvaltingInteraksjonsdesignereSSAB,
+		},
+		{
+			projectKey: ProjectKeys.PASX,
+			timecode: UdirBekkIds.UTA1139PasForvaltingInteraksjonsdesignereSSAB,
 		},
 	],
 };

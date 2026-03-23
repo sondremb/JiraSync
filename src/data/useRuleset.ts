@@ -1,6 +1,12 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Ruleset, RulesetId } from "../rules";
-import { oldPasRuleSet, newPasRuleSet, otherRuleSet } from "../timecode-map";
+import {
+	oldPasRuleSet,
+	newPasRuleSet,
+	otherRuleSet,
+	newPasDesignRuleSet,
+	oldPasDesignRuleSet,
+} from "../timecode-map";
 import { toRecord } from "../Utils/arrayUtils";
 
 export function useRuleSet(): {
@@ -8,7 +14,13 @@ export function useRuleSet(): {
 	selectedRuleset: Ruleset | undefined;
 	setRuleSet: (ruleset: Ruleset) => void;
 } {
-	const rulesets = [oldPasRuleSet, newPasRuleSet, otherRuleSet];
+	const rulesets = [
+		oldPasRuleSet,
+		newPasRuleSet,
+		otherRuleSet,
+		oldPasDesignRuleSet,
+		newPasDesignRuleSet,
+	];
 	const rulesetsById: Record<RulesetId, Ruleset> = toRecord(
 		rulesets,
 		(r) => r.id,
