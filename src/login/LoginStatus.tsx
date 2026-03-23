@@ -13,9 +13,6 @@ import { jiraAuthenticationContext } from "./jira/authContext";
 export const LoginStatus: React.FC = () => {
 	const { instance } = useMsal();
 	const onClick = () => {
-		fetch("/.netlify/functions/jira-auth-logout", {
-			method: "POST",
-		});
 		jiraAuthenticationContext.logout();
 		instance.logoutRedirect();
 	};

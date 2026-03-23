@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as LogoutRouteImport } from './routes/logout'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ErrorRouteImport } from './routes/error'
 import { Route as IndexRouteImport } from './routes/index'
@@ -17,6 +18,11 @@ import { Route as IndexRouteImport } from './routes/index'
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LogoutRoute = LogoutRouteImport.update({
+  id: '/logout',
+  path: '/logout',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -39,12 +45,14 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/error': typeof ErrorRoute
   '/login': typeof LoginRoute
+  '/logout': typeof LogoutRoute
   '/privacy': typeof PrivacyRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/error': typeof ErrorRoute
   '/login': typeof LoginRoute
+  '/logout': typeof LogoutRoute
   '/privacy': typeof PrivacyRoute
 }
 export interface FileRoutesById {
@@ -52,20 +60,22 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/error': typeof ErrorRoute
   '/login': typeof LoginRoute
+  '/logout': typeof LogoutRoute
   '/privacy': typeof PrivacyRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/error' | '/login' | '/privacy'
+  fullPaths: '/' | '/error' | '/login' | '/logout' | '/privacy'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/error' | '/login' | '/privacy'
-  id: '__root__' | '/' | '/error' | '/login' | '/privacy'
+  to: '/' | '/error' | '/login' | '/logout' | '/privacy'
+  id: '__root__' | '/' | '/error' | '/login' | '/logout' | '/privacy'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ErrorRoute: typeof ErrorRoute
   LoginRoute: typeof LoginRoute
+  LogoutRoute: typeof LogoutRoute
   PrivacyRoute: typeof PrivacyRoute
 }
 
@@ -76,6 +86,13 @@ declare module '@tanstack/react-router' {
       path: '/privacy'
       fullPath: '/privacy'
       preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/logout': {
+      id: '/logout'
+      path: '/logout'
+      fullPath: '/logout'
+      preLoaderRoute: typeof LogoutRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -106,6 +123,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ErrorRoute: ErrorRoute,
   LoginRoute: LoginRoute,
+  LogoutRoute: LogoutRoute,
   PrivacyRoute: PrivacyRoute,
 }
 export const routeTree = rootRouteImport

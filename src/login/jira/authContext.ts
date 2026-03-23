@@ -94,8 +94,12 @@ export const jiraAuthenticationContext: JiraAuthContext = {
 
 		return refreshFromServer();
 	},
-	logout: () => {
+	logout: async () => {
 		sessionStorage.removeItem(accessTokenKey);
 		sessionStorage.removeItem(expiresAtKey);
+		await fetch("/.netlify/functions/jira-auth-logout", {
+			method: "POST",
+			credentials: "include",
+		});
 	},
 };
