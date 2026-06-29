@@ -24,8 +24,8 @@ export const UdirBekkIds = {
 	UTA1124HflEkstraTildeling: bekkId(1003471),
 	UTA1127PasEksamenNyutvikling: bekkId(1003615),
 	UTA1128PaspNyutvikling: bekkId(1003616),
-	UTA1129PasNytuviklingInteraksjonsdesignere: bekkId(1003617),
-	UTA1131HflBriskNytuvikling: bekkId(1003625),
+	UTA1129PasNyutviklingInteraksjonsdesignere: bekkId(1003617),
+	UTA1131HflBriskNyutvikling: bekkId(1003625),
 	UTA1134VeikartForEksamenOgPrøver: bekkId(1003628),
 
 	// ny kontrakt
@@ -142,12 +142,12 @@ export const oldPasDesignRuleSet: Ruleset = {
 		{
 			projectKey: ProjectKeys.PASP,
 			jql: `component = ${ComponentIds.PaspNyutvikling}` as Jql,
-			timecode: UdirBekkIds.UTA1129PasNytuviklingInteraksjonsdesignere,
+			timecode: UdirBekkIds.UTA1129PasNyutviklingInteraksjonsdesignere,
 		},
 		{
 			projectKey: ProjectKeys.PASX,
 			jql: `component = ${ComponentIds.PasxNyutvikling}` as Jql,
-			timecode: UdirBekkIds.UTA1129PasNytuviklingInteraksjonsdesignere,
+			timecode: UdirBekkIds.UTA1129PasNyutviklingInteraksjonsdesignere,
 		},
 		{
 			projectKey: ProjectKeys.PASP,
@@ -184,7 +184,7 @@ export const otherRuleSet: Ruleset = {
 		{
 			projectKey: ProjectKeys.HFL,
 			jql: `component = ${ComponentIds.HflBriskNyutvikling}` as Jql,
-			timecode: UdirBekkIds.UTA1131HflBriskNytuvikling,
+			timecode: UdirBekkIds.UTA1131HflBriskNyutvikling,
 		},
 		{
 			projectKey: ProjectKeys.HFL,
