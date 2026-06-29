@@ -25,7 +25,6 @@ export const UdirBekkIds = {
 	UTA1127PasEksamenNyutvikling: bekkId(1003615),
 	UTA1128PaspNyutvikling: bekkId(1003616),
 	UTA1129PasNytuviklingInteraksjonsdesignere: bekkId(1003617),
-	UTA1130UidpNyutvikling: bekkId(1003618),
 	UTA1131HflBriskNytuvikling: bekkId(1003625),
 	UTA1134VeikartForEksamenOgPrøver: bekkId(1003628),
 
@@ -35,6 +34,8 @@ export const UdirBekkIds = {
 	UTA1137PasPrøverForvaltningSSAB: bekkId(1003650),
 	UTA1138PasPrøverNyutviklingSSAB: bekkId(1003651),
 	UTA1139PasForvaltingInteraksjonsdesignereSSAB: bekkId(1003652),
+	UTA1130UidpForvaltningSSAB: bekkId(1003618),
+	UTA1143UidpNyutviklingSSAB: bekkId(1003780),
 } as const;
 
 const ProjectKeys = {
@@ -219,11 +220,6 @@ export const oldPasRuleSet: Ruleset = {
 		},
 		{
 			projectKey: ProjectKeys.UIDP,
-			jql: `component = ${ComponentIds.UidpNyutvikling}` as Jql,
-			timecode: UdirBekkIds.UTA1130UidpNyutvikling,
-		},
-		{
-			projectKey: ProjectKeys.UIDP,
 			timecode: UdirBekkIds.UTA1067PåloggingssystemetForvaltning,
 		},
 		{
@@ -239,7 +235,7 @@ export const oldPasRuleSet: Ruleset = {
 
 export const newPasRuleSet: Ruleset = {
 	name: "Nye PAS-regler",
-	description: "For deg som er på PASX eller PASP på ny kontrakt",
+	description: "For deg som er på PASX, PASP eller UIDP på ny kontrakt",
 	id: "new-pas-rules" as RulesetId,
 	rules: [
 		{
@@ -259,6 +255,15 @@ export const newPasRuleSet: Ruleset = {
 		{
 			projectKey: ProjectKeys.PASP,
 			timecode: UdirBekkIds.UTA1137PasPrøverForvaltningSSAB,
+		},
+		{
+			projectKey: ProjectKeys.UIDP,
+			jql: `component = ${ComponentIds.UidpNyutvikling}` as Jql,
+			timecode: UdirBekkIds.UTA1143UidpNyutviklingSSAB,
+		},
+		{
+			projectKey: ProjectKeys.UIDP,
+			timecode: UdirBekkIds.UTA1130UidpForvaltningSSAB,
 		},
 	],
 };
