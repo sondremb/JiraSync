@@ -36,6 +36,7 @@ export const UdirBekkIds = {
 	UTA1139PasForvaltingInteraksjonsdesignereSSAB: bekkId(1003652),
 	UTA1130UidpForvaltningSSAB: bekkId(1003618),
 	UTA1143UidpNyutviklingSSAB: bekkId(1003780),
+	UTA1145BistandTilEksamensTjenestenSSAB: bekkId(1003823),
 } as const;
 
 const ProjectKeys = {
@@ -203,6 +204,18 @@ export const otherRuleSet: Ruleset = {
 		{
 			projectKey: ProjectKeys.HFL,
 			timecode: UdirBekkIds.UTA1110HflForvaltning,
+		},
+	],
+};
+
+export const adrianRuleSet: Ruleset = {
+	name: "Adrians regler",
+	description: "For deg som er Adrian Kortyczko",
+	id: "adrian-rules" as RulesetId,
+	rules: [
+		{
+			projectKey: ProjectKeys.PASP,
+			timecode: UdirBekkIds.UTA1145BistandTilEksamensTjenestenSSAB,
 		},
 	],
 };
