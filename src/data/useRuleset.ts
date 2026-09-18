@@ -7,6 +7,7 @@ import {
 	newPasDesignRuleSet,
 	oldPasDesignRuleSet,
 	adrianRuleSet,
+	grunnmurRuleSet,
 } from "../timecode-map";
 import { toRecord } from "../Utils/arrayUtils";
 
@@ -22,6 +23,7 @@ export function useRuleSet(): {
 		oldPasDesignRuleSet,
 		newPasDesignRuleSet,
 		adrianRuleSet,
+		grunnmurRuleSet,
 	];
 	const rulesetsById: Record<RulesetId, Ruleset> = toRecord(
 		rulesets,

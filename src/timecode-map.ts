@@ -37,6 +37,8 @@ export const UdirBekkIds = {
 	UTA1130UidpForvaltningSSAB: bekkId(1003618),
 	UTA1143UidpNyutviklingSSAB: bekkId(1003780),
 	UTA1145BistandTilEksamensTjenestenSSAB: bekkId(1003823),
+	UTA1146SepGrunnmurForvaltningSSAB: bekkId(1003834),
+	UTA1147SepGrunnmurNyutvikliungSSAB: bekkId(1003835),
 } as const;
 
 const ProjectKeys = {
@@ -48,6 +50,7 @@ const ProjectKeys = {
 	SO: "SO" as JiraProjectKey,
 	UBAS: "UBAS" as JiraProjectKey,
 	DESIGN: "DESIGN" as JiraProjectKey,
+	GRUNNMUR: "GMS" as JiraProjectKey,
 } as const;
 
 const ComponentIds = {
@@ -55,6 +58,7 @@ const ComponentIds = {
 	PasxNyutvikling: componentId("10121"),
 	UidpNyutvikling: componentId("10677"),
 	HflBriskNyutvikling: componentId("10073"),
+	GrunnmurNyutvikling: componentId("12045"),
 } as const;
 
 const udirIdSet = new Set<BekkId>(Object.values(UdirBekkIds));
@@ -216,6 +220,23 @@ export const adrianRuleSet: Ruleset = {
 		{
 			projectKey: ProjectKeys.PASP,
 			timecode: UdirBekkIds.UTA1145BistandTilEksamensTjenestenSSAB,
+		},
+	],
+};
+
+export const grunnmurRuleSet: Ruleset = {
+	name: "Grunnmur-regler",
+	description: "For deg som jobber digital grunnmur",
+	id: "grunnmur-rules" as RulesetId,
+	rules: [
+		{
+			projectKey: ProjectKeys.GRUNNMUR,
+			jql: `component = ${ComponentIds.GrunnmurNyutvikling}` as Jql,
+			timecode: UdirBekkIds.UTA1147SepGrunnmurNyutvikliungSSAB,
+		},
+		{
+			projectKey: ProjectKeys.GRUNNMUR,
+			timecode: UdirBekkIds.UTA1146SepGrunnmurForvaltningSSAB,
 		},
 	],
 };
