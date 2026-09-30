@@ -9,10 +9,9 @@ import {
 	DayReport,
 	InternalWork,
 	JiraWork,
-	JiraIssueId,
-	JiraMatchResult,
 	InternalTimecodeId,
 	ManagedTimecodeDayComparison,
+	JiraMatchResult,
 } from "./entities";
 
 export async function reconcilePeriod(
@@ -51,7 +50,7 @@ export function reconcileInternal(
 	to: IsoDate,
 	internalWorklogs: InternalWork[],
 	jiraWorklogs: JiraWork[],
-	matchResultByIssueId: Map<JiraIssueId, JiraMatchResult>,
+	matchResultByIssueId: JiraMatchResult,
 	managedTimecodeIds: Set<InternalTimecodeId>,
 ): DayReport[] {
 	const internalWorkByDate = groupBy(internalWorklogs, (work) => work.date);
@@ -73,7 +72,7 @@ function createDayReport(
 	date: IsoDate,
 	internalWork: InternalWork[],
 	jiraWork: JiraWork[],
-	matchResultByIssueId: Map<JiraIssueId, JiraMatchResult>,
+	matchResultByIssueId: JiraMatchResult,
 	managedTimecodeIds: Set<InternalTimecodeId>,
 ): DayReport {
 	const report = DayReport.empty(date);

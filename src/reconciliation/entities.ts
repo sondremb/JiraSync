@@ -15,10 +15,11 @@ export interface InternalWork {
 	hoursWorked: number;
 }
 
-export type JiraMatchResult = { issueId: JiraIssueId } & (
+export type JiraMatchResult = Map<JiraIssueId, IssueMatchResult>;
+
+export type IssueMatchResult =
 	| { isMatched: true; timecodeId: InternalTimecodeId }
-	| { isMatched: false }
-);
+	| { isMatched: false };
 
 export interface ManagedTimecodeDayComparison {
 	timecodeId: InternalTimecodeId;

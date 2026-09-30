@@ -3,14 +3,12 @@ import {
 	InternalTimecodeId,
 	InternalWork,
 	JiraIssueId,
-	JiraMatchResult,
 	JiraWork,
+	JiraMatchResult,
 } from "./entities";
 
 export interface Policy {
-	matchIssues: (
-		work: JiraIssueId[],
-	) => Promise<Map<JiraIssueId, JiraMatchResult>>;
+	matchIssues: (issues: JiraIssueId[]) => Promise<JiraMatchResult>;
 	getManagedTimecodes: () => Promise<Set<InternalTimecodeId>>;
 }
 export type LoadPolicy = () => Promise<Policy>;
