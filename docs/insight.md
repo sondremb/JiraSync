@@ -9,7 +9,7 @@ The user's logged work is considered Synced (or In Sync) for a given day if:
 For each Timecode in the Contract, the sum of hours logged in Jira on Issues that Map to that Timecode on that day is equal to the hours logged on the Timecode itself in the Internal System on that day.
 The user's logged work is considered Synced for a period of days if it is Synced for each day in the period.
 Hours logged on Timecodes not in the Contract do not affect the Sync status.
-Ideally, all of a user's logged hours in Jira should be covered by the Contract. The case where they are not is considered undefined behavior.
+Ideally, all of a user's Jira worklogs are covered by the selected policy. Worklogs on issues that match no rule are shown separately and mean the day needs review.
 
 Synchronizing/Syncing:
 Since Issue-to-Timecode mapping is unambiguous, we can choose to consider Jira hours the ground truth. Using this, we can consider the process of setting Internal hours equal to what they should be based on Jira hours. We call this process Syncing/Synchronization.
@@ -57,6 +57,7 @@ Fixes:
     Handle overtime when locking month
     Don't crash when Issue has no Mapping
     Don't crash when user lacks access to Timecode
+    If fetching the Internal System lock date fails, show the error instead of loading indefinitely. Let the weekly timesheet load independently using a fallback initial week, so it remains possible to view hours and diagnose whether the failure is specific to lock dates. Keep locking controls unavailable until the lock date is known.
 New features?:
     logging arbitrary Internal hours
     Rule-drafting tool (nice-to-have, second-order priority): start new or copy existing policy, discover Jira components and Internal timecodes using the signed-in user's access, and export a full proposed policy for developer review and read-only publication.

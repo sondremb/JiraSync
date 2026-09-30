@@ -10,12 +10,27 @@ The first rewrite does not model manager–employee relationships, provide manag
 
 Jira and the Internal System remain authoritative for their respective worklogs, time entries, access rights, and locking permissions.
 
+Rewrite goals:
+* Increase testability and test coverage
+* Increase maintability and ease of understanding
+* Decouple from Udir
+* Increase portability and decouple from Netlify hosting
+* Better support multiple user flows
+* Reduce friction in policy updates
+
+To achieve the goal:
+* A testable domain core, Clean Architecture (CA) inspired
+* Move policies to data (static JSON for now), but abstracted so they may become live data later
+* Rewrite to DigDir design system (with default theme for now)
+* An overall strategy for handling errors
+
+
 ## 2. Domain behavior
 
 - A **mapping policy** is an ordered list of rules. Each rule specifies a Jira project, an optional JQL condition, and an Internal System timecode. The first matching rule wins.
 - Matching is delegated to Jira. This keeps Jira-specific field semantics—including custom fields—out of JiraSync's matching engine. Rule *configuration* can still be specific to a Jira site.
-- For an employee, date, and managed timecode, hours are **in sync** when the sum of their Jira worklogs on mapped issues equals their Internal System hours. A period is in sync when every applicable day and timecode is in sync.
-- Hours on timecodes outside the selected policy do not affect its sync status. Jira worklogs that match no rule are shown explicitly.
+- For an employee, date, and managed timecode, hours are **in sync** when the sum of their Jira worklogs on mapped issues equals their Internal System hours. A period needs review if any applicable day and timecode differs **or if any Jira worklog matches no rule**.
+- Internal hours on timecodes outside the selected policy are shown explicitly but do not affect its sync status. Jira worklogs that match no rule are shown explicitly and require review.
 - For the initial Jira-to-Internal sync operation, Jira hours are the proposed target. A preview shows the affected dates, timecodes, and changes before writing. The Internal System decides whether a write is permitted, including on locked dates.
 
 **Open:** The domain document currently calls a rule list a *Contract*. Confirm whether that means an actual business contract, or whether *mapping policy/ruleset* is the clearer name. Effective-dated reassignment and the treatment of historical rule changes also need explicit rules before implementation.
@@ -45,6 +60,11 @@ Lock state ────────────┘
 ```
 
 Pure domain functions should express comparison and sync-planning rules. Application-level operations coordinate fetching, matching, previewing, and writing. React components and hooks adapt those operations for the screen; API clients adapt the external systems. Create these layers where they clarify real logic, rather than requiring every feature to have an identical folder structure.
+
+The reconciliation domain uses application-owned values, independent of generated API response types. Jira and Internal System adapters validate and translate responses at the data boundary; incomplete or failed fetches must not be treated as empty, in-sync weeks.
+The reconciliation operation loads a selected policy, fetches worklogs from both systems, and asks the policy to batch-match distinct worked issue IDs. The policy also supplies its managed timecodes; mapped outcomes must refer to timecodes it manages. A rules/JQL implementation can delegate matching to a Jira adapter while deriving managed timecodes from the same rules. The matching contract requires exactly one explicit mapped or unmatched outcome per worked issue; missing, duplicate, or unexpected outcomes are errors. Daily comparison and sync planning remain pure and synchronous.
+
+**Implementation status:** `src/reconciliation/` contains the contracts, pure daily comparison, asynchronous orchestration, and behavior tests. The operation currently rejects missing match outcomes; validation of unexpected outcomes and key/value ID disagreements is still pending. Production policy and worklog adapters, UI integration, and sync planning have not yet been implemented.
 
 The frontend may initially perform reconciliation using the employee's existing direct access to Jira and the Internal System. Shared configuration publication and authorization, if introduced, belong server-side.
 
