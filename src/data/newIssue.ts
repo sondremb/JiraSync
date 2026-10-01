@@ -9,7 +9,7 @@ import {
 	Worklog,
 } from "./issue";
 import { useQueries, useQuery } from "@tanstack/react-query";
-import { jiraClient } from "./jiraclient";
+import { jiraClient } from "./jira/jiraclient";
 
 interface JiraIssueResponse {
 	id?: string;

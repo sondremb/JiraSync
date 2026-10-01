@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, test, vi } from "vitest";
-import { jiraClient } from "../../data/jiraclient";
+import { jiraClient } from "../../data/jira/jiraclient";
 import { Jql } from "../../rules";
 import { JiraIssueId } from "../entities";
 import { matchJiraJqls } from "./jqlPolicy";
@@ -18,9 +18,15 @@ describe("matchJiraJqls", () => {
 			{ matchedIssues: [101], errors: [] },
 			{ matchedIssues: [], errors: [] },
 		];
-		post.mockResolvedValue({ response: { ok: true }, data: { matches } } as never);
+		post.mockResolvedValue({
+			response: { ok: true },
+			data: { matches },
+		} as never);
 
-		await expect(matchJiraJqls(issues, jqls)).resolves.toEqual(matches);
+		await expect(matchJiraJqls(issues, jqls)).resolves.toEqual([
+			{ matchedIssues: [101] },
+			{ matchedIssues: [] },
+		]);
 		expect(post).toHaveBeenCalledExactlyOnceWith("/rest/api/3/jql/match", {
 			body: { issueIds: issues, jqls },
 		});
@@ -32,18 +38,24 @@ describe("matchJiraJqls", () => {
 	])("rejects unsuccessful or missing response data", async (result) => {
 		post.mockResolvedValue(result as never);
 
-		await expect(matchJiraJqls(issues, jqls)).rejects.toThrow("Failed to match JQL");
+		await expect(matchJiraJqls(issues, jqls)).rejects.toThrow(
+			"Failed to match JQL",
+		);
 	});
 
 	test("rejects per-JQL errors even when the HTTP request succeeded", async () => {
 		post.mockResolvedValue({
 			response: { ok: true },
-			data: { matches: [
-				{ matchedIssues: [101], errors: [] },
-				{ matchedIssues: [], errors: ["Invalid JQL"] },
-			] },
+			data: {
+				matches: [
+					{ matchedIssues: [101], errors: [] },
+					{ matchedIssues: [], errors: ["Invalid JQL"] },
+				],
+			},
 		} as never);
 
-		await expect(matchJiraJqls(issues, jqls)).rejects.toThrow("Internal error when matching JQL");
+		await expect(matchJiraJqls(issues, jqls)).rejects.toThrow(
+			"Internal error when matching JQL",
+		);
 	});
 });

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import { TimeTable } from "./components/TimeTable/TimeTable";
 import {
@@ -20,6 +20,8 @@ import { addDays } from "date-fns";
 import { CopyTokenButton } from "./login/bekk/CopyTokenButton";
 import { config } from "./Utils/envUtils";
 import { RulesetModal } from "./components/RulesetModal";
+import { useRuleSet } from "./data/useRuleset";
+import { WeeklyReconciliation } from "./components/WeeklyReconciliation";
 
 const CenteredText = styled(Text)`
 	text-align: center;
@@ -35,52 +37,33 @@ interface Props {
 
 export const App: React.FC<Props> = ({ initialWeek }) => {
 	const { lockDate } = useLockDate();
+	const { selectedRuleset } = useRuleSet();
 	const [weekAndYear, setWeekAndYear] = useState<IsoWeek>(initialWeek);
+	const navigated = useRef(false);
+	const initialLockDateApplied = useRef(false);
 
 	useEffect(() => {
-		if (lockDate === undefined || weekAndYear !== undefined) return;
+		if (lockDate === undefined || navigated.current || initialLockDateApplied.current) return;
 
 		const dayAfterLockDate = addDays(new Date(lockDate), 1);
 		const isoWeek = IsoWeek.fromDate(dayAfterLockDate);
 		setWeekAndYear(isoWeek);
+		initialLockDateApplied.current = true;
 	}, [lockDate]);
 
-	const { state: entries, timestamp, updateBekkHours } = useWeek(weekAndYear);
-
 	const onNextWeekClick = () => {
+		navigated.current = true;
 		setWeekAndYear((old) => IsoWeek.next(old));
 	};
 
 	const onPreviousWeekClick = () => {
+		navigated.current = true;
 		setWeekAndYear((old) => IsoWeek.previous(old));
-	};
-
-	const synchronize = () => {
-		if (entries === undefined || lockDate === undefined) return;
-		const udirEntries = entries.filter((entry) => isUdir(entry.id));
-		const udirDays = udirEntries.flatMap((entry) =>
-			Object.entries(entry.days).map(([dateString, day]) => ({
-				...day,
-				dateString,
-				id: entry.id,
-			})),
-		);
-		const daysWithDifference = udirDays
-			.filter((day) => day.bekkHours !== day.totalJiraHours)
-			.filter((day) => day.dateString > lockDate);
-		daysWithDifference.forEach((day) =>
-			updateBekkHours({
-				timecodeId: day.id,
-				hours: day.totalJiraHours,
-				date: IsoDate.parse(day.dateString),
-			}),
-		);
 	};
 
 	return (
 		<>
 			<FlexRow halign="space-between" className="mb-12">
-				{timestamp && <DownloadTimestamp timestamp={timestamp} />}
 				<RulesetModal />
 				{config.debug && <CopyTokenButton />}
 			</FlexRow>
@@ -111,14 +94,42 @@ export const App: React.FC<Props> = ({ initialWeek }) => {
 					Neste
 				</Button>
 			</ColoredRow>
-			{entries !== undefined && lockDate !== undefined && (
-				<TimeTable
-					entries={entries}
-					days={IsoWeek.days(weekAndYear)}
-					lockDate={lockDate}
-				/>
+			{lockDate !== undefined && <LegacyWeek week={weekAndYear} lockDate={lockDate} />}
+			{selectedRuleset && <WeeklyReconciliation week={weekAndYear} ruleset={selectedRuleset} />}
+		</>
+	);
+};
+
+function LegacyWeek({ week, lockDate }: { week: IsoWeek; lockDate: IsoDate }) {
+	const { state: entries, timestamp, updateBekkHours } = useWeek(week);
+	const synchronize = () => {
+		if (entries === undefined) return;
+		const udirEntries = entries.filter((entry) => isUdir(entry.id));
+		const udirDays = udirEntries.flatMap((entry) =>
+			Object.entries(entry.days).map(([dateString, day]) => ({
+				...day,
+				dateString,
+				id: entry.id,
+			})),
+		);
+		const daysWithDifference = udirDays
+			.filter((day) => day.bekkHours !== day.totalJiraHours)
+			.filter((day) => day.dateString > lockDate);
+		daysWithDifference.forEach((day) =>
+			updateBekkHours({
+				timecodeId: day.id,
+				hours: day.totalJiraHours,
+				date: IsoDate.parse(day.dateString),
+			}),
+		);
+	};
+	return (
+		<>
+			{timestamp && <DownloadTimestamp timestamp={timestamp} />}
+			{entries !== undefined && (
+				<TimeTable entries={entries} days={IsoWeek.days(week)} lockDate={lockDate} />
 			)}
 			<AltStemmerAlert entries={entries} onSynchronize={synchronize} />
 		</>
 	);
-};
+}

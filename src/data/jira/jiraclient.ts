@@ -1,8 +1,8 @@
 import { Middleware } from "openapi-fetch";
-import { jiraAuthenticationContext } from "../login/jira/authContext";
+import { jiraAuthenticationContext } from "../../login/jira/authContext";
 import createClient from "openapi-fetch";
-import { paths } from "../generated/jira-issues";
-import { config } from "../Utils/envUtils";
+import { paths } from "../../generated/jira-issues";
+import { config } from "../../Utils/envUtils";
 
 function getBaseUrl() {
 	const cloudId = config.jira.cloudId;

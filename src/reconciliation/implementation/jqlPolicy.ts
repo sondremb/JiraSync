@@ -1,4 +1,4 @@
-import { jiraClient } from "../../data/jiraclient";
+import { jiraClient } from "../../data/jira/jiraclient";
 import { Jql, Rule, Ruleset } from "../../rules";
 import { Policy } from "../contracts";
 import {
@@ -27,7 +27,9 @@ export async function matchJiraJqls(issueIds: JiraIssueId[], jqls: Jql[]) {
 		throw new Error("Internal error when matching JQL");
 	}
 
-	return data.matches;
+	return data.matches.map((match) => ({
+		matchedIssues: match.matchedIssues.map((id) => id as JiraIssueId),
+	}));
 }
 
 export function createJqlPolicy(
@@ -38,6 +40,10 @@ export function createJqlPolicy(
 	const matchedIds = rules.map((rule) => rule.timecode as InternalTimecodeId);
 
 	async function matchIssues(issues: JiraIssueId[]): Promise<JiraMatchResult> {
+		if (issues.length === 0) return new Map();
+		if (rules.length === 0) {
+			return new Map(issues.map((issue) => [issue, { isMatched: false }]));
+		}
 		const matches = await matchJqls(issues, rules.map(Rule.toFullJql));
 		if (matches.length !== rules.length) {
 			throw new Error("Match length does not match rules length");

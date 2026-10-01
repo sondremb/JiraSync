@@ -3,7 +3,7 @@ import { Ruleset, Rule } from "../rules";
 import { BekkId } from "../types";
 import { unique, toRecord } from "../Utils/arrayUtils";
 import { JiraIssue, JiraIssueKey, JiraIssueId } from "./issue";
-import { jiraClient } from "./jiraclient";
+import { jiraClient } from "./jira/jiraclient";
 
 export function useIssueMappings(
 	issues: JiraIssue[],

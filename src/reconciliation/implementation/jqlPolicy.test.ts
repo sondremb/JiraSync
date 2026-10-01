@@ -26,6 +26,23 @@ const ruleset: Ruleset = {
 type MatchJqls = Parameters<typeof createJqlPolicy>[1];
 
 describe("createJqlPolicy", () => {
+	test("does not request JQL matches for an empty week", async () => {
+		const matchJqls = vi.fn<MatchJqls>();
+		const policy = createJqlPolicy(ruleset, matchJqls);
+
+		expect(await policy.matchIssues([])).toEqual(new Map());
+		expect(matchJqls).not.toHaveBeenCalled();
+	});
+	test("treats all issues as unmatched if the selected policy has no rules", async () => {
+		const matchJqls = vi.fn<MatchJqls>();
+		const policy = createJqlPolicy({ ...ruleset, rules: [] }, matchJqls);
+
+		expect(await policy.matchIssues([firstIssue])).toEqual(new Map([
+			[firstIssue, { isMatched: false }],
+		]));
+		expect(await policy.getManagedTimecodes()).toEqual(new Set());
+		expect(matchJqls).not.toHaveBeenCalled();
+	});
 	test("batch-matches with full JQL in rule order and gives the first matching rule priority", async () => {
 		const matchJqls = vi
 			.fn<MatchJqls>()
