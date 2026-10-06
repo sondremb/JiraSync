@@ -141,3 +141,27 @@ describe("IsoDate.range", () => {
 		}
 	});
 });
+
+describe("IsoDate.addDays", () => {
+	test.each([
+		["2025-02-03", 1, "2025-02-04"],
+		["2025-02-03", -1, "2025-02-02"],
+		["2025-01-31", 1, "2025-02-01"],
+		["2025-12-31", 1, "2026-01-01"],
+		["2026-01-01", -1, "2025-12-31"],
+		["2024-02-28", 1, "2024-02-29"],
+		["2024-02-29", 1, "2024-03-01"],
+	])("adds %i days to %s", (from, days, expected) => {
+		expect(IsoDate.addDays(from as IsoDate, days)).toBe(expected);
+	});
+
+	test("preserves Oslo calendar dates across the DST spring transition", () => {
+		expect(IsoDate.addDays("2025-03-29" as IsoDate, 1)).toBe("2025-03-30");
+		expect(IsoDate.addDays("2025-03-30" as IsoDate, 1)).toBe("2025-03-31");
+	});
+
+	test("preserves Oslo calendar dates across the DST autumn transition", () => {
+		expect(IsoDate.addDays("2025-10-25" as IsoDate, 1)).toBe("2025-10-26");
+		expect(IsoDate.addDays("2025-10-26" as IsoDate, 1)).toBe("2025-10-27");
+	});
+});

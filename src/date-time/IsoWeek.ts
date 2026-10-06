@@ -71,6 +71,10 @@ export const IsoWeek = {
 		const year = getISOWeekYear(date);
 		return `${year}-W${week.toString().padStart(2, "0")}` as IsoWeek;
 	},
+	fromIsoDate(isoDate: IsoDate): IsoWeek {
+		const date = IsoDate.toDate(isoDate);
+		return IsoWeek.fromDate(date);
+	},
 	next(week: IsoWeek): IsoWeek {
 		const monday = IsoWeek.monday(week);
 		const mondayDate = IsoDate.toDate(monday);
@@ -128,5 +132,10 @@ export const IsoDate = {
 			throw new Error(`Invalid IsoDate string: ${input}`);
 		}
 		return input as IsoDate;
+	},
+	addDays(isoDate: IsoDate, days: number): IsoDate {
+		const date = IsoDate.toDate(isoDate);
+		const newDate = addDays(date, days);
+		return IsoDate.fromDate(newDate);
 	},
 };

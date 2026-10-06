@@ -95,6 +95,18 @@ describe(".fromDate logic around around new years", () => {
 	});
 });
 
+describe(".fromIsoDate", () => {
+	test.each([
+		["2024-12-30", "2025-W01"],
+		["2025-01-01", "2025-W01"],
+		["2026-12-31", "2026-W53"],
+		["2027-01-01", "2026-W53"],
+		["2025-06-30", "2025-W27"],
+	])("maps %s to %s", (date, week) => {
+		expect(IsoWeek.fromIsoDate(date as IsoDate)).toBe(week);
+	});
+});
+
 describe("It uses norwegian time", () => {
 	describe("When timezone is set to norway", () => {
 		let originalTZ: string | undefined;

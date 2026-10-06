@@ -9,10 +9,10 @@ import {
 	adrianRuleSet,
 	grunnmurRuleSet,
 } from "../timecode-map";
-import { toRecord } from "../Utils/arrayUtils";
+import { toMap } from "../Utils/arrayUtils";
 
 export function useRuleSet(): {
-	rulesets: Record<RulesetId, Ruleset>;
+	rulesets: Map<RulesetId, Ruleset>;
 	selectedRuleset: Ruleset | undefined;
 	setRuleSet: (ruleset: Ruleset) => void;
 } {
@@ -25,10 +25,7 @@ export function useRuleSet(): {
 		adrianRuleSet,
 		grunnmurRuleSet,
 	];
-	const rulesetsById: Record<RulesetId, Ruleset> = toRecord(
-		rulesets,
-		(r) => r.id,
-	);
+	const rulesetsById: Map<RulesetId, Ruleset> = toMap(rulesets, (r) => r.id);
 
 	const rulesetIdFromStorage = localStorage.getItem("selectedRulesetId");
 	const initiallySelectedRuleset = rulesets.find(

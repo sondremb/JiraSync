@@ -1,4 +1,3 @@
-import { addDays } from "date-fns";
 import { IsoDate } from "../../date-time/IsoWeek";
 import { JiraIssueId, JiraWork } from "../../reconciliation/entities";
 import { jiraClient } from "./jiraclient";
@@ -14,7 +13,7 @@ export async function loadIssueWorklogs(
 ): Promise<JiraWork[]> {
 	const startedAfter =
 		IsoDate.toDateAt(from, { hours: 0, minutes: 0 }).getTime() - 1;
-	const dayAfterTo = IsoDate.fromDate(addDays(IsoDate.toDate(to), 1));
+	const dayAfterTo = IsoDate.addDays(to, 1);
 	const startedBefore = IsoDate.toDateAt(dayAfterTo, {
 		hours: 0,
 		minutes: 0,
