@@ -1,13 +1,13 @@
 import { describe, expect, test, vi } from "vitest";
-import { IsoDate } from "../date-time/IsoWeek";
-import { Policy } from "./contracts";
+import { IsoDate } from "../../src/date-time/IsoWeek";
+import { Policy } from "../../src/reconciliation/contracts";
 import {
 	DayReport,
 	InternalTimecodeId,
 	JiraIssueId,
 	JiraWork,
-} from "./entities";
-import { reconcilePeriod } from "./reconcile";
+} from "../../src/reconciliation/entities";
+import { reconcilePeriod } from "../../src/reconciliation/reconcile";
 
 const date = IsoDate.parse("2025-02-03");
 const issue = 101 as JiraIssueId;

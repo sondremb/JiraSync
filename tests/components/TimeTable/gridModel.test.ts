@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest";
-import { IsoDate } from "../../date-time/IsoWeek";
-import { DayReport, type InternalTimecodeId, type JiraIssueId } from "../../reconciliation/entities";
-import { toGridEntries } from "./gridModel";
+import { IsoDate } from "../../../src/date-time/IsoWeek";
+import { DayReport, type InternalTimecodeId, type JiraIssueId } from "../../../src/reconciliation/entities";
+import { toGridEntries } from "../../../src/components/TimeTable/gridModel";
 
 const monday = IsoDate.parse("2025-02-03");
 const tuesday = IsoDate.parse("2025-02-04");

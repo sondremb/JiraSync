@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest";
-import { IsoDate } from "../date-time/IsoWeek";
-import { DayReport, type InternalTimecodeId, type JiraIssueId } from "./entities";
-import { planSync } from "./syncPreview";
+import { IsoDate } from "../../src/date-time/IsoWeek";
+import { DayReport, type InternalTimecodeId, type JiraIssueId } from "../../src/reconciliation/entities";
+import { planSync } from "../../src/reconciliation/syncPreview";
 
 const monday = IsoDate.parse("2025-02-03");
 const tuesday = IsoDate.parse("2025-02-04");

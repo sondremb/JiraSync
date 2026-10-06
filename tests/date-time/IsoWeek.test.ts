@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
-import { IsoDate, IsoWeek } from "./IsoWeek";
+import { IsoDate, IsoWeek } from "../../src/date-time/IsoWeek";
 
 describe(".toParts", () => {
 	test("It splits single digit weeks", () => {

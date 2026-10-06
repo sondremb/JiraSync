@@ -1,7 +1,7 @@
 import { describe, expect, test, vi } from "vitest";
-import { IsoDate } from "../date-time/IsoWeek";
-import type { InternalTimecodeId } from "./entities";
-import { syncWeek } from "./syncWeek";
+import { IsoDate } from "../../src/date-time/IsoWeek";
+import type { InternalTimecodeId } from "../../src/reconciliation/entities";
+import { syncWeek } from "../../src/reconciliation/syncWeek";
 
 const date = IsoDate.parse("2025-02-03");
 const changes = [

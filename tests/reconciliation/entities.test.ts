@@ -1,12 +1,12 @@
 import { describe, expect, test } from "vitest";
-import { IsoDate } from "../date-time/IsoWeek";
+import { IsoDate } from "../../src/date-time/IsoWeek";
 import {
 	DayReport,
 	InternalTimecodeId,
 	JiraIssueId,
 	JiraWork,
 	ManagedTimecodeDayComparison,
-} from "./entities";
+} from "../../src/reconciliation/entities";
 
 const date = IsoDate.parse("2025-02-03");
 const issue = 101 as JiraIssueId;

@@ -1,8 +1,8 @@
 import { describe, expect, test, vi } from "vitest";
-import { JiraProjectKey } from "../../data/issue";
-import { Jql, Ruleset, RulesetId } from "../../rules";
-import { InternalTimecodeId, JiraIssueId } from "../entities";
-import { createJqlPolicy } from "./jqlPolicy";
+import { JiraProjectKey } from "../../../src/data/issue";
+import { Jql, Ruleset, RulesetId } from "../../../src/rules";
+import { InternalTimecodeId, JiraIssueId } from "../../../src/reconciliation/entities";
+import { createJqlPolicy } from "../../../src/reconciliation/implementation/jqlPolicy";
 
 const firstIssue = 101 as JiraIssueId;
 const secondIssue = 102 as JiraIssueId;

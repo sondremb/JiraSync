@@ -1,11 +1,11 @@
 import { beforeEach, describe, expect, test, vi } from "vitest";
-import { IsoDate } from "../date-time/IsoWeek";
-import type { InternalTimecodeId } from "../reconciliation/entities";
-import { bekkClient } from "./bekkclient";
-import { writeInternalHours } from "./writeInternalHours";
+import { IsoDate } from "../../src/date-time/IsoWeek";
+import type { InternalTimecodeId } from "../../src/reconciliation/entities";
+import { bekkClient } from "../../src/data/bekkclient";
+import { writeInternalHours } from "../../src/data/writeInternalHours";
 
-vi.mock("./bekkclient", () => ({ bekkClient: { PUT: vi.fn(), DELETE: vi.fn() } }));
-vi.mock("../login/bekk/bekkLogin", () => ({ getEmployeeId: () => 42 }));
+vi.mock("../../src/data/bekkclient", () => ({ bekkClient: { PUT: vi.fn(), DELETE: vi.fn() } }));
+vi.mock("../../src/login/bekk/bekkLogin", () => ({ getEmployeeId: () => 42 }));
 const put = vi.mocked(bekkClient.PUT);
 const remove = vi.mocked(bekkClient.DELETE);
 const date = IsoDate.parse("2025-02-03");

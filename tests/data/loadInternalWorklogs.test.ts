@@ -1,10 +1,10 @@
 import { beforeEach, describe, expect, test, vi } from "vitest";
-import { IsoDate } from "../date-time/IsoWeek";
-import { bekkClient } from "./bekkclient";
-import { loadInternalWorklogs } from "./loadInternalWorklogs";
+import { IsoDate } from "../../src/date-time/IsoWeek";
+import { bekkClient } from "../../src/data/bekkclient";
+import { loadInternalWorklogs } from "../../src/data/loadInternalWorklogs";
 
-vi.mock("./bekkclient", () => ({ bekkClient: { GET: vi.fn() } }));
-vi.mock("../login/bekk/bekkLogin", () => ({ getEmployeeId: () => 42 }));
+vi.mock("../../src/data/bekkclient", () => ({ bekkClient: { GET: vi.fn() } }));
+vi.mock("../../src/login/bekk/bekkLogin", () => ({ getEmployeeId: () => 42 }));
 const get = vi.mocked(bekkClient.GET);
 const from = IsoDate.parse("2025-02-03");
 const to = IsoDate.parse("2025-02-04");

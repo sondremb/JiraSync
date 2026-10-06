@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { IsoDate } from "../date-time/IsoWeek";
+import { IsoDate } from "../../src/date-time/IsoWeek";
 import {
 	DayReport,
 	InternalTimecodeId,
@@ -7,8 +7,8 @@ import {
 	JiraWork,
 	ManagedTimecodeDayComparison,
 	JiraMatchResult,
-} from "./entities";
-import { reconcileInternal } from "./reconcile";
+} from "../../src/reconciliation/entities";
+import { reconcileInternal } from "../../src/reconciliation/reconcile";
 
 const monday = IsoDate.parse("2025-02-03");
 const tuesday = IsoDate.parse("2025-02-04");

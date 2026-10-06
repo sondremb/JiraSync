@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
-import { IsoDate } from "./IsoWeek";
+import { IsoDate } from "../../src/date-time/IsoWeek";
 
 describe("IsoDate.fromDate (Oslo zone logic)", () => {
 	test("Summer time: switches at 22:00 UTC (midnight Oslo)", () => {
