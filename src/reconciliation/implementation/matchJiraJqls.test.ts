@@ -4,7 +4,7 @@ import { Jql } from "../../rules";
 import { JiraIssueId } from "../entities";
 import { matchJiraJqls } from "./jqlPolicy";
 
-vi.mock("../../data/jiraclient", () => ({ jiraClient: { POST: vi.fn() } }));
+vi.mock("../../data/jira/jiraclient", () => ({ jiraClient: { POST: vi.fn() } }));
 
 const issues = [101 as JiraIssueId, 102 as JiraIssueId];
 const jqls = ["project = 'PASX'" as Jql, "project = 'OTHER'" as Jql];

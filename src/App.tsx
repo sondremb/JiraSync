@@ -1,27 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
-
-import { TimeTable } from "./components/TimeTable/TimeTable";
-import {
-	Button,
-	FlexColumn,
-	FlexRow,
-	Icon,
-	Text,
-} from "@utdanningsdirektoratet/lisa";
-import styled from "styled-components";
-import { useLockDate } from "./data/useLockDate";
-import { isUdir } from "./timecode-map";
-import { useWeek } from "./data/useWeek";
-import { AltStemmerAlert } from "./components/AltStemmerAlert";
-import { DownloadTimestamp } from "./components/DownloadTimestamp";
+import { Button, FlexColumn, FlexRow, Icon, Text } from "@utdanningsdirektoratet/lisa";
 import { colors, spacing } from "@utdanningsdirektoratet/lisa-tokens";
-import { IsoDate, IsoWeek } from "./date-time/IsoWeek";
 import { addDays } from "date-fns";
+import styled from "styled-components";
+import { WeeklyReconciliation } from "./components/WeeklyReconciliation";
+import { RulesetModal } from "./components/RulesetModal";
+import { useLockDate } from "./data/useLockDate";
+import { useRuleSet } from "./data/useRuleset";
+import { IsoWeek } from "./date-time/IsoWeek";
 import { CopyTokenButton } from "./login/bekk/CopyTokenButton";
 import { config } from "./Utils/envUtils";
-import { RulesetModal } from "./components/RulesetModal";
-import { useRuleSet } from "./data/useRuleset";
-import { WeeklyReconciliation } from "./components/WeeklyReconciliation";
 
 const CenteredText = styled(Text)`
 	text-align: center;
@@ -31,6 +19,7 @@ const ColoredRow = styled(FlexRow)`
 	background-color: ${colors.skifer500};
 	padding: ${spacing(8)};
 `;
+
 interface Props {
 	initialWeek: IsoWeek;
 }
@@ -44,10 +33,7 @@ export const App: React.FC<Props> = ({ initialWeek }) => {
 
 	useEffect(() => {
 		if (lockDate === undefined || navigated.current || initialLockDateApplied.current) return;
-
-		const dayAfterLockDate = addDays(new Date(lockDate), 1);
-		const isoWeek = IsoWeek.fromDate(dayAfterLockDate);
-		setWeekAndYear(isoWeek);
+		setWeekAndYear(IsoWeek.fromDate(addDays(new Date(lockDate), 1)));
 		initialLockDateApplied.current = true;
 	}, [lockDate]);
 
@@ -94,42 +80,13 @@ export const App: React.FC<Props> = ({ initialWeek }) => {
 					Neste
 				</Button>
 			</ColoredRow>
-			{lockDate !== undefined && <LegacyWeek week={weekAndYear} lockDate={lockDate} />}
-			{selectedRuleset && <WeeklyReconciliation week={weekAndYear} ruleset={selectedRuleset} />}
+			{selectedRuleset && (
+				<WeeklyReconciliation
+					key={`${weekAndYear}-${selectedRuleset.id}`}
+					week={weekAndYear}
+					ruleset={selectedRuleset}
+				/>
+			)}
 		</>
 	);
 };
-
-function LegacyWeek({ week, lockDate }: { week: IsoWeek; lockDate: IsoDate }) {
-	const { state: entries, timestamp, updateBekkHours } = useWeek(week);
-	const synchronize = () => {
-		if (entries === undefined) return;
-		const udirEntries = entries.filter((entry) => isUdir(entry.id));
-		const udirDays = udirEntries.flatMap((entry) =>
-			Object.entries(entry.days).map(([dateString, day]) => ({
-				...day,
-				dateString,
-				id: entry.id,
-			})),
-		);
-		const daysWithDifference = udirDays
-			.filter((day) => day.bekkHours !== day.totalJiraHours)
-			.filter((day) => day.dateString > lockDate);
-		daysWithDifference.forEach((day) =>
-			updateBekkHours({
-				timecodeId: day.id,
-				hours: day.totalJiraHours,
-				date: IsoDate.parse(day.dateString),
-			}),
-		);
-	};
-	return (
-		<>
-			{timestamp && <DownloadTimestamp timestamp={timestamp} />}
-			{entries !== undefined && (
-				<TimeTable entries={entries} days={IsoWeek.days(week)} lockDate={lockDate} />
-			)}
-			<AltStemmerAlert entries={entries} onSynchronize={synchronize} />
-		</>
-	);
-}

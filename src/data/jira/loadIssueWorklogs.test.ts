@@ -4,7 +4,7 @@ import { JiraIssueId } from "../../reconciliation/entities";
 import { jiraClient } from "./jiraclient";
 import { loadIssueWorklogs } from "./loadIssueWorklogs";
 
-vi.mock("../jiraclient", () => ({ jiraClient: { GET: vi.fn() } }));
+vi.mock("./jiraclient", () => ({ jiraClient: { GET: vi.fn() } }));
 const get = vi.mocked(jiraClient.GET);
 const from = IsoDate.parse("2025-02-03");
 const to = IsoDate.parse("2025-02-04");

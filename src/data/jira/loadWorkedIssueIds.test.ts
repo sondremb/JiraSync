@@ -3,7 +3,7 @@ import { IsoDate } from "../../date-time/IsoWeek";
 import { jiraClient } from "./jiraclient";
 import { loadWorkedIssueIds } from "./loadWorkedIssueIds";
 
-vi.mock("../jiraclient", () => ({ jiraClient: { GET: vi.fn() } }));
+vi.mock("./jiraclient", () => ({ jiraClient: { GET: vi.fn() } }));
 const get = vi.mocked(jiraClient.GET);
 const from = IsoDate.parse("2025-02-03");
 const to = IsoDate.parse("2025-02-04");
