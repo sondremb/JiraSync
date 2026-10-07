@@ -17,7 +17,7 @@ http:
     type: json
     data: |-
       {
-        "queries": ["project = 'PASP' AND component = '1045 Utvikling'"]
+        "queries": ["project = 'IDPF' AND component = '1045 Utvikling'"]
       }
   auth: inherit
 
@@ -26,3 +26,4 @@ settings:
   timeout: 0
   followRedirects: true
   maxRedirects: 5
+  forwardAuthorizationHeader: true

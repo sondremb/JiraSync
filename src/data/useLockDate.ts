@@ -1,44 +1,29 @@
-import { useNotification } from "@utdanningsdirektoratet/lisa";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { IsoDate } from "../date-time/IsoWeek";
 import { bekkClient } from "./bekkclient";
 import { getEmployeeId } from "../login/bekk/bekkLogin";
+import { lockInternalHours } from "./lockInternalHours";
 
 export const useLockDate = () => {
 	const queryClient = useQueryClient();
-	const showNotification = useNotification();
 
-	const { data, error, isLoading } = useQuery({
+	const { data, error, isLoading, isFetching } = useQuery({
 		queryKey: ["bekk", "lockdate"],
 		queryFn: async () => {
 			const { data, response } = await bekkClient.GET(
 				"/timesheets/lockdates/{employeeId}",
 				{ params: { path: { employeeId: getEmployeeId() } } },
 			);
-			if (!response.ok) throw new Error("Failed to fetch lock date");
+			if (!response.ok || !data?.lockDate)
+				throw new Error("Failed to fetch lock date");
 			return data;
 		},
 	});
 
-	const { mutate: updateLockDate } = useMutation({
-		mutationFn: (lockDate: IsoDate) =>
-			bekkClient.PUT("/timesheets/lockhours", {
-				params: { query: { employeeId: getEmployeeId(), lockDate } },
-			}),
-		onSuccess: (_, lockDate) => {
-			queryClient.invalidateQueries({ queryKey: ["bekk", "lockdate"] });
-			showNotification({
-				type: "success",
-				// TODO formatter
-				content: `Låste timer frem til ${lockDate}`,
-			});
-		},
-		onError: (error: any) => {
-			showNotification({
-				type: "error",
-				title: "Kunne ikke låse timer",
-				content: error?.error?.userMessage ?? "Ingen detaljer",
-			});
+	const updateLockDate = useMutation({
+		mutationFn: lockInternalHours,
+		onSuccess: async () => {
+			await queryClient.invalidateQueries({ queryKey: ["bekk", "lockdate"] });
 		},
 	});
 
@@ -48,6 +33,7 @@ export const useLockDate = () => {
 			: undefined,
 		error,
 		isLoading,
+		isFetching,
 		updateLockDate,
 	};
 };
