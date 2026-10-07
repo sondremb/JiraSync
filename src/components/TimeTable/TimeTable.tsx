@@ -10,10 +10,12 @@ import { IsoDate } from "../../date-time/IsoWeek";
 import { formatDate } from "date-fns";
 import { nb } from "date-fns/locale/nb";
 import { GridEntry } from "./gridModel";
+import { LockDateButton } from "./LockDateButton";
 
 interface Props {
 	entries: GridEntry[];
 	days: IsoDate[];
+	onLockDate?: (day: IsoDate) => void;
 }
 
 const CapitalText = styled(Text)`
@@ -41,6 +43,9 @@ export const TimeTable: React.FC<Props> = (props) => {
 				<CapitalText textStyle="labelBold">
 					{formatDate(dateAsDate, "d. MMMM", { locale: nb })}
 				</CapitalText>
+				{props.onLockDate && (
+					<LockDateButton day={date} onClick={() => props.onLockDate!(date)} />
+				)}
 			</FlexColumn>
 		);
 	};

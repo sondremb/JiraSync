@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 import { Button, ConfirmModal } from "@utdanningsdirektoratet/lisa";
-import { IsoWeek } from "../date-time/IsoWeek";
+import { IsoDate, IsoWeek } from "../date-time/IsoWeek";
 import { useLockDate } from "../data/useLockDate";
 import {
 	useSyncWeek,
@@ -20,9 +20,10 @@ interface Props {
 export const WeeklyReconciliation: React.FC<Props> = ({ week, ruleset }) => {
 	const { data, error, isPending, dataUpdatedAt, isFetching } =
 		useWeeklyReconciliation(week, ruleset);
-	const { lockDate } = useLockDate();
+	const { lockDate, updateLockDate } = useLockDate();
 	const sync = useSyncWeek();
 	const submitting = useRef(false);
+	const [lockPreview, setLockPreview] = useState<IsoDate | null>(null);
 	const [preview, setPreview] = useState<{
 		version: string;
 		changes: ProposedChange[];
@@ -56,6 +57,27 @@ export const WeeklyReconciliation: React.FC<Props> = ({ week, ruleset }) => {
 			setPreview(null);
 		}
 	};
+
+	const weekDays = data?.map((r) => r.date) ?? [];
+	const weekStart = weekDays[0];
+	const coveredNeedingReview =
+		lockPreview && data
+			? data.filter((r) => r.date <= lockPreview && !DayReport.isInSync(r))
+			: [];
+	const hasGapBeforeWeek =
+		lockPreview !== null &&
+		weekStart !== undefined &&
+		(lockDate === undefined || lockDate < weekStart);
+
+	const confirmLock = async () => {
+		if (!lockPreview) return;
+		try {
+			await updateLockDate.mutateAsync(lockPreview);
+		} finally {
+			setLockPreview(null);
+		}
+	};
+
 	return (
 		<section aria-label="Avstemming">
 			{isPending ? (
@@ -68,6 +90,7 @@ export const WeeklyReconciliation: React.FC<Props> = ({ week, ruleset }) => {
 						<TimeTable
 							entries={toGridEntries(data)}
 							days={data.map((report) => report.date)}
+							onLockDate={setLockPreview}
 						/>
 						{unmatchedCount > 0 && (
 							<p role="status">
@@ -99,6 +122,12 @@ export const WeeklyReconciliation: React.FC<Props> = ({ week, ruleset }) => {
 			)}
 			{sync.isSuccess && (
 				<p role="status">Timene ble oppdatert. Avstemmingen oppdateres.</p>
+			)}
+			{updateLockDate.isError && (
+				<p role="alert">Kunne ikke låse: {updateLockDate.error.message}</p>
+			)}
+			{updateLockDate.isSuccess && (
+				<p role="status">Timer ble låst.</p>
 			)}
 			<ConfirmModal
 				showModal={Boolean(openPreview)}
@@ -139,6 +168,32 @@ export const WeeklyReconciliation: React.FC<Props> = ({ week, ruleset }) => {
 						{sync.isPending && <p>Oppdaterer timer…</p>}
 					</>
 				)}
+			</ConfirmModal>
+			<ConfirmModal
+				showModal={lockPreview !== null}
+				onCancel={() => {
+					if (!updateLockDate.isPending) setLockPreview(null);
+				}}
+				title="Lås timer"
+				confirmLabel={`Lås til ${lockPreview}`}
+				cancelLabel="Avbryt"
+				confirmButtonDisabled={updateLockDate.isPending}
+				onConfirm={() => {
+					void confirmLock();
+				}}
+			>
+				<p>Timer i internt system låses frem til og med {lockPreview}.</p>
+				{coveredNeedingReview.length > 0 && (
+					<p>
+						{coveredNeedingReview.length === 1
+							? "1 dag som låses trenger gjennomgang."
+							: `${coveredNeedingReview.length} dager som låses trenger gjennomgang.`}
+					</p>
+				)}
+				{hasGapBeforeWeek && (
+					<p>Datoer før denne uken er ikke vist, men låses også.</p>
+				)}
+				{updateLockDate.isPending && <p>Låser timer…</p>}
 			</ConfirmModal>
 		</section>
 	);
