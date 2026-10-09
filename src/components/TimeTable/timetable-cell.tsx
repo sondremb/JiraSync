@@ -74,6 +74,8 @@ export const TimetableCell: React.FC<Props> = (props) => {
 			);
 		case "entry":
 			return <EntryCell entry={props.row.entry} dateString={props.day} />;
+		case "lock":
+			return <></>;
 	}
 };
 
@@ -110,6 +112,8 @@ export const FirstColumnCell: React.FC<{ row: Row }> = ({ row }) => {
 			);
 		case "entry":
 			return <TimeCodeCell entry={row.entry} />;
+		case "lock":
+			return <></>;
 	}
 };
 
@@ -147,6 +151,8 @@ export const SumColumnCell: React.FC<{ row: Row }> = ({ row }) => {
 					{totalBekkHoursAllWeek}
 				</OtherDiv>
 			);
+		case "lock":
+			return <></>;
 	}
 };
 

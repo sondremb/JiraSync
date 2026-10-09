@@ -30,6 +30,9 @@ export type Row =
 	| {
 			kind: "sum";
 			entries: GridEntry[];
+	  }
+	| {
+			kind: "lock";
 	  };
 
 export const TimeTable: React.FC<Props> = (props) => {
@@ -43,9 +46,6 @@ export const TimeTable: React.FC<Props> = (props) => {
 				<CapitalText textStyle="labelBold">
 					{formatDate(dateAsDate, "d. MMMM", { locale: nb })}
 				</CapitalText>
-				{props.onLockDate && (
-					<LockDateButton day={date} onClick={() => props.onLockDate!(date)} />
-				)}
 			</FlexColumn>
 		);
 	};
@@ -53,7 +53,8 @@ export const TimeTable: React.FC<Props> = (props) => {
 	const rows: Row[] = [...props.entries]
 		.sort((a, b) => Number(b.managed) - Number(a.managed))
 		.map((entry) => ({ kind: "entry", entry }));
-	const items: Row[] = [...rows, { kind: "sum", entries: props.entries }];
+	const lockRow: Row[] = props.onLockDate ? [{ kind: "lock" }] : [];
+	const items: Row[] = [...rows, { kind: "sum", entries: props.entries }, ...lockRow];
 
 	return (
 		<Table
@@ -61,16 +62,25 @@ export const TimeTable: React.FC<Props> = (props) => {
 			columns={[
 				{
 					headerName: "Kode",
-					displayFunction: (row) => <FirstColumnCell row={row} />,
+					displayFunction: (row) =>
+						row.kind === "lock" ? <></> : <FirstColumnCell row={row} />,
 					width: "25%",
 				},
 				...props.days.map((day: IsoDate) => ({
 					headerName: dateHeader(day),
-					displayFunction: (i: Row) => <TimetableCell day={day} row={i} />,
+					displayFunction: (i: Row) => {
+						if (i.kind === "lock") {
+							return props.onLockDate ? (
+								<LockDateButton day={day} onClick={() => props.onLockDate!(day)} />
+							) : <></>;
+						}
+						return <TimetableCell day={day} row={i} />;
+					},
 				})),
 				{
 					headerName: "Sum",
-					displayFunction: (row) => <SumColumnCell row={row} />,
+					displayFunction: (row) =>
+						row.kind === "lock" ? <></> : <SumColumnCell row={row} />,
 				},
 			]}
 			items={items}
