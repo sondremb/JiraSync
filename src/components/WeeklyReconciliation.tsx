@@ -58,8 +58,7 @@ export const WeeklyReconciliation: React.FC<Props> = ({ week, ruleset }) => {
 		}
 	};
 
-	const weekDays = data?.map((r) => r.date) ?? [];
-	const weekStart = weekDays[0];
+	const weekStart = data?.[0]?.date;
 	const coveredNeedingReview =
 		lockPreview && data
 			? data.filter((r) => r.date <= lockPreview && !DayReport.isInSync(r))
@@ -175,7 +174,7 @@ export const WeeklyReconciliation: React.FC<Props> = ({ week, ruleset }) => {
 					if (!updateLockDate.isPending) setLockPreview(null);
 				}}
 				title="Lås timer"
-				confirmLabel={`Lås til ${lockPreview}`}
+				confirmLabel={lockPreview ? `Lås til ${lockPreview}` : ""}
 				cancelLabel="Avbryt"
 				confirmButtonDisabled={updateLockDate.isPending}
 				onConfirm={() => {
