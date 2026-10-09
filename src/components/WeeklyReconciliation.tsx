@@ -67,7 +67,7 @@ export const WeeklyReconciliation: React.FC<Props> = ({ week, ruleset }) => {
 	const hasGapBeforeWeek =
 		lockPreview !== null &&
 		weekStart !== undefined &&
-		(lockDate === undefined || lockDate < weekStart);
+		(lockDate === undefined || IsoDate.addDays(lockDate, 1) < weekStart);
 
 	const confirmLock = async () => {
 		if (!lockPreview) return;
