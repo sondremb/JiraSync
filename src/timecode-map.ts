@@ -193,7 +193,7 @@ export const otherRuleSet: Ruleset = {
 		},
 		{
 			projectKey: ProjectKeys.HFL,
-			jql: `component != ${ComponentIds.HflBriskNyutvikling} AND "Epic Link" = HFL-7191` as Jql,
+			jql: `component != ${ComponentIds.HflBriskNyutvikling} AND "Epic Link" IN (HFL-7191, HFL-5799)` as Jql,
 			timecode: UdirBekkIds.UTA1090HflBrisk,
 		},
 		{
