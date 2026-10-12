@@ -1,30 +1,16 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Ruleset, RulesetId } from "../rules";
-import {
-	oldPasRuleSet,
-	newPasRuleSet,
-	otherRuleSet,
-	newPasDesignRuleSet,
-	oldPasDesignRuleSet,
-	adrianRuleSet,
-	grunnmurRuleSet,
-} from "../timecode-map";
+import { type Ruleset, type RulesetId } from "../rules";
+import { loadPolicies } from "../policies/schema";
+import policiesJson from "../policies/policies.json";
 import { toMap } from "../Utils/arrayUtils";
+
+const rulesets = loadPolicies(policiesJson);
 
 export function useRuleSet(): {
 	rulesets: Map<RulesetId, Ruleset>;
 	selectedRuleset: Ruleset | undefined;
 	setRuleSet: (ruleset: Ruleset) => void;
 } {
-	const rulesets = [
-		oldPasRuleSet,
-		newPasRuleSet,
-		otherRuleSet,
-		oldPasDesignRuleSet,
-		newPasDesignRuleSet,
-		adrianRuleSet,
-		grunnmurRuleSet,
-	];
 	const rulesetsById: Map<RulesetId, Ruleset> = toMap(rulesets, (r) => r.id);
 
 	const rulesetIdFromStorage = localStorage.getItem("selectedRulesetId");
@@ -33,9 +19,7 @@ export function useRuleSet(): {
 	);
 	const { data: selectedRulesetData } = useQuery({
 		queryKey: ["rulesets", "selected"],
-		queryFn: () => {
-			return initiallySelectedRuleset;
-		},
+		queryFn: () => initiallySelectedRuleset,
 		staleTime: Infinity,
 	});
 	const queryClient = useQueryClient();
