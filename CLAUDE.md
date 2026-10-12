@@ -22,14 +22,14 @@ JiraSync is a React/TypeScript SPA deployed on Netlify that synchronizes time tr
 ### Data flow
 
 1. User authenticates via **Jira OAuth** (Atlassian OIDC) and **Bekk MSAL** (Azure Entra ID)
-2. `useWeek` hook fetches both Jira worklogs and Bekk timesheet entries for a given ISO week
-3. `timecode-map.ts` maps Jira issue keys + components/epic links → Bekk timecode IDs
-4. `Utils/stateUtils.ts` merges the two datasets into a unified state for display
-5. The `TimeTable` component renders a weekly grid; `AltStemmerAlert` surfaces sync status
+2. `useWeeklyReconciliation` hook fetches Jira worklogs and Bekk timesheet entries for a given ISO week
+3. The selected mapping policy (`src/policies/policies.json`) routes Jira issues → Bekk timecodes via JQL matching
+4. `reconcilePeriod` compares the two datasets and produces `DayReport[]`
+5. `WeeklyReconciliation` renders the weekly grid, sync preview, and locking controls
 
-### Timecode mapping (`src/timecode-map.ts`)
+### Mapping policy (`src/policies/`)
 
-This is the core business logic. Jira issues are routed to Bekk timecodes based on project key (PASX, PASP, IDPF, SO, UBAS, DESIGN, HFL, HSS), component IDs, and custom epic link fields. When Jira projects add new components or epics, this file needs updating.
+Rulesets live in `src/policies/policies.json` — a versioned JSON file validated by the zod schema in `src/policies/schema.ts`. Each ruleset is an ordered list of rules; the first matching rule wins. A rule specifies a Jira project key, an optional JQL condition, and a Bekk timecode ID. Matching is delegated to Jira's `/jql/match` API. When Jira projects add new components or epics, edit `policies.json`.
 
 ### Authentication
 
