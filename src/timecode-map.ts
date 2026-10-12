@@ -51,6 +51,7 @@ const ProjectKeys = {
 	UBAS: "UBAS" as JiraProjectKey,
 	DESIGN: "DESIGN" as JiraProjectKey,
 	GRUNNMUR: "GMS" as JiraProjectKey,
+	NYE_PRØVER: "NYAPROV" as JiraProjectKey
 } as const;
 
 const ComponentIds = {
@@ -136,6 +137,10 @@ export const newPasRuleSet: Ruleset = {
 			projectKey: ProjectKeys.UIDP,
 			timecode: UdirBekkIds.UTA1130UidpForvaltningSSAB,
 		},
+		{
+			projectKey: ProjectKeys.NYE_PRØVER,
+			timecode: UdirBekkIds.UTA1138PasPrøverNyutviklingSSAB
+		}
 	],
 };
 
