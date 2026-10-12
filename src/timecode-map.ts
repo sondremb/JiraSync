@@ -139,7 +139,7 @@ export const newPasRuleSet: Ruleset = {
 		},
 		{
 			projectKey: ProjectKeys.NYE_PRØVER,
-			timecode: UdirBekkIds.UTA1138PasPrøverNyutviklingSSAB
+			timecode: UdirBekkIds.UTA1137PasPrøverForvaltningSSAB
 		}
 	],
 };
