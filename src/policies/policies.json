@@ -25,7 +25,8 @@
         { "projectKey": "PASP", "jql": "component = 10290", "timecode": 1003651, "comment": "Nyutvikling" },
         { "projectKey": "PASP", "timecode": 1003650, "comment": "Forvaltning" },
         { "projectKey": "IDPF", "jql": "component = 10677", "timecode": 1003780, "comment": "Nyutvikling" },
-        { "projectKey": "IDPF", "timecode": 1003618, "comment": "Forvaltning" }
+        { "projectKey": "IDPF", "timecode": 1003618, "comment": "Forvaltning" },
+        { "projectKey": "NYAPROV", "timecode": 1003650 }
       ]
     },
     {
@@ -54,7 +55,7 @@
       "description": "For deg som er på HFL/HSS eller designsystem",
       "rules": [
         { "projectKey": "HFL", "jql": "component = 10073", "timecode": 1003625, "comment": "Brisk nyutvikling" },
-        { "projectKey": "HFL", "jql": "component != 10073 AND \"Epic Link\" = HFL-7191", "timecode": 1002302, "comment": "Brisk forvaltning" },
+        { "projectKey": "HFL", "jql": "parentEpic IN (HFL-7191, HFL-5799)", "timecode": 1002302, "comment": "Brisk forvaltning" },
         { "projectKey": "HSS", "jql": "\"Epic Link\" = HSS-1030", "timecode": 1003290, "comment": "Skjema-vertikal" },
         { "projectKey": "HSS", "timecode": 1003012 },
         { "projectKey": "HFL", "timecode": 1003011, "comment": "Forvaltning" }
