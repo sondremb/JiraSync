@@ -1,7 +1,6 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import { Button, FlexColumn, FlexRow, Icon, Text } from "@utdanningsdirektoratet/lisa";
 import { colors, spacing } from "@utdanningsdirektoratet/lisa-tokens";
-import { addDays } from "date-fns";
 import styled from "styled-components";
 import { WeeklyReconciliation } from "./components/WeeklyReconciliation";
 import { RulesetModal } from "./components/RulesetModal";
@@ -25,27 +24,18 @@ interface Props {
 }
 
 export const App: React.FC<Props> = ({ initialWeek }) => {
-	const { lockDate } = useLockDate();
+	const { isLoading: lockDateLoading } = useLockDate();
 	const { selectedRuleset } = useRuleSet();
-	const [weekAndYear, setWeekAndYear] = useState<IsoWeek>(initialWeek);
-	const navigated = useRef(false);
-	const initialLockDateApplied = useRef(false);
+	// Start on the week after the lock date, but only the first time it loads:
+	// locking a week later must not move the user's view.
+	const [startWeek, setStartWeek] = useState<IsoWeek | undefined>();
+	if (!lockDateLoading && startWeek === undefined) setStartWeek(initialWeek);
+	const [navigatedWeek, setNavigatedWeek] = useState<IsoWeek | undefined>();
+	const weekAndYear = navigatedWeek ?? startWeek ?? initialWeek;
 
-	useEffect(() => {
-		if (lockDate === undefined || navigated.current || initialLockDateApplied.current) return;
-		setWeekAndYear(IsoWeek.fromDate(addDays(new Date(lockDate), 1)));
-		initialLockDateApplied.current = true;
-	}, [lockDate]);
-
-	const onNextWeekClick = () => {
-		navigated.current = true;
-		setWeekAndYear((old) => IsoWeek.next(old));
-	};
-
-	const onPreviousWeekClick = () => {
-		navigated.current = true;
-		setWeekAndYear((old) => IsoWeek.previous(old));
-	};
+	const onNextWeekClick = () => setNavigatedWeek(IsoWeek.next(weekAndYear));
+	const onPreviousWeekClick = () =>
+		setNavigatedWeek(IsoWeek.previous(weekAndYear));
 
 	return (
 		<>
@@ -80,7 +70,7 @@ export const App: React.FC<Props> = ({ initialWeek }) => {
 					Neste
 				</Button>
 			</ColoredRow>
-			{selectedRuleset && (
+			{selectedRuleset && !lockDateLoading && (
 				<WeeklyReconciliation
 					key={`${weekAndYear}-${selectedRuleset.id}`}
 					week={weekAndYear}

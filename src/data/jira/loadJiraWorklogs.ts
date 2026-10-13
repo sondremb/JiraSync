@@ -8,8 +8,10 @@ export async function loadJiraWorklogs(
 	from: IsoDate,
 	to: IsoDate,
 ): Promise<JiraWork[]> {
-	const accountId = await loadAccountId();
-	const issueIds = await loadWorkedIssueIds(from, to);
+	const [accountId, issueIds] = await Promise.all([
+		loadAccountId(),
+		loadWorkedIssueIds(from, to),
+	]);
 	const worklogs = await Promise.all(
 		issueIds.map((id) => loadIssueWorklogs(id, from, to, accountId)),
 	);

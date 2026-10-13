@@ -15,8 +15,9 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 	component: RootComponent,
 });
 
+const queryClient = new QueryClient();
+
 function RootComponent() {
-	const queryClient = new QueryClient();
 	return (
 		<QueryClientProvider client={queryClient}>
 			<LisaProvider includeGlobalStyling>
