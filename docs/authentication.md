@@ -63,9 +63,13 @@ flowchart TB
 Klienten (`src/login/jira/authContext.ts`) håndterer token-livssyklusen:
 
 1. **Hent token**: Sjekker om det finnes et gyldig access token i `sessionStorage`
-2. **Bruk cached token**: Hvis tokenet ikke er utløpt, returner det direkte
-3. **Refresh**: Hvis tokenet er utløpt, kaller `/.netlify/functions/jira-auth-session` som bruker refresh token-cookien til å hente nytt access token + refresh token
+2. **Bruk cached token**: Hvis tokenet er gyldig i mer enn 60 sekunder til, returneres det direkte. Marginen hindrer at tokenet utløper mens forespørselen er underveis
+3. **Refresh**: Hvis tokenet er utløpt (eller nær utløp), kaller `/.netlify/functions/jira-auth-session` som bruker refresh token-cookien til å hente nytt access token + refresh token. Parallelle kall deler én refresh-request, siden refresh tokens roteres og samtidige refreshes ellers ville ugyldiggjort hverandre
 4. **Lagre**: Nytt access token og utløpstid lagres i `sessionStorage`
+
+#### 401 fra Jira
+
+Et token som ser gyldig ut lokalt kan likevel være avvist av Jira (f.eks. tilbakekalt, eller et gammelt token i `sessionStorage` etter endret klient-ID/miljø). Hvis Jira svarer 401, kaller Jira-klienten (`src/data/jira/jiraclient.ts`) `invalidate()` for å slette det cachede tokenet, henter et nytt og prøver request én gang til. Feiler den igjen, returneres feilen til kalleren; det skjer ingen automatisk redirect til `/login`.
 
 Access tokens i `sessionStorage` er kortlevde (1 time). Refresh tokens er langvarige (90 dager), lagres kun i httpOnly cookies, og er ikke tilgjengelige fra JavaScript.
 
