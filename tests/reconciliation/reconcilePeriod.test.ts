@@ -24,10 +24,7 @@ describe("reconcilePeriod", () => {
 		const matchIssues = vi.fn<Policy["matchIssues"]>().mockResolvedValue(
 			new Map([
 				[issue, { isMatched: true, timecodeId: timecode }],
-				[
-					otherIssue,
-					{ isMatched: true, timecodeId: timecode },
-				],
+				[otherIssue, { isMatched: true, timecodeId: timecode }],
 			]),
 		);
 		const policy: Policy = {
@@ -57,9 +54,7 @@ describe("reconcilePeriod", () => {
 	test("rejects a missing issue outcome instead of returning a partial report", async () => {
 		const policy: Policy = {
 			matchIssues: async () =>
-				new Map([
-					[issue, { isMatched: true, timecodeId: timecode }],
-				]),
+				new Map([[issue, { isMatched: true, timecodeId: timecode }]]),
 			getManagedTimecodes: async () => new Set([timecode]),
 		};
 		const loadInternalWorklogs = vi.fn().mockResolvedValue([]);
@@ -83,9 +78,7 @@ describe("reconcilePeriod", () => {
 			const policy: Policy = {
 				matchIssues: async () => {
 					if (failedOperation === "matcher") throw failure;
-					return new Map([
-						[issue, { isMatched: true, timecodeId: timecode }],
-					]);
+					return new Map([[issue, { isMatched: true, timecodeId: timecode }]]);
 				},
 				getManagedTimecodes: async () => new Set([timecode]),
 			};

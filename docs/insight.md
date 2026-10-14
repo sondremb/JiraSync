@@ -5,7 +5,7 @@ The general rule:
 When a person is under a given Contract, there is a many-to-one relationship between Issues and Timecodes. That is, for a given Contract, an Issue Maps to exactly one Timecode - many issues may map to the same Timecode.
 
 Synced/In Sync:
-The user's logged work is considered Synced (or In Sync) for a given day if: 
+The user's logged work is considered Synced (or In Sync) for a given day if:
 For each Timecode in the Contract, the sum of hours logged in Jira on Issues that Map to that Timecode on that day is equal to the hours logged on the Timecode itself in the Internal System on that day.
 The user's logged work is considered Synced for a period of days if it is Synced for each day in the period.
 Hours logged on Timecodes not in the Contract do not affect the Sync status.
@@ -20,7 +20,7 @@ For a given time period, the user's logged Issues are fetched from Jira. Each Is
 Hours logged on Issues not covered by the Contract (i.e. do not match any Rule) should be flagged and shown to the user.
 
 Locking
-Hours logged in the Internal System can be Locked. Locking means setting their Lock Date to a given date. Work logged on days prior to the Lock Date cannot be changed. This applies to the date of the work, not the date the logging happened. 
+Hours logged in the Internal System can be Locked. Locking means setting their Lock Date to a given date. Work logged on days prior to the Lock Date cannot be changed. This applies to the date of the work, not the date the logging happened.
 E.g.: If the user on Monday logs work for the entire week, and sets the Lock Date to Wednesday, they can still at any time change their work logs for Thursday and Friday, but may not change their logs of work logged for Monday through Wednesday.
 
 Hours can be Unlocked, which just means that their Lock Date is set back to before a given point. Unlocking hours for a week usually means setting the Lock Date to the Friday before the given week. Most users lack the permission to Unlock their own hours, and require help from someone with higher access, such as a Manager.
@@ -50,16 +50,16 @@ Rewrite
 Remove customer-specific references (as good as possible)
 More hosting agnostic
 Move away from Lisa design system - use one of: Udir design system (design.udir.no) | digdir design system | kilden (https://kilden.design/)
-    Current preference: digdir with default theme. Established, maintained, not customer-specific
+Current preference: digdir with default theme. Established, maintained, not customer-specific
 Better mobile support
 Fixes:
-    Know when time tracking requires comment
-    Handle overtime when locking month
-    Don't crash when Issue has no Mapping
-    Don't crash when user lacks access to Timecode
-    If fetching the Internal System lock date fails, show the error instead of loading indefinitely. Let the weekly timesheet load independently using a fallback initial week, so it remains possible to view hours and diagnose whether the failure is specific to lock dates. Keep locking controls unavailable until the lock date is known.
+Know when time tracking requires comment
+Handle overtime when locking month
+Don't crash when Issue has no Mapping
+Don't crash when user lacks access to Timecode
+If fetching the Internal System lock date fails, show the error instead of loading indefinitely. Let the weekly timesheet load independently using a fallback initial week, so it remains possible to view hours and diagnose whether the failure is specific to lock dates. Keep locking controls unavailable until the lock date is known.
 New features?:
-    logging arbitrary Internal hours
-    Rule-drafting tool (nice-to-have, second-order priority): start new or copy existing policy, discover Jira components and Internal timecodes using the signed-in user's access, and export a full proposed policy for developer review and read-only publication.
-    sync-to-jira?
-    View without mapping
+logging arbitrary Internal hours
+Rule-drafting tool (nice-to-have, second-order priority): start new or copy existing policy, discover Jira components and Internal timecodes using the signed-in user's access, and export a full proposed policy for developer review and read-only publication.
+sync-to-jira?
+View without mapping

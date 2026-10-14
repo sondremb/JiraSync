@@ -1,7 +1,10 @@
 import { describe, expect, test, vi } from "vitest";
 import { JiraProjectKey } from "../../../src/data/issue";
 import { Jql, Ruleset, RulesetId } from "../../../src/rules";
-import { InternalTimecodeId, JiraIssueId } from "../../../src/reconciliation/entities";
+import {
+	InternalTimecodeId,
+	JiraIssueId,
+} from "../../../src/reconciliation/entities";
 import { createJqlPolicy } from "../../../src/reconciliation/implementation/jqlPolicy";
 
 const firstIssue = 101 as JiraIssueId;
@@ -37,9 +40,9 @@ describe("createJqlPolicy", () => {
 		const matchJqls = vi.fn<MatchJqls>();
 		const policy = createJqlPolicy({ ...ruleset, rules: [] }, matchJqls);
 
-		expect(await policy.matchIssues([firstIssue])).toEqual(new Map([
-			[firstIssue, { isMatched: false }],
-		]));
+		expect(await policy.matchIssues([firstIssue])).toEqual(
+			new Map([[firstIssue, { isMatched: false }]]),
+		);
 		expect(await policy.getManagedTimecodes()).toEqual(new Set());
 		expect(matchJqls).not.toHaveBeenCalled();
 	});

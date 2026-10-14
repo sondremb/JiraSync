@@ -28,12 +28,10 @@ export function loadPolicies(raw: unknown): Ruleset[] {
 		id: r.id as RulesetId,
 		name: r.name,
 		description: r.description,
-		rules: r.rules.map(
-			(rule): Rule => ({
-				projectKey: rule.projectKey as JiraProjectKey,
-				jql: rule.jql as Jql | undefined,
-				timecode: rule.timecode as BekkId,
-			}),
-		),
+		rules: r.rules.map((rule): Rule => ({
+			projectKey: rule.projectKey as JiraProjectKey,
+			jql: rule.jql as Jql | undefined,
+			timecode: rule.timecode as BekkId,
+		})),
 	}));
 }

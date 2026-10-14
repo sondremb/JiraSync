@@ -1,7 +1,12 @@
 {
-  "$schema": "./node_modules/oxfmt/configuration_schema.json",
-  "useTabs": true,
-  "printWidth": 80,
-  "sortPackageJson": false,
-  "ignorePatterns": ["src/generated/**", "src/routeTree.gen.ts", "pnpm-lock.yaml"]
+	"$schema": "./node_modules/oxfmt/configuration_schema.json",
+	"useTabs": true,
+	"printWidth": 80,
+	"sortPackageJson": false,
+	"ignorePatterns": [
+		"src/generated/**",
+		"src/routeTree.gen.ts",
+		"pnpm-lock.yaml",
+		"bruno/**"
+	]
 }

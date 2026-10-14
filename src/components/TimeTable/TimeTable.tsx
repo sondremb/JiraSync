@@ -54,7 +54,11 @@ export const TimeTable: React.FC<Props> = (props) => {
 		.sort((a, b) => Number(b.managed) - Number(a.managed))
 		.map((entry) => ({ kind: "entry", entry }));
 	const lockRow: Row[] = props.onLockDate ? [{ kind: "lock" }] : [];
-	const items: Row[] = [...rows, { kind: "sum", entries: props.entries }, ...lockRow];
+	const items: Row[] = [
+		...rows,
+		{ kind: "sum", entries: props.entries },
+		...lockRow,
+	];
 
 	return (
 		<Table
@@ -71,8 +75,13 @@ export const TimeTable: React.FC<Props> = (props) => {
 					displayFunction: (i: Row) => {
 						if (i.kind === "lock") {
 							return props.onLockDate ? (
-								<LockDateButton day={day} onClick={() => props.onLockDate!(day)} />
-							) : <></>;
+								<LockDateButton
+									day={day}
+									onClick={() => props.onLockDate!(day)}
+								/>
+							) : (
+								<></>
+							);
 						}
 						return <TimetableCell day={day} row={i} />;
 					},

@@ -20,10 +20,7 @@ const otherTimecode = 202 as InternalTimecodeId;
 
 function mapped(...ids: JiraIssueId[]): JiraMatchResult {
 	return new Map(
-		ids.map((issueId) => [
-			issueId,
-			{ isMatched: true, timecodeId: timecode },
-		]),
+		ids.map((issueId) => [issueId, { isMatched: true, timecodeId: timecode }]),
 	);
 }
 

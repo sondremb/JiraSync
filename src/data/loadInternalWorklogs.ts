@@ -47,7 +47,11 @@ function mapEntry(
 	from: IsoDate,
 	to: IsoDate,
 ): InternalWork {
-	if (entry.date == null || entry.hours == null || !Number.isFinite(entry.hours))
+	if (
+		entry.date == null ||
+		entry.hours == null ||
+		!Number.isFinite(entry.hours)
+	)
 		throw new Error("Invalid Internal timesheet entry");
 	const date = toWorkDate(entry.date);
 	if (date < from || date > to)

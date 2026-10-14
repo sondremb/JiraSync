@@ -9,7 +9,7 @@ interface Props {
 
 export const DownloadTimestamp: React.FC<Props> = (props) => {
 	const [timeSince, setTimeSince] = useState(
-		formatDistanceToNow(props.timestamp, { locale: nb })
+		formatDistanceToNow(props.timestamp, { locale: nb }),
 	);
 
 	useEffect(() => {

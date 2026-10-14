@@ -8,6 +8,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 pnpm start           # Start dev server (Vite)
 pnpm build           # Build for production
 pnpm test            # Run vitest tests
+pnpm lint            # Lint with oxlint
+pnpm format          # Format with oxfmt (pnpm format:check to verify)
 pnpm generate:bekk   # Regenerate Bekk API types from OpenAPI schema
 pnpm generate:jira   # Regenerate Jira API types from OpenAPI schema
 pnpm generate        # Calls generate:bekk and generate:jira
@@ -33,7 +35,7 @@ Rulesets live in `src/policies/policies.json` — a versioned JSON file validate
 
 ### Authentication
 
-- **Jira**: OAuth 2.0 tokens stored in `sessionStorage`; refresh handled by Netlify serverless function `functions/jira-auth-session.ts` using httpOnly cookie refresh tokens
+- **Jira**: OAuth 2.0 tokens stored in `sessionStorage`; refresh handled by Netlify serverless function `src/backend/jira-auth-session.ts` using httpOnly cookie refresh tokens
 - **Bekk**: Azure Entra ID via `@azure/msal-react`, managed in `src/login/bekk/`
 
 ### API clients
@@ -43,7 +45,7 @@ Both APIs use the same stack: `openapi-typescript` for type generation and `open
 - **Jira**: `src/data/jiraclient.ts` — module-level singleton; types in `src/generated/jira-issues.d.ts` (from `yarn generate:jira`)
 - **Bekk**: `src/data/bekkclient.ts` — module-level singleton; types in `src/generated/bekk-timekeeper.d.ts` (from `yarn generate:bekk`)
 
-Auth is injected via middleware on each client. Jira uses a sessionStorage-backed token context (`src/login/jira/authContext.ts`); Bekk calls `msalInstance.acquireTokenSilent()` directly (the MSAL `PublicClientApplication` instance is a module-level singleton exported from `src/login/bekk/example.tsx`).
+Auth is injected via middleware on each client. Jira uses a sessionStorage-backed token context (`src/login/jira/authContext.ts`; a 401 from Jira invalidates the token, refreshes it and retries the request once, see `jiraclient.ts`); Bekk calls `msalInstance.acquireTokenSilent()` directly (the MSAL `PublicClientApplication` instance is a module-level singleton exported from `src/login/bekk/example.tsx`).
 
 `getEmployeeId()` in `src/login/bekk/example2.tsx` reads the employee ID from the active MSAL account — call it inside `queryFn`, not at the hook level.
 
@@ -53,16 +55,16 @@ Auth is injected via middleware on each client. Jira uses a sessionStorage-backe
 - **ISO week** (`src/date-time/IsoWeek.ts`): All date handling uses Norway timezone; format is `YYYY-Www`
 - **Server state**: `@tanstack/react-query` for all Jira and Bekk API calls — `useQuery` for fetches, `useMutation` + `invalidateQueries` for writes
 
-### Serverless functions (`functions/`)
+### Serverless functions (`src/backend/`)
 
 Netlify functions handle the Jira OAuth flow (init → callback → session refresh → logout). They run server-side to keep `JIRA_CLIENT_SECRET` out of the browser.
 
 ## Environment variables
 
-| Variable | Purpose |
-|---|---|
-| `VITE_BEKK_BASE_URL` | Bekk API endpoint |
-| `VITE_BEKK_ENTRA_*` | Azure Entra ID config for MSAL |
-| `VITE_ATLASSIAN_CLOUD_ID` | Jira cloud tenant ID |
+| Variable                                | Purpose                                   |
+| --------------------------------------- | ----------------------------------------- |
+| `VITE_BEKK_BASE_URL`                    | Bekk API endpoint                         |
+| `VITE_BEKK_ENTRA_*`                     | Azure Entra ID config for MSAL            |
+| `VITE_ATLASSIAN_CLOUD_ID`               | Jira cloud tenant ID                      |
 | `JIRA_CLIENT_ID` / `JIRA_CLIENT_SECRET` | Jira OAuth credentials (server-side only) |
-| `VITE_DEBUG` | Enables dev tools overlay |
+| `VITE_DEBUG`                            | Enables dev tools overlay                 |

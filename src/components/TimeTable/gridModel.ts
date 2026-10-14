@@ -24,7 +24,9 @@ export function toGridEntries(reports: readonly DayReport[]): GridEntry[] {
 			entry = { id, managed, days: {} };
 			entries.set(id, entry);
 		} else if (entry.managed !== managed) {
-			throw new Error(`Timecode ${id} has inconsistent management across reports`);
+			throw new Error(
+				`Timecode ${id} has inconsistent management across reports`,
+			);
 		}
 		return entry;
 	};

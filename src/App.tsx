@@ -1,5 +1,11 @@
 import React, { useState } from "react";
-import { Button, FlexColumn, FlexRow, Icon, Text } from "@utdanningsdirektoratet/lisa";
+import {
+	Button,
+	FlexColumn,
+	FlexRow,
+	Icon,
+	Text,
+} from "@utdanningsdirektoratet/lisa";
 import { colors, spacing } from "@utdanningsdirektoratet/lisa-tokens";
 import styled from "styled-components";
 import { WeeklyReconciliation } from "./components/WeeklyReconciliation";

@@ -18,7 +18,7 @@ describe(".isValid", () => {
 		"It accepts valid week %s",
 		(week) => {
 			expect(IsoWeek.isValid(week)).toBe(true);
-		}
+		},
 	);
 
 	test.each([
@@ -41,7 +41,7 @@ describe(".parse", () => {
 		"It returns IsoWeek for valid week %s",
 		(week) => {
 			expect(IsoWeek.parse(week)).toBe(week);
-		}
+		},
 	);
 
 	test.each([
@@ -194,7 +194,7 @@ describe(".days", () => {
 			days.forEach((day) => {
 				expect(IsoWeek.fromDate(IsoDate.toDate(day))).toBe(week);
 			});
-		}
+		},
 	);
 });
 
@@ -219,9 +219,9 @@ describe(".getDay", () => {
 		"It corrresponds with .days for day %i",
 		(day) => {
 			expect(IsoWeek.getDay("2026-W53" as IsoWeek, day)).toBe(
-				IsoWeek.days("2026-W53" as IsoWeek)[day - 1]
+				IsoWeek.days("2026-W53" as IsoWeek)[day - 1],
 			);
-		}
+		},
 	);
 });
 
@@ -234,18 +234,18 @@ describe(".monday", () => {
 		"It corresponds with .days[0] for %s",
 		(week) => {
 			expect(IsoWeek.monday(week as IsoWeek)).toBe(
-				IsoWeek.days(week as IsoWeek)[0]
+				IsoWeek.days(week as IsoWeek)[0],
 			);
-		}
+		},
 	);
 
 	test.each(["2025-W41", "2025-W52", "2026-W53"])(
 		"It corresponds with .getDay(1) for %s",
 		(week) => {
 			expect(IsoWeek.monday(week as IsoWeek)).toBe(
-				IsoWeek.getDay(week as IsoWeek, 1)
+				IsoWeek.getDay(week as IsoWeek, 1),
 			);
-		}
+		},
 	);
 });
 
@@ -258,18 +258,18 @@ describe(".sunday", () => {
 		"It corresponds with .days[6] for %s",
 		(week) => {
 			expect(IsoWeek.sunday(week as IsoWeek)).toBe(
-				IsoWeek.days(week as IsoWeek)[6]
+				IsoWeek.days(week as IsoWeek)[6],
 			);
-		}
+		},
 	);
 
 	test.each(["2025-W41", "2025-W52", "2026-W53"])(
 		"It corresponds with .getDay(7) for %s",
 		(week) => {
 			expect(IsoWeek.sunday(week as IsoWeek)).toBe(
-				IsoWeek.getDay(week as IsoWeek, 7)
+				IsoWeek.getDay(week as IsoWeek, 7),
 			);
-		}
+		},
 	);
 });
 

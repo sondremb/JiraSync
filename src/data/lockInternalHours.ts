@@ -8,7 +8,8 @@ export async function lockInternalHours(lockDate: IsoDate): Promise<void> {
 	});
 	if (!response.ok || data?.timesheetSuccessfullyLocked !== true) {
 		throw new Error(
-			data?.userMessage || `Kunne ikke låse timer til ${lockDate} (${response.status})`,
+			data?.userMessage ||
+				`Kunne ikke låse timer til ${lockDate} (${response.status})`,
 		);
 	}
 }

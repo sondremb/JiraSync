@@ -11,29 +11,30 @@ The first rewrite does not model manager–employee relationships, provide manag
 Jira and the Internal System remain authoritative for their respective worklogs, time entries, access rights, and locking permissions.
 
 Rewrite goals:
-* Increase testability and test coverage
-* Increase maintability and ease of understanding
-* Decouple from Udir
-* Increase portability and decouple from Netlify hosting
-* Better support multiple user flows
-* Reduce friction in policy updates
+
+- Increase testability and test coverage
+- Increase maintability and ease of understanding
+- Decouple from Udir
+- Increase portability and decouple from Netlify hosting
+- Better support multiple user flows
+- Reduce friction in policy updates
 
 To achieve the goal:
-* A testable domain core, Clean Architecture (CA) inspired
-* Move policies to data (static JSON for now), but abstracted so they may become live data later
-* Rewrite to DigDir design system (with default theme for now)
-* An overall strategy for handling errors
 
+- A testable domain core, Clean Architecture (CA) inspired
+- Move policies to data (static JSON for now), but abstracted so they may become live data later
+- Rewrite to DigDir design system (with default theme for now)
+- An overall strategy for handling errors
 
 ## 2. Domain behavior
 
 - A **mapping policy** is an ordered list of rules. Each rule specifies a Jira project, an optional JQL condition, and an Internal System timecode. The first matching rule wins.
-- Matching is delegated to Jira. This keeps Jira-specific field semantics—including custom fields—out of JiraSync's matching engine. Rule *configuration* can still be specific to a Jira site.
+- Matching is delegated to Jira. This keeps Jira-specific field semantics—including custom fields—out of JiraSync's matching engine. Rule _configuration_ can still be specific to a Jira site.
 - For an employee, date, and managed timecode, hours are **in sync** when the sum of their Jira worklogs on mapped issues equals their Internal System hours. A period needs review if any applicable day and timecode differs **or if any Jira worklog matches no rule**.
 - Internal hours on timecodes outside the selected policy are shown explicitly but do not affect its sync status. Jira worklogs that match no rule are shown explicitly and require review.
 - For the initial Jira-to-Internal sync operation, Jira hours are the proposed target. A preview shows the affected dates, timecodes, and changes before writing. The Internal System decides whether a write is permitted, including on locked dates.
 
-**Open:** The domain document currently calls a rule list a *Contract*. Confirm whether that means an actual business contract, or whether *mapping policy/ruleset* is the clearer name. Effective-dated reassignment and the treatment of historical rule changes also need explicit rules before implementation.
+**Open:** The domain document currently calls a rule list a _Contract_. Confirm whether that means an actual business contract, or whether _mapping policy/ruleset_ is the clearer name. Effective-dated reassignment and the treatment of historical rule changes also need explicit rules before implementation.
 
 ## 3. Boundaries
 
@@ -50,7 +51,7 @@ These boundaries do **not** prescribe separate services or one screen per contex
 
 ## 4. Frontend composition
 
-The primary UI capability is **Review my week**. Its table brings together raw hours, mapping outcomes, sync status, proposed changes, and locking controls. The screen owns the *presentation and coordination* of those concerns; it does not own all their business rules.
+The primary UI capability is **Review my week**. Its table brings together raw hours, mapping outcomes, sync status, proposed changes, and locking controls. The screen owns the _presentation and coordination_ of those concerns; it does not own all their business rules.
 
 ```text
 Jira worklogs ────────┐

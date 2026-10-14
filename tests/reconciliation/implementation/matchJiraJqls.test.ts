@@ -4,7 +4,9 @@ import { Jql } from "../../../src/rules";
 import { JiraIssueId } from "../../../src/reconciliation/entities";
 import { matchJiraJqls } from "../../../src/reconciliation/implementation/jqlPolicy";
 
-vi.mock("../../../src/data/jira/jiraclient", () => ({ jiraClient: { POST: vi.fn() } }));
+vi.mock("../../../src/data/jira/jiraclient", () => ({
+	jiraClient: { POST: vi.fn() },
+}));
 
 const issues = [101 as JiraIssueId, 102 as JiraIssueId];
 const jqls = ["project = 'PASX'" as Jql, "project = 'OTHER'" as Jql];

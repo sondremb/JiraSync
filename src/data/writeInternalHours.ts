@@ -2,7 +2,9 @@ import { getEmployeeId } from "../login/bekk/bekkLogin";
 import { ProposedChange } from "../reconciliation/syncPreview";
 import { bekkClient } from "./bekkclient";
 
-export async function writeInternalHours(change: ProposedChange): Promise<void> {
+export async function writeInternalHours(
+	change: ProposedChange,
+): Promise<void> {
 	const employeeId = getEmployeeId();
 	if (change.targetHours === 0) {
 		const { response } = await bekkClient.DELETE(
@@ -13,7 +15,9 @@ export async function writeInternalHours(change: ProposedChange): Promise<void> 
 			},
 		);
 		if (!response.ok)
-			throw new Error(`Internal System rejected the deletion (${response.status})`);
+			throw new Error(
+				`Internal System rejected the deletion (${response.status})`,
+			);
 		return;
 	}
 
@@ -31,5 +35,6 @@ export async function writeInternalHours(change: ProposedChange): Promise<void> 
 	);
 	if (!response.ok || !data)
 		throw new Error(`Internal System rejected the update (${response.status})`);
-	if (data.validationInfo?.length) throw new Error(data.validationInfo.join(", "));
+	if (data.validationInfo?.length)
+		throw new Error(data.validationInfo.join(", "));
 }

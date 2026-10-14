@@ -10,7 +10,6 @@ Se Atlassian-dokumentasjon om [OAuth 2.0 (3LO) apps](https://developer.atlassian
 
 ### Flyt
 
-
 ```mermaid
 ---
 title: Atlassian auth flyt
@@ -85,12 +84,12 @@ Access tokens i `sessionStorage` er kortlevde (1 time). Refresh tokens er langva
 
 ### Serverless-funksjoner
 
-| Funksjon | Fil | Beskrivelse |
-|---|---|---|
-| `jira-auth-init` | `src/backend/jira-auth-init.ts` | Starter OAuth-flyten, genererer PKCE, redirecter til Atlassian |
-| `jira-auth-callback` | `src/backend/jira-auth-callback.ts` | Mottar callback fra Atlassian, bytter code mot tokens |
-| `jira-auth-session` | `src/backend/jira-auth-session.ts` | Refresher access token via refresh token cookie |
-| `jira-auth-logout` | `src/backend/jira-auth-logout.ts` | Sletter refresh token cookie |
+| Funksjon             | Fil                                 | Beskrivelse                                                    |
+| -------------------- | ----------------------------------- | -------------------------------------------------------------- |
+| `jira-auth-init`     | `src/backend/jira-auth-init.ts`     | Starter OAuth-flyten, genererer PKCE, redirecter til Atlassian |
+| `jira-auth-callback` | `src/backend/jira-auth-callback.ts` | Mottar callback fra Atlassian, bytter code mot tokens          |
+| `jira-auth-session`  | `src/backend/jira-auth-session.ts`  | Refresher access token via refresh token cookie                |
+| `jira-auth-logout`   | `src/backend/jira-auth-logout.ts`   | Sletter refresh token cookie                                   |
 
 ### Konfigurasjon
 
@@ -123,6 +122,7 @@ Appen er klar
 ### Oppsett (`src/login/bekk/bekkLogin.tsx`)
 
 MSAL-instansen er en modul-singleton (`msalInstance`) konfigurert med:
+
 - `clientId` — App registration client ID fra Azure
 - `authority` — `https://login.microsoftonline.com/{tenantId}`
 - `cacheLocation` — `localStorage`
@@ -141,10 +141,10 @@ MSAL håndterer token-refresh automatisk via `acquireTokenSilent()`. Bekk API-kl
 
 ### Azure-registreringer
 
-| Miljø | App registration |
-|---|---|
-| Prod | [97690193-50da-4eda-b961-519d047cc8ce](https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/~/Overview/appId/97690193-50da-4eda-b961-519d047cc8ce) |
-| Dev | [05d0e69d-bb21-43b6-bdd0-5eed364561c0](https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/~/Overview/appId/05d0e69d-bb21-43b6-bdd0-5eed364561c0) |
+| Miljø | App registration                                                                                                                                                               |
+| ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Prod  | [97690193-50da-4eda-b961-519d047cc8ce](https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/~/Overview/appId/97690193-50da-4eda-b961-519d047cc8ce) |
+| Dev   | [05d0e69d-bb21-43b6-bdd0-5eed364561c0](https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/~/Overview/appId/05d0e69d-bb21-43b6-bdd0-5eed364561c0) |
 
 ### Konfigurasjon
 

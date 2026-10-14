@@ -1,6 +1,10 @@
 import { describe, expect, test } from "vitest";
 import { IsoDate } from "../../src/date-time/IsoWeek";
-import { DayReport, type InternalTimecodeId, type JiraIssueId } from "../../src/reconciliation/entities";
+import {
+	DayReport,
+	type InternalTimecodeId,
+	type JiraIssueId,
+} from "../../src/reconciliation/entities";
 import { planSync } from "../../src/reconciliation/syncPreview";
 
 const monday = IsoDate.parse("2025-02-03");
@@ -22,7 +26,11 @@ describe("planSync", () => {
 			internalHoursWorked: 3,
 			matchedWork: [],
 		});
-		firstDay.unmanagedInternals.push({ timecodeId: 203 as InternalTimecodeId, date: monday, hoursWorked: 7 });
+		firstDay.unmanagedInternals.push({
+			timecodeId: 203 as InternalTimecodeId,
+			date: monday,
+			hoursWorked: 7,
+		});
 		const nextDay = DayReport.empty(tuesday);
 		nextDay.comparisons.set(firstCode, {
 			timecodeId: firstCode,
@@ -37,7 +45,11 @@ describe("planSync", () => {
 			internalHoursWorked: 1,
 			matchedWork: [{ issueId: issue, date: tuesday, hoursWorked: 1 }],
 		});
-		nextDay.unmatchedJiraWork.push({ issueId: issue, date: tuesday, hoursWorked: 4 });
+		nextDay.unmatchedJiraWork.push({
+			issueId: issue,
+			date: tuesday,
+			hoursWorked: 4,
+		});
 
 		expect(planSync([firstDay, nextDay])).toEqual([
 			{ date: monday, timecodeId: firstCode, currentHours: 5, targetHours: 2 },
@@ -48,7 +60,11 @@ describe("planSync", () => {
 
 	test("produces no writes for an empty or in-sync week", () => {
 		const unmatchedOnly = DayReport.empty(monday);
-		unmatchedOnly.unmatchedJiraWork.push({ issueId: issue, date: monday, hoursWorked: 2 });
+		unmatchedOnly.unmatchedJiraWork.push({
+			issueId: issue,
+			date: monday,
+			hoursWorked: 2,
+		});
 		expect(planSync([unmatchedOnly])).toEqual([]);
 	});
 });

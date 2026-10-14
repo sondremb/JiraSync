@@ -42,8 +42,7 @@ export const WeeklyReconciliation: React.FC<Props> = ({ week, ruleset }) => {
 	} | null>(null);
 	const changes = data ? planSync(data) : [];
 	const unmatchedCount =
-		data?.reduce((count, day) => count + day.unmatchedJiraWork.length, 0) ??
-		0;
+		data?.reduce((count, day) => count + day.unmatchedJiraWork.length, 0) ?? 0;
 	const version = JSON.stringify([
 		week,
 		ruleset.id,
@@ -56,8 +55,7 @@ export const WeeklyReconciliation: React.FC<Props> = ({ week, ruleset }) => {
 		if (!submitting.current) setPreview(null);
 	};
 	const confirm = async () => {
-		if (!openPreview || !preview || submitting.current)
-			return;
+		if (!openPreview || !preview || submitting.current) return;
 		submitting.current = true;
 		try {
 			await sync.mutateAsync(preview.changes);
@@ -104,8 +102,8 @@ export const WeeklyReconciliation: React.FC<Props> = ({ week, ruleset }) => {
 						/>
 						{unmatchedCount > 0 && (
 							<p role="status">
-								{unmatchedCount} Jira-føringer mangler regel og må gjennomgås. De er
-								ikke med i synkroniseringen.
+								{unmatchedCount} Jira-føringer mangler regel og må gjennomgås.
+								De er ikke med i synkroniseringen.
 							</p>
 						)}
 						<p>
@@ -136,9 +134,7 @@ export const WeeklyReconciliation: React.FC<Props> = ({ week, ruleset }) => {
 			{updateLockDate.isError && (
 				<p role="alert">Kunne ikke låse: {updateLockDate.error.message}</p>
 			)}
-			{updateLockDate.isSuccess && (
-				<p role="status">Timer ble låst.</p>
-			)}
+			{updateLockDate.isSuccess && <p role="status">Timer ble låst.</p>}
 			<ConfirmModal
 				showModal={Boolean(openPreview)}
 				onCancel={closePreview}
@@ -152,7 +148,10 @@ export const WeeklyReconciliation: React.FC<Props> = ({ week, ruleset }) => {
 			>
 				{preview && (
 					<>
-						<p>Oppdaterer følgende Bekk-timer til å stemme overens med Jira-timeføring:</p>
+						<p>
+							Oppdaterer følgende Bekk-timer til å stemme overens med
+							Jira-timeføring:
+						</p>
 						{groupByDate(preview.changes).map(([date, dayChanges]) => (
 							<section key={date} aria-label={IsoDate.formatLong(date)}>
 								<h3>{IsoDate.formatLong(date)}</h3>
@@ -169,19 +168,23 @@ export const WeeklyReconciliation: React.FC<Props> = ({ week, ruleset }) => {
 						))}
 						{preview.unmatchedCount > 0 && (
 							<p>
-								{preview.unmatchedCount} Jira-føringer uten regel blir ikke synkronisert.
+								{preview.unmatchedCount} Jira-føringer uten regel blir ikke
+								synkronisert.
 							</p>
 						)}
 						{lockDate === undefined && (
 							<p>
-								Låsedato er ukjent. Internt system avgjør om endringene kan utføres.
+								Låsedato er ukjent. Internt system avgjør om endringene kan
+								utføres.
 							</p>
 						)}
-						{lockDate && preview.changes.some((change) => change.date <= lockDate) && (
-							<p>
-								Noen dager er låst. Internt system avgjør om endringene kan utføres.
-							</p>
-						)}
+						{lockDate &&
+							preview.changes.some((change) => change.date <= lockDate) && (
+								<p>
+									Noen dager er låst. Internt system avgjør om endringene kan
+									utføres.
+								</p>
+							)}
 						{sync.isPending && <p>Oppdaterer timer…</p>}
 					</>
 				)}

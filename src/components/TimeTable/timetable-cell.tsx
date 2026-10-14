@@ -27,7 +27,10 @@ const CustomText = styled.div<{
 		props.textColor ? colorTypeToHex(props.textColor) : colors.svart};
 `;
 
-const ContainerDiv = styled(CustomText as any)<{ correct: boolean; border: boolean }>`
+const ContainerDiv = styled(CustomText as any)<{
+	correct: boolean;
+	border: boolean;
+}>`
 	border-radius: 5px;
 	position: relative;
 	height: 50px;
