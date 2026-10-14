@@ -9,15 +9,33 @@ function getBaseUrl() {
 	return `https://api.atlassian.com/ex/jira/${cloudId}`;
 }
 
+async function getBearerToken(): Promise<string> {
+	const authResult = await jiraAuthenticationContext.getAccessToken();
+	if (authResult.kind !== "authenticated") {
+		throw new Error("User is not authenticated");
+	}
+	return `Bearer ${authResult.accessToken}`;
+}
+
+// Unconsumed copies of outgoing requests, so a 401 can be retried with a fresh token
+const retryableRequests = new WeakMap<Request, Request>();
+
 const authMiddleWare: Middleware = {
 	async onRequest({ request }) {
-		const authResult = await jiraAuthenticationContext.getAccessToken();
-		if (authResult.kind !== "authenticated") {
-			throw new Error("User is not authenticated");
-		}
-
-		request.headers.set("Authorization", `Bearer ${authResult.accessToken}`);
+		request.headers.set("Authorization", await getBearerToken());
+		retryableRequests.set(request, request.clone());
 		return request;
+	},
+	async onResponse({ request, response }) {
+		const retryRequest = retryableRequests.get(request);
+		retryableRequests.delete(request);
+		if (response.status !== 401 || !retryRequest) {
+			return response;
+		}
+		// The cached token was rejected despite looking valid locally; fetch a new one and retry once
+		jiraAuthenticationContext.invalidate();
+		retryRequest.headers.set("Authorization", await getBearerToken());
+		return fetch(retryRequest);
 	},
 };
 

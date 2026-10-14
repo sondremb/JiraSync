@@ -29,6 +29,8 @@ const AuthenticationResult = {
 
 export interface JiraAuthContext {
 	getAccessToken: () => Promise<AuthenticationResult>;
+	/** Drops the cached access token so the next getAccessToken() refreshes it. */
+	invalidate: () => void;
 	logout: () => void;
 }
 
@@ -53,8 +55,21 @@ function getFromStorage(): StoredToken | null {
 	};
 }
 
+// Refresh slightly early so a token doesn't expire while the request is in flight
+const expiryMarginMs = 60_000;
+
 function isValid(token: StoredToken): boolean {
-	return token.expiresAt > Date.now();
+	return token.expiresAt > Date.now() + expiryMarginMs;
+}
+
+// Refresh tokens rotate, so parallel refreshes would invalidate each other
+let inflightRefresh: Promise<AuthenticationResult> | null = null;
+
+function refreshFromServerOnce(): Promise<AuthenticationResult> {
+	inflightRefresh ??= refreshFromServer().finally(() => {
+		inflightRefresh = null;
+	});
+	return inflightRefresh;
 }
 
 async function refreshFromServer(): Promise<AuthenticationResult> {
@@ -81,6 +96,11 @@ async function refreshFromServer(): Promise<AuthenticationResult> {
 	return AuthenticationResult.Authenticated(accessToken);
 }
 
+function clearStorage() {
+	sessionStorage.removeItem(accessTokenKey);
+	sessionStorage.removeItem(expiresAtKey);
+}
+
 const accessTokenKey = "atlassian_access_token";
 const expiresAtKey = "atlassian_access_token_expires_at";
 
@@ -92,11 +112,11 @@ export const jiraAuthenticationContext: JiraAuthContext = {
 			return AuthenticationResult.Authenticated(storedToken.accessToken);
 		}
 
-		return refreshFromServer();
+		return refreshFromServerOnce();
 	},
+	invalidate: clearStorage,
 	logout: async () => {
-		sessionStorage.removeItem(accessTokenKey);
-		sessionStorage.removeItem(expiresAtKey);
+		clearStorage();
 		await fetch("/.netlify/functions/jira-auth-logout", {
 			method: "POST",
 			credentials: "include",
