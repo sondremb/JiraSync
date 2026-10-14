@@ -133,9 +133,21 @@ export const IsoDate = {
 		}
 		return input as IsoDate;
 	},
+	formatLong(isoDate: IsoDate): string {
+		const text = new Intl.DateTimeFormat("nb-NO", {
+			weekday: "long",
+			day: "numeric",
+			month: "long",
+			timeZone: NORWAY_TIMEZONE,
+		}).format(IsoDate.toDate(isoDate));
+		return text.charAt(0).toUpperCase() + text.slice(1);
+	},
 	addDays(isoDate: IsoDate, days: number): IsoDate {
 		const date = IsoDate.toDate(isoDate);
 		const newDate = addDays(date, days);
 		return IsoDate.fromDate(newDate);
 	},
 };
+
+export const formatHours = (hours: number): string =>
+	new Intl.NumberFormat("nb-NO", { maximumFractionDigits: 2 }).format(hours);

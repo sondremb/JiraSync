@@ -1,6 +1,7 @@
 import React, { useRef, useState } from "react";
 import { Button, ConfirmModal } from "@utdanningsdirektoratet/lisa";
-import { IsoDate, IsoWeek } from "../date-time/IsoWeek";
+import { formatHours, IsoDate, IsoWeek } from "../date-time/IsoWeek";
+import { TimecodeLabel } from "./TimecodeLabel";
 import { useLockDate } from "../data/useLockDate";
 import {
 	useSyncWeek,
@@ -16,6 +17,16 @@ interface Props {
 	week: IsoWeek;
 	ruleset: Ruleset;
 }
+
+const groupByDate = (
+	changes: readonly ProposedChange[],
+): [IsoDate, ProposedChange[]][] => {
+	const groups = new Map<IsoDate, ProposedChange[]>();
+	for (const change of changes) {
+		groups.set(change.date, [...(groups.get(change.date) ?? []), change]);
+	}
+	return Array.from(groups);
+};
 
 export const WeeklyReconciliation: React.FC<Props> = ({ week, ruleset }) => {
 	const { data, error, isPending, dataUpdatedAt, isFetching } =
@@ -132,7 +143,7 @@ export const WeeklyReconciliation: React.FC<Props> = ({ week, ruleset }) => {
 				showModal={Boolean(openPreview)}
 				onCancel={closePreview}
 				title="Forslag til synkronisering"
-				confirmLabel="Oppdater interne timer"
+				confirmLabel="Oppdater Bekk-timer"
 				cancelLabel="Avbryt"
 				confirmButtonDisabled={sync.isPending}
 				onConfirm={() => {
@@ -141,14 +152,21 @@ export const WeeklyReconciliation: React.FC<Props> = ({ week, ruleset }) => {
 			>
 				{preview && (
 					<>
-						<p>Jira-timene blir målet for disse endringene i internt system:</p>
-						<ul>
-							{preview.changes.map((change) => (
-								<li key={`${change.date}-${change.timecodeId}`}>
-									{change.date}, timekode {change.timecodeId}: {change.currentHours} → {change.targetHours} timer
-								</li>
-							))}
-						</ul>
+						<p>Oppdaterer følgende Bekk-timer til å stemme overens med Jira-timeføring:</p>
+						{groupByDate(preview.changes).map(([date, dayChanges]) => (
+							<section key={date} aria-label={IsoDate.formatLong(date)}>
+								<h3>{IsoDate.formatLong(date)}</h3>
+								<ul>
+									{dayChanges.map((change) => (
+										<li key={change.timecodeId}>
+											<TimecodeLabel timecodeId={change.timecodeId} />:{" "}
+											{formatHours(change.currentHours)} →{" "}
+											{formatHours(change.targetHours)} timer
+										</li>
+									))}
+								</ul>
+							</section>
+						))}
 						{preview.unmatchedCount > 0 && (
 							<p>
 								{preview.unmatchedCount} Jira-føringer uten regel blir ikke synkronisert.
