@@ -14,7 +14,6 @@ import {
 	useSyncWeek,
 	useWeeklyReconciliation,
 } from "../reconciliation/useWeeklyReconciliation";
-import { DayReport } from "../reconciliation/entities";
 import { planSync, type ProposedChange } from "../reconciliation/syncPreview";
 import { Ruleset } from "../rules";
 import { TimeTable } from "./TimeTable/TimeTable";
@@ -43,7 +42,6 @@ export const WeeklyReconciliation: React.FC<Props> = ({ week, ruleset }) => {
 	const sync = useSyncWeek();
 	const notify = useNotification();
 	const submitting = useRef(false);
-	const [lockPreview, setLockPreview] = useState<IsoDate | null>(null);
 	const [preview, setPreview] = useState<{
 		version: string;
 		changes: ProposedChange[];
@@ -89,23 +87,9 @@ export const WeeklyReconciliation: React.FC<Props> = ({ week, ruleset }) => {
 		await runSync(preview.changes);
 	};
 
-	const weekStart = data?.[0]?.date;
-	const coveredNeedingReview =
-		lockPreview && data
-			? data.filter((r) => r.date <= lockPreview && !DayReport.isInSync(r))
-			: [];
-	const hasGapBeforeWeek =
-		lockPreview !== null &&
-		weekStart !== undefined &&
-		(lockDate === undefined || IsoDate.addDays(lockDate, 1) < weekStart);
-
-	const confirmLock = async () => {
-		if (!lockPreview) return;
-		try {
-			await updateLockDate.mutateAsync(lockPreview);
-		} finally {
-			setLockPreview(null);
-		}
+	const lock = (day: IsoDate) => {
+		if (updateLockDate.isPending) return;
+		updateLockDate.mutate(day);
 	};
 
 	return (
@@ -120,7 +104,7 @@ export const WeeklyReconciliation: React.FC<Props> = ({ week, ruleset }) => {
 						<TimeTable
 							entries={toGridEntries(data)}
 							days={data.map((report) => report.date)}
-							onLockDate={setLockPreview}
+							onLockDate={lock}
 						/>
 						{unmatchedCount > 0 && (
 							<p role="status">
@@ -216,32 +200,6 @@ export const WeeklyReconciliation: React.FC<Props> = ({ week, ruleset }) => {
 						{sync.isPending && <p>Oppdaterer timer…</p>}
 					</>
 				)}
-			</ConfirmModal>
-			<ConfirmModal
-				showModal={lockPreview !== null}
-				onCancel={() => {
-					if (!updateLockDate.isPending) setLockPreview(null);
-				}}
-				title="Lås timer"
-				confirmLabel={lockPreview ? `Lås til ${lockPreview}` : ""}
-				cancelLabel="Avbryt"
-				confirmButtonDisabled={updateLockDate.isPending}
-				onConfirm={() => {
-					void confirmLock();
-				}}
-			>
-				<p>Timer i internt system låses frem til og med {lockPreview}.</p>
-				{coveredNeedingReview.length > 0 && (
-					<p>
-						{coveredNeedingReview.length === 1
-							? "1 dag som låses trenger gjennomgang."
-							: `${coveredNeedingReview.length} dager som låses trenger gjennomgang.`}
-					</p>
-				)}
-				{hasGapBeforeWeek && (
-					<p>Datoer før denne uken er ikke vist, men låses også.</p>
-				)}
-				{updateLockDate.isPending && <p>Låser timer…</p>}
 			</ConfirmModal>
 		</section>
 	);
