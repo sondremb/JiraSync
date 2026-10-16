@@ -1,5 +1,11 @@
 import React, { useRef, useState } from "react";
-import { Button, ConfirmModal, H2 } from "@utdanningsdirektoratet/lisa";
+import {
+	Alert,
+	Button,
+	ConfirmModal,
+	FlexRow,
+	H2,
+} from "@utdanningsdirektoratet/lisa";
 import { formatHours, IsoDate, IsoWeek } from "../date-time/IsoWeek";
 import { TimecodeLabel } from "./TimecodeLabel";
 import { useLockDate } from "../data/useLockDate";
@@ -55,17 +61,21 @@ export const WeeklyReconciliation: React.FC<Props> = ({ week, ruleset }) => {
 	const closePreview = () => {
 		if (!submitting.current) setPreview(null);
 	};
-	const confirm = async () => {
-		if (!openPreview || !preview || submitting.current) return;
+	const runSync = async (toApply: ProposedChange[]) => {
+		if (submitting.current) return;
 		submitting.current = true;
 		try {
-			await sync.mutateAsync(preview.changes);
+			await sync.mutateAsync(toApply);
 		} catch {
 			// The mutation exposes the failed date/timecode and count of completed writes.
 		} finally {
 			submitting.current = false;
 			setPreview(null);
 		}
+	};
+	const confirm = async () => {
+		if (!openPreview || !preview) return;
+		await runSync(preview.changes);
 	};
 
 	const weekStart = data?.[0]?.date;
@@ -107,21 +117,33 @@ export const WeeklyReconciliation: React.FC<Props> = ({ week, ruleset }) => {
 								De er ikke med i synkroniseringen.
 							</p>
 						)}
-						<p>
-							{data.every(DayReport.isInSync)
-								? "Alle dager stemmer."
-								: "Uken trenger gjennomgang."}
-						</p>
-						{changes.length > 0 && (
-							<Button
-								disabled={isFetching || sync.isPending}
-								onClick={() => {
-									sync.reset();
-									setPreview({ version, changes, unmatchedCount });
-								}}
-							>
-								Vis synkroniseringsforslag
-							</Button>
+						{changes.length > 0 ? (
+							<FlexRow gap={12} className="mt-20" halign="center">
+								<Button
+									pending={isFetching || sync.isPending}
+									onClick={() => {
+										sync.reset();
+										void runSync(changes);
+									}}
+								>
+									Synkroniser
+								</Button>
+								<Button
+									variant="outlined"
+									icon="eye"
+									disabled={isFetching || sync.isPending}
+									onClick={() => {
+										sync.reset();
+										setPreview({ version, changes, unmatchedCount });
+									}}
+								>
+									Forhåndsvis
+								</Button>
+							</FlexRow>
+						) : (
+							<FlexRow halign="center" className="mt-20">
+								<Alert type="success">Alt stemmer!</Alert>
+							</FlexRow>
 						)}
 					</>
 				)
