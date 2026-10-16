@@ -5,9 +5,7 @@ export type Seconds = number;
 // STATE
 type BekkId = TimecodeViewModelV2DTO["id"];
 type JiraId = Jira.Timecode["key"];
-type BekkTimecode = Pick<TimecodeViewModelV2DTO, "id" | "code" | "name"> & {
-	isUdir: boolean;
-};
+type BekkTimecode = Pick<TimecodeViewModelV2DTO, "id" | "code" | "name">;
 interface JiraTimecode extends Pick<Jira.Timecode, "key" | "summary"> {
 	bekkTimecodeId: BekkId;
 }
