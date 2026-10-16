@@ -5,6 +5,7 @@ import {
 	ConfirmModal,
 	FlexRow,
 	H2,
+	useNotification,
 } from "@utdanningsdirektoratet/lisa";
 import { formatHours, IsoDate, IsoWeek } from "../date-time/IsoWeek";
 import { TimecodeLabel } from "./TimecodeLabel";
@@ -40,6 +41,7 @@ export const WeeklyReconciliation: React.FC<Props> = ({ week, ruleset }) => {
 		useWeeklyReconciliation(week, ruleset);
 	const { lockDate, updateLockDate } = useLockDate();
 	const sync = useSyncWeek();
+	const notify = useNotification();
 	const submitting = useRef(false);
 	const [lockPreview, setLockPreview] = useState<IsoDate | null>(null);
 	const [preview, setPreview] = useState<{
@@ -66,8 +68,17 @@ export const WeeklyReconciliation: React.FC<Props> = ({ week, ruleset }) => {
 		submitting.current = true;
 		try {
 			await sync.mutateAsync(toApply);
-		} catch {
-			// The mutation exposes the failed date/timecode and count of completed writes.
+			notify({
+				type: "success",
+				content: "Timene ble oppdatert!",
+			});
+		} catch (error) {
+			notify({
+				type: "error",
+				title: "Synkronisering feilet",
+				content: error instanceof Error ? error.message : String(error),
+				closeable: true,
+			});
 		} finally {
 			submitting.current = false;
 			setPreview(null);
@@ -102,7 +113,7 @@ export const WeeklyReconciliation: React.FC<Props> = ({ week, ruleset }) => {
 			{isPending ? (
 				<TimeTable pending entries={[]} days={IsoWeek.days(week)} />
 			) : error ? (
-				<p role="alert">Kunne ikke avstemme uken: {error.message}</p>
+				<p role="alert">En feil oppstod: {error.message}</p>
 			) : (
 				data && (
 					<>
@@ -122,7 +133,6 @@ export const WeeklyReconciliation: React.FC<Props> = ({ week, ruleset }) => {
 								<Button
 									pending={isFetching || sync.isPending}
 									onClick={() => {
-										sync.reset();
 										void runSync(changes);
 									}}
 								>
@@ -133,7 +143,6 @@ export const WeeklyReconciliation: React.FC<Props> = ({ week, ruleset }) => {
 									icon="eye"
 									disabled={isFetching || sync.isPending}
 									onClick={() => {
-										sync.reset();
 										setPreview({ version, changes, unmatchedCount });
 									}}
 								>
@@ -147,12 +156,6 @@ export const WeeklyReconciliation: React.FC<Props> = ({ week, ruleset }) => {
 						)}
 					</>
 				)
-			)}
-			{sync.isError && (
-				<p role="alert">Synkronisering feilet: {sync.error.message}</p>
-			)}
-			{sync.isSuccess && (
-				<p role="status">Timene ble oppdatert. Avstemmingen oppdateres.</p>
 			)}
 			{updateLockDate.isError && (
 				<p role="alert">Kunne ikke låse: {updateLockDate.error.message}</p>
