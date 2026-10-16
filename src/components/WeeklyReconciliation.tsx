@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { Button, ConfirmModal } from "@utdanningsdirektoratet/lisa";
+import { Button, ConfirmModal, H2 } from "@utdanningsdirektoratet/lisa";
 import { formatHours, IsoDate, IsoWeek } from "../date-time/IsoWeek";
 import { TimecodeLabel } from "./TimecodeLabel";
 import { useLockDate } from "../data/useLockDate";
@@ -12,6 +12,7 @@ import { planSync, type ProposedChange } from "../reconciliation/syncPreview";
 import { Ruleset } from "../rules";
 import { TimeTable } from "./TimeTable/TimeTable";
 import { toGridEntries } from "./TimeTable/gridModel";
+import { P } from "./P";
 
 interface Props {
 	week: IsoWeek;
@@ -148,14 +149,16 @@ export const WeeklyReconciliation: React.FC<Props> = ({ week, ruleset }) => {
 			>
 				{preview && (
 					<>
-						<p>
+						<P className="mt-20">
 							Oppdaterer følgende Bekk-timer til å stemme overens med
 							Jira-timeføring:
-						</p>
+						</P>
 						{groupByDate(preview.changes).map(([date, dayChanges]) => (
 							<section key={date} aria-label={IsoDate.formatLong(date)}>
-								<h3>{IsoDate.formatLong(date)}</h3>
-								<ul>
+								<H2 textStyle="title" clasName="mb-12">
+									{IsoDate.formatLong(date)}
+								</H2>
+								<ul className="mt-0 mb-20">
 									{dayChanges.map((change) => (
 										<li key={change.timecodeId}>
 											<TimecodeLabel timecodeId={change.timecodeId} />:{" "}
