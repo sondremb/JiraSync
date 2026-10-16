@@ -89,7 +89,7 @@ export const WeeklyReconciliation: React.FC<Props> = ({ week, ruleset }) => {
 	return (
 		<section aria-label="Avstemming">
 			{isPending ? (
-				<p>Henter timer fra Jira og internt system…</p>
+				<TimeTable pending entries={[]} days={IsoWeek.days(week)} />
 			) : error ? (
 				<p role="alert">Kunne ikke avstemme uken: {error.message}</p>
 			) : (

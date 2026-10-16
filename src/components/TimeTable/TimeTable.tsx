@@ -16,6 +16,7 @@ interface Props {
 	entries: GridEntry[];
 	days: IsoDate[];
 	onLockDate?: (day: IsoDate) => void;
+	pending?: boolean;
 }
 
 const CapitalText = styled(Text)`
@@ -54,11 +55,9 @@ export const TimeTable: React.FC<Props> = (props) => {
 		.sort((a, b) => Number(b.managed) - Number(a.managed))
 		.map((entry) => ({ kind: "entry", entry }));
 	const lockRow: Row[] = props.onLockDate ? [{ kind: "lock" }] : [];
-	const items: Row[] = [
-		...rows,
-		{ kind: "sum", entries: props.entries },
-		...lockRow,
-	];
+	const items: Row[] = props.pending
+		? []
+		: [...rows, { kind: "sum", entries: props.entries }, ...lockRow];
 
 	return (
 		<Table
@@ -93,6 +92,11 @@ export const TimeTable: React.FC<Props> = (props) => {
 				},
 			]}
 			items={items}
+			pendingProps={{
+				pending: !!props.pending,
+				numberOfRows: 4,
+				rowColor: (i) => (i >= 2 ? "skifer500" : "stålblå200"),
+			}}
 			rowColor={(row) => (row.kind === "entry" ? "stålblå200" : "skifer500")}
 		/>
 	);
