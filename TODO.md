@@ -43,6 +43,7 @@
 - [ ] T28 Add state to URL
   - Isoweek, with "/" defaulting to current logic (week of day after current
     lock date)
+- [ ] T29 Make logout page not ugly
 
 ## Blocked on a decision
 
