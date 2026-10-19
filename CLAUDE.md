@@ -42,12 +42,12 @@ Rulesets live in `src/policies/policies.json` — a versioned JSON file validate
 
 Both APIs use the same stack: `openapi-typescript` for type generation and `openapi-fetch` for the HTTP client.
 
-- **Jira**: `src/data/jiraclient.ts` — module-level singleton; types in `src/generated/jira-issues.d.ts` (from `yarn generate:jira`)
-- **Bekk**: `src/data/bekkclient.ts` — module-level singleton; types in `src/generated/bekk-timekeeper.d.ts` (from `yarn generate:bekk`)
+- **Jira**: `src/data/jira/jiraclient.ts` — module-level singleton; types in `src/generated/jira-issues.d.ts` (from `pnpm generate:jira`)
+- **Bekk**: `src/data/bekkclient.ts` — module-level singleton; types in `src/generated/bekk-timekeeper.d.ts` (from `pnpm generate:bekk`)
 
-Auth is injected via middleware on each client. Jira uses a sessionStorage-backed token context (`src/login/jira/authContext.ts`; a 401 from Jira invalidates the token, refreshes it and retries the request once, see `jiraclient.ts`); Bekk calls `msalInstance.acquireTokenSilent()` directly (the MSAL `PublicClientApplication` instance is a module-level singleton exported from `src/login/bekk/example.tsx`).
+Auth is injected via middleware on each client. Jira uses a sessionStorage-backed token context (`src/login/jira/authContext.ts`; a 401 from Jira invalidates the token, refreshes it and retries the request once, see `jiraclient.ts`); Bekk calls `msalInstance.acquireTokenSilent()` directly (the MSAL `PublicClientApplication` instance is a module-level singleton exported from `src/login/bekk/bekkLogin.tsx`).
 
-`getEmployeeId()` in `src/login/bekk/example2.tsx` reads the employee ID from the active MSAL account — call it inside `queryFn`, not at the hook level.
+`getEmployeeId()` in `src/login/bekk/bekkLogin.tsx` reads the employee ID from the active MSAL account — call it inside `queryFn`, not at the hook level.
 
 ### Key patterns
 
