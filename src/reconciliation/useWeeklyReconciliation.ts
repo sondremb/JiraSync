@@ -4,10 +4,11 @@ import { loadInternalWorklogs } from "../data/loadInternalWorklogs";
 import { loadJiraWorklogs } from "../data/jira/loadJiraWorklogs";
 import { writeInternalHours } from "../data/writeInternalHours";
 import { Ruleset } from "../rules";
-import { createJqlPolicy, matchJiraJqls } from "./implementation/jqlPolicy";
+import { createJqlPolicy } from "./implementation/jqlPolicy";
 import { reconcilePeriod } from "./reconcile";
 import { ProposedChange } from "./syncPreview";
 import { syncWeek } from "./syncWeek";
+import { matchJqls } from "../data/jira/matchJqls";
 
 export function useWeeklyReconciliation(week: IsoWeek, ruleset: Ruleset) {
 	return useQuery({
@@ -17,7 +18,7 @@ export function useWeeklyReconciliation(week: IsoWeek, ruleset: Ruleset) {
 				IsoWeek.monday(week),
 				IsoWeek.sunday(week),
 				loadJiraWorklogs,
-				async () => createJqlPolicy(ruleset, matchJiraJqls),
+				async () => createJqlPolicy(ruleset, matchJqls),
 				loadInternalWorklogs,
 			),
 	});
