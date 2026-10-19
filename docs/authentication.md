@@ -10,7 +10,6 @@ Se Atlassian-dokumentasjon om [OAuth 2.0 (3LO) apps](https://developer.atlassian
 
 ### Flyt
 
-
 ```mermaid
 ---
 title: Atlassian auth flyt
@@ -63,9 +62,13 @@ flowchart TB
 Klienten (`src/login/jira/authContext.ts`) håndterer token-livssyklusen:
 
 1. **Hent token**: Sjekker om det finnes et gyldig access token i `sessionStorage`
-2. **Bruk cached token**: Hvis tokenet ikke er utløpt, returner det direkte
-3. **Refresh**: Hvis tokenet er utløpt, kaller `/.netlify/functions/jira-auth-session` som bruker refresh token-cookien til å hente nytt access token + refresh token
+2. **Bruk cached token**: Hvis tokenet er gyldig i mer enn 60 sekunder til, returneres det direkte. Marginen hindrer at tokenet utløper mens forespørselen er underveis
+3. **Refresh**: Hvis tokenet er utløpt (eller nær utløp), kaller `/.netlify/functions/jira-auth-session` som bruker refresh token-cookien til å hente nytt access token + refresh token. Parallelle kall deler én refresh-request, siden refresh tokens roteres og samtidige refreshes ellers ville ugyldiggjort hverandre
 4. **Lagre**: Nytt access token og utløpstid lagres i `sessionStorage`
+
+#### 401 fra Jira
+
+Et token som ser gyldig ut lokalt kan likevel være avvist av Jira (f.eks. tilbakekalt, eller et gammelt token i `sessionStorage` etter endret klient-ID/miljø). Hvis Jira svarer 401, kaller Jira-klienten (`src/data/jira/jiraclient.ts`) `invalidate()` for å slette det cachede tokenet, henter et nytt og prøver request én gang til. Feiler den igjen, returneres feilen til kalleren; det skjer ingen automatisk redirect til `/login`.
 
 Access tokens i `sessionStorage` er kortlevde (1 time). Refresh tokens er langvarige (90 dager), lagres kun i httpOnly cookies, og er ikke tilgjengelige fra JavaScript.
 
@@ -81,12 +84,12 @@ Access tokens i `sessionStorage` er kortlevde (1 time). Refresh tokens er langva
 
 ### Serverless-funksjoner
 
-| Funksjon | Fil | Beskrivelse |
-|---|---|---|
-| `jira-auth-init` | `src/backend/jira-auth-init.ts` | Starter OAuth-flyten, genererer PKCE, redirecter til Atlassian |
-| `jira-auth-callback` | `src/backend/jira-auth-callback.ts` | Mottar callback fra Atlassian, bytter code mot tokens |
-| `jira-auth-session` | `src/backend/jira-auth-session.ts` | Refresher access token via refresh token cookie |
-| `jira-auth-logout` | `src/backend/jira-auth-logout.ts` | Sletter refresh token cookie |
+| Funksjon             | Fil                                 | Beskrivelse                                                    |
+| -------------------- | ----------------------------------- | -------------------------------------------------------------- |
+| `jira-auth-init`     | `src/backend/jira-auth-init.ts`     | Starter OAuth-flyten, genererer PKCE, redirecter til Atlassian |
+| `jira-auth-callback` | `src/backend/jira-auth-callback.ts` | Mottar callback fra Atlassian, bytter code mot tokens          |
+| `jira-auth-session`  | `src/backend/jira-auth-session.ts`  | Refresher access token via refresh token cookie                |
+| `jira-auth-logout`   | `src/backend/jira-auth-logout.ts`   | Sletter refresh token cookie                                   |
 
 ### Konfigurasjon
 
@@ -119,6 +122,7 @@ Appen er klar
 ### Oppsett (`src/login/bekk/bekkLogin.tsx`)
 
 MSAL-instansen er en modul-singleton (`msalInstance`) konfigurert med:
+
 - `clientId` — App registration client ID fra Azure
 - `authority` — `https://login.microsoftonline.com/{tenantId}`
 - `cacheLocation` — `localStorage`
@@ -137,10 +141,10 @@ MSAL håndterer token-refresh automatisk via `acquireTokenSilent()`. Bekk API-kl
 
 ### Azure-registreringer
 
-| Miljø | App registration |
-|---|---|
-| Prod | [97690193-50da-4eda-b961-519d047cc8ce](https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/~/Overview/appId/97690193-50da-4eda-b961-519d047cc8ce) |
-| Dev | [05d0e69d-bb21-43b6-bdd0-5eed364561c0](https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/~/Overview/appId/05d0e69d-bb21-43b6-bdd0-5eed364561c0) |
+| Miljø | App registration                                                                                                                                                               |
+| ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Prod  | [97690193-50da-4eda-b961-519d047cc8ce](https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/~/Overview/appId/97690193-50da-4eda-b961-519d047cc8ce) |
+| Dev   | [05d0e69d-bb21-43b6-bdd0-5eed364561c0](https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/~/Overview/appId/05d0e69d-bb21-43b6-bdd0-5eed364561c0) |
 
 ### Konfigurasjon
 

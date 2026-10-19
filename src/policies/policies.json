@@ -1,0 +1,135 @@
+{
+	"schemaVersion": 1,
+	"rulesets": [
+		{
+			"id": "old-pas-rules",
+			"name": "Gamle PAS-regler",
+			"description": "For deg som er på PASX, PASP eller UIDP på gammel kontrakt",
+			"rules": [
+				{
+					"projectKey": "PASX",
+					"jql": "component = 10121",
+					"timecode": 1003615,
+					"comment": "Nyutvikling"
+				},
+				{ "projectKey": "PASX", "timecode": 1000752, "comment": "Forvaltning" },
+				{
+					"projectKey": "PASP",
+					"jql": "component = 10290",
+					"timecode": 1003616,
+					"comment": "Nyutvikling"
+				},
+				{ "projectKey": "PASP", "timecode": 1000890, "comment": "Forvaltning" },
+				{ "projectKey": "IDPF", "timecode": 1000854 },
+				{ "projectKey": "SO", "timecode": 1002326 },
+				{ "projectKey": "UBAS", "timecode": 1002497 }
+			]
+		},
+		{
+			"id": "new-pas-rules",
+			"name": "Nye PAS-regler",
+			"description": "For deg som er på PASX, PASP eller UIDP på ny kontrakt",
+			"rules": [
+				{
+					"projectKey": "PASX",
+					"jql": "component = 10121",
+					"timecode": 1003649,
+					"comment": "Nyutvikling"
+				},
+				{ "projectKey": "PASX", "timecode": 1003648, "comment": "Forvaltning" },
+				{
+					"projectKey": "PASP",
+					"jql": "component = 10290",
+					"timecode": 1003651,
+					"comment": "Nyutvikling"
+				},
+				{ "projectKey": "PASP", "timecode": 1003650, "comment": "Forvaltning" },
+				{
+					"projectKey": "IDPF",
+					"jql": "component = 10677",
+					"timecode": 1003780,
+					"comment": "Nyutvikling"
+				},
+				{ "projectKey": "IDPF", "timecode": 1003618, "comment": "Forvaltning" },
+				{ "projectKey": "NYAPROV", "timecode": 1003650 }
+			]
+		},
+		{
+			"id": "old-pas-design-rules",
+			"name": "Gamle PAS-designerregler",
+			"description": "For deg som er designer i PASP eller PASX på gammel kontrakt",
+			"rules": [
+				{
+					"projectKey": "PASP",
+					"jql": "component = 10290",
+					"timecode": 1003617,
+					"comment": "Nyutvikling"
+				},
+				{
+					"projectKey": "PASX",
+					"jql": "component = 10121",
+					"timecode": 1003617,
+					"comment": "Nyutvikling"
+				},
+				{ "projectKey": "PASP", "timecode": 1001717, "comment": "Forvaltning" },
+				{ "projectKey": "PASX", "timecode": 1001717, "comment": "Forvaltning" }
+			]
+		},
+		{
+			"id": "new-pas-design-rules",
+			"name": "Nye PAS-designerregler",
+			"description": "For deg som er designer i PASP eller PASX på ny kontrakt",
+			"rules": [
+				{ "projectKey": "PASP", "timecode": 1003652 },
+				{ "projectKey": "PASX", "timecode": 1003652 }
+			]
+		},
+		{
+			"id": "other-rules",
+			"name": "Andre regler",
+			"description": "For deg som er på HFL/HSS eller designsystem",
+			"rules": [
+				{
+					"projectKey": "HFL",
+					"jql": "component = 10073",
+					"timecode": 1003625,
+					"comment": "Brisk nyutvikling"
+				},
+				{
+					"projectKey": "HFL",
+					"jql": "parentEpic IN (HFL-7191, HFL-5799)",
+					"timecode": 1002302,
+					"comment": "Brisk forvaltning"
+				},
+				{
+					"projectKey": "HSS",
+					"jql": "\"Epic Link\" = HSS-1030",
+					"timecode": 1003290,
+					"comment": "Skjema-vertikal"
+				},
+				{ "projectKey": "HSS", "timecode": 1003012 },
+				{ "projectKey": "HFL", "timecode": 1003011, "comment": "Forvaltning" }
+			]
+		},
+		{
+			"id": "adrian-rules",
+			"name": "Adrians regler",
+			"description": "For deg som er Adrian Kortyczko",
+			"rules": [{ "projectKey": "PASP", "timecode": 1003823 }]
+		},
+		{
+			"id": "grunnmur-rules",
+			"name": "Grunnmur-regler",
+			"description": "For deg som jobber digital grunnmur",
+			"rules": [
+				{
+					"projectKey": "GMS",
+					"jql": "component = 12045",
+					"timecode": 1003835,
+					"comment": "Nyutvikling"
+				},
+				{ "projectKey": "GMS", "timecode": 1003834, "comment": "Forvaltning" }
+			]
+		}
+	]
+}

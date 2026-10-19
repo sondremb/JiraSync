@@ -1,6 +1,5 @@
 import React from "react";
 import { createRootRouteWithContext, Outlet } from "@tanstack/react-router";
-import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { LisaProvider } from "@utdanningsdirektoratet/lisa";
 import { GlobalStyle } from "../global-style";
 import { JiraAuthContext } from "../login/jira/authContext";
@@ -15,8 +14,15 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 	component: RootComponent,
 });
 
+const queryClient = new QueryClient();
+
+const TanStackRouterDevtools = React.lazy(() =>
+	import("@tanstack/react-router-devtools").then((m) => ({
+		default: m.TanStackRouterDevtools,
+	})),
+);
+
 function RootComponent() {
-	const queryClient = new QueryClient();
 	return (
 		<QueryClientProvider client={queryClient}>
 			<LisaProvider includeGlobalStyling>

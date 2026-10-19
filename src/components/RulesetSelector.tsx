@@ -20,9 +20,9 @@ export const RulesetSelector: React.FC<Props> = ({ className }) => {
 			<RadioGroup
 				title={"Velg regelsett"}
 				onChange={(selectedValue: string) => {
-					setRuleSet(rulesets[selectedValue as RulesetId]);
+					setRuleSet(rulesets.get(selectedValue as RulesetId)!);
 				}}
-				items={Object.values(rulesets).map((ruleset) => ({
+				items={Array.from(rulesets.values()).map((ruleset) => ({
 					value: ruleset.id,
 					label: ruleset.name + " - " + ruleset.description,
 				}))}

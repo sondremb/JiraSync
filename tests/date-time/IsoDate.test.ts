@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
-import { IsoDate } from "./IsoWeek";
+import { IsoDate } from "../../src/date-time/IsoWeek";
 
 describe("IsoDate.fromDate (Oslo zone logic)", () => {
 	test("Summer time: switches at 22:00 UTC (midnight Oslo)", () => {
@@ -67,37 +67,59 @@ describe("IsoDate.toDate / fromDate round-trips", () => {
 describe("IsoDate.toDateAt", () => {
 	test("Returns correct UTC instant for a given Oslo wall time (winter)", () => {
 		// 2025-01-15 09:00 Oslo = 08:00 UTC (UTC+1)
-		const result = IsoDate.toDateAt("2025-01-15" as IsoDate, { hours: 9, minutes: 0 });
+		const result = IsoDate.toDateAt("2025-01-15" as IsoDate, {
+			hours: 9,
+			minutes: 0,
+		});
 		expect(result.toISOString()).toBe("2025-01-15T08:00:00.000Z");
 	});
 
 	test("Returns correct UTC instant for a given Oslo wall time (summer)", () => {
 		// 2025-07-15 09:00 Oslo = 07:00 UTC (UTC+2)
-		const result = IsoDate.toDateAt("2025-07-15" as IsoDate, { hours: 9, minutes: 0 });
+		const result = IsoDate.toDateAt("2025-07-15" as IsoDate, {
+			hours: 9,
+			minutes: 0,
+		});
 		expect(result.toISOString()).toBe("2025-07-15T07:00:00.000Z");
 	});
 
 	test("Accepts optional seconds", () => {
 		// 2025-01-15 08:30:45 Oslo = 07:30:45 UTC
-		const result = IsoDate.toDateAt("2025-01-15" as IsoDate, { hours: 8, minutes: 30, seconds: 45 });
+		const result = IsoDate.toDateAt("2025-01-15" as IsoDate, {
+			hours: 8,
+			minutes: 30,
+			seconds: 45,
+		});
 		expect(result.toISOString()).toBe("2025-01-15T07:30:45.000Z");
 	});
 
 	test("Defaults seconds to 0 when omitted", () => {
-		const result = IsoDate.toDateAt("2025-06-01" as IsoDate, { hours: 0, minutes: 0 });
+		const result = IsoDate.toDateAt("2025-06-01" as IsoDate, {
+			hours: 0,
+			minutes: 0,
+		});
 		expect(result.getUTCSeconds()).toBe(0);
 	});
 
 	test("fromDate(toDateAt(...)) round-trips back to the same IsoDate", () => {
 		const iso = "2025-06-15" as IsoDate;
-		expect(IsoDate.fromDate(IsoDate.toDateAt(iso, { hours: 8, minutes: 0 }))).toBe(iso);
-		expect(IsoDate.fromDate(IsoDate.toDateAt(iso, { hours: 23, minutes: 59, seconds: 59 }))).toBe(iso);
+		expect(
+			IsoDate.fromDate(IsoDate.toDateAt(iso, { hours: 8, minutes: 0 })),
+		).toBe(iso);
+		expect(
+			IsoDate.fromDate(
+				IsoDate.toDateAt(iso, { hours: 23, minutes: 59, seconds: 59 }),
+			),
+		).toBe(iso);
 	});
 
 	test("DST spring-forward: 2025-03-30 is handled correctly", () => {
 		// Norway springs forward at 02:00 -> 03:00 on 2025-03-30
 		// 08:00 Oslo (CEST, UTC+2) = 06:00 UTC
-		const result = IsoDate.toDateAt("2025-03-30" as IsoDate, { hours: 8, minutes: 0 });
+		const result = IsoDate.toDateAt("2025-03-30" as IsoDate, {
+			hours: 8,
+			minutes: 0,
+		});
 		expect(result.toISOString()).toBe("2025-03-30T06:00:00.000Z");
 	});
 });
@@ -105,33 +127,33 @@ describe("IsoDate.toDateAt", () => {
 describe("IsoDate.range", () => {
 	test("Inclusive range over normal days", () => {
 		expect(
-			IsoDate.range("2025-02-03" as IsoDate, "2025-02-05" as IsoDate)
+			IsoDate.range("2025-02-03" as IsoDate, "2025-02-05" as IsoDate),
 		).toEqual(["2025-02-03", "2025-02-04", "2025-02-05"]);
 	});
 
 	test("Single-day range returns one element", () => {
 		expect(
-			IsoDate.range("2025-07-15" as IsoDate, "2025-07-15" as IsoDate)
+			IsoDate.range("2025-07-15" as IsoDate, "2025-07-15" as IsoDate),
 		).toEqual(["2025-07-15"]);
 	});
 
 	test("Range across DST start (spring forward)", () => {
 		// Norway (Europe/Oslo) DST starts in late March; dates are calendar-stable.
 		expect(
-			IsoDate.range("2025-03-29" as IsoDate, "2025-03-31" as IsoDate)
+			IsoDate.range("2025-03-29" as IsoDate, "2025-03-31" as IsoDate),
 		).toEqual(["2025-03-29", "2025-03-30", "2025-03-31"]);
 	});
 
 	test("Range across year boundary", () => {
 		expect(
-			IsoDate.range("2026-12-30" as IsoDate, "2027-01-02" as IsoDate)
+			IsoDate.range("2026-12-30" as IsoDate, "2027-01-02" as IsoDate),
 		).toEqual(["2026-12-30", "2026-12-31", "2027-01-01", "2027-01-02"]);
 	});
 
 	test("Contiguous +1 day increments (no gaps/dups)", () => {
 		const days = IsoDate.range(
 			"2026-12-28" as IsoDate,
-			"2027-01-03" as IsoDate
+			"2027-01-03" as IsoDate,
 		);
 		for (let i = 1; i < days.length; i++) {
 			const prev = IsoDate.toDate(days[i - 1]).getTime();
@@ -139,5 +161,29 @@ describe("IsoDate.range", () => {
 			const deltaDays = (curr - prev) / 86_400_000;
 			expect(deltaDays).toBe(1);
 		}
+	});
+});
+
+describe("IsoDate.addDays", () => {
+	test.each([
+		["2025-02-03", 1, "2025-02-04"],
+		["2025-02-03", -1, "2025-02-02"],
+		["2025-01-31", 1, "2025-02-01"],
+		["2025-12-31", 1, "2026-01-01"],
+		["2026-01-01", -1, "2025-12-31"],
+		["2024-02-28", 1, "2024-02-29"],
+		["2024-02-29", 1, "2024-03-01"],
+	])("adds %i days to %s", (from, days, expected) => {
+		expect(IsoDate.addDays(from as IsoDate, days)).toBe(expected);
+	});
+
+	test("preserves Oslo calendar dates across the DST spring transition", () => {
+		expect(IsoDate.addDays("2025-03-29" as IsoDate, 1)).toBe("2025-03-30");
+		expect(IsoDate.addDays("2025-03-30" as IsoDate, 1)).toBe("2025-03-31");
+	});
+
+	test("preserves Oslo calendar dates across the DST autumn transition", () => {
+		expect(IsoDate.addDays("2025-10-25" as IsoDate, 1)).toBe("2025-10-26");
+		expect(IsoDate.addDays("2025-10-26" as IsoDate, 1)).toBe("2025-10-27");
 	});
 });

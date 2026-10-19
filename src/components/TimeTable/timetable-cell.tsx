@@ -2,7 +2,6 @@ import React from "react";
 import { FlexColumn, Icon, Text } from "@utdanningsdirektoratet/lisa";
 import styled, { css } from "styled-components";
 import { Row } from "./TimeTable";
-import { FrivilligKompetanseByggingId, isUdir } from "../../timecode-map";
 import {
 	colors,
 	ColorType,
@@ -11,11 +10,9 @@ import {
 	spacing,
 	Weight,
 } from "@utdanningsdirektoratet/lisa-tokens";
-import { LockDateButton } from "./LockDateButton";
 import { useBekkTimecode } from "../../data/useBekkTimecode";
-import { BekkTimecodeEntry, DateString } from "../../types";
-import { SkeletonLoader } from "../SkeletonLoader";
 import { IsoDate } from "../../date-time/IsoWeek";
+import { GridEntry } from "./gridModel";
 
 const CustomText = styled.div<{
 	fontSize?: number;
@@ -30,7 +27,10 @@ const CustomText = styled.div<{
 		props.textColor ? colorTypeToHex(props.textColor) : colors.svart};
 `;
 
-const ContainerDiv = styled(CustomText as any)<{ correct: boolean; border: boolean }>`
+const ContainerDiv = styled(CustomText as any)<{
+	correct: boolean;
+	border: boolean;
+}>`
 	border-radius: 5px;
 	position: relative;
 	height: 50px;
@@ -63,44 +63,33 @@ const CornerDiv = styled(CustomText as any)<{ correct: boolean }>`
 interface Props {
 	row: Row;
 	day: IsoDate;
-	onLockClicked: (day: IsoDate) => void;
 }
 
 export const TimetableCell: React.FC<Props> = (props) => {
 	switch (props.row.kind) {
-		case "lock":
-			return (
-				<LockDateButton
-					day={props.day}
-					onClick={() => props.onLockClicked(props.day)}
-				/>
-			);
 		case "sum":
 			return (
 				<OtherDiv fontSize={24} textColor={"grå100"}>
 					{props.row.entries
-						// frivillig kompetansebygging teller ikke mot kravet om 37.5 timer i uka
-						.filter((entry) => entry.id !== FrivilligKompetanseByggingId)
 						.map((entry) => entry.days[props.day]?.bekkHours ?? 0)
 						.reduce((prev, curr) => prev + curr, 0)}
 				</OtherDiv>
 			);
 		case "entry":
 			return <EntryCell entry={props.row.entry} dateString={props.day} />;
+		case "lock":
+			return <></>;
 	}
 };
 
 const EntryCell: React.FC<{
-	entry: BekkTimecodeEntry;
-	dateString: DateString;
+	entry: GridEntry;
+	dateString: IsoDate;
 }> = ({ entry, dateString }) => {
-	const timecode = useBekkTimecode(entry.id);
-	if (timecode === undefined) return null;
 	const day = entry.days[dateString];
 
-	const correct =
-		!isUdir(timecode.id) || day?.bekkHours === day?.totalJiraHours;
-	const jiraHours = day?.totalJiraHours || (isUdir(timecode.id) ? 0 : "");
+	const correct = !entry.managed || day?.bekkHours === day?.totalJiraHours;
+	const jiraHours = entry.managed ? (day?.totalJiraHours ?? 0) : "";
 	return (
 		<ContainerDiv fontSize={24} bold={!correct} correct={correct} border>
 			{day !== undefined &&
@@ -124,30 +113,17 @@ export const FirstColumnCell: React.FC<{ row: Row }> = ({ row }) => {
 					Totalt
 				</CustomText>
 			);
-		case "lock":
-			return <></>;
 		case "entry":
 			return <TimeCodeCell entry={row.entry} />;
+		case "lock":
+			return <></>;
 	}
 };
 
-const TimeCodeCell: React.FC<{ entry: BekkTimecodeEntry }> = ({ entry }) => {
+const TimeCodeCell: React.FC<{ entry: GridEntry }> = ({ entry }) => {
 	const timecode = useBekkTimecode(entry.id);
 	if (timecode === undefined) {
-		return (
-			<div
-				style={{
-					display: "flex",
-					flexDirection: "column",
-					alignItems: "flex-start",
-				}}
-			>
-				<SkeletonLoader>TEST1001</SkeletonLoader>
-				<SkeletonLoader textStyle="label">
-					Timekoden lastes - Laster nå
-				</SkeletonLoader>
-			</div>
-		);
+		return <Text>Timekode {entry.id}</Text>;
 	}
 	return (
 		<FlexColumn>
@@ -163,24 +139,19 @@ export const SumColumnCell: React.FC<{ row: Row }> = ({ row }) => {
 			return (
 				<OtherDiv fontSize={24} bold>
 					{Object.values(row.entry.days)
-						.map((day) => day.bekkHours)
+						.map((day) => day?.bekkHours ?? 0)
 						.reduce((prev, curr) => prev + curr, 0)}
 				</OtherDiv>
 			);
 		case "sum":
 			const totalBekkHoursAllWeek = row.entries
-				.filter((entry) => entry.id !== FrivilligKompetanseByggingId)
 				.flatMap((entry) =>
-					Object.values(entry.days).map((day) => day.bekkHours),
+					Object.values(entry.days).map((day) => day?.bekkHours ?? 0),
 				)
 				.reduce((prev, curr) => prev + curr, 0);
 			return (
-				<OtherDiv
-					fontSize={24}
-					bold
-					textColor={totalBekkHoursAllWeek >= 37.5 ? "grå100" : "fersken500"}
-				>
-					{totalBekkHoursAllWeek ?? 0}
+				<OtherDiv fontSize={24} bold textColor="grå100">
+					{totalBekkHoursAllWeek}
 				</OtherDiv>
 			);
 		case "lock":

@@ -1,6 +1,4 @@
-import React, { useEffect, useState } from "react";
-
-import { TimeTable } from "./components/TimeTable/TimeTable";
+import React, { useState } from "react";
 import {
 	Button,
 	FlexColumn,
@@ -8,18 +6,13 @@ import {
 	Icon,
 	Text,
 } from "@utdanningsdirektoratet/lisa";
-import styled from "styled-components";
-import { useLockDate } from "./data/useLockDate";
-import { isUdir } from "./timecode-map";
-import { useWeek } from "./data/useWeek";
-import { AltStemmerAlert } from "./components/AltStemmerAlert";
-import { DownloadTimestamp } from "./components/DownloadTimestamp";
 import { colors, spacing } from "@utdanningsdirektoratet/lisa-tokens";
-import { IsoDate, IsoWeek } from "./date-time/IsoWeek";
-import { addDays } from "date-fns";
-import { CopyTokenButton } from "./login/bekk/CopyTokenButton";
-import { config } from "./Utils/envUtils";
+import styled from "styled-components";
+import { WeeklyReconciliation } from "./components/WeeklyReconciliation";
 import { RulesetModal } from "./components/RulesetModal";
+import { useLockDate } from "./data/useLockDate";
+import { useRuleSet } from "./data/useRuleset";
+import { IsoWeek } from "./date-time/IsoWeek";
 
 const CenteredText = styled(Text)`
 	text-align: center;
@@ -29,60 +22,29 @@ const ColoredRow = styled(FlexRow)`
 	background-color: ${colors.skifer500};
 	padding: ${spacing(8)};
 `;
+
 interface Props {
 	initialWeek: IsoWeek;
 }
 
 export const App: React.FC<Props> = ({ initialWeek }) => {
-	const { lockDate } = useLockDate();
-	const [weekAndYear, setWeekAndYear] = useState<IsoWeek>(initialWeek);
+	const { isLoading: lockDateLoading } = useLockDate();
+	const { selectedRuleset } = useRuleSet();
+	// Start on the week after the lock date, but only the first time it loads:
+	// locking a week later must not move the user's view.
+	const [startWeek, setStartWeek] = useState<IsoWeek | undefined>();
+	if (!lockDateLoading && startWeek === undefined) setStartWeek(initialWeek);
+	const [navigatedWeek, setNavigatedWeek] = useState<IsoWeek | undefined>();
+	const weekAndYear = navigatedWeek ?? startWeek ?? initialWeek;
 
-	useEffect(() => {
-		if (lockDate === undefined || weekAndYear !== undefined) return;
-
-		const dayAfterLockDate = addDays(new Date(lockDate), 1);
-		const isoWeek = IsoWeek.fromDate(dayAfterLockDate);
-		setWeekAndYear(isoWeek);
-	}, [lockDate]);
-
-	const { state: entries, timestamp, updateBekkHours } = useWeek(weekAndYear);
-
-	const onNextWeekClick = () => {
-		setWeekAndYear((old) => IsoWeek.next(old));
-	};
-
-	const onPreviousWeekClick = () => {
-		setWeekAndYear((old) => IsoWeek.previous(old));
-	};
-
-	const synchronize = () => {
-		if (entries === undefined || lockDate === undefined) return;
-		const udirEntries = entries.filter((entry) => isUdir(entry.id));
-		const udirDays = udirEntries.flatMap((entry) =>
-			Object.entries(entry.days).map(([dateString, day]) => ({
-				...day,
-				dateString,
-				id: entry.id,
-			})),
-		);
-		const daysWithDifference = udirDays
-			.filter((day) => day.bekkHours !== day.totalJiraHours)
-			.filter((day) => day.dateString > lockDate);
-		daysWithDifference.forEach((day) =>
-			updateBekkHours({
-				timecodeId: day.id,
-				hours: day.totalJiraHours,
-				date: IsoDate.parse(day.dateString),
-			}),
-		);
-	};
+	const onNextWeekClick = () => setNavigatedWeek(IsoWeek.next(weekAndYear));
+	const onPreviousWeekClick = () =>
+		setNavigatedWeek(IsoWeek.previous(weekAndYear));
 
 	return (
 		<>
 			<FlexRow halign="space-between" className="mb-12">
-				{timestamp && <DownloadTimestamp timestamp={timestamp} />}
 				<RulesetModal />
-				{config.debug && <CopyTokenButton />}
 			</FlexRow>
 			<ColoredRow halign="center" valign="center">
 				<Button
@@ -111,14 +73,13 @@ export const App: React.FC<Props> = ({ initialWeek }) => {
 					Neste
 				</Button>
 			</ColoredRow>
-			{entries !== undefined && lockDate !== undefined && (
-				<TimeTable
-					entries={entries}
-					days={IsoWeek.days(weekAndYear)}
-					lockDate={lockDate}
+			{selectedRuleset && !lockDateLoading && (
+				<WeeklyReconciliation
+					key={`${weekAndYear}-${selectedRuleset.id}`}
+					week={weekAndYear}
+					ruleset={selectedRuleset}
 				/>
 			)}
-			<AltStemmerAlert entries={entries} onSynchronize={synchronize} />
 		</>
 	);
 };
