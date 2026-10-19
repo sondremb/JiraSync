@@ -43,7 +43,7 @@ describe("createJqlPolicy", () => {
 		expect(await policy.matchIssues([firstIssue])).toEqual(
 			new Map([[firstIssue, { isMatched: false }]]),
 		);
-		expect(await policy.getManagedTimecodes()).toEqual(new Set());
+		expect(await policy.selectManaged([firstTimecode])).toEqual(new Set());
 		expect(matchJqls).not.toHaveBeenCalled();
 	});
 	test("batch-matches with full JQL in rule order and gives the first matching rule priority", async () => {
@@ -86,7 +86,7 @@ describe("createJqlPolicy", () => {
 		);
 	});
 
-	test("derives distinct managed timecodes from every rule, even when no issues match", async () => {
+	test("selects only timecodes named by a rule, even when no issues match", async () => {
 		const policy = createJqlPolicy(
 			{
 				...ruleset,
@@ -98,9 +98,13 @@ describe("createJqlPolicy", () => {
 			vi.fn<MatchJqls>(),
 		);
 
-		expect(await policy.getManagedTimecodes()).toEqual(
-			new Set([firstTimecode, secondTimecode]),
-		);
+		expect(
+			await policy.selectManaged([
+				firstTimecode,
+				secondTimecode,
+				9999 as InternalTimecodeId,
+			]),
+		).toEqual(new Set([firstTimecode, secondTimecode]));
 	});
 
 	test("rejects a result for the wrong number of JQLs", async () => {

@@ -9,7 +9,9 @@ import {
 
 export interface Policy {
 	matchIssues: (issues: JiraIssueId[]) => Promise<JiraMatchResult>;
-	getManagedTimecodes: () => Promise<Set<InternalTimecodeId>>;
+	selectManaged: (
+		ids: InternalTimecodeId[],
+	) => Promise<Set<InternalTimecodeId>>;
 }
 export type LoadPolicy = () => Promise<Policy>;
 

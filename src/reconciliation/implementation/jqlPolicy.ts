@@ -37,7 +37,9 @@ export function createJqlPolicy(
 	matchJqls: MatchJqls,
 ): Policy {
 	const rules = ruleset.rules;
-	const matchedIds = rules.map((rule) => rule.timecode as InternalTimecodeId);
+	const ruleTimecodes = new Set(
+		rules.map((rule) => rule.timecode as InternalTimecodeId),
+	);
 
 	async function matchIssues(issues: JiraIssueId[]): Promise<JiraMatchResult> {
 		if (issues.length === 0) return new Map();
@@ -76,7 +78,8 @@ export function createJqlPolicy(
 		return result;
 	}
 	return {
-		getManagedTimecodes: () => Promise.resolve(new Set(matchedIds)),
+		selectManaged: (ids) =>
+			Promise.resolve(new Set(ids.filter((id) => ruleTimecodes.has(id)))),
 		matchIssues,
 	};
 }

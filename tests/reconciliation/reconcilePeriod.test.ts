@@ -19,6 +19,11 @@ const worklogs: JiraWork[] = [
 	{ issueId: otherIssue, date, hoursWorked: 2 },
 ];
 
+const selectOnly =
+	(...managed: InternalTimecodeId[]): Policy["selectManaged"] =>
+	async (ids) =>
+		new Set(ids.filter((id) => managed.includes(id)));
+
 describe("reconcilePeriod", () => {
 	test("batch-matches distinct issues once and applies the outcomes to every worklog", async () => {
 		const matchIssues = vi.fn<Policy["matchIssues"]>().mockResolvedValue(
@@ -29,7 +34,7 @@ describe("reconcilePeriod", () => {
 		);
 		const policy: Policy = {
 			matchIssues,
-			getManagedTimecodes: async () => new Set([timecode]),
+			selectManaged: selectOnly(timecode),
 		};
 		const loadJiraWorklogs = vi.fn().mockResolvedValue(worklogs);
 		const loadInternalWorklogs = vi
@@ -51,11 +56,81 @@ describe("reconcilePeriod", () => {
 		expect(DayReport.isInSync(report)).toBe(true);
 	});
 
+	test("asks the policy about the distinct union of worked and matched timecodes", async () => {
+		const workedTimecode = 202 as InternalTimecodeId;
+		const selectManaged = vi
+			.fn<Policy["selectManaged"]>()
+			.mockResolvedValue(new Set([timecode, workedTimecode]));
+		const policy: Policy = {
+			matchIssues: async () =>
+				new Map([
+					[issue, { isMatched: true, timecodeId: timecode }],
+					[otherIssue, { isMatched: true, timecodeId: timecode }],
+				]),
+			selectManaged,
+		};
+
+		await reconcilePeriod(
+			date,
+			date,
+			async () => worklogs,
+			async () => policy,
+			async () => [
+				{ timecodeId: workedTimecode, date, hoursWorked: 1 },
+				{ timecodeId: workedTimecode, date, hoursWorked: 2 },
+			],
+		);
+
+		expect(selectManaged).toHaveBeenCalledExactlyOnceWith([
+			workedTimecode,
+			timecode,
+		]);
+	});
+
+	test("rejects a match to a timecode the policy does not manage", async () => {
+		const policy: Policy = {
+			matchIssues: async () =>
+				new Map([[issue, { isMatched: true, timecodeId: timecode }]]),
+			selectManaged: selectOnly(),
+		};
+
+		await expect(
+			reconcilePeriod(
+				date,
+				date,
+				async () => [worklogs[0]],
+				async () => policy,
+				async () => [],
+			),
+		).rejects.toThrow("does not manage");
+	});
+
+	test("propagates a failing selectManaged", async () => {
+		const failure = new Error("select failed");
+		const policy: Policy = {
+			matchIssues: async () =>
+				new Map([[issue, { isMatched: true, timecodeId: timecode }]]),
+			selectManaged: async () => {
+				throw failure;
+			},
+		};
+
+		await expect(
+			reconcilePeriod(
+				date,
+				date,
+				async () => [worklogs[0]],
+				async () => policy,
+				async () => [],
+			),
+		).rejects.toBe(failure);
+	});
+
 	test("rejects a missing issue outcome instead of returning a partial report", async () => {
 		const policy: Policy = {
 			matchIssues: async () =>
 				new Map([[issue, { isMatched: true, timecodeId: timecode }]]),
-			getManagedTimecodes: async () => new Set([timecode]),
+			selectManaged: selectOnly(timecode),
 		};
 		const loadInternalWorklogs = vi.fn().mockResolvedValue([]);
 
@@ -80,7 +155,7 @@ describe("reconcilePeriod", () => {
 					if (failedOperation === "matcher") throw failure;
 					return new Map([[issue, { isMatched: true, timecodeId: timecode }]]);
 				},
-				getManagedTimecodes: async () => new Set([timecode]),
+				selectManaged: selectOnly(timecode),
 			};
 			await expect(
 				reconcilePeriod(

@@ -33,7 +33,20 @@ export async function reconcilePeriod(
 	}
 
 	const internalWork = await loadInternalWorklogs(from, to);
-	const managedTimecodes = await policy.getManagedTimecodes();
+
+	const matchedTimecodeIds = [...matchResultByIssueId.values()]
+		.filter((match) => match.isMatched)
+		.map((match) => match.timecodeId);
+	const allRelevantTimecodes = unique([
+		...internalWork.map((work) => work.timecodeId),
+		...matchedTimecodeIds,
+	]);
+	const managedTimecodes = await policy.selectManaged(allRelevantTimecodes);
+	if (matchedTimecodeIds.some((id) => !managedTimecodes.has(id))) {
+		throw new Error(
+			"Invariant failure: policy matched to a timecode it does not manage",
+		);
+	}
 
 	return reconcileInternal(
 		from,
