@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, test, vi } from "vitest";
 import { jiraClient } from "../../../src/data/jira/jiraclient";
 import { Jql } from "../../../src/rules";
 import { JiraIssueId } from "../../../src/reconciliation/entities";
-import { matchJiraJqls } from "../../../src/reconciliation/implementation/jqlPolicy";
+import { matchJqls } from "../../../src/data/jira/matchJqls";
 
 vi.mock("../../../src/data/jira/jiraclient", () => ({
 	jiraClient: { POST: vi.fn() },
@@ -14,7 +14,7 @@ const post = vi.mocked(jiraClient.POST);
 
 beforeEach(() => post.mockReset());
 
-describe("matchJiraJqls", () => {
+describe("matchJqls", () => {
 	test("sends one batch and returns Jira's ordered match results", async () => {
 		const matches = [
 			{ matchedIssues: [101], errors: [] },
@@ -25,7 +25,7 @@ describe("matchJiraJqls", () => {
 			data: { matches },
 		} as never);
 
-		await expect(matchJiraJqls(issues, jqls)).resolves.toEqual([
+		await expect(matchJqls(issues, jqls)).resolves.toEqual([
 			{ matchedIssues: [101] },
 			{ matchedIssues: [] },
 		]);
@@ -40,7 +40,7 @@ describe("matchJiraJqls", () => {
 	])("rejects unsuccessful or missing response data", async (result) => {
 		post.mockResolvedValue(result as never);
 
-		await expect(matchJiraJqls(issues, jqls)).rejects.toThrow(
+		await expect(matchJqls(issues, jqls)).rejects.toThrow(
 			"Failed to match JQL",
 		);
 	});
@@ -56,7 +56,7 @@ describe("matchJiraJqls", () => {
 			},
 		} as never);
 
-		await expect(matchJiraJqls(issues, jqls)).rejects.toThrow(
+		await expect(matchJqls(issues, jqls)).rejects.toThrow(
 			"Internal error when matching JQL",
 		);
 	});

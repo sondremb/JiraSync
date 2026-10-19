@@ -40,7 +40,7 @@ Pure domain logic, kept free of API clients so it can be tested with plain funct
 - `entities.ts` — `JiraWork`, `InternalWork` (Bekk), `DayReport`, `ManagedTimecodeDayComparison`. A `DayReport` has per-timecode `comparisons` (Jira vs Bekk hours), plus `unmanagedInternals` (Bekk hours on timecodes the policy doesn't manage — never touched) and `unmatchedJiraWork` (Jira worklogs no rule matches — a day with any of these is not in sync).
 - `contracts.ts` — `Policy` (`matchIssues`, `selectManaged`) and the loader function types injected into reconciliation.
 - `reconcile.ts` — `reconcilePeriod` loads Jira worklogs, matches issues via the policy, loads Bekk worklogs, and builds `DayReport[]`. It throws on invariant failures (policy missed an issue, or matched a timecode it doesn't manage).
-- `implementation/jqlPolicy.ts` — the `Policy` implementation backed by a `Ruleset` and Jira's `/jql/match` (`matchJiraJqls`).
+- `implementation/jqlPolicy.ts` — the `Policy` implementation backed by a `Ruleset`.
 - `syncPreview.ts` — `planSync` turns reports into `ProposedChange[]` (date, timecode, current → target hours). Jira hours are the source of truth; only managed timecodes with differing hours produce changes.
 - `syncWeek.ts` — applies changes sequentially via an injected `write`; on failure it throws with how many entries were already updated.
 - `useWeeklyReconciliation.ts` — React Query glue: `useWeeklyReconciliation(week, ruleset)` query and `useSyncWeek()` mutation (invalidates the `["reconciliation"]` queries). The concrete loaders/writers are in `src/data/` (`jira/loadJiraWorklogs`, `loadInternalWorklogs`, `writeInternalHours`).
