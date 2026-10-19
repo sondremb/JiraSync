@@ -12,8 +12,6 @@ type MatchJqls = (
 	jqls: Jql[],
 ) => Promise<{ matchedIssues: JiraIssueId[] }[]>;
 
-
-
 export function createJqlPolicy(
 	ruleset: Ruleset,
 	matchJqls: MatchJqls,
