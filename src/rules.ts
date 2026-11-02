@@ -16,6 +16,7 @@ export interface Rule {
 	projectKey: JiraProjectKey;
 	jql?: Jql;
 	timecode: BekkId;
+	comment?: string;
 }
 
 export const Rule = {

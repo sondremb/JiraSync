@@ -1,18 +1,12 @@
 import React from "react";
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { BekkEntraLogin } from "../login/bekk/bekkLogin";
 import { LockdateWrapper } from "../LockdateWrapper";
+import { requireAuth } from "../login/requireAuth";
 
 export const Route = createFileRoute("/")({
 	component: Component,
-	beforeLoad: async ({ context }) => {
-		const authResult = await context.auth.getAccessToken();
-		if (authResult.kind === "unauthenticated") {
-			throw redirect({ to: "/login" });
-		} else if (authResult.kind === "error") {
-			throw redirect({ to: "/error" });
-		}
-	},
+	beforeLoad: requireAuth,
 });
 
 function Component() {
