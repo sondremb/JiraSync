@@ -11,6 +11,7 @@ import { useTimecodesByIds } from "../data/useTimecodesByIds";
 import { Column } from "../layout/Column";
 import { Row } from "../layout/Row";
 import { findEntry } from "../policies/catalog";
+import { timecodeLabel } from "../policies/timecodeOptions";
 import { usePolicyCatalog } from "../policies/usePolicyCatalog";
 import { PolicyKindTags } from "./PolicyKindTag";
 import styles from "./PolicyDetail.module.css";
@@ -53,6 +54,18 @@ export const PolicyDetail: React.FC<{ id: string }> = ({ id }) => {
 					<PolicyKindTags entry={entry} />
 				</Row>
 				{ruleset.description && <Paragraph>{ruleset.description}</Paragraph>}
+				<Row wrap>
+					<DsLink asChild>
+						<RouterLink to="/policy/$id/edit" params={{ id: ruleset.id }}>
+							Rediger
+						</RouterLink>
+					</DsLink>
+					<DsLink asChild>
+						<RouterLink to="/policy/new" search={{ from: ruleset.id }}>
+							Lag kopi
+						</RouterLink>
+					</DsLink>
+				</Row>
 				<Paragraph data-size="sm">
 					Reglene gjelder i rekkefølge: den første som passer, vinner.
 				</Paragraph>
@@ -94,7 +107,7 @@ export const PolicyDetail: React.FC<{ id: string }> = ({ id }) => {
 								</Table.Cell>
 								<Table.Cell>
 									{timecode
-										? `${timecode.code} ${timecode.name}`
+										? timecodeLabel(timecode)
 										: `Timekode ${rule.timecode}`}
 								</Table.Cell>
 								<Table.Cell>{rule.comment ?? ""}</Table.Cell>

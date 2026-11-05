@@ -16,9 +16,14 @@ export const PolicyList: React.FC = () => {
 	const catalog = usePolicyCatalog();
 	return (
 		<Column gap="large">
-			<Heading level={2} data-size="lg">
-				Regelsett
-			</Heading>
+			<Row justify="between" wrap>
+				<Heading level={2} data-size="lg">
+					Regelsett
+				</Heading>
+				<DsLink asChild>
+					<RouterLink to="/policy/new">Nytt regelsett</RouterLink>
+				</DsLink>
+			</Row>
 			<ul className={styles.policyList}>
 				{catalog.map((entry) => (
 					<li key={entry.ruleset.id} className={styles.policyList__item}>

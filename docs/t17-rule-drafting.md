@@ -1,6 +1,6 @@
 # T17 Rule drafting: plan, status and next steps
 
-Source spec: `spec.md` (untracked, repo root). This document records the decisions, research, what is built, and what remains, so the work can be resumed later.
+Source spec: `spec.md` (repo root). This document records the decisions, research, what is built, and what remains, so the work can be resumed later.
 
 ## Goal
 
@@ -35,44 +35,48 @@ Digdir-only pages (no Lisa) for viewing, drafting and exporting mapping rulesets
 
 ### Done
 
-- `netlify.toml`: SPA fallback redirect (`/* -> /index.html 200`). **Not yet verified on a Netlify deploy preview.**
+- `netlify.toml`: SPA fallback redirect (`/* -> /index.html 200`). Verified on a Netlify deploy preview.
 - `comment` now carries through `loadPolicies`/`Rule` (`src/policies/schema.ts`, `src/rules.ts`), and `ruleSchema`/`rulesetSchema` are exported.
 - **Domain** (pure, tested in `tests/policies/`):
   - `src/policies/draft.ts`: `DraftRuleset`/`DraftRule`, edit functions (`updateMeta`, `updateRule`, `insertRule`, `deleteRule`, `moveRule`), `validateDraft` (returns error codes, not text; takes the set of taken ids), `toRuleset`, `exportRuleset`.
   - `src/policies/draftStore.ts`: `loadDrafts`/`saveDraft`/`deleteDraft` (tolerant of corrupt or blocked storage) and `getDraftStorage()`.
   - `src/policies/catalog.ts`: `buildCatalog`/`findEntry` (bundled + drafts, selected first, kinds `bundled | draft | edited`).
-  - `src/policies/usePolicyCatalog.ts`: React hook (reads drafts once on mount).
+  - `src/policies/useDrafts.ts`: `useDrafts`/`useSaveDraft`/`useDeleteDraft`, the single React Query source for drafts (`["policies", "drafts"]`).
+  - `src/policies/usePolicyCatalog.ts`: React hook over `useRuleSet` and `useDrafts`.
+  - `src/policies/timecodeOptions.ts`: `timecodeLabel`, `matchesTimecode` (Combobox filter), `isOfferedTimecode`.
+  - `src/policies/draftMessages.ts`: Norwegian text for every `validateDraft` error code.
 - **Data layer** (loaders tested with mocked clients in `tests/data/`):
   - `src/data/loadTimecodes.ts` (`loadAllTimecodes`, `loadTimecodesByIds`, chunks of 100), `src/data/jira/loadProjects.ts`, `loadProjectComponents.ts`, `validateJqlSyntax.ts`.
   - Hooks: `useAllTimecodes`, `useTimecodesByIds`, `useJiraProjects`, `useProjectComponents`, `useJqlSyntax` (debounced 500 ms). Only `useJiraProjects` and `useTimecodesByIds` are used so far; the rest wait for the editor.
 - **Shell:** `src/layout/{Page,Row,Column,UserStatus}` (CSS modules, BEM), `src/login/requireAuth.ts` and `useLogout.ts` (also used by `routes/index.tsx` and the Lisa `LoginStatus`).
 - **Pages (verified by the user):** `/policy/all` (`src/policy/PolicyList.tsx`) and `/policy/$id` (`src/policy/PolicyDetail.tsx`), via `src/routes/policy.all.tsx` and `policy.$id.tsx`, wrapped by `src/policy/PolicyPage.tsx`.
+- **Routes:** `/policy/$id/edit` and `/policy/new` (`?from=<id>` copies a ruleset), both rendering the placeholder `src/policy/PolicyEditor.tsx`. Links: "Nytt regelsett" on the list, "Rediger" and "Lag kopi" on the detail page.
 
-All of `pnpm build`, `tsc --noEmit`, `pnpm lint` and `pnpm test` pass (214 tests).
+All of `pnpm build`, `tsc --noEmit`, `pnpm lint` and `pnpm test` pass (218 tests).
 
 ### Not done
 
 **Part A (rest)**
-1. Routes: `src/routes/policy.$id.edit.tsx` and `policy.new.tsx` (same `requireAuth` + `PolicyPage`). Add edit/new/"copy" links to the list and detail pages. Remember `routeTree.gen.ts` is committed and regenerates on build/dev.
-2. Editor page: policy-level fields (name, description; id only on new), and one row per rule:
+
+1. Editor page (replace the placeholder `PolicyEditor`): policy-level fields (name, description; id only on new), and one row per rule:
    - timecode: `Combobox` with `virtual`, a substring filter over "code name", active only unless it's the rule's current value, via `useAllTimecodes`
    - project: `Textfield` with suggestions from `useJiraProjects`
    - JQL: `Textarea`, with a component helper (`useProjectComponents`), a display of the effective JQL, and advisory syntax feedback (`useJqlSyntax`)
    - comment: text field
    - insert above/below, move up/down, delete (no drag and drop), and a "first match wins" hint
-3. Banner (`Alert`) that edits aren't live and must be sent to the admin; a note that exported JSON contains customer Jira/Bekk identifiers (warning in `docs/rewrite-design.md`).
-4. Save draft (only when `validateDraft` passes), delete draft, "save as copy"; show error codes as Norwegian text; id uniqueness against bundled ids and other drafts.
-5. Export: download as `<id>.json` (Blob) and copy to clipboard, both from `exportRuleset(toRuleset(draft))`.
-6. Small pure helpers still to add (with tests): timecode label and the substring match used by the Combobox filter.
+2. Banner (`Alert`) that edits aren't live and must be sent to the admin; a note that exported JSON contains customer Jira/Bekk identifiers (warning in `docs/rewrite-design.md`).
+3. Save draft (only when `validateDraft` passes), delete draft, "save as copy", via `useSaveDraft`/`useDeleteDraft`; show errors with `draftMessages.ts`; id uniqueness against bundled ids and other drafts.
+4. Export: download as `<id>.json` (Blob) and copy to clipboard, both from `exportRuleset(toRuleset(draft))`.
 
 **Part B: use a draft in the sync view**
-1. `useRuleSet` (`src/data/useRuleset.ts`) should merge bundled and draft rulesets using the same override rule as `buildCatalog`, keep selection by id in `localStorage["selectedRulesetId"]`, and handle a deleted draft that is still selected. Consider making `usePolicyCatalog` and `useRuleSet` share one source so they can't disagree.
+
+1. `useRuleSet` (`src/data/useRuleset.ts`) should merge bundled and draft rulesets using the same override rule as `buildCatalog`, keep selection by id in `localStorage["selectedRulesetId"]`, and handle a deleted draft that is still selected. Read drafts from `useDrafts`, the same source as `usePolicyCatalog`, so they can't disagree.
 2. `RulesetSelector`/`RulesetModal` (Lisa) list drafts with a label.
 3. `App.tsx` remount key includes a hash of the rules.
 4. Tests for merge, override and missing-draft handling.
 
 **Other**
-- Verify the Netlify redirect on a deploy preview: refresh `/policy/all`; login/logout and `/.netlify/functions/*` still work; assets still load.
+
 - Update `CLAUDE.md` (new pages, draft store, hooks) and `TODO.md` (T17) when finished.
 
 ## Review points agreed with the user
@@ -85,4 +89,4 @@ All of `pnpm build`, `tsc --noEmit`, `pnpm lint` and `pnpm test` pass (214 tests
 - A draft id may later collide with a newly added bundled id (handled by the "edited copy" rule plus a visible marker).
 - Overlap with T21/T22 (removing `RulesetWrapper`/`LockdateWrapper`): keep Part B changes small.
 - The full timecode list is ~600 kB: only load it on the editor, never on the list/detail pages.
-- Working tree notes: `spec.md` is untracked, and `bruno/…` files are the user's own edits from the API checks. Don't commit them with this work unless asked. Nothing from T17 is committed yet.
+- `spec.md` is committed along with the T17 work. `bruno/…` files are the user's own edits from the API checks: don't commit them unless asked. `pnpm format` decides formatting for all files, including `spec.md` and the docs.
