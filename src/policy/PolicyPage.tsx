@@ -20,7 +20,7 @@ export const PolicyPage: React.FC<React.PropsWithChildren> = ({ children }) => (
 						<RouterLink to="/">Timeføring</RouterLink>
 					</DsLink>
 					<DsLink asChild>
-						<RouterLink to="/policy/all">Regler</RouterLink>
+						<RouterLink to="/policy">Regler</RouterLink>
 					</DsLink>
 				</Row>
 				<UserStatus />

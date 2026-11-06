@@ -3,7 +3,7 @@
 A new page for "drafting" rulesets.
 Made entirely using DigDir design system, NO Lisa.
 
-- /policy/all
+- /policy
   - lists all policies with name, description
   - if user has selected a policy for themselves, put it at the top of the list, marked "dine regler"
   - a link to view/edit each policy

@@ -3,7 +3,7 @@ command = "pnpm build" # the command you run to build this file
 functions = "src/backend"
 publish = "dist"
 
-# SPA fallback so deep links like /policy/all survive a refresh.
+# SPA fallback so deep links like /policy/$id survive a refresh.
 # Netlify serves existing files and functions before applying this rule.
 [[redirects]]
 from = "/*"

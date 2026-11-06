@@ -4,7 +4,7 @@ import { requireAuth } from "../login/requireAuth";
 import { PolicyList } from "../policy/PolicyList";
 import { PolicyPage } from "../policy/PolicyPage";
 
-export const Route = createFileRoute("/policy/all")({
+export const Route = createFileRoute("/policy/")({
 	component: Component,
 	beforeLoad: requireAuth,
 });

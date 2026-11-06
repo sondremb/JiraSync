@@ -32,7 +32,7 @@ export const PolicyDetail: React.FC<{ id: string }> = ({ id }) => {
 				</Heading>
 				<Paragraph>Det finnes ingen regler med id «{id}».</Paragraph>
 				<DsLink asChild>
-					<RouterLink to="/policy/all">Tilbake til alle regelsett</RouterLink>
+					<RouterLink to="/policy">Tilbake til alle regelsett</RouterLink>
 				</DsLink>
 			</Column>
 		);
@@ -45,7 +45,7 @@ export const PolicyDetail: React.FC<{ id: string }> = ({ id }) => {
 		<Column gap="large">
 			<Column gap="small">
 				<DsLink asChild>
-					<RouterLink to="/policy/all">← Alle regelsett</RouterLink>
+					<RouterLink to="/policy">← Alle regelsett</RouterLink>
 				</DsLink>
 				<Row wrap>
 					<Heading level={2} data-size="lg">

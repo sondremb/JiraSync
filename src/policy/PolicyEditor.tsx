@@ -61,7 +61,7 @@ export const PolicyEditor: React.FC<{
 				</Heading>
 				<Paragraph>Det finnes ingen regler med id «{sourceId}».</Paragraph>
 				<DsLink asChild>
-					<RouterLink to="/policy/all">Tilbake til alle regelsett</RouterLink>
+					<RouterLink to="/policy">Tilbake til alle regelsett</RouterLink>
 				</DsLink>
 			</Column>
 		);
@@ -181,7 +181,7 @@ const DraftForm: React.FC<{
 							← {source.ruleset.name}
 						</RouterLink>
 					) : (
-						<RouterLink to="/policy/all">← Alle regelsett</RouterLink>
+						<RouterLink to="/policy">← Alle regelsett</RouterLink>
 					)}
 				</DsLink>
 				<Row wrap>
@@ -356,7 +356,7 @@ const DeleteDraft: React.FC<{ entry: CatalogEntry }> = ({ entry }) => {
 										if (isEditedCopy) {
 											navigate({ to: "/policy/$id", params: { id } });
 										} else {
-											navigate({ to: "/policy/all" });
+											navigate({ to: "/policy" });
 										}
 									},
 								})
