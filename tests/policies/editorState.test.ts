@@ -3,7 +3,6 @@ import { type JiraProjectKey } from "../../src/data/issue";
 import { buildCatalog } from "../../src/policies/catalog";
 import { DraftRuleset } from "../../src/policies/draft";
 import {
-	addComponentClause,
 	effectiveJql,
 	exportFileName,
 	firstInvalidRule,
@@ -63,24 +62,6 @@ describe("takenIds", () => {
 describe("exportFileName", () => {
 	test("uses the trimmed id", () => {
 		expect(exportFileName(" team ")).toBe("team.json");
-	});
-});
-
-describe("addComponentClause", () => {
-	test("empty JQL becomes the clause", () => {
-		expect(addComponentClause("  ", "10121")).toBe("component = 10121");
-	});
-
-	test("appends to existing JQL with AND", () => {
-		expect(addComponentClause("parentEpic = X-1", "10121")).toBe(
-			"parentEpic = X-1 AND component = 10121",
-		);
-	});
-
-	test("wraps JQL containing OR so the clause applies to all of it", () => {
-		expect(addComponentClause("component = 1 or component = 2", "3")).toBe(
-			"(component = 1 or component = 2) AND component = 3",
-		);
 	});
 });
 

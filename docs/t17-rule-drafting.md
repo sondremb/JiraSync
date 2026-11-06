@@ -25,9 +25,9 @@ Digdir-only pages (no Lisa) for viewing, drafting and exporting mapping rulesets
   - `Suggestion` (experimental) supports `creatable`, but is not virtualized.
   - So the timecode picker is `Combobox` + `virtual`. The project field must allow free text, so it is a `Textfield` plus suggestions, not a Combobox.
   - Digdir CSS lives in `@layer`; Lisa's `GlobalStyle` is unlayered but only a mild reset, so coexistence works. Verified visually by the user for the list and detail pages.
-- **Jira projects:** `/project/search` returns the user's accessible projects (11 for the user). Jira can't tell "doesn't exist" from "no access": `/project/{key}/components` returns 404 for both. Names fall back to the raw key; component suggestions are silently empty.
+- **Jira projects:** `/project/search` returns the user's accessible projects (11 for the user). Names of projects the user can't see fall back to the raw key.
 - **JQL:** `/jql/parse` with default `strict` validation rejects projects the user can't see. `validation=none` checks syntax only and accepts unknown projects (confirmed by the user in Bruno). The UI should say "syntax OK / syntax error", never "valid", and never block saving or export.
-- Existing rules use component ids (`component = 10121`), which are opaque to humans, so the editor should offer a component helper (reads `/project/{key}/components`, inserts `component = <id>`) and show the effective JQL `project = 'KEY' AND (…)`.
+- The editor shows the effective JQL `project = 'KEY' AND (…)`. Components are not handled explicitly; users write `component = …` in the JQL like any other clause.
 - The reconciliation query key already includes `ruleset.rules` (`useWeeklyReconciliation.ts`), so edited drafts refetch correctly. The remount key in `App.tsx` (`${week}-${id}`) uses only the id.
 - The repo has no jsdom/testing-library, so tests are logic-only. Keep logic in pure modules.
 
@@ -46,12 +46,12 @@ Digdir-only pages (no Lisa) for viewing, drafting and exporting mapping rulesets
   - `src/policies/timecodeOptions.ts`: `timecodeLabel`, `matchesTimecode` (Combobox filter), `isOfferedTimecode`.
   - `src/policies/draftMessages.ts`: Norwegian text for every `validateDraft` error code.
 - **Data layer** (loaders tested with mocked clients in `tests/data/`):
-  - `src/data/loadTimecodes.ts` (`loadAllTimecodes`, `loadTimecodesByIds`, chunks of 100), `src/data/jira/loadProjects.ts`, `loadProjectComponents.ts`, `validateJqlSyntax.ts`.
-  - Hooks: `useAllTimecodes`, `useTimecodesByIds`, `useJiraProjects`, `useProjectComponents`, `useJqlSyntax` (debounced 500 ms). Only `useJiraProjects` and `useTimecodesByIds` are used so far; the rest wait for the editor.
+  - `src/data/loadTimecodes.ts` (`loadAllTimecodes`, `loadTimecodesByIds`, chunks of 100), `src/data/jira/loadProjects.ts`, `validateJqlSyntax.ts`.
+  - Hooks: `useAllTimecodes`, `useTimecodesByIds`, `useJiraProjects`, `useJqlSyntax` (debounced 500 ms). Only `useJiraProjects` and `useTimecodesByIds` are used so far; the rest wait for the editor.
 - **Shell:** `src/layout/{Page,Row,Column,UserStatus}` (CSS modules, BEM), `src/login/requireAuth.ts` and `useLogout.ts` (also used by `routes/index.tsx` and the Lisa `LoginStatus`).
 - **Pages (verified by the user):** `/policy/all` (`src/policy/PolicyList.tsx`) and `/policy/$id` (`src/policy/PolicyDetail.tsx`), via `src/routes/policy.all.tsx` and `policy.$id.tsx`, wrapped by `src/policy/PolicyPage.tsx`.
 - **Routes:** `/policy/$id/edit` and `/policy/new` (`?from=<id>` copies a ruleset). Links: "Nytt regelsett" on the list, "Rediger" and "Lag kopi" on the detail page.
-- **Editor (Part A, structure verified by the user; compact list not yet):** `src/policy/PolicyEditor.tsx` (page, save/export, delete dialog, which rule is open), `RuleList.tsx` (sortable list with `@dnd-kit`, "+" insert buttons between rules), `RuleRow.tsx` (a closed rule as one read-only line with a drag handle, edit and delete), `RuleEditor.tsx` (the open rule: project with a datalist of Jira projects, JQL with a component helper, effective JQL and syntax feedback, comment), and `TimecodePicker.tsx` (virtual `Combobox`). Pure helpers live in `src/policies/editorState.ts` (`initialDraft`, `takenIds`, `exportFileName`, `addComponentClause`, `effectiveJql`, `firstInvalidRule`). `useJqlSyntax` also uses `effectiveJql`.
+- **Editor (Part A, structure verified by the user; compact list not yet):** `src/policy/PolicyEditor.tsx` (page, save/export, delete dialog, which rule is open), `RuleList.tsx` (sortable list with `@dnd-kit`, "+" insert buttons between rules), `RuleRow.tsx` (a closed rule as one read-only line with a drag handle, edit and delete), `RuleEditor.tsx` (the open rule: project with a datalist of Jira projects, JQL, effective JQL and syntax feedback, comment), and `TimecodePicker.tsx` (virtual `Combobox`). Pure helpers live in `src/policies/editorState.ts` (`initialDraft`, `takenIds`, `exportFileName`, `effectiveJql`, `firstInvalidRule`). `useJqlSyntax` also uses `effectiveJql`.
   - One rule is open at a time. New rules open automatically, and a failed save or export opens the first invalid rule.
   - Reordering is drag and drop via `@dnd-kit` (decided with the user, replacing the earlier "no drag and drop"), with keyboard dragging and Norwegian screen reader announcements.
   - Errors show only after a save or export attempt. Save, download and copy are always clickable and reveal the errors when the draft is invalid.

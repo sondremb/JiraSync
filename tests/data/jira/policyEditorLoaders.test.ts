@@ -1,6 +1,5 @@
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import { jiraClient } from "../../../src/data/jira/jiraclient";
-import { loadProjectComponents } from "../../../src/data/jira/loadProjectComponents";
 import { loadProjects } from "../../../src/data/jira/loadProjects";
 import { validateJqlSyntax } from "../../../src/data/jira/validateJqlSyntax";
 
@@ -47,29 +46,6 @@ describe("loadProjects", () => {
 			response: { ok: false, status: 500 },
 		} as never);
 		await expect(loadProjects()).rejects.toThrow();
-	});
-});
-
-describe("loadProjectComponents", () => {
-	test("returns id and name", async () => {
-		get.mockResolvedValueOnce(ok([{ id: "10121", name: "Core", extra: 1 }]));
-		await expect(loadProjectComponents("PASX")).resolves.toEqual([
-			{ id: "10121", name: "Core" },
-		]);
-	});
-
-	test("treats 404 (missing or no access) as no components", async () => {
-		get.mockResolvedValueOnce({
-			response: { ok: false, status: 404 },
-		} as never);
-		await expect(loadProjectComponents("NOPE")).resolves.toEqual([]);
-	});
-
-	test("throws on other failures", async () => {
-		get.mockResolvedValueOnce({
-			response: { ok: false, status: 500 },
-		} as never);
-		await expect(loadProjectComponents("PASX")).rejects.toThrow();
 	});
 });
 

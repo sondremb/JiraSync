@@ -1,15 +1,11 @@
 import {
 	Button,
-	Field,
 	Fieldset,
-	Label,
 	Paragraph,
-	Select,
 	Textfield,
 	ValidationMessage,
 } from "@digdir/designsystemet-react";
-import React, { useId } from "react";
-import { useProjectComponents } from "../data/useProjectComponents";
+import React from "react";
 import { useJqlSyntax } from "../data/useJqlSyntax";
 import { Column } from "../layout/Column";
 import { Row } from "../layout/Row";
@@ -18,7 +14,7 @@ import {
 	projectKeyErrorText,
 	timecodeErrorText,
 } from "../policies/draftMessages";
-import { addComponentClause, effectiveJql } from "../policies/editorState";
+import { effectiveJql } from "../policies/editorState";
 import styles from "./PolicyEditor.module.css";
 import { TimecodePicker } from "./TimecodePicker";
 
@@ -86,8 +82,6 @@ const JqlField: React.FC<{
 	rule: DraftRule;
 	onChange: (jql: string) => void;
 }> = ({ rule, onChange }) => {
-	const componentSelectId = useId();
-	const { data: components } = useProjectComponents(rule.projectKey);
 	const syntax = useJqlSyntax(rule.projectKey, rule.jql);
 	const fullJql = effectiveJql(rule.projectKey, rule.jql);
 
@@ -101,28 +95,6 @@ const JqlField: React.FC<{
 				value={rule.jql}
 				onChange={(e) => onChange(e.target.value)}
 			/>
-			{components && components.length > 0 && (
-				<Field>
-					<Label htmlFor={componentSelectId}>Legg til komponent</Label>
-					<Select
-						id={componentSelectId}
-						width="auto"
-						value=""
-						onChange={(e) => {
-							if (e.target.value) {
-								onChange(addComponentClause(rule.jql, e.target.value));
-							}
-						}}
-					>
-						<Select.Option value="">Velg komponent …</Select.Option>
-						{components.map((component) => (
-							<Select.Option key={component.id} value={component.id}>
-								{component.name} ({component.id})
-							</Select.Option>
-						))}
-					</Select>
-				</Field>
-			)}
 			{fullJql && (
 				<Paragraph data-size="sm">
 					Spørringen som kjøres:{" "}

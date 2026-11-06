@@ -40,17 +40,6 @@ export function exportFileName(id: string): string {
 	return `${id.trim()}.json`;
 }
 
-/** Adds `component = <id>` to a rule's JQL, keeping an existing OR together. */
-export function addComponentClause(jql: string, componentId: string): string {
-	const clause = `component = ${componentId}`;
-	const current = jql.trim();
-	if (current === "") {
-		return clause;
-	}
-	const left = /\bor\b/i.test(current) ? `(${current})` : current;
-	return `${left} AND ${clause}`;
-}
-
 /** The JQL a draft rule will actually run, or undefined while the project is empty. */
 export function effectiveJql(projectKey: string, jql: string): Jql | undefined {
 	const key = projectKey.trim();
