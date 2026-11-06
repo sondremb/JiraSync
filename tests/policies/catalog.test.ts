@@ -1,6 +1,16 @@
 import { describe, expect, test } from "vitest";
-import { buildCatalog, findEntry } from "../../src/policies/catalog";
-import { type Ruleset, type RulesetId } from "../../src/rules";
+import {
+	buildCatalog,
+	findEntry,
+	resolveSelected,
+	rulesetKey,
+} from "../../src/policies/catalog";
+import {
+	type Jql,
+	type Rule,
+	type Ruleset,
+	type RulesetId,
+} from "../../src/rules";
 
 function ruleset(id: string, name = id): Ruleset {
 	return { id: id as RulesetId, name, rules: [] };
@@ -49,5 +59,62 @@ describe("buildCatalog", () => {
 		const catalog = buildCatalog(bundled, [], undefined);
 		expect(findEntry(catalog, "b")?.ruleset.id).toBe("b");
 		expect(findEntry(catalog, "zzz")).toBeUndefined();
+	});
+});
+
+describe("resolveSelected", () => {
+	const bundled = [ruleset("a", "A"), ruleset("b", "B")];
+
+	test("nothing selected gives undefined", () => {
+		expect(resolveSelected(bundled, [], null)).toBeUndefined();
+		expect(resolveSelected(bundled, [], undefined)).toBeUndefined();
+	});
+
+	test("finds a bundled ruleset", () => {
+		expect(resolveSelected(bundled, [], "b")?.name).toBe("B");
+	});
+
+	test("finds a draft-only ruleset", () => {
+		expect(resolveSelected(bundled, [ruleset("mine")], "mine")?.id).toBe(
+			"mine",
+		);
+	});
+
+	test("an edited copy overrides the bundled ruleset", () => {
+		expect(resolveSelected(bundled, [ruleset("b", "My b")], "b")?.name).toBe(
+			"My b",
+		);
+	});
+
+	test("deleting an edited copy falls back to the bundled ruleset", () => {
+		expect(resolveSelected(bundled, [], "b")?.name).toBe("B");
+	});
+
+	test("a selected draft that was deleted gives undefined", () => {
+		expect(resolveSelected(bundled, [], "mine")).toBeUndefined();
+	});
+});
+
+describe("rulesetKey", () => {
+	const base: Ruleset = {
+		id: "x" as RulesetId,
+		name: "X",
+		rules: [{ projectKey: "P", timecode: 1 } as unknown as Rule],
+	};
+
+	test("is stable for equal rulesets", () => {
+		expect(rulesetKey(base)).toBe(rulesetKey(structuredClone(base)));
+	});
+
+	test("changes when the rules change", () => {
+		const edited = structuredClone(base);
+		edited.rules[0] = { ...edited.rules[0], jql: "component = 1" as Jql };
+		expect(rulesetKey(edited)).not.toBe(rulesetKey(base));
+	});
+
+	test("ignores name and description", () => {
+		expect(rulesetKey({ ...base, name: "Y", description: "d" })).toBe(
+			rulesetKey(base),
+		);
 	});
 });

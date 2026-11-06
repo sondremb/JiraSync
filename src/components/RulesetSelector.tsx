@@ -1,15 +1,26 @@
 import React from "react";
 import { RadioGroup } from "@utdanningsdirektoratet/lisa";
-import { RulesetId } from "../rules";
 import { useRuleSet } from "../data/useRuleset";
+import { type CatalogEntry } from "../policies/catalog";
 import { P } from "./P";
 
 interface Props {
 	className?: string;
 }
 
+const kindSuffix: Record<CatalogEntry["kind"], string> = {
+	bundled: "",
+	draft: " (kladd)",
+	edited: " (redigert kopi)",
+};
+
+function label({ ruleset, kind }: CatalogEntry): string {
+	const description = ruleset.description ? " - " + ruleset.description : "";
+	return ruleset.name + kindSuffix[kind] + description;
+}
+
 export const RulesetSelector: React.FC<Props> = ({ className }) => {
-	const { rulesets, setRuleSet, selectedRuleset } = useRuleSet();
+	const { entries, setRuleSet, selectedRuleset } = useRuleSet();
 
 	return (
 		<div className={className}>
@@ -20,11 +31,12 @@ export const RulesetSelector: React.FC<Props> = ({ className }) => {
 			<RadioGroup
 				title={"Velg regelsett"}
 				onChange={(selectedValue: string) => {
-					setRuleSet(rulesets.get(selectedValue as RulesetId)!);
+					const entry = entries.find((e) => e.ruleset.id === selectedValue);
+					if (entry) setRuleSet(entry.ruleset);
 				}}
-				items={Array.from(rulesets.values()).map((ruleset) => ({
-					value: ruleset.id,
-					label: ruleset.name + " - " + ruleset.description,
+				items={entries.map((entry) => ({
+					value: entry.ruleset.id,
+					label: label(entry),
 				}))}
 				value={selectedRuleset?.id ?? ""}
 			/>

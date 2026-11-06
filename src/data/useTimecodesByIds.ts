@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { loadTimecodesByIds } from "./loadTimecodes";
 
 export function useTimecodesByIds(ids: readonly number[]) {
@@ -8,5 +8,7 @@ export function useTimecodesByIds(ids: readonly number[]) {
 		staleTime: Infinity,
 		queryFn: () => loadTimecodesByIds(sortedIds),
 		enabled: sortedIds.length > 0,
+		// Keep the known labels while a changed id list loads.
+		placeholderData: keepPreviousData,
 	});
 }

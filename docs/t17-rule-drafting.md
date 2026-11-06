@@ -50,30 +50,23 @@ Digdir-only pages (no Lisa) for viewing, drafting and exporting mapping rulesets
   - Hooks: `useAllTimecodes`, `useTimecodesByIds`, `useJiraProjects`, `useProjectComponents`, `useJqlSyntax` (debounced 500 ms). Only `useJiraProjects` and `useTimecodesByIds` are used so far; the rest wait for the editor.
 - **Shell:** `src/layout/{Page,Row,Column,UserStatus}` (CSS modules, BEM), `src/login/requireAuth.ts` and `useLogout.ts` (also used by `routes/index.tsx` and the Lisa `LoginStatus`).
 - **Pages (verified by the user):** `/policy/all` (`src/policy/PolicyList.tsx`) and `/policy/$id` (`src/policy/PolicyDetail.tsx`), via `src/routes/policy.all.tsx` and `policy.$id.tsx`, wrapped by `src/policy/PolicyPage.tsx`.
-- **Routes:** `/policy/$id/edit` and `/policy/new` (`?from=<id>` copies a ruleset), both rendering the placeholder `src/policy/PolicyEditor.tsx`. Links: "Nytt regelsett" on the list, "Rediger" and "Lag kopi" on the detail page.
+- **Routes:** `/policy/$id/edit` and `/policy/new` (`?from=<id>` copies a ruleset). Links: "Nytt regelsett" on the list, "Rediger" and "Lag kopi" on the detail page.
+- **Editor (Part A, structure verified by the user; compact list not yet):** `src/policy/PolicyEditor.tsx` (page, save/export, delete dialog, which rule is open), `RuleList.tsx` (sortable list with `@dnd-kit`, "+" insert buttons between rules), `RuleRow.tsx` (a closed rule as one read-only line with a drag handle, edit and delete), `RuleEditor.tsx` (the open rule: project with a datalist of Jira projects, JQL with a component helper, effective JQL and syntax feedback, comment), and `TimecodePicker.tsx` (virtual `Combobox`). Pure helpers live in `src/policies/editorState.ts` (`initialDraft`, `takenIds`, `exportFileName`, `addComponentClause`, `effectiveJql`, `firstInvalidRule`). `useJqlSyntax` also uses `effectiveJql`.
+  - One rule is open at a time. New rules open automatically, and a failed save or export opens the first invalid rule.
+  - Reordering is drag and drop via `@dnd-kit` (decided with the user, replacing the earlier "no drag and drop"), with keyboard dragging and Norwegian screen reader announcements.
+  - Errors show only after a save or export attempt. Save, download and copy are always clickable and reveal the errors when the draft is invalid.
+  - "Lagre som kopi" links to `/policy/new?from=<id>`, so unsaved edits are not carried over.
+  - Deleting an "edited" copy goes back to the bundled ruleset; deleting a draft goes to the list.
 
-All of `pnpm build`, `tsc --noEmit`, `pnpm lint` and `pnpm test` pass (218 tests).
+- **Part B (use a draft in the sync view):** `useRuleSet` (`src/data/useRuleset.ts`) now merges bundled rulesets with drafts from `useDrafts`. The selection is stored as an id (`localStorage["selectedRulesetId"]`, query key `["rulesets", "selectedId"]`) and resolved by `resolveSelected` in `catalog.ts`, using the same override rule as `buildCatalog`. Deleting an edited copy falls back to the bundled ruleset. Deleting a selected draft-only ruleset leaves nothing selected, so `RulesetWrapper` shows the picker. `RulesetSelector` lists drafts as "(kladd)" and edited copies as "(redigert kopi)", in a stable order. The `App.tsx` remount key uses `rulesetKey`, a hash of the id and rules. `usePolicyCatalog` reads the bundled list from `useRuleSet`.
+
+All of `pnpm build`, `tsc --noEmit`, `pnpm lint` and `pnpm test` pass (244 tests).
 
 ### Not done
 
-**Part A (rest)**
+**Part A:** manual check by the user (review point 2).
 
-1. Editor page (replace the placeholder `PolicyEditor`): policy-level fields (name, description; id only on new), and one row per rule:
-   - timecode: `Combobox` with `virtual`, a substring filter over "code name", active only unless it's the rule's current value, via `useAllTimecodes`
-   - project: `Textfield` with suggestions from `useJiraProjects`
-   - JQL: `Textarea`, with a component helper (`useProjectComponents`), a display of the effective JQL, and advisory syntax feedback (`useJqlSyntax`)
-   - comment: text field
-   - insert above/below, move up/down, delete (no drag and drop), and a "first match wins" hint
-2. Banner (`Alert`) that edits aren't live and must be sent to the admin; a note that exported JSON contains customer Jira/Bekk identifiers (warning in `docs/rewrite-design.md`).
-3. Save draft (only when `validateDraft` passes), delete draft, "save as copy", via `useSaveDraft`/`useDeleteDraft`; show errors with `draftMessages.ts`; id uniqueness against bundled ids and other drafts.
-4. Export: download as `<id>.json` (Blob) and copy to clipboard, both from `exportRuleset(toRuleset(draft))`.
-
-**Part B: use a draft in the sync view**
-
-1. `useRuleSet` (`src/data/useRuleset.ts`) should merge bundled and draft rulesets using the same override rule as `buildCatalog`, keep selection by id in `localStorage["selectedRulesetId"]`, and handle a deleted draft that is still selected. Read drafts from `useDrafts`, the same source as `usePolicyCatalog`, so they can't disagree.
-2. `RulesetSelector`/`RulesetModal` (Lisa) list drafts with a label.
-3. `App.tsx` remount key includes a hash of the rules.
-4. Tests for merge, override and missing-draft handling.
+**Part B:** manual check by the user.
 
 **Other**
 
@@ -82,7 +75,7 @@ All of `pnpm build`, `tsc --noEmit`, `pnpm lint` and `pnpm test` pass (218 tests
 ## Review points agreed with the user
 
 1. After list/detail pages: **done and verified.**
-2. After the editor, before Part B.
+2. After the editor, before Part B: **editor built, awaiting review.**
 
 ## Risks and notes
 

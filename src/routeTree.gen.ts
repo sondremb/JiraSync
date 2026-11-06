@@ -17,7 +17,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as PolicyNewRouteImport } from './routes/policy.new'
 import { Route as PolicyAllRouteImport } from './routes/policy.all'
 import { Route as PolicyIdRouteImport } from './routes/policy.$id'
-import { Route as PolicyIdEditRouteImport } from './routes/policy.$id.edit'
+import { Route as PolicyIdEditRouteImport } from './routes/policy.$id_.edit'
 
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
@@ -60,9 +60,9 @@ const PolicyIdRoute = PolicyIdRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const PolicyIdEditRoute = PolicyIdEditRouteImport.update({
-  id: '/edit',
-  path: '/edit',
-  getParentRoute: () => PolicyIdRoute,
+  id: '/policy/$id_/edit',
+  path: '/policy/$id/edit',
+  getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -71,7 +71,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/logout': typeof LogoutRoute
   '/privacy': typeof PrivacyRoute
-  '/policy/$id': typeof PolicyIdRouteWithChildren
+  '/policy/$id': typeof PolicyIdRoute
   '/policy/all': typeof PolicyAllRoute
   '/policy/new': typeof PolicyNewRoute
   '/policy/$id/edit': typeof PolicyIdEditRoute
@@ -82,7 +82,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/logout': typeof LogoutRoute
   '/privacy': typeof PrivacyRoute
-  '/policy/$id': typeof PolicyIdRouteWithChildren
+  '/policy/$id': typeof PolicyIdRoute
   '/policy/all': typeof PolicyAllRoute
   '/policy/new': typeof PolicyNewRoute
   '/policy/$id/edit': typeof PolicyIdEditRoute
@@ -94,10 +94,10 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/logout': typeof LogoutRoute
   '/privacy': typeof PrivacyRoute
-  '/policy/$id': typeof PolicyIdRouteWithChildren
+  '/policy/$id': typeof PolicyIdRoute
   '/policy/all': typeof PolicyAllRoute
   '/policy/new': typeof PolicyNewRoute
-  '/policy/$id/edit': typeof PolicyIdEditRoute
+  '/policy/$id_/edit': typeof PolicyIdEditRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -132,7 +132,7 @@ export interface FileRouteTypes {
     | '/policy/$id'
     | '/policy/all'
     | '/policy/new'
-    | '/policy/$id/edit'
+    | '/policy/$id_/edit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -141,9 +141,10 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   LogoutRoute: typeof LogoutRoute
   PrivacyRoute: typeof PrivacyRoute
-  PolicyIdRoute: typeof PolicyIdRouteWithChildren
+  PolicyIdRoute: typeof PolicyIdRoute
   PolicyAllRoute: typeof PolicyAllRoute
   PolicyNewRoute: typeof PolicyNewRoute
+  PolicyIdEditRoute: typeof PolicyIdEditRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -204,27 +205,15 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PolicyIdRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/policy/$id/edit': {
-      id: '/policy/$id/edit'
-      path: '/edit'
+    '/policy/$id_/edit': {
+      id: '/policy/$id_/edit'
+      path: '/policy/$id/edit'
       fullPath: '/policy/$id/edit'
       preLoaderRoute: typeof PolicyIdEditRouteImport
-      parentRoute: typeof PolicyIdRoute
+      parentRoute: typeof rootRouteImport
     }
   }
 }
-
-interface PolicyIdRouteChildren {
-  PolicyIdEditRoute: typeof PolicyIdEditRoute
-}
-
-const PolicyIdRouteChildren: PolicyIdRouteChildren = {
-  PolicyIdEditRoute: PolicyIdEditRoute,
-}
-
-const PolicyIdRouteWithChildren = PolicyIdRoute._addFileChildren(
-  PolicyIdRouteChildren,
-)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -232,9 +221,10 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   LogoutRoute: LogoutRoute,
   PrivacyRoute: PrivacyRoute,
-  PolicyIdRoute: PolicyIdRouteWithChildren,
+  PolicyIdRoute: PolicyIdRoute,
   PolicyAllRoute: PolicyAllRoute,
   PolicyNewRoute: PolicyNewRoute,
+  PolicyIdEditRoute: PolicyIdEditRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

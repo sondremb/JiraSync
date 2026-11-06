@@ -48,3 +48,37 @@ export function findEntry(
 ): CatalogEntry | undefined {
 	return catalog.find((entry) => entry.ruleset.id === id);
 }
+
+/**
+ * The ruleset with `selectedId`, with local drafts overriding bundled rulesets
+ * the same way as in `buildCatalog`. `undefined` when nothing is selected or the
+ * selected ruleset no longer exists (for example a deleted draft).
+ */
+export function resolveSelected(
+	bundled: readonly Ruleset[],
+	drafts: readonly Ruleset[],
+	selectedId: string | null | undefined,
+): Ruleset | undefined {
+	if (!selectedId) {
+		return undefined;
+	}
+	return (
+		drafts.find((d) => d.id === selectedId) ??
+		bundled.find((r) => r.id === selectedId)
+	);
+}
+
+/**
+ * A short key that changes whenever the ruleset's id or rules change, so views
+ * keyed on it remount when a selected draft is edited.
+ */
+export function rulesetKey(ruleset: Ruleset): string {
+	const text = JSON.stringify([ruleset.id, ruleset.rules]);
+	// FNV-1a, 32 bit. Not cryptographic: only needs to differ between edits.
+	let hash = 0x811c9dc5;
+	for (let i = 0; i < text.length; i++) {
+		hash ^= text.charCodeAt(i);
+		hash = Math.imul(hash, 0x01000193);
+	}
+	return `${ruleset.id}-${(hash >>> 0).toString(36)}`;
+}

@@ -4,7 +4,7 @@ import { requireAuth } from "../login/requireAuth";
 import { PolicyEditor } from "../policy/PolicyEditor";
 import { PolicyPage } from "../policy/PolicyPage";
 
-export const Route = createFileRoute("/policy/$id/edit")({
+export const Route = createFileRoute("/policy/$id_/edit")({
 	component: Component,
 	beforeLoad: requireAuth,
 });

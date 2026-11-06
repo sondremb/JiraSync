@@ -1,9 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { validateJqlSyntax } from "./jira/validateJqlSyntax";
-import { Rule, type Jql } from "../rules";
-import { type JiraProjectKey } from "./issue";
-import { type BekkId } from "../types";
+import { effectiveJql } from "../policies/editorState";
 
 const debounceMs = 500;
 
@@ -13,13 +11,7 @@ const debounceMs = 500;
  * projects or components exist.
  */
 export function useJqlSyntax(projectKey: string, jql: string) {
-	const fullJql = projectKey.trim()
-		? Rule.toFullJql({
-				projectKey: projectKey.trim() as JiraProjectKey,
-				jql: (jql.trim() || undefined) as Jql | undefined,
-				timecode: 0 as BekkId, // irrelevant for the JQL string
-			})
-		: undefined;
+	const fullJql = effectiveJql(projectKey, jql);
 	const debounced = useDebounced(fullJql, debounceMs);
 
 	return useQuery({

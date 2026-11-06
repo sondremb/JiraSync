@@ -14,8 +14,9 @@ export const GlobalStyle = createGlobalStyle`
 	*::after {
 		box-sizing: border-box;
 	}
-	/* 2. Remove default margin */
-	* {
+	/* 2. Remove default margin. Not on dialogs: they are centred with margin: auto,
+	   and this unlayered rule would beat Digdir's layered dialog styles. */
+	*:not(dialog) {
 		margin: 0;
 	}
 	/* 3. Allow percentage-based heights in the application */
