@@ -21,7 +21,7 @@ export interface DraftRuleset {
 	rules: DraftRule[];
 }
 
-export const reservedRulesetIds: readonly string[] = ["new"];
+export const reservedRulesetIds: readonly string[] = ["new", "all"];
 const idPattern = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 
 export const DraftRule = {

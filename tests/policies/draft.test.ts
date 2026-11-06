@@ -88,6 +88,7 @@ describe("validateDraft", () => {
 		["-leading", "invalid-format"],
 		["double--dash", "invalid-format"],
 		["new", "reserved"],
+		["all", "reserved"],
 		["taken-id", "taken"],
 	])("id %j gives %s", (id, expected) => {
 		const result = validateDraft(draft({ id }), new Set(["taken-id"]));
