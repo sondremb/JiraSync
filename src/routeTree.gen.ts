@@ -14,6 +14,10 @@ import { Route as LogoutRouteImport } from './routes/logout'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ErrorRouteImport } from './routes/error'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as PolicyIndexRouteImport } from './routes/policy.index'
+import { Route as PolicyNewRouteImport } from './routes/policy.new'
+import { Route as PolicyIdRouteImport } from './routes/policy.$id'
+import { Route as PolicyIdEditRouteImport } from './routes/policy.$id_.edit'
 
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
@@ -40,6 +44,26 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PolicyIndexRoute = PolicyIndexRouteImport.update({
+  id: '/policy/',
+  path: '/policy/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PolicyNewRoute = PolicyNewRouteImport.update({
+  id: '/policy/new',
+  path: '/policy/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PolicyIdRoute = PolicyIdRouteImport.update({
+  id: '/policy/$id',
+  path: '/policy/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PolicyIdEditRoute = PolicyIdEditRouteImport.update({
+  id: '/policy/$id_/edit',
+  path: '/policy/$id/edit',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -47,6 +71,10 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/logout': typeof LogoutRoute
   '/privacy': typeof PrivacyRoute
+  '/policy/$id': typeof PolicyIdRoute
+  '/policy/new': typeof PolicyNewRoute
+  '/policy/': typeof PolicyIndexRoute
+  '/policy/$id/edit': typeof PolicyIdEditRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -54,6 +82,10 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/logout': typeof LogoutRoute
   '/privacy': typeof PrivacyRoute
+  '/policy/$id': typeof PolicyIdRoute
+  '/policy/new': typeof PolicyNewRoute
+  '/policy': typeof PolicyIndexRoute
+  '/policy/$id/edit': typeof PolicyIdEditRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -62,13 +94,45 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/logout': typeof LogoutRoute
   '/privacy': typeof PrivacyRoute
+  '/policy/$id': typeof PolicyIdRoute
+  '/policy/new': typeof PolicyNewRoute
+  '/policy/': typeof PolicyIndexRoute
+  '/policy/$id_/edit': typeof PolicyIdEditRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/error' | '/login' | '/logout' | '/privacy'
+  fullPaths:
+    | '/'
+    | '/error'
+    | '/login'
+    | '/logout'
+    | '/privacy'
+    | '/policy/$id'
+    | '/policy/new'
+    | '/policy/'
+    | '/policy/$id/edit'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/error' | '/login' | '/logout' | '/privacy'
-  id: '__root__' | '/' | '/error' | '/login' | '/logout' | '/privacy'
+  to:
+    | '/'
+    | '/error'
+    | '/login'
+    | '/logout'
+    | '/privacy'
+    | '/policy/$id'
+    | '/policy/new'
+    | '/policy'
+    | '/policy/$id/edit'
+  id:
+    | '__root__'
+    | '/'
+    | '/error'
+    | '/login'
+    | '/logout'
+    | '/privacy'
+    | '/policy/$id'
+    | '/policy/new'
+    | '/policy/'
+    | '/policy/$id_/edit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -77,6 +141,10 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   LogoutRoute: typeof LogoutRoute
   PrivacyRoute: typeof PrivacyRoute
+  PolicyIdRoute: typeof PolicyIdRoute
+  PolicyNewRoute: typeof PolicyNewRoute
+  PolicyIndexRoute: typeof PolicyIndexRoute
+  PolicyIdEditRoute: typeof PolicyIdEditRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -116,6 +184,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/policy/': {
+      id: '/policy/'
+      path: '/policy'
+      fullPath: '/policy/'
+      preLoaderRoute: typeof PolicyIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/policy/new': {
+      id: '/policy/new'
+      path: '/policy/new'
+      fullPath: '/policy/new'
+      preLoaderRoute: typeof PolicyNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/policy/$id': {
+      id: '/policy/$id'
+      path: '/policy/$id'
+      fullPath: '/policy/$id'
+      preLoaderRoute: typeof PolicyIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/policy/$id_/edit': {
+      id: '/policy/$id_/edit'
+      path: '/policy/$id/edit'
+      fullPath: '/policy/$id/edit'
+      preLoaderRoute: typeof PolicyIdEditRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -125,6 +221,10 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   LogoutRoute: LogoutRoute,
   PrivacyRoute: PrivacyRoute,
+  PolicyIdRoute: PolicyIdRoute,
+  PolicyNewRoute: PolicyNewRoute,
+  PolicyIndexRoute: PolicyIndexRoute,
+  PolicyIdEditRoute: PolicyIdEditRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

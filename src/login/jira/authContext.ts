@@ -31,7 +31,7 @@ export interface JiraAuthContext {
 	getAccessToken: () => Promise<AuthenticationResult>;
 	/** Drops the cached access token so the next getAccessToken() refreshes it. */
 	invalidate: () => void;
-	logout: () => void;
+	logout: () => Promise<void>;
 }
 
 type StoredToken = {

@@ -14,6 +14,24 @@ importers:
       '@azure/msal-react':
         specifier: ^3.0.0
         version: 3.0.29(@azure/msal-browser@4.30.0)(react@18.3.1)
+      '@digdir/designsystemet-css':
+        specifier: ^1.23.0
+        version: 1.23.0
+      '@digdir/designsystemet-react':
+        specifier: ^1.23.0
+        version: 1.23.0(@types/react@18.3.28)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@dnd-kit/core':
+        specifier: ^6.3.1
+        version: 6.3.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@dnd-kit/sortable':
+        specifier: ^10.0.0
+        version: 10.0.0(@dnd-kit/core@6.3.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
+      '@dnd-kit/utilities':
+        specifier: ^3.2.2
+        version: 3.2.2(react@18.3.1)
+      '@navikt/aksel-icons':
+        specifier: ^8.19.2
+        version: 8.19.2
       '@netlify/vite-plugin':
         specifier: ^2.8.0
         version: 2.11.2(rollup@4.59.1)(vite@7.3.1(@types/node@25.5.0)(jiti@2.6.1)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.2))
@@ -315,6 +333,43 @@ packages:
   '@dependents/detective-less@5.0.1':
     resolution: {integrity: sha512-Y6+WUMsTFWE5jb20IFP4YGa5IrGY/+a/FbOSjDF/wz9gepU2hwCYSXRHP/vPwBvwcY3SVMASt4yXxbXNXigmZQ==}
     engines: {node: '>=18'}
+
+  '@digdir/designsystemet-css@1.23.0':
+    resolution: {integrity: sha512-OuqjDBxKl81K+X/5bDj2RydTq2+97kgImanjJOTB6uKe19mmEmnE22uLYuP6QWTjzU9LuBF5nTApM9zTtkRvSw==}
+
+  '@digdir/designsystemet-react@1.23.0':
+    resolution: {integrity: sha512-ejVfuutPGRjtLBNAiWGdKNGS4SFjBYd94VhonaWB2mMBcPkTcGvHtl1zLjKNmx255mlaunk2LuHOZ9x9z93YBw==}
+    peerDependencies:
+      react: '>=18.3.1 || ^19.0.0'
+      react-dom: '>=18.3.1 || ^19.0.0'
+
+  '@digdir/designsystemet-types@1.23.0':
+    resolution: {integrity: sha512-fUDl1bMAWlV2pyo1GlWaN5heuVZNdNMW3/hEgzmYxQcCtaq0g8lNKsUt2GZEeWR5vKE1dfxahsOdKW1E9Udpyg==}
+
+  '@digdir/designsystemet-web@1.23.0':
+    resolution: {integrity: sha512-XaCVAw7W84PXjSt2RqJVTWIpl9/5zeazTqL3nsIwud3+bfH1mvyo5UeE8GVTFsC23LXmprjjDZG1ySD2Xuo4yw==}
+
+  '@dnd-kit/accessibility@3.1.1':
+    resolution: {integrity: sha512-2P+YgaXF+gRsIihwwY1gCsQSYnu9Zyj2py8kY5fFvUM1qm2WA2u639R6YNVfU4GWr+ZM5mqEsfHZZLoRONbemw==}
+    peerDependencies:
+      react: '>=16.8.0'
+
+  '@dnd-kit/core@6.3.1':
+    resolution: {integrity: sha512-xkGBRQQab4RLwgXxoqETICr6S5JlogafbhNsidmrkVv2YRs5MLwpjoF2qpiGjQt8S9AoxtIV603s0GIUpY5eYQ==}
+    peerDependencies:
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
+
+  '@dnd-kit/sortable@10.0.0':
+    resolution: {integrity: sha512-+xqhmIIzvAYMGfBYYnbKuNicfSsk4RksY2XdmJhT+HAC01nix6fHCztU68jooFiMUB01Ky3F0FyOvhG/BZrWkg==}
+    peerDependencies:
+      '@dnd-kit/core': ^6.3.0
+      react: '>=16.8.0'
+
+  '@dnd-kit/utilities@3.2.2':
+    resolution: {integrity: sha512-+MKAJEOfaBe5SmV6t34p80MMKhjvUz0vRrvVJbPT0WElzaOJ/1xs+D+KDv+tD/NE5ujfrChEcshd4fLn0wpiqg==}
+    peerDependencies:
+      react: '>=16.8.0'
 
   '@electric-sql/pglite@0.3.16':
     resolution: {integrity: sha512-mZkZfOd9OqTMHsK+1cje8OSzfAQcpD7JmILXTl5ahdempjUDdmg4euf1biDex5/LfQIDJ3gvCu6qDgdnDxfJmA==}
@@ -656,6 +711,27 @@ packages:
   '@fastify/busboy@3.2.0':
     resolution: {integrity: sha512-m9FVDXU3GT2ITSe0UaMA5rU3QkfC/UXtCU8y0gSN/GugTqtVldOBWIB5V6V3sbmenVZUIpU6f+mPEO2+m5iTaA==}
 
+  '@floating-ui/core@1.8.0':
+    resolution: {integrity: sha512-0CIZ5itps/8x7BG8dEIhs53BvCUH2PCoogtakwRTut+Arm58sJooJ0AuZhLw2HJYIR5cMLNPBSS728sPho2khQ==}
+
+  '@floating-ui/dom@1.8.0':
+    resolution: {integrity: sha512-yXSrzeHZBTZadLOlfyhCkJHNeLJnHRnRInwdZ40L7ZiaAtrBwoYlsDrX3v5zB1Utk7CLfzcOVnVVWoXEky7Ceg==}
+
+  '@floating-ui/react-dom@2.1.9':
+    resolution: {integrity: sha512-JDjEFGCpImxDCA7JJKviA0M9+RtmJdj0m/NVU5IMgBK+AmZouAQQ7/+2GLH0GXXY0YMw9oXPB8hKdbPYg5QLYg==}
+    peerDependencies:
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
+
+  '@floating-ui/react@0.26.23':
+    resolution: {integrity: sha512-9u3i62fV0CFF3nIegiWiRDwOs7OW/KhSUJDNx2MkQM3LbE5zQOY01sL3nelcVBXvX7Ovvo3A49I8ql+20Wg/Hw==}
+    peerDependencies:
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
+
+  '@floating-ui/utils@0.2.12':
+    resolution: {integrity: sha512-HpCo8tmWzLVad5s2d19EhAz5zqrrQ6s69qd6moPMQvkOuSwDT1YgRfWSVuc4ennqrgv3OHppiOGMQ7oC13yIww==}
+
   '@humanwhocodes/momoa@2.0.4':
     resolution: {integrity: sha512-RE815I4arJFtt+FVeU1Tgp9/Xvecacji8w/V6XtXsWWH/wz/eNkNbhb+ny/+PlVZjV0rxQpRSQKNKE3lcktHEA==}
     engines: {node: '>=10.10.0'}
@@ -886,6 +962,9 @@ packages:
     resolution: {integrity: sha512-uwPAhccfFJlsfCxMYTwOdVfOz3xqyj8xYL3zJj8f0pb30tLohnnFPhLuqp4/qoEz8sNxe4SESZedcBojRefIzg==}
     engines: {node: '>=18'}
     hasBin: true
+
+  '@navikt/aksel-icons@8.19.2':
+    resolution: {integrity: sha512-QFqO/2GFNKgB1NLQ2KAhWNegn/+Tevj1wlvrImSRdWPg6QGvlrBRjDbZxclRrosqMtYqYzF3BWMtAb5f8tmvgw==}
 
   '@netlify/ai@0.4.1':
     resolution: {integrity: sha512-ETLtV/9taYrcGhszwO+BLFgFJJ2MCnJp8BwxfwV6Z/+z3SsaUG4ExC8x4xzNCdB2GPWxXrXkvR2LFNsPFSLcRA==}
@@ -1422,6 +1501,24 @@ packages:
   '@popperjs/core@2.11.8':
     resolution: {integrity: sha512-P1st0aksCrn9sGZhp8GMYwBnQsbvAWsZAX44oXNNvLHGqAOcoVxmjZiohstwQ7SqKnbR47akdNi+uleWD8+g6A==}
 
+  '@radix-ui/react-compose-refs@1.1.5':
+    resolution: {integrity: sha512-+48PbAAbq3didjJxa+OaWY2ZwgAKsNiRGyeHKszblZMQ+kcpd9pAaT11cMkGEie0vsOi3QdeTE6d5Fe3Gn61kA==}
+    peerDependencies:
+      '@types/react': '*'
+      react: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+
+  '@radix-ui/react-slot@1.5.0':
+    resolution: {integrity: sha512-tyYd9ddPXAysAbdbD9eYxgwpCSv6f3PncqVSNKQFSR5lcJVLz3cb/pANDoYrLiHBpXv7skortyUgGUWsYuPPFQ==}
+    peerDependencies:
+      '@types/react': '*'
+      react: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+
   '@react-native/assets-registry@0.84.1':
     resolution: {integrity: sha512-lAJ6PDZv95FdT9s9uhc9ivhikW1Zwh4j9XdXM7J2l4oUA3t37qfoBmTSDLuPyE3Bi+Xtwa11hJm0BUTT2sc/gg==}
     engines: {node: '>= 20.19.4'}
@@ -1695,6 +1792,12 @@ packages:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
+  '@tanstack/react-virtual@3.14.21':
+    resolution: {integrity: sha512-wWE/ZJDNNDp18JHWy7n5PQooqerHePVkEEu6Op0twKQ2InF9DPhYMQptQY0syDEviMd3/r8D0OUvKJibDGm9HQ==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+
   '@tanstack/router-core@1.168.1':
     resolution: {integrity: sha512-RtpshTLZsMOkwW7rI52WFWGZSSfMAyDR1zWP9kVm91UX28gedc+LXih1CTP6TchS+TvxK4q8oW7ApMTvnpiY1w==}
     engines: {node: '>=20.19'}
@@ -1742,6 +1845,9 @@ packages:
 
   '@tanstack/store@0.9.2':
     resolution: {integrity: sha512-K013lUJEFJK2ofFQ/hZKJUmCnpcV00ebLyOyFOWQvyQHUOZp/iYO84BM6aOGiV81JzwbX0APTVmW8YI7yiG5oA==}
+
+  '@tanstack/virtual-core@3.19.6':
+    resolution: {integrity: sha512-CsTW892z23gy7IyxYTTorVu1uZWB+0N349rSMgKz4rFLPpLza7F7TpcCKeI5iUAwYQCt8QUlOU67J+KXCxtpGw==}
 
   '@tanstack/virtual-file-routes@1.161.7':
     resolution: {integrity: sha512-olW33+Cn+bsCsZKPwEGhlkqS6w3M2slFv11JIobdnCFKMLG97oAI2kWKdx5/zsywTL8flpnoIgaZZPlQTFYhdQ==}
@@ -1853,6 +1959,18 @@ packages:
   '@typescript-eslint/visitor-keys@8.57.1':
     resolution: {integrity: sha512-YWnmJkXbofiz9KbnbbwuA2rpGkFPLbAIetcCNO6mJ8gdhdZ/v7WDXsoGFAJuM6ikUFKTlSQnjWnVO4ux+UzS6A==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
+  '@u-elements/u-combobox@2.1.5':
+    resolution: {integrity: sha512-SnuSbE0OSSSut41tZYtLClXifWXO29n3Y+D2EBNRlbVUuSfcgG46yrOjiwbwxkfAX6WpJ6UciMwSHGW3xcegMA==}
+
+  '@u-elements/u-datalist@2.0.3':
+    resolution: {integrity: sha512-1/N53P9CtmpTQQN/S8fQG0JEQqQmpAmAVhuPTskycrn74DJUdi2lKYdyGW7X4tg6ANsi4iGLn5Bv3NLHoCrzIg==}
+
+  '@u-elements/u-details@1.0.0':
+    resolution: {integrity: sha512-CA0w0VTH/vWWouFWEw7XIws3RUCBm2dh7ity+sbDXgpc6yz5NkoMpeDTdB/DHpI+/YInULz0XLOTrw8b7KX3Qg==}
+
+  '@u-elements/u-tabs@1.0.4':
+    resolution: {integrity: sha512-F0CoSaiFnUInfTSiftufZARi6bvC0Ucb+aVaVfO65a0GWeIsTjTZupXh313POqN7SkvH4lQ+4+X33uhwBMAiww==}
 
   '@utdanningsdirektoratet/lisa-tokens@1.2.0':
     resolution: {integrity: sha512-L0b+E0GbLDh/dBYz6t+06l2SYJ+1wHM5t8MprwIfasE7fAGXG50n/mAo56QWLRbJRIwfmDzZ+S/VwcXX3icABg==, tarball: https://npm.pkg.github.com/download/@utdanningsdirektoratet/lisa-tokens/1.2.0/56cb2677bff70b0fe93b2150517246e8a67322ac}
@@ -4512,6 +4630,9 @@ packages:
   tabbable@5.3.3:
     resolution: {integrity: sha512-QD9qKY3StfbZqWOPLp0++pOrAVb/HbUi5xCc8cUo4XjP19808oaMiDzn0leBY5mCespIBM0CIZePzZjgzR83kA==}
 
+  tabbable@6.5.0:
+    resolution: {integrity: sha512-wieBHXygIm7OyQOu5hQlkk62/WyCFYGlWg7L6/ZCUZwx0o398Zkn4pVmMyfYhfMG8kGrj/Krt8eIk6UKC6VzwA==}
+
   tar-stream@3.1.8:
     resolution: {integrity: sha512-U6QpVRyCGHva435KoNWy9PRoi2IFYCgtEhq9nmrPPpbRacPs9IH4aJ3gbrFC8dPcXvdSZ4XXfXT5Fshbp2MtlQ==}
 
@@ -5308,6 +5429,60 @@ snapshots:
       gonzales-pe: 4.3.0
       node-source-walk: 7.0.1
 
+  '@digdir/designsystemet-css@1.23.0':
+    dependencies:
+      '@digdir/designsystemet-types': 1.23.0
+
+  '@digdir/designsystemet-react@1.23.0(@types/react@18.3.28)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      '@digdir/designsystemet-types': 1.23.0
+      '@digdir/designsystemet-web': 1.23.0
+      '@floating-ui/dom': 1.8.0
+      '@floating-ui/react': 0.26.23(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@navikt/aksel-icons': 8.19.2
+      '@radix-ui/react-slot': 1.5.0(@types/react@18.3.28)(react@18.3.1)
+      '@tanstack/react-virtual': 3.14.21(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      clsx: 2.1.1
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+    transitivePeerDependencies:
+      - '@types/react'
+
+  '@digdir/designsystemet-types@1.23.0': {}
+
+  '@digdir/designsystemet-web@1.23.0':
+    dependencies:
+      '@floating-ui/dom': 1.8.0
+      '@u-elements/u-combobox': 2.1.5
+      '@u-elements/u-datalist': 2.0.3
+      '@u-elements/u-details': 1.0.0
+      '@u-elements/u-tabs': 1.0.4
+
+  '@dnd-kit/accessibility@3.1.1(react@18.3.1)':
+    dependencies:
+      react: 18.3.1
+      tslib: 2.8.1
+
+  '@dnd-kit/core@6.3.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      '@dnd-kit/accessibility': 3.1.1(react@18.3.1)
+      '@dnd-kit/utilities': 3.2.2(react@18.3.1)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+      tslib: 2.8.1
+
+  '@dnd-kit/sortable@10.0.0(@dnd-kit/core@6.3.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      '@dnd-kit/core': 6.3.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@dnd-kit/utilities': 3.2.2(react@18.3.1)
+      react: 18.3.1
+      tslib: 2.8.1
+
+  '@dnd-kit/utilities@3.2.2(react@18.3.1)':
+    dependencies:
+      react: 18.3.1
+      tslib: 2.8.1
+
   '@electric-sql/pglite@0.3.16': {}
 
   '@emnapi/runtime@1.9.1':
@@ -5489,6 +5664,31 @@ snapshots:
   '@fastify/accept-negotiator@2.0.1': {}
 
   '@fastify/busboy@3.2.0': {}
+
+  '@floating-ui/core@1.8.0':
+    dependencies:
+      '@floating-ui/utils': 0.2.12
+
+  '@floating-ui/dom@1.8.0':
+    dependencies:
+      '@floating-ui/core': 1.8.0
+      '@floating-ui/utils': 0.2.12
+
+  '@floating-ui/react-dom@2.1.9(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      '@floating-ui/dom': 1.8.0
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+
+  '@floating-ui/react@0.26.23(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      '@floating-ui/react-dom': 2.1.9(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@floating-ui/utils': 0.2.12
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+      tabbable: 6.5.0
+
+  '@floating-ui/utils@0.2.12': {}
 
   '@humanwhocodes/momoa@2.0.4': {}
 
@@ -5706,6 +5906,8 @@ snapshots:
     transitivePeerDependencies:
       - encoding
       - supports-color
+
+  '@navikt/aksel-icons@8.19.2': {}
 
   '@netlify/ai@0.4.1':
     dependencies:
@@ -6306,6 +6508,19 @@ snapshots:
 
   '@popperjs/core@2.11.8': {}
 
+  '@radix-ui/react-compose-refs@1.1.5(@types/react@18.3.28)(react@18.3.1)':
+    dependencies:
+      react: 18.3.1
+    optionalDependencies:
+      '@types/react': 18.3.28
+
+  '@radix-ui/react-slot@1.5.0(@types/react@18.3.28)(react@18.3.1)':
+    dependencies:
+      '@radix-ui/react-compose-refs': 1.1.5(@types/react@18.3.28)(react@18.3.1)
+      react: 18.3.1
+    optionalDependencies:
+      '@types/react': 18.3.28
+
   '@react-native/assets-registry@0.84.1': {}
 
   '@react-native/codegen@0.84.1(@babel/core@7.29.0)':
@@ -6543,6 +6758,12 @@ snapshots:
       react-dom: 18.3.1(react@18.3.1)
       use-sync-external-store: 1.6.0(react@18.3.1)
 
+  '@tanstack/react-virtual@3.14.21(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      '@tanstack/virtual-core': 3.19.6
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+
   '@tanstack/router-core@1.168.1':
     dependencies:
       '@tanstack/history': 1.161.6
@@ -6610,6 +6831,8 @@ snapshots:
       - supports-color
 
   '@tanstack/store@0.9.2': {}
+
+  '@tanstack/virtual-core@3.19.6': {}
 
   '@tanstack/virtual-file-routes@1.161.7': {}
 
@@ -6758,6 +6981,14 @@ snapshots:
     dependencies:
       '@typescript-eslint/types': 8.57.1
       eslint-visitor-keys: 5.0.1
+
+  '@u-elements/u-combobox@2.1.5': {}
+
+  '@u-elements/u-datalist@2.0.3': {}
+
+  '@u-elements/u-details@1.0.0': {}
+
+  '@u-elements/u-tabs@1.0.4': {}
 
   '@utdanningsdirektoratet/lisa-tokens@1.2.0(@types/styled-components@4.4.3(@babel/core@7.29.0)(react@18.3.1))(react@18.3.1)(styled-components@5.3.11(@babel/core@7.29.0)(react-dom@18.3.1(react@18.3.1))(react-is@18.3.1)(react@18.3.1))':
     dependencies:
@@ -9912,6 +10143,8 @@ snapshots:
   system-architecture@0.1.0: {}
 
   tabbable@5.3.3: {}
+
+  tabbable@6.5.0: {}
 
   tar-stream@3.1.8:
     dependencies:

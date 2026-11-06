@@ -1,0 +1,16 @@
+.column {
+	display: flex;
+	flex-direction: column;
+}
+
+.column--gap-small {
+	gap: var(--ds-size-2);
+}
+
+.column--gap-medium {
+	gap: var(--ds-size-4);
+}
+
+.column--gap-large {
+	gap: var(--ds-size-8);
+}

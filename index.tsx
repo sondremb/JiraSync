@@ -3,6 +3,8 @@ import { createRoot } from "react-dom/client";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { routeTree } from "./src/routeTree.gen";
 import { jiraAuthenticationContext } from "./src/login/jira/authContext";
+import "@digdir/designsystemet-css";
+import "@digdir/designsystemet-css/theme.css";
 
 const router = createRouter({
 	routeTree,

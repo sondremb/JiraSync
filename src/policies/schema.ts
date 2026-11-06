@@ -3,14 +3,14 @@ import { type JiraProjectKey } from "../data/issue";
 import { type Ruleset, type Rule, type RulesetId, type Jql } from "../rules";
 import { type BekkId } from "../types";
 
-const ruleSchema = z.object({
+export const ruleSchema = z.object({
 	projectKey: z.string().min(1),
 	jql: z.string().min(1).optional(),
 	timecode: z.number().int().positive(),
 	comment: z.string().optional(),
 });
 
-const rulesetSchema = z.object({
+export const rulesetSchema = z.object({
 	id: z.string().min(1),
 	name: z.string().min(1),
 	description: z.string().optional(),
@@ -32,6 +32,7 @@ export function loadPolicies(raw: unknown): Ruleset[] {
 			projectKey: rule.projectKey as JiraProjectKey,
 			jql: rule.jql as Jql | undefined,
 			timecode: rule.timecode as BekkId,
+			comment: rule.comment,
 		})),
 	}));
 }

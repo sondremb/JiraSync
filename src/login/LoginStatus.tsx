@@ -8,14 +8,11 @@ import {
 } from "@utdanningsdirektoratet/lisa";
 import React from "react";
 import styled from "styled-components";
-import { jiraAuthenticationContext } from "./jira/authContext";
+import { useLogout } from "./useLogout";
 
 export const LoginStatus: React.FC = () => {
 	const { instance } = useMsal();
-	const onClick = () => {
-		jiraAuthenticationContext.logout();
-		instance.logoutRedirect();
-	};
+	const logout = useLogout();
 	const navn = instance.getActiveAccount()?.name;
 	return (
 		<FlexRow halign="end">
@@ -23,7 +20,7 @@ export const LoginStatus: React.FC = () => {
 				<Text textStyle="label">
 					<em>{navn}</em>
 				</Text>
-				<Link onClick={onClick}>Logg ut</Link>
+				<Link onClick={logout}>Logg ut</Link>
 			</FixedFlexColumn>
 			<Pictogram type="user" className="ml-8" />
 		</FlexRow>

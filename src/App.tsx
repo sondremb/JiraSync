@@ -12,6 +12,7 @@ import { WeeklyReconciliation } from "./components/WeeklyReconciliation";
 import { RulesetModal } from "./components/RulesetModal";
 import { useLockDate } from "./data/useLockDate";
 import { useRuleSet } from "./data/useRuleset";
+import { rulesetKey } from "./policies/catalog";
 import { IsoWeek } from "./date-time/IsoWeek";
 
 const CenteredText = styled(Text)`
@@ -75,7 +76,7 @@ export const App: React.FC<Props> = ({ initialWeek }) => {
 			</ColoredRow>
 			{selectedRuleset && !lockDateLoading && (
 				<WeeklyReconciliation
-					key={`${weekAndYear}-${selectedRuleset.id}`}
+					key={`${weekAndYear}-${rulesetKey(selectedRuleset)}`}
 					week={weekAndYear}
 					ruleset={selectedRuleset}
 				/>
