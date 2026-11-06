@@ -20,9 +20,7 @@ export const LoginStatus: React.FC = () => {
 				<Text textStyle="label">
 					<em>{navn}</em>
 				</Text>
-				<Link url="/logout" onClick={logout}>
-					Logg ut
-				</Link>
+				<Link onClick={logout}>Logg ut</Link>
 			</FixedFlexColumn>
 			<Pictogram type="user" className="ml-8" />
 		</FlexRow>
