@@ -29,12 +29,55 @@
 	background: var(--ds-color-neutral-background-default);
 }
 
-.policyEditor__project {
-	flex: 1 1 12rem;
+/*
+ * Project (Textfield) and timecode (Combobox) render their label, description,
+ * input and error with different markup and spacing. Each field becomes a
+ * subgrid over shared rows so the parts line up across the two columns.
+ */
+.policyEditor__fields {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) minmax(0, 3fr);
+	column-gap: var(--ds-size-4);
 }
 
-.policyEditor__timecode {
-	flex: 3 1 20rem;
+.policyEditor__fields > * {
+	display: grid;
+	grid-row: span 4;
+	grid-template-rows: subgrid;
+	align-content: start;
+	gap: 0;
+}
+
+.policyEditor__fields > * > * {
+	margin: 0;
+}
+
+.policyEditor__fields :global(.ds-label) {
+	grid-row: 1;
+}
+
+.policyEditor__fields :global([data-field="description"]),
+.policyEditor__fields :global(.ds-combobox__description) {
+	grid-row: 2;
+}
+
+.policyEditor__fields :global(.ds-field-affixes),
+.policyEditor__fields :global(.ds-combobox__input__wrapper) {
+	grid-row: 3;
+	margin-top: var(--ds-size-2);
+}
+
+.policyEditor__fields :global(.ds-field > .ds-validation-message),
+.policyEditor__fields :global(.ds-combobox__error-message:not(:empty)) {
+	grid-row: 4;
+	margin-top: var(--ds-size-2);
+}
+
+@media (max-width: 40rem) {
+	.policyEditor__fields {
+		grid-template-columns: minmax(0, 1fr);
+		row-gap: var(--ds-size-4);
+	}
 }
 
 .policyEditor__jql {

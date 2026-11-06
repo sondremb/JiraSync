@@ -36,9 +36,8 @@ export const RuleEditor: React.FC<{
 	return (
 		<Fieldset className={styles.policyEditor__ruleForm}>
 			<Fieldset.Legend>Regel {position}</Fieldset.Legend>
-			<Row wrap align="start">
+			<div className={styles.policyEditor__fields}>
 				<Textfield
-					className={styles.policyEditor__project}
 					label="Prosjekt"
 					description="Jira-nøkkel, f.eks. ABC"
 					value={rule.projectKey}
@@ -47,14 +46,12 @@ export const RuleEditor: React.FC<{
 					onChange={(e) => change({ projectKey: e.target.value })}
 					error={errors?.projectKey && projectKeyErrorText[errors.projectKey]}
 				/>
-				<div className={styles.policyEditor__timecode}>
-					<TimecodePicker
-						value={rule.timecode}
-						onChange={(timecode) => change({ timecode })}
-						error={errors?.timecode && timecodeErrorText[errors.timecode]}
-					/>
-				</div>
-			</Row>
+				<TimecodePicker
+					value={rule.timecode}
+					onChange={(timecode) => change({ timecode })}
+					error={errors?.timecode && timecodeErrorText[errors.timecode]}
+				/>
+			</div>
 			<JqlField rule={rule} onChange={(jql) => change({ jql })} />
 			<Textfield
 				label="Kommentar"
