@@ -27,7 +27,6 @@ export default defineConfig({
 				manualChunks(id) {
 					if (!id.includes("node_modules")) return undefined;
 					if (id.includes("@azure")) return "msal";
-					if (id.includes("@utdanningsdirektoratet")) return "lisa";
 					if (id.includes("zod")) return "zod";
 					return undefined;
 				},

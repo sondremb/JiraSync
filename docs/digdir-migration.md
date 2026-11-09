@@ -43,7 +43,7 @@ Migrate in small, separately verifiable steps. Lisa and Digdir can coexist brief
 - Do this per component as it is migrated in steps 2–4, instead of a separate pass, so each file is touched once.
 - Once no `styled` usage remains, remove `styled-components`, `@types/styled-components`, `src/typings/styled-components-compat.d.ts` and the `@ts-expect-error` in `src/components/P.tsx`.
 
-### 6. Final step: remove Lisa
+### 6. Final step: remove Lisa ✅ Done
 
 Only once nothing imports `@utdanningsdirektoratet/*` any more (check with grep):
 
@@ -97,9 +97,12 @@ Notes from this step:
 - `login.tsx`, `logout.tsx`, `error.tsx` and `privacy.tsx` use `Page`, Digdir `Heading`/`Paragraph`/`Link`/`Button`. The login button is `Button asChild` around an `<a>`.
 - `useScreenSize` on the login page is replaced by a media query in `login.module.css`. The illustration is decorative, so its `alt` is empty.
 
-### Next: remove Lisa
+### Remove Lisa ✅ Done (awaiting visual check)
 
-Step 6 above: `LisaProvider` in `__root.tsx`, `global-style.ts`, the Roboto link in `index.html`, the styled-components typings and deps, and the Lisa deps and registry setup.
+- `LisaProvider` and `GlobalStyle` are gone from `__root.tsx`. The CSS reset moved to `src/global.css` (imported in `index.tsx`), still unlayered and still skipping `dialog`. The page background is `--ds-color-neutral-background-default` instead of `stålblå200`.
+- Digdir's CSS defines `--ds-font-family` (Inter) but neither applies it nor loads the font. `global.css` sets it on `body`, and `index.html` loads Inter from Google Fonts in place of Roboto.
+- Removed `@utdanningsdirektoratet/lisa`, `lisa-tokens`, `styled-components`, `@types/styled-components`, `src/typings/styled-components-compat.d.ts`, `.npmrc`, the GitHub Packages registry setup in CI, the `lisa` chunk in `vite.config.ts` and the `NPM_TOKEN` docs in `README.md`.
+- `NPM_TOKEN` can also be removed from Netlify's environment variables and the repo's `NODE_AUTH_TOKEN` secret.
 
 ## Verification
 

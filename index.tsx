@@ -5,6 +5,7 @@ import { routeTree } from "./src/routeTree.gen";
 import { jiraAuthenticationContext } from "./src/login/jira/authContext";
 import "@digdir/designsystemet-css";
 import "@digdir/designsystemet-css/theme.css";
+import "./src/global.css";
 
 const router = createRouter({
 	routeTree,

@@ -24,11 +24,9 @@
 - [ ] T7 Stable `/api/...` routes over the Netlify functions (design §6, §7.5)
   - Frontend should not see `/.netlify/functions/*` paths. Document
     request/response/error shapes.
-- [ ] T8 Rewrite UI to the digdir design system, default theme
-  - Likely needs splitting into smaller tasks once started (layout shell, grid,
-    dialogs).
 - [ ] T9 Mobile support for the weekly view
-  - Do alongside T8, since the grid layout will change anyway.
+  - The timetable now scrolls sideways on narrow screens (T8), but the weekly
+    view is not designed for mobile yet.
 - [ ] T10 Know when time tracking requires a comment
   - Needs investigation of how the Internal System signals this.
 - [ ] T11 Handle overtime when locking the month
@@ -62,6 +60,8 @@
 
 ## Done
 
+- [x] T8 Rewrite UI to the digdir design system, default theme
+  - See `docs/digdir-migration.md`. Lisa and styled-components are removed.
 - [x] T0 Move rulesets from TypeScript to validated JSON (5063cec)
 - [x] T12 Remove customer-specific references (as far as practical)
   - Only removed the unused `isUdir` field. Remaining Udir references (bruno
