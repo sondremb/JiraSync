@@ -1,28 +1,13 @@
 import React, { useState } from "react";
-import {
-	Button,
-	FlexColumn,
-	FlexRow,
-	Icon,
-	Text,
-} from "@utdanningsdirektoratet/lisa";
-import { colors, spacing } from "@utdanningsdirektoratet/lisa-tokens";
-import styled from "styled-components";
+import { Button, Paragraph } from "@digdir/designsystemet-react";
+import { ArrowLeftIcon, ArrowRightIcon } from "@navikt/aksel-icons";
 import { WeeklyReconciliation } from "./components/WeeklyReconciliation";
 import { RulesetBar } from "./components/RulesetBar";
 import { useLockDate } from "./data/useLockDate";
 import { useRuleSet } from "./data/useRuleset";
 import { rulesetKey } from "./policies/catalog";
 import { IsoWeek } from "./date-time/IsoWeek";
-
-const CenteredText = styled(Text)`
-	text-align: center;
-`;
-
-const ColoredRow = styled(FlexRow)`
-	background-color: ${colors.skifer500};
-	padding: ${spacing(8)};
-`;
+import styles from "./App.module.css";
 
 interface Props {
 	initialWeek: IsoWeek;
@@ -37,6 +22,7 @@ export const App: React.FC<Props> = ({ initialWeek }) => {
 	if (!lockDateLoading && startWeek === undefined) setStartWeek(initialWeek);
 	const [navigatedWeek, setNavigatedWeek] = useState<IsoWeek | undefined>();
 	const weekAndYear = navigatedWeek ?? startWeek ?? initialWeek;
+	const { week, year } = IsoWeek.toParts(weekAndYear);
 
 	const onNextWeekClick = () => setNavigatedWeek(IsoWeek.next(weekAndYear));
 	const onPreviousWeekClick = () =>
@@ -44,34 +30,21 @@ export const App: React.FC<Props> = ({ initialWeek }) => {
 
 	return (
 		<>
-			<RulesetBar className="mb-12" />
-			<ColoredRow halign="center" valign="center">
-				<Button
-					variant="text"
-					onClick={onPreviousWeekClick}
-					icon={<Icon type="arrow" direction="left" />}
-					colorTheme="dark"
-				>
+			<RulesetBar />
+			<nav aria-label="Uke" className={styles.weekNav} data-color-scheme="dark">
+				<Button variant="tertiary" onClick={onPreviousWeekClick}>
+					<ArrowLeftIcon aria-hidden />
 					Forrige
 				</Button>
-				<FlexColumn halign="center" className="mx-40" width={`${55 / 16}rem`}>
-					<CenteredText textStyle="bodyBold" textColor="grå100">
-						UKE {IsoWeek.toParts(weekAndYear).week}
-					</CenteredText>
-					<CenteredText textStyle="bodyBold" textColor="grå100">
-						{IsoWeek.toParts(weekAndYear).year}
-					</CenteredText>
-				</FlexColumn>
-				<Button
-					variant="text"
-					onClick={onNextWeekClick}
-					icon={<Icon type="arrow" direction="right" />}
-					iconPlacement="right"
-					colorTheme="dark"
-				>
+				<div className={styles.weekNav__current} aria-live="polite">
+					<Paragraph className={styles.weekNav__label}>UKE {week}</Paragraph>
+					<Paragraph className={styles.weekNav__label}>{year}</Paragraph>
+				</div>
+				<Button variant="tertiary" onClick={onNextWeekClick}>
 					Neste
+					<ArrowRightIcon aria-hidden />
 				</Button>
-			</ColoredRow>
+			</nav>
 			{selectedRuleset && !lockDateLoading && (
 				<WeeklyReconciliation
 					key={`${weekAndYear}-${rulesetKey(selectedRuleset)}`}

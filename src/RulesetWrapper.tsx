@@ -1,34 +1,39 @@
+import { Heading } from "@digdir/designsystemet-react";
 import React from "react";
 import { RulesetSelector } from "./components/RulesetSelector";
-import { FlexRow, H1, H2, PageLayout } from "@utdanningsdirektoratet/lisa";
 import { useRuleSet } from "./data/useRuleset";
 import { Example } from "./components/TimeTable/timetable-cell";
-import { LoginStatus } from "./login/LoginStatus";
+import { Page } from "./layout/Page";
+import { Row } from "./layout/Row";
+import { UserStatus } from "./layout/UserStatus";
+import styles from "./RulesetWrapper.module.css";
 
-export const RulesetWrapper: React.FC<React.PropsWithChildren<{}>> = ({
+export const RulesetWrapper: React.FC<React.PropsWithChildren> = ({
 	children,
 }) => {
 	const { selectedRuleset } = useRuleSet();
 
 	return (
-		<PageLayout>
-			<FlexRow valign="center" halign="space-between" className="mb-20">
-				<FlexRow>
-					<H1 textStyle="display" className="mb-0 mr-40">
+		<Page>
+			<Row justify="between" align="start">
+				<Row className={styles.rulesetWrapper__brand}>
+					<Heading level={1} data-size="xl">
 						Jirasync
-					</H1>
+					</Heading>
 					<Example />
-				</FlexRow>
-				<LoginStatus />
-			</FlexRow>
+				</Row>
+				<UserStatus />
+			</Row>
 			{selectedRuleset ? (
 				children
 			) : (
 				<>
-					<H2 textStyle="headline">Velg regler</H2>
+					<Heading level={2} data-size="md">
+						Velg regler
+					</Heading>
 					<RulesetSelector />
 				</>
 			)}
-		</PageLayout>
+		</Page>
 	);
 };

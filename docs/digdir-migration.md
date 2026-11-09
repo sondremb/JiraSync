@@ -67,7 +67,7 @@ Only once nothing imports `@utdanningsdirektoratet/*` any more (check with grep)
 
 The remaining work is organised by page rather than by component type. That way each PR moves one screen fully onto Digdir and can be checked visually as a whole.
 
-### Next: the main week page, without the table
+### Main week page, without the table ✅ Done
 
 This is the route users land on after login (`routes/index.tsx` → `LockdateWrapper` → `RulesetWrapper` → `App` → `WeeklyReconciliation`). It currently still looks like Lisa, while the policy pages look like Digdir.
 
@@ -77,7 +77,14 @@ This is the route users land on after login (`routes/index.tsx` → `LockdateWra
 - `src/components/RulesetModal.tsx` → Digdir `Dialog`. `RulesetSelector.tsx`: `RadioGroup` → `Fieldset` + `Radio`. The already migrated `RulesetBar` opens this modal, so it still shows Lisa.
 - Small components: `P.tsx` → `Paragraph` (removes the `@ts-expect-error`), `DownloadTimestamp.tsx`, `SkeletonLoader.tsx` → Digdir `Skeleton`.
 
-### Then: TimeTable
+Notes from this step:
+
+- Notifications: `useNotification` was replaced with inline `Alert`s driven by the sync mutation's state (success, or error with the message). No custom toast.
+- `RulesetWrapper` now uses the same `UserStatus` as the policy pages, so `LoginStatus.tsx` was deleted. `SkeletonLoader.tsx` and `DownloadTimestamp.tsx` were unused and deleted. `P.tsx` was replaced by Digdir `Paragraph`.
+- The week bar uses `data-color-scheme="dark"` to keep its dark look with Digdir tokens.
+- `Example` (the legend in the header) still comes from `timetable-cell.tsx` and moves with the TimeTable step.
+
+### Next: TimeTable
 
 - `src/components/TimeTable/TimeTable.tsx`, `timetable-cell.tsx` and `LockDateButton.tsx`.
 - This is a separate PR because `timetable-cell.tsx` is the heaviest styled-components file (conditional colours, corner markers, hard-coded Roboto). It needs a careful visual comparison against the current table. Use BEM modifiers for the states, e.g. `.timetableCell--mismatch`.
@@ -85,7 +92,7 @@ This is the route users land on after login (`routes/index.tsx` → `LockdateWra
 
 ### Then: login and small routes
 
-- `src/routes/login.tsx` (`useScreenSize`/`ScreenSize` → media query), `src/login/LoginStatus.tsx` (`Pictogram` → Aksel icon), `routes/privacy.tsx`, `routes/logout.tsx` and `routes/error.tsx`.
+- `src/routes/login.tsx` (`useScreenSize`/`ScreenSize` → media query), `routes/privacy.tsx`, `routes/logout.tsx` and `routes/error.tsx`.
 
 ### Last: remove Lisa
 
@@ -100,4 +107,4 @@ Step 6 above: `LisaProvider` in `__root.tsx`, `global-style.ts`, the Roboto link
 
 ## Open decisions
 
-- Toast replacement (inline `Alert` vs custom toast).
+- None. Toast replacement was decided as inline `Alert` (2026-11-09).

@@ -1,0 +1,21 @@
+/* Rendered with data-color-scheme="dark", so the tokens resolve to dark colours. */
+.weekNav {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: var(--ds-size-6);
+	padding: var(--ds-size-2);
+	border-radius: var(--ds-border-radius-md);
+	background-color: var(--ds-color-neutral-background-default);
+	color: var(--ds-color-neutral-text-default);
+}
+
+.weekNav__current {
+	min-width: 4.5rem;
+	text-align: center;
+}
+
+.weekNav__label {
+	margin: 0;
+	font-weight: var(--ds-font-weight-semibold);
+}

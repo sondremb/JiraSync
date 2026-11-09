@@ -1,0 +1,13 @@
+.weeklyReconciliation {
+	display: flex;
+	flex-direction: column;
+	gap: var(--ds-size-4);
+}
+
+.weeklyReconciliation__alert--centered {
+	align-self: center;
+}
+
+.weeklyReconciliation__changes {
+	margin: var(--ds-size-2) 0 0;
+}
