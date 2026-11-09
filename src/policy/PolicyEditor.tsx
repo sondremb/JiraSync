@@ -43,6 +43,7 @@ import { type Ruleset } from "../rules";
 import { usePolicyCatalog } from "../policies/usePolicyCatalog";
 import { PolicyKindTags } from "./PolicyKindTag";
 import { RuleList } from "./RuleList";
+import { SendStatusMessage, useSendRuleset } from "./SendToSondre";
 
 export const PolicyEditor: React.FC<{
 	/** The ruleset to edit, or to copy from when `mode` is "new". */
@@ -105,14 +106,14 @@ const DraftForm: React.FC<{
 		),
 	);
 	const [showErrors, setShowErrors] = useState(false);
-	const [copied, setCopied] = useState(false);
+	const sending = useSendRuleset();
 
 	const validation = validateDraft(draft, taken);
 	const errorsVisible = showErrors && !validation.valid;
 
 	const edit = (change: (d: DraftRuleset) => DraftRuleset) => {
 		setDraft(change);
-		setCopied(false);
+		sending.reset();
 	};
 	const insertAt = (index: number) => {
 		const key = nextKey.current++;
@@ -164,13 +165,7 @@ const DraftForm: React.FC<{
 			URL.revokeObjectURL(url);
 		});
 
-	const copy = () =>
-		withValidRuleset((ruleset) => {
-			navigator.clipboard.writeText(exportRuleset(ruleset)).then(
-				() => setCopied(true),
-				() => setCopied(false),
-			);
-		});
+	const send = () => withValidRuleset(sending.send);
 
 	return (
 		<Column gap="large">
@@ -193,14 +188,7 @@ const DraftForm: React.FC<{
 			</Column>
 
 			<Alert data-color="info">
-				<Heading level={3} data-size="xs">
-					Endringene blir ikke tatt i bruk automatisk
-				</Heading>
-				<Paragraph>
-					Et lagret utkast finnes bare i denne nettleseren. For at endringene
-					skal gjelde for alle, last ned eller kopier JSON og send den til
-					Sondre.
-				</Paragraph>
+				Endringene gjelder bare deg til du har sendt dem til Sondre.
 			</Alert>
 
 			<Column>
@@ -281,7 +269,7 @@ const DraftForm: React.FC<{
 				<Alert data-color="danger">
 					{validation.rules
 						? rulesErrorText[validation.rules]
-						: "Rett feilene som er markert over før du lagrer eller eksporterer."}
+						: "Rett feilene som er markert over før du sender eller lagrer."}
 				</Alert>
 			)}
 			{saveDraft.isError && (
@@ -290,22 +278,30 @@ const DraftForm: React.FC<{
 				</Alert>
 			)}
 
-			<Row wrap>
-				<Button onClick={save} disabled={saveDraft.isPending}>
-					Lagre utkast
-				</Button>
-				<Button variant="secondary" onClick={download}>
-					Last ned JSON
-				</Button>
-				<Button variant="secondary" onClick={copy}>
-					Kopier JSON
-				</Button>
-				{copied && (
-					<Paragraph data-size="sm" role="status">
-						Kopiert til utklippstavlen.
-					</Paragraph>
-				)}
-			</Row>
+			<Column gap="small">
+				<Heading level={3} data-size="xs">
+					Ferdig? Send regelsettet til Sondre
+				</Heading>
+				<Paragraph>
+					Endringene gjelder for alle først når Sondre har lagt dem inn i appen.
+					Et lagret utkast blir bare liggende i denne nettleseren, så du kan
+					jobbe videre senere.
+				</Paragraph>
+				<Row wrap>
+					<Button onClick={send}>Send til Sondre</Button>
+					<Button
+						variant="secondary"
+						onClick={save}
+						disabled={saveDraft.isPending}
+					>
+						Lagre utkast i nettleseren
+					</Button>
+					<Button variant="secondary" onClick={download}>
+						Last ned fil
+					</Button>
+				</Row>
+				<SendStatusMessage status={sending.status} />
+			</Column>
 
 			{mode === "edit" && source && (
 				<Row wrap>

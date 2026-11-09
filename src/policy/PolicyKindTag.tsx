@@ -12,13 +12,13 @@ export const PolicyKindTags: React.FC<{ entry: CatalogEntry }> = ({
 			</Tag>
 		)}
 		{entry.kind === "draft" && (
-			<Tag data-color="neutral" data-size="sm">
-				kladd
+			<Tag data-color="warning" data-size="sm">
+				bare hos deg
 			</Tag>
 		)}
 		{entry.kind === "edited" && (
-			<Tag data-color="neutral" data-size="sm">
-				redigert kopi
+			<Tag data-color="warning" data-size="sm">
+				endret, bare hos deg
 			</Tag>
 		)}
 	</>

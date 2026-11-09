@@ -9,7 +9,7 @@ import {
 import { colors, spacing } from "@utdanningsdirektoratet/lisa-tokens";
 import styled from "styled-components";
 import { WeeklyReconciliation } from "./components/WeeklyReconciliation";
-import { RulesetModal } from "./components/RulesetModal";
+import { RulesetBar } from "./components/RulesetBar";
 import { useLockDate } from "./data/useLockDate";
 import { useRuleSet } from "./data/useRuleset";
 import { rulesetKey } from "./policies/catalog";
@@ -44,9 +44,7 @@ export const App: React.FC<Props> = ({ initialWeek }) => {
 
 	return (
 		<>
-			<FlexRow halign="space-between" className="mb-12">
-				<RulesetModal />
-			</FlexRow>
+			<RulesetBar className="mb-12" />
 			<ColoredRow halign="center" valign="center">
 				<Button
 					variant="text"
