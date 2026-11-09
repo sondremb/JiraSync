@@ -1,8 +1,8 @@
 import React from "react";
 import { createFileRoute } from "@tanstack/react-router";
+import { Heading, Link, Paragraph } from "@digdir/designsystemet-react";
 import { jiraAuthenticationContext } from "../login/jira/authContext";
-import { Paragraph } from "@digdir/designsystemet-react";
-import { Link } from "@utdanningsdirektoratet/lisa";
+import { Page } from "../layout/Page";
 
 export const Route = createFileRoute("/logout")({
 	component: RouteComponent,
@@ -13,12 +13,14 @@ export const Route = createFileRoute("/logout")({
 
 function RouteComponent() {
 	return (
-		<div>
-			Du har nå logget ut.
+		<Page>
+			<Heading level={1} data-size="lg">
+				Du har nå logget ut
+			</Heading>
 			<Paragraph>
 				Klikk her for å{" "}
-				<Link url=".netlify/functions/jira-auth-init">logge inn igjen</Link>
+				<Link href=".netlify/functions/jira-auth-init">logge inn igjen</Link>
 			</Paragraph>
-		</div>
+		</Page>
 	);
 }

@@ -1,11 +1,16 @@
 import React from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { Text } from "@utdanningsdirektoratet/lisa";
+import { Paragraph } from "@digdir/designsystemet-react";
+import { Page } from "../layout/Page";
 
 export const Route = createFileRoute("/privacy")({
 	component: RouteComponent,
 });
 
 function RouteComponent() {
-	return <Text>🚧 Personvernerklæring kommer 🚧</Text>;
+	return (
+		<Page>
+			<Paragraph>🚧 Personvernerklæring kommer 🚧</Paragraph>
+		</Page>
+	);
 }

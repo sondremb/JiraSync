@@ -92,11 +92,12 @@ Notes from this step:
 - `LockDateButton` is a Digdir tertiary icon `Button` with Aksel padlock icons. It now has an `aria-label` (it had no accessible name before).
 - The table scrolls sideways on narrow screens.
 
-### Next: login and small routes
+### Login and small routes ✅ Done
 
-- `src/routes/login.tsx` (`useScreenSize`/`ScreenSize` → media query), `routes/privacy.tsx`, `routes/logout.tsx` and `routes/error.tsx`.
+- `login.tsx`, `logout.tsx`, `error.tsx` and `privacy.tsx` use `Page`, Digdir `Heading`/`Paragraph`/`Link`/`Button`. The login button is `Button asChild` around an `<a>`.
+- `useScreenSize` on the login page is replaced by a media query in `login.module.css`. The illustration is decorative, so its `alt` is empty.
 
-### Last: remove Lisa
+### Next: remove Lisa
 
 Step 6 above: `LisaProvider` in `__root.tsx`, `global-style.ts`, the Roboto link in `index.html`, the styled-components typings and deps, and the Lisa deps and registry setup.
 
