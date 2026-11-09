@@ -61,7 +61,8 @@
 ## Done
 
 - [x] T8 Rewrite UI to the digdir design system, default theme
-  - See `docs/digdir-migration.md`. Lisa and styled-components are removed.
+  - Lisa and styled-components are removed. Styling conventions are in
+    `CLAUDE.md`.
 - [x] T0 Move rulesets from TypeScript to validated JSON (5063cec)
 - [x] T12 Remove customer-specific references (as far as practical)
   - Only removed the unused `isUdir` field. Remaining Udir references (bruno

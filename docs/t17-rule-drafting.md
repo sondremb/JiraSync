@@ -9,7 +9,7 @@ Digdir-only pages (no Lisa) for viewing, drafting and exporting mapping rulesets
 ## Decisions (made with the user)
 
 - Pages require Bekk and Jira login, using the same guard as `/`.
-- Build minimal Digdir `Page`/`Row`/`Column` as part of this task (migration step 2 in `docs/digdir-migration.md`). Pages render inside the existing Lisa root until step 6 of that doc.
+- Build minimal Digdir `Page`/`Row`/`Column` as part of this task (part of the Lisa → Digdir migration, T8). Pages render inside the existing Lisa root until Lisa is removed.
 - Export = a single ruleset JSON, validated against the zod schema, in the same key order and tab-indented layout as `policies.json`.
 - Drafts persist in localStorage (`jirasync.drafts`). Only valid, explicitly saved drafts are persisted. Half-finished edits live in page state.
 - **Part B (in scope):** a user can select a draft in the sync view.
