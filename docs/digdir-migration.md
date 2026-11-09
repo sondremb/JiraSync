@@ -57,6 +57,40 @@ Only once nothing imports `@utdanningsdirektoratet/*` any more (check with grep)
 
 1 → 2 → 3 (file by file, starting with `login.tsx`, `routes/*` and small components) → 4 (Dialog, then Table) → 5 (alongside 2–4) → 6 (last). One commit per step.
 
+## Status and remaining work (2026-11-09)
+
+### Done
+
+- Foundation (step 1).
+- Layout primitives: `src/layout/Page`, `Row` and `Column`, with CSS modules.
+- Policy pages (`src/policy/*`), `RulesetBar` and `UserStatus`. These are fully on Digdir with BEM CSS modules.
+
+The remaining work is organised by page rather than by component type. That way each PR moves one screen fully onto Digdir and can be checked visually as a whole.
+
+### Next: the main week page, without the table
+
+This is the route users land on after login (`routes/index.tsx` → `LockdateWrapper` → `RulesetWrapper` → `App` → `WeeklyReconciliation`). It currently still looks like Lisa, while the policy pages look like Digdir.
+
+- `src/RulesetWrapper.tsx`: `PageLayout`/`FlexRow`/`H1`/`H2` → `Page`/`Row`/`Column` + Digdir `Heading`.
+- `src/App.tsx`: week navigation bar (`Button`, `Icon`, `Text`, `FlexRow`/`FlexColumn`). Replace the `CenteredText` and `ColoredRow` styled-components and the `lisa-tokens` usage with a CSS module.
+- `src/components/WeeklyReconciliation.tsx`: `ConfirmModal` → `ConfirmDialog` wrapper on Digdir `Dialog`; `useNotification` → requires the toast decision (see Open decisions). Fix the `clasName` typo.
+- `src/components/RulesetModal.tsx` → Digdir `Dialog`. `RulesetSelector.tsx`: `RadioGroup` → `Fieldset` + `Radio`. The already migrated `RulesetBar` opens this modal, so it still shows Lisa.
+- Small components: `P.tsx` → `Paragraph` (removes the `@ts-expect-error`), `DownloadTimestamp.tsx`, `SkeletonLoader.tsx` → Digdir `Skeleton`.
+
+### Then: TimeTable
+
+- `src/components/TimeTable/TimeTable.tsx`, `timetable-cell.tsx` and `LockDateButton.tsx`.
+- This is a separate PR because `timetable-cell.tsx` is the heaviest styled-components file (conditional colours, corner markers, hard-coded Roboto). It needs a careful visual comparison against the current table. Use BEM modifiers for the states, e.g. `.timetableCell--mismatch`.
+- It doesn't depend on the outer page, so it can be swapped with the previous step if it's better to get the hardest part done first.
+
+### Then: login and small routes
+
+- `src/routes/login.tsx` (`useScreenSize`/`ScreenSize` → media query), `src/login/LoginStatus.tsx` (`Pictogram` → Aksel icon), `routes/privacy.tsx`, `routes/logout.tsx` and `routes/error.tsx`.
+
+### Last: remove Lisa
+
+Step 6 above: `LisaProvider` in `__root.tsx`, `global-style.ts`, the Roboto link in `index.html`, the styled-components typings and deps, and the Lisa deps and registry setup.
+
 ## Verification
 
 - `pnpm build`, `pnpm lint`, `pnpm format:check` and `pnpm test` pass after each step.
