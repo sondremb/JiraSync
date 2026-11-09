@@ -1,7 +1,6 @@
-import { FlexRow, Icon } from "@utdanningsdirektoratet/lisa";
-import { borderRadius, rem } from "@utdanningsdirektoratet/lisa-tokens";
 import React from "react";
-import styled, { css } from "styled-components";
+import { Button } from "@digdir/designsystemet-react";
+import { PadlockLockedIcon, PadlockUnlockedIcon } from "@navikt/aksel-icons";
 import { useLockDate } from "../../data/useLockDate";
 import { IsoDate } from "../../date-time/IsoWeek";
 
@@ -10,46 +9,30 @@ interface Props {
 	onClick: () => void;
 }
 
-export const LockDateButton: React.FC<Props> = (props) => {
+export const LockDateButton: React.FC<Props> = ({ day, onClick }) => {
 	const { lockDate } = useLockDate();
-	const disabled = lockDate === undefined || props.day <= lockDate;
-
-	const onClick = () => {
-		if (!disabled) {
-			props.onClick();
-		}
-	};
+	const locked = lockDate === undefined || day <= lockDate;
+	const label =
+		lockDate === undefined
+			? "Låsedato er ukjent"
+			: locked
+				? `${IsoDate.formatLong(day)} er låst`
+				: `Lås timer til og med ${IsoDate.formatLong(day)}`;
 
 	return (
-		<FlexRow halign="center" valign="center">
-			<Button disabled={disabled} onClick={onClick}>
-				<StyledIcon type={disabled ? "locked" : "unlocked"} iconColor="hvit" />
-			</Button>
-		</FlexRow>
+		<Button
+			variant="tertiary"
+			icon
+			disabled={locked}
+			aria-label={label}
+			title={label}
+			onClick={onClick}
+		>
+			{locked ? (
+				<PadlockLockedIcon aria-hidden />
+			) : (
+				<PadlockUnlockedIcon aria-hidden />
+			)}
+		</Button>
 	);
 };
-
-const StyledIcon = styled(Icon)`
-	width: ${rem(20)};
-	height: ${rem(20)};
-`;
-
-const Button = styled.button<{ disabled: boolean }>`
-	background-color: transparent;
-	border: none;
-	cursor: ${(props) => (props.disabled ? "default" : "pointer")};
-	border-radius: ${borderRadius.large};
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	width: ${rem(40)};
-	height: ${rem(40)};
-	padding: 0;
-	:hover {
-		${(props) =>
-			!props.disabled &&
-			css`
-				background-color: rgba(255, 255, 255, 0.1);
-			`}
-	}
-`;

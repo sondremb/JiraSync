@@ -2,7 +2,7 @@ import { Heading } from "@digdir/designsystemet-react";
 import React from "react";
 import { RulesetSelector } from "./components/RulesetSelector";
 import { useRuleSet } from "./data/useRuleset";
-import { Example } from "./components/TimeTable/timetable-cell";
+import { HoursLegend } from "./components/TimeTable/HoursBox";
 import { Page } from "./layout/Page";
 import { Row } from "./layout/Row";
 import { UserStatus } from "./layout/UserStatus";
@@ -20,7 +20,7 @@ export const RulesetWrapper: React.FC<React.PropsWithChildren> = ({
 					<Heading level={1} data-size="xl">
 						Jirasync
 					</Heading>
-					<Example />
+					<HoursLegend />
 				</Row>
 				<UserStatus />
 			</Row>

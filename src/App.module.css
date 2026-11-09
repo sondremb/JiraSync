@@ -1,4 +1,4 @@
-/* Rendered with data-color-scheme="dark", so the tokens resolve to dark colours. */
+/* Same accent tint as the timetable header. */
 .weekNav {
 	display: flex;
 	align-items: center;
@@ -6,8 +6,8 @@
 	gap: var(--ds-size-6);
 	padding: var(--ds-size-2);
 	border-radius: var(--ds-border-radius-md);
-	background-color: var(--ds-color-neutral-background-default);
-	color: var(--ds-color-neutral-text-default);
+	background-color: var(--ds-color-accent-surface-tinted);
+	color: var(--ds-color-accent-text-default);
 }
 
 .weekNav__current {

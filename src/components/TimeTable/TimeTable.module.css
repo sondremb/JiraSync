@@ -1,0 +1,48 @@
+/* Scrolls sideways on narrow screens instead of squeezing the days. */
+.timeTable {
+	overflow-x: auto;
+}
+
+.timeTable__table {
+	width: 100%;
+}
+
+.timeTable__code {
+	width: 25%;
+}
+
+.timeTable__cell--hours {
+	text-align: center;
+}
+
+.timeTable__cell--hours > * {
+	margin-inline: auto;
+}
+
+.timeTable__cell--total {
+	font-size: 1.5rem;
+	font-variant-numeric: tabular-nums;
+	font-weight: var(--ds-font-weight-semibold);
+}
+
+.timeTable__day {
+	display: flex;
+	flex-direction: column;
+	text-transform: capitalize;
+}
+
+.timeTable__timecodeName {
+	display: block;
+	color: var(--ds-color-neutral-text-subtle);
+	font-size: 0.875rem;
+}
+
+/* Header in the accent colour, totals row neutral. Digdir uses the header
+ * background for both, so set it per section. */
+.timeTable__table > thead {
+	--dsc-table-header-background: var(--ds-color-accent-surface-tinted);
+}
+
+.timeTable__foot {
+	--dsc-table-header-background: var(--ds-color-neutral-surface-tinted);
+}

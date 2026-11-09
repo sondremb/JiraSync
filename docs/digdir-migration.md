@@ -81,16 +81,18 @@ Notes from this step:
 
 - Notifications: `useNotification` was replaced with inline `Alert`s driven by the sync mutation's state (success, or error with the message). No custom toast.
 - `RulesetWrapper` now uses the same `UserStatus` as the policy pages, so `LoginStatus.tsx` was deleted. `SkeletonLoader.tsx` and `DownloadTimestamp.tsx` were unused and deleted. `P.tsx` was replaced by Digdir `Paragraph`.
-- The week bar uses `data-color-scheme="dark"` to keep its dark look with Digdir tokens.
+- The week bar uses the accent tinted surface, matching the timetable header.
 - `Example` (the legend in the header) still comes from `timetable-cell.tsx` and moves with the TimeTable step.
 
-### Next: TimeTable
+### TimeTable ✅ Done
 
-- `src/components/TimeTable/TimeTable.tsx`, `timetable-cell.tsx` and `LockDateButton.tsx`.
-- This is a separate PR because `timetable-cell.tsx` is the heaviest styled-components file (conditional colours, corner markers, hard-coded Roboto). It needs a careful visual comparison against the current table. Use BEM modifiers for the states, e.g. `.timetableCell--mismatch`.
-- It doesn't depend on the outer page, so it can be swapped with the previous step if it's better to get the hardest part done first.
+- Rebuilt on Digdir `Table` with explicit `Head`/`Body`/`Foot` rows instead of Lisa's column definitions. The totals and lock rows are in `Table.Foot`. The header uses the accent tinted surface and the totals row the neutral tinted surface (via `--dsc-table-header-background`), replacing the dark `skifer500` rows.
+- `timetable-cell.tsx` was split into `HoursBox.tsx` (the hours box and the `HoursLegend` in the header) with a BEM CSS module. A mismatch is `.hoursBox--mismatch` with Digdir danger tokens. The hard-coded Roboto is gone.
+- Loading state uses Digdir `Skeleton` rows.
+- `LockDateButton` is a Digdir tertiary icon `Button` with Aksel padlock icons. It now has an `aria-label` (it had no accessible name before).
+- The table scrolls sideways on narrow screens.
 
-### Then: login and small routes
+### Next: login and small routes
 
 - `src/routes/login.tsx` (`useScreenSize`/`ScreenSize` → media query), `routes/privacy.tsx`, `routes/logout.tsx` and `routes/error.tsx`.
 
