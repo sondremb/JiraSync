@@ -10,8 +10,8 @@ interface Props {
 
 const kindSuffix: Record<CatalogEntry["kind"], string> = {
 	bundled: "",
-	draft: " (kladd)",
-	edited: " (redigert kopi)",
+	draft: " (bare hos deg)",
+	edited: " (endret, bare hos deg)",
 };
 
 function label({ ruleset, kind }: CatalogEntry): string {

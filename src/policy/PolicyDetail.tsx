@@ -1,4 +1,6 @@
 import {
+	Alert,
+	Button,
 	Heading,
 	Link as DsLink,
 	Paragraph,
@@ -10,11 +12,12 @@ import { useJiraProjects } from "../data/useJiraProjects";
 import { useTimecodesByIds } from "../data/useTimecodesByIds";
 import { Column } from "../layout/Column";
 import { Row } from "../layout/Row";
-import { findEntry } from "../policies/catalog";
+import { type CatalogEntry, findEntry } from "../policies/catalog";
 import { timecodeLabel } from "../policies/timecodeOptions";
 import { usePolicyCatalog } from "../policies/usePolicyCatalog";
 import { PolicyKindTags } from "./PolicyKindTag";
 import styles from "./PolicyDetail.module.css";
+import { SendStatusMessage, useSendRuleset } from "./SendToSondre";
 
 export const PolicyDetail: React.FC<{ id: string }> = ({ id }) => {
 	const catalog = usePolicyCatalog();
@@ -70,6 +73,7 @@ export const PolicyDetail: React.FC<{ id: string }> = ({ id }) => {
 					Reglene gjelder i rekkefølge: den første som passer, vinner.
 				</Paragraph>
 			</Column>
+			{entry.kind !== "bundled" && <NotSharedNotice entry={entry} />}
 			<Table zebra>
 				<Table.Head>
 					<Table.Row>
@@ -116,6 +120,32 @@ export const PolicyDetail: React.FC<{ id: string }> = ({ id }) => {
 					})}
 				</Table.Body>
 			</Table>
+		</Column>
+	);
+};
+
+/** Local rulesets only apply to this user until they are sent and added to the app. */
+const NotSharedNotice: React.FC<{ entry: CatalogEntry }> = ({ entry }) => {
+	const sending = useSendRuleset();
+	return (
+		<Column gap="small">
+			<Alert data-color="warning">
+				<Heading level={3} data-size="xs">
+					Gjelder bare deg
+				</Heading>
+				<Paragraph>
+					{entry.kind === "edited"
+						? "Endringene dine finnes bare i denne nettleseren."
+						: "Regelsettet finnes bare i denne nettleseren."}{" "}
+					Det gjelder for alle først når Sondre har lagt det inn i appen.
+					{entry.kind === "edited" &&
+						" Når endringene er lagt inn, kan du forkaste kopien din under «Rediger»."}
+				</Paragraph>
+				<Button data-size="sm" onClick={() => sending.send(entry.ruleset)}>
+					Send til Sondre
+				</Button>
+			</Alert>
+			<SendStatusMessage status={sending.status} />
 		</Column>
 	);
 };
