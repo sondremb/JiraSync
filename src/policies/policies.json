@@ -51,6 +51,14 @@
 					"comment": "Nyutvikling"
 				},
 				{ "projectKey": "IDPF", "timecode": 1003618, "comment": "Forvaltning" },
+				{
+					"projectKey": "SO",
+					"timecode": 1003691
+				},
+				{
+					"projectKey": "UMS",
+					"timecode": 1003703
+				},
 				{ "projectKey": "NYAPROV", "timecode": 1003650 }
 			]
 		},
