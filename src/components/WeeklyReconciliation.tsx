@@ -17,6 +17,7 @@ import {
 import { planSync, type ProposedChange } from "../reconciliation/syncPreview";
 import { Ruleset } from "../rules";
 import { TimeTable } from "./TimeTable/TimeTable";
+import { DayList } from "./TimeTable/DayList";
 import { toGridEntries } from "./TimeTable/gridModel";
 import { Column } from "../layout/Column";
 import { Row } from "../layout/Row";
@@ -87,15 +88,33 @@ export const WeeklyReconciliation: React.FC<Props> = ({ week, ruleset }) => {
 	return (
 		<section aria-label="Avstemming" className={styles.weeklyReconciliation}>
 			{isPending ? (
-				<TimeTable pending entries={[]} days={IsoWeek.days(week)} />
+				<>
+					<TimeTable
+						pending
+						className={styles.weeklyReconciliation__table}
+						entries={[]}
+						days={IsoWeek.days(week)}
+					/>
+					<DayList
+						pending
+						className={styles.weeklyReconciliation__list}
+						reports={[]}
+					/>
+				</>
 			) : error ? (
 				<Alert data-color="danger">En feil oppstod: {error.message}</Alert>
 			) : (
 				data && (
 					<>
 						<TimeTable
+							className={styles.weeklyReconciliation__table}
 							entries={toGridEntries(data)}
 							days={data.map((report) => report.date)}
+							onLockDate={lock}
+						/>
+						<DayList
+							className={styles.weeklyReconciliation__list}
+							reports={data}
 							onLockDate={lock}
 						/>
 						{unmatchedCount > 0 && (

@@ -1,3 +1,11 @@
 .rulesetWrapper__brand {
-	gap: var(--ds-size-10);
+	column-gap: var(--ds-size-10);
+	row-gap: var(--ds-size-2);
+}
+
+/* The legend wraps under the heading. */
+@media (width < 48rem) {
+	.rulesetWrapper__brand {
+		column-gap: var(--ds-size-4);
+	}
 }

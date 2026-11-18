@@ -1,0 +1,101 @@
+.dayList {
+	display: flex;
+	flex-direction: column;
+	gap: var(--ds-size-3);
+}
+
+.dayList__days {
+	display: flex;
+	flex-direction: column;
+	gap: var(--ds-size-2);
+	padding: 0;
+	list-style: none;
+}
+
+.dayList__day {
+	display: flex;
+	flex-direction: column;
+	gap: var(--ds-size-2);
+	padding: var(--ds-size-3);
+	border: 1px solid var(--ds-color-neutral-border-subtle);
+	border-radius: var(--ds-border-radius-md);
+}
+
+/* Same accent tint as the table header on desktop. */
+.dayList__header {
+	display: flex;
+	align-items: center;
+	gap: var(--ds-size-2);
+	margin: calc(-1 * var(--ds-size-3)) calc(-1 * var(--ds-size-3)) 0;
+	padding: var(--ds-size-1) var(--ds-size-1) var(--ds-size-1) var(--ds-size-3);
+	border-radius: var(--ds-border-radius-md) var(--ds-border-radius-md) 0 0;
+	background-color: var(--ds-color-accent-surface-tinted);
+}
+
+.dayList__title {
+	flex: 1;
+	min-width: 0;
+	font-variant-numeric: tabular-nums;
+}
+
+.dayList__status {
+	flex-shrink: 0;
+	font-size: 1.25rem;
+}
+
+.dayList__status--ok {
+	color: var(--ds-color-success-base-default);
+}
+
+.dayList__status--warning {
+	color: var(--ds-color-warning-base-default);
+}
+
+.dayList__lines {
+	display: flex;
+	flex-direction: column;
+	gap: var(--ds-size-2);
+	padding: 0;
+	list-style: none;
+}
+
+.dayList__line {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--ds-size-3);
+}
+
+.dayList__timecode {
+	min-width: 0;
+	overflow-wrap: anywhere;
+}
+
+.dayList__line > :last-child {
+	flex-shrink: 0;
+}
+
+.dayList__empty {
+	color: var(--ds-color-neutral-text-subtle);
+}
+
+/* A thin row: the label and Sunday's lock button. */
+.dayList__day--weekend {
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+	padding-block: var(--ds-size-1);
+	background-color: var(--ds-color-neutral-surface-tinted);
+}
+
+.dayList__weekendLabel {
+	color: var(--ds-color-neutral-text-subtle);
+}
+
+.dayList__total {
+	display: flex;
+	justify-content: space-between;
+	padding-inline: var(--ds-size-3);
+	font-size: 1.25rem;
+	font-variant-numeric: tabular-nums;
+}

@@ -15,8 +15,8 @@ export const RulesetWrapper: React.FC<React.PropsWithChildren> = ({
 
 	return (
 		<Page>
-			<Row justify="between" align="start">
-				<Row className={styles.rulesetWrapper__brand}>
+			<Row justify="between" align="start" wrap>
+				<Row wrap className={styles.rulesetWrapper__brand}>
 					<Heading level={1} data-size="xl">
 						Jirasync
 					</Heading>

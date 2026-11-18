@@ -3,13 +3,14 @@ import { Skeleton, Table } from "@digdir/designsystemet-react";
 import { formatDate } from "date-fns";
 import { nb } from "date-fns/locale/nb";
 import { IsoDate } from "../../date-time/IsoWeek";
-import { useBekkTimecode } from "../../data/useBekkTimecode";
 import { GridEntry } from "./gridModel";
 import { HoursBox } from "./HoursBox";
 import { LockDateButton } from "./LockDateButton";
+import { TimecodeName } from "./TimecodeName";
 import styles from "./TimeTable.module.css";
 
 interface Props {
+	className?: string;
 	entries: GridEntry[];
 	days: IsoDate[];
 	onLockDate?: (day: IsoDate) => void;
@@ -25,6 +26,7 @@ const weekBekkHours = (entry: GridEntry) =>
 	sum(Object.values(entry.days).map((day) => day?.bekkHours ?? 0));
 
 export const TimeTable: React.FC<Props> = ({
+	className,
 	entries,
 	days,
 	onLockDate,
@@ -36,7 +38,9 @@ export const TimeTable: React.FC<Props> = ({
 	const hoursCell = styles["timeTable__cell--hours"];
 
 	return (
-		<div className={styles.timeTable}>
+		<div
+			className={[styles.timeTable, className ?? ""].filter(Boolean).join(" ")}
+		>
 			<Table className={styles.timeTable__table}>
 				<Table.Head>
 					<Table.Row>
@@ -122,17 +126,6 @@ const DayHeader: React.FC<{ day: IsoDate }> = ({ day }) => {
 			<span>{formatDate(date, "EEEE", { locale: nb })}</span>
 			<span>{formatDate(date, "d. MMMM", { locale: nb })}</span>
 		</span>
-	);
-};
-
-const TimecodeName: React.FC<{ id: GridEntry["id"] }> = ({ id }) => {
-	const timecode = useBekkTimecode(id);
-	if (timecode === undefined) return <>Timekode {id}</>;
-	return (
-		<>
-			{timecode.code}
-			<span className={styles.timeTable__timecodeName}>{timecode.name}</span>
-		</>
 	);
 };
 

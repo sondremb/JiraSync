@@ -1,0 +1,5 @@
+.timecodeName__name {
+	display: block;
+	color: var(--ds-color-neutral-text-subtle);
+	font-size: 0.875rem;
+}

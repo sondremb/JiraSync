@@ -31,7 +31,12 @@ export const App: React.FC<Props> = ({ initialWeek }) => {
 	return (
 		<>
 			<RulesetBar />
-			<nav aria-label="Uke" className={styles.weekNav} data-color="accent">
+			<nav
+				aria-label="Uke"
+				className={styles.weekNav}
+				data-color="accent"
+				data-size="md"
+			>
 				<Button variant="tertiary" onClick={onPreviousWeekClick}>
 					<ArrowLeftIcon aria-hidden />
 					Forrige
