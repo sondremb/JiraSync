@@ -63,10 +63,14 @@ export const DayList: React.FC<Props> = ({
 	);
 };
 
-const dayTitle = (date: IsoDate) => {
-	const text = formatDate(IsoDate.toDate(date), "EEEE d. MMM", { locale: nb });
-	return text.charAt(0).toUpperCase() + text.slice(1).replace(/\.$/, "");
-};
+const capitalize = (text: string) =>
+	text.charAt(0).toUpperCase() + text.slice(1);
+
+const weekdayName = (date: IsoDate) =>
+	capitalize(formatDate(IsoDate.toDate(date), "EEEE", { locale: nb }));
+
+const shortDate = (date: IsoDate) =>
+	formatDate(IsoDate.toDate(date), "d. MMM", { locale: nb }).replace(/\.$/, "");
 
 const Day: React.FC<{
 	day: DayListDay;
@@ -75,7 +79,8 @@ const Day: React.FC<{
 	<li className={styles.dayList__day}>
 		<div className={styles.dayList__header}>
 			<Heading level={2} data-size="2xs" className={styles.dayList__title}>
-				{dayTitle(day.date)} · {formatHours(day.bekkHours)} t
+				{weekdayName(day.date)} · {formatHours(day.bekkHours)} t{" "}
+				<span className={styles.dayList__date}>{shortDate(day.date)}</span>
 			</Heading>
 			{day.inSync ? (
 				<CheckmarkCircleFillIcon

@@ -38,6 +38,14 @@
 	font-variant-numeric: tabular-nums;
 }
 
+/* Below the weekday, smaller. */
+.dayList__date {
+	display: block;
+	color: var(--ds-color-neutral-text-subtle);
+	font-size: var(--ds-body-sm-font-size);
+	font-weight: var(--ds-font-weight-regular);
+}
+
 .dayList__status {
 	flex-shrink: 0;
 	font-size: 1.25rem;
