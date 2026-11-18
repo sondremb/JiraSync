@@ -1,5 +1,6 @@
 import React from "react";
-import { ArrowLeftIcon } from "@navikt/aksel-icons";
+import { Popover } from "@digdir/designsystemet-react";
+import { ArrowLeftIcon, QuestionmarkCircleIcon } from "@navikt/aksel-icons";
 import styles from "./HoursBox.module.css";
 
 interface Props {
@@ -49,5 +50,26 @@ export const HoursLegend: React.FC = () => (
 				Jira-timer
 			</span>
 		</div>
+	</div>
+);
+
+/** The legend behind a "?" button, for narrow screens. */
+export const HoursLegendHelp: React.FC<{ className?: string }> = ({
+	className,
+}) => (
+	<div className={className}>
+		<Popover.TriggerContext>
+			<Popover.Trigger
+				variant="tertiary"
+				icon
+				aria-label="Hva betyr tallene?"
+				title="Hva betyr tallene?"
+			>
+				<QuestionmarkCircleIcon aria-hidden />
+			</Popover.Trigger>
+			<Popover placement="bottom">
+				<HoursLegend />
+			</Popover>
+		</Popover.TriggerContext>
 	</div>
 );

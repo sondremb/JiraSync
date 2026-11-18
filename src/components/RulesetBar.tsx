@@ -12,19 +12,42 @@ import { Row } from "../layout/Row";
 import { type CatalogEntry } from "../policies/catalog";
 import { SendStatusMessage, useSendRuleset } from "../policy/SendToSondre";
 import { RulesetModal } from "./RulesetModal";
+import styles from "./RulesetBar.module.css";
 
 /**
  * Which ruleset the reconciliation uses. A local one only works for this user,
  * so say so here too, where its effect is seen.
+ *
+ * Narrow screens show only a one-line warning for a local ruleset; the choice
+ * itself is in the user menu.
  */
-export const RulesetBar: React.FC<{ className?: string }> = ({ className }) => {
+export const RulesetBar: React.FC = () => {
 	const { entries } = useRuleSet();
 	const selected = entries.find((entry) => entry.isSelected);
 	return (
-		<Row justify="between" align="start" wrap className={className}>
-			{selected ? <Summary entry={selected} /> : <span />}
-			<RulesetModal />
-		</Row>
+		<>
+			<div className={styles.rulesetBar}>
+				<Row justify="between" align="start" wrap>
+					{selected ? <Summary entry={selected} /> : <span />}
+					<RulesetModal />
+				</Row>
+			</div>
+			{selected && selected.kind !== "bundled" && (
+				<div className={styles.rulesetBar__compact}>
+					<Tag data-color="warning" data-size="sm">
+						{selected.kind === "edited" ? "Endrede regler" : "Lokale regler"}
+					</Tag>
+					<Paragraph data-size="sm">
+						<strong>{selected.ruleset.name}</strong> gjelder bare hos deg.{" "}
+						<DsLink asChild>
+							<RouterLink to="/policy/$id" params={{ id: selected.ruleset.id }}>
+								Se regelsett
+							</RouterLink>
+						</DsLink>
+					</Paragraph>
+				</div>
+			)}
+		</>
 	);
 };
 
