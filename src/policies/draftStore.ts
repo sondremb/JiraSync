@@ -1,10 +1,10 @@
 import { type Ruleset } from "../rules";
+import { type KeyValueStorage } from "../Utils/safeStorage";
 import { loadPolicies, rulesetSchema } from "./schema";
 
 export const draftsStorageKey = "jirasync.drafts";
 
-/** The subset of `Storage` the store needs, so tests can pass a fake. */
-export type DraftStorage = Pick<Storage, "getItem" | "setItem">;
+export type DraftStorage = KeyValueStorage;
 
 /**
  * Reads saved drafts. Never throws: unavailable storage, bad JSON and
@@ -48,13 +48,4 @@ function write(storage: DraftStorage, drafts: Ruleset[]) {
 
 function loadRulesets(valid: unknown[]): Ruleset[] {
 	return loadPolicies({ schemaVersion: 1, rulesets: valid });
-}
-
-/** `localStorage`, or a no-op store where access is blocked (private windows, cleared site data). */
-export function getDraftStorage(): DraftStorage {
-	try {
-		return window.localStorage;
-	} catch {
-		return { getItem: () => null, setItem: () => {} };
-	}
 }

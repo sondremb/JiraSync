@@ -1,0 +1,56 @@
+/* Tighter than Digdir's default Alert. [data-color] outranks .ds-alert, which
+ * sets these variables. The left padding is derived from the inline-end
+ * padding, the icon size and the spacing. */
+.announcementBanner[data-color] {
+	--dsc-alert-padding-block: var(--ds-size-2);
+	--dsc-alert-padding-inline-end: var(--ds-size-2);
+	--dsc-alert-spacing: var(--ds-size-2);
+	display: flex;
+	align-items: flex-start;
+	gap: var(--ds-size-1);
+	padding-inline-start: calc(
+		var(--ds-size-3) + var(--dsc-alert-icon-size) + var(--dsc-alert-spacing)
+	);
+}
+
+/* Digdir's info icon. Push it down by the content's padding-block so it lines
+ * up with the first line of text (Digdir only sets its inline margins). */
+.announcementBanner[data-color]::before {
+	margin-block-start: var(--ds-size-1);
+}
+
+.announcementBanner__content {
+	flex: 1;
+	min-width: 0;
+	/* Line the text up with the close button. */
+	padding-block: var(--ds-size-1);
+}
+
+.announcementBanner__text {
+	margin: 0;
+}
+
+.announcementBanner__list {
+	margin: 0;
+	padding-left: var(--ds-size-4);
+	display: flex;
+	flex-direction: column;
+	gap: var(--ds-size-1);
+}
+
+.announcementBanner__toggle {
+	margin-inline-start: calc(-1 * var(--ds-size-2));
+	margin-block-start: var(--ds-size-1);
+}
+
+.announcementBanner__close {
+	flex-shrink: 0;
+}
+
+/* No room for the info icon on narrow screens. */
+@media (width < 48rem) {
+	.announcementBanner[data-color] {
+		--dsc-alert-icon-size: 0px;
+		--dsc-alert-spacing: 0px;
+	}
+}

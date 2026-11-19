@@ -1,11 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { type Ruleset } from "../rules";
-import {
-	deleteDraft,
-	getDraftStorage,
-	loadDrafts,
-	saveDraft,
-} from "./draftStore";
+import { getSafeStorage } from "../Utils/safeStorage";
+import { deleteDraft, loadDrafts, saveDraft } from "./draftStore";
 
 const draftsQueryKey = ["policies", "drafts"];
 
@@ -14,8 +10,8 @@ export function useDrafts(): Ruleset[] {
 	const { data } = useQuery({
 		queryKey: draftsQueryKey,
 		staleTime: Infinity,
-		queryFn: () => loadDrafts(getDraftStorage()),
-		initialData: () => loadDrafts(getDraftStorage()),
+		queryFn: () => loadDrafts(getSafeStorage()),
+		initialData: () => loadDrafts(getSafeStorage()),
 	});
 	return data;
 }
@@ -23,7 +19,7 @@ export function useDrafts(): Ruleset[] {
 export function useSaveDraft() {
 	const client = useQueryClient();
 	return useMutation({
-		mutationFn: async (draft: Ruleset) => saveDraft(getDraftStorage(), draft),
+		mutationFn: async (draft: Ruleset) => saveDraft(getSafeStorage(), draft),
 		onSuccess: (drafts) => client.setQueryData(draftsQueryKey, drafts),
 	});
 }
@@ -31,7 +27,7 @@ export function useSaveDraft() {
 export function useDeleteDraft() {
 	const client = useQueryClient();
 	return useMutation({
-		mutationFn: async (id: string) => deleteDraft(getDraftStorage(), id),
+		mutationFn: async (id: string) => deleteDraft(getSafeStorage(), id),
 		onSuccess: (drafts) => client.setQueryData(draftsQueryKey, drafts),
 	});
 }

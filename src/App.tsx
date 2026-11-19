@@ -3,6 +3,7 @@ import { Button, Paragraph } from "@digdir/designsystemet-react";
 import { ArrowLeftIcon, ArrowRightIcon } from "@navikt/aksel-icons";
 import { WeeklyReconciliation } from "./components/WeeklyReconciliation";
 import { RulesetBar } from "./components/RulesetBar";
+import { AnnouncementBanner } from "./announcements/AnnouncementBanner";
 import { useLockDate } from "./data/useLockDate";
 import { useRuleSet } from "./data/useRuleset";
 import { rulesetKey } from "./policies/catalog";
@@ -30,6 +31,7 @@ export const App: React.FC<Props> = ({ initialWeek }) => {
 
 	return (
 		<>
+			<AnnouncementBanner />
 			<RulesetBar />
 			<nav
 				aria-label="Uke"

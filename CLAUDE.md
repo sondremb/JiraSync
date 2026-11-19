@@ -93,6 +93,8 @@ Auth is injected via middleware on each client. Jira uses a sessionStorage-backe
 - **Branded types** (`Utils/brandedTypes.ts`): `JiraIssueKey`, `IsoDate`, `IsoWeek`, `AccessToken` — prevent accidental mixing of string values
 - **ISO week** (`src/date-time/IsoWeek.ts`): All date handling uses Norway timezone; format is `YYYY-Www`
 - **Styling**: Digdir Designsystemet (`@digdir/designsystemet-react`, default theme) with icons from `@navikt/aksel-icons`. Custom styles are CSS modules (`*.module.css`) with BEM class names (`block__element--modifier`) using `--ds-*` tokens. Global base styles live in `src/global.css`. Layout primitives are in `src/layout/` (`Page`, `Row`, `Column`).
+- **Announcements** (`src/announcements/`): add `{ id, date, text }` to the list in `announcements.ts` to show a "what's new" banner on `/`. The selection (`unseen.ts`) is pure and tested; dismissal stores a "seen up to" date in `localStorage`.
+- **localStorage**: go through `getSafeStorage()` (`src/Utils/safeStorage.ts`), which falls back to a no-op store when storage is blocked.
 - **Server state**: `@tanstack/react-query` for all Jira and Bekk API calls — `useQuery` for fetches, `useMutation` + `invalidateQueries` for writes
 
 ### Serverless functions (`src/backend/`)
