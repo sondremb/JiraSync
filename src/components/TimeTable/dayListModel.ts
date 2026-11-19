@@ -1,4 +1,3 @@
-import { getISODay } from "date-fns";
 import { IsoDate } from "../../date-time/IsoWeek";
 import {
 	DayReport,
@@ -78,8 +77,6 @@ const toDay = (report: DayReport, entries: GridEntry[]): DayListDay => {
 const isEmpty = (day: DayListDay, report: DayReport) =>
 	day.lines.length === 0 && report.unmatchedJiraWork.length === 0;
 
-const weekday = (date: IsoDate) => getISODay(IsoDate.toDate(date));
-
 /** The mobile view of a week: one block per day, empty weekends collapsed. */
 export function toDayList(reports: readonly DayReport[]): DayList {
 	const entries = toGridEntries(reports).sort(
@@ -93,8 +90,8 @@ export function toDayList(reports: readonly DayReport[]): DayList {
 		const next = days[i + 1];
 		if (
 			next &&
-			weekday(day.date) === SATURDAY &&
-			weekday(next.date) === SUNDAY &&
+			IsoDate.weekday(day.date) === SATURDAY &&
+			IsoDate.weekday(next.date) === SUNDAY &&
 			isEmpty(day, reports[i]) &&
 			isEmpty(next, reports[i + 1])
 		) {

@@ -7,10 +7,12 @@ import {
 	Paragraph,
 } from "@digdir/designsystemet-react";
 import { EyeIcon } from "@navikt/aksel-icons";
+import { useQueryClient } from "@tanstack/react-query";
 import { formatHours, IsoDate, IsoWeek } from "../date-time/IsoWeek";
 import { TimecodeLabel } from "./TimecodeLabel";
 import { useLockDate } from "../data/useLockDate";
 import {
+	reconciliationQueryKey,
 	useSyncWeek,
 	useWeeklyReconciliation,
 } from "../reconciliation/useWeeklyReconciliation";
@@ -43,7 +45,15 @@ export const WeeklyReconciliation: React.FC<Props> = ({ week, ruleset }) => {
 		useWeeklyReconciliation(week, ruleset);
 	const { lockDate, updateLockDate } = useLockDate();
 	const sync = useSyncWeek();
+	const queryClient = useQueryClient();
 	const submitting = useRef(false);
+	/**
+	 * `dataUpdatedAt` of the refetch that follows a successful sync. The success
+	 * message only shows for that data, so a later refetch, week or ruleset
+	 * change replaces it with the current state.
+	 */
+	const [syncedAt, setSyncedAt] = useState<number | null>(null);
+	const justSynced = syncedAt !== null && syncedAt === dataUpdatedAt;
 	const [preview, setPreview] = useState<{
 		version: string;
 		changes: ProposedChange[];
@@ -68,6 +78,11 @@ export const WeeklyReconciliation: React.FC<Props> = ({ week, ruleset }) => {
 		submitting.current = true;
 		try {
 			await sync.mutateAsync(toApply);
+			// The mutation awaits the invalidation, so this is the refetched data.
+			setSyncedAt(
+				queryClient.getQueryState(reconciliationQueryKey(week, ruleset))
+					?.dataUpdatedAt ?? null,
+			);
 		} catch {
 			// Shown from `sync.error` below.
 		} finally {
@@ -126,7 +141,10 @@ export const WeeklyReconciliation: React.FC<Props> = ({ week, ruleset }) => {
 						{changes.length > 0 ? (
 							<Row justify="center" wrap>
 								<Button
+									// `loading` only shows a spinner, so block clicks while the
+									// data behind `changes` may be stale.
 									loading={isFetching || sync.isPending}
+									disabled={isFetching || sync.isPending}
 									onClick={() => {
 										void runSync(changes);
 									}}
@@ -145,7 +163,7 @@ export const WeeklyReconciliation: React.FC<Props> = ({ week, ruleset }) => {
 								</Button>
 							</Row>
 						) : (
-							!sync.isSuccess && (
+							!justSynced && (
 								<Alert
 									data-color="success"
 									className={styles["weeklyReconciliation__alert--centered"]}
@@ -157,7 +175,7 @@ export const WeeklyReconciliation: React.FC<Props> = ({ week, ruleset }) => {
 					</>
 				)
 			)}
-			{sync.isSuccess && (
+			{justSynced && (
 				<Alert
 					data-color="success"
 					className={styles["weeklyReconciliation__alert--centered"]}

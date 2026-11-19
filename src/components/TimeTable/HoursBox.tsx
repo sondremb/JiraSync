@@ -1,6 +1,7 @@
 import React from "react";
 import { Popover } from "@digdir/designsystemet-react";
 import { ArrowLeftIcon, QuestionmarkCircleIcon } from "@navikt/aksel-icons";
+import { formatHours } from "../../date-time/IsoWeek";
 import styles from "./HoursBox.module.css";
 
 interface Props {
@@ -25,13 +26,13 @@ export const HoursBox: React.FC<Props> = ({
 			bekkHours === undefined
 				? undefined
 				: jiraHours === undefined
-					? `Timekeeper: ${bekkHours}`
-					: `Timekeeper: ${bekkHours}, Jira: ${jiraHours}`
+					? `Timekeeper: ${formatHours(bekkHours)}`
+					: `Timekeeper: ${formatHours(bekkHours)}, Jira: ${formatHours(jiraHours)}`
 		}
 	>
-		{bekkHours}
+		{bekkHours !== undefined && formatHours(bekkHours)}
 		{jiraHours !== undefined && (
-			<span className={styles.hoursBox__jira}>{jiraHours}</span>
+			<span className={styles.hoursBox__jira}>{formatHours(jiraHours)}</span>
 		)}
 	</div>
 );

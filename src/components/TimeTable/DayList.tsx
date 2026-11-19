@@ -4,7 +4,6 @@ import {
 	CheckmarkCircleFillIcon,
 	ExclamationmarkTriangleFillIcon,
 } from "@navikt/aksel-icons";
-import { formatDate } from "date-fns";
 import { nb } from "date-fns/locale/nb";
 import { formatHours, IsoDate } from "../../date-time/IsoWeek";
 import type { DayReport } from "../../reconciliation/entities";
@@ -67,10 +66,10 @@ const capitalize = (text: string) =>
 	text.charAt(0).toUpperCase() + text.slice(1);
 
 const weekdayName = (date: IsoDate) =>
-	capitalize(formatDate(IsoDate.toDate(date), "EEEE", { locale: nb }));
+	capitalize(IsoDate.format(date, "EEEE", { locale: nb }));
 
 const shortDate = (date: IsoDate) =>
-	formatDate(IsoDate.toDate(date), "d. MMM", { locale: nb }).replace(/\.$/, "");
+	IsoDate.format(date, "d. MMM", { locale: nb }).replace(/\.$/, "");
 
 const Day: React.FC<{
 	day: DayListDay;

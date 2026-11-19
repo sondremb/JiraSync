@@ -1,8 +1,7 @@
 import React from "react";
 import { Skeleton, Table } from "@digdir/designsystemet-react";
-import { formatDate } from "date-fns";
 import { nb } from "date-fns/locale/nb";
-import { IsoDate } from "../../date-time/IsoWeek";
+import { formatHours, IsoDate } from "../../date-time/IsoWeek";
 import { GridEntry } from "./gridModel";
 import { HoursBox } from "./HoursBox";
 import { LockDateButton } from "./LockDateButton";
@@ -71,7 +70,7 @@ export const TimeTable: React.FC<Props> = ({
 									<Table.Cell
 										className={`${hoursCell} ${styles["timeTable__cell--total"]}`}
 									>
-										{weekBekkHours(entry)}
+										{formatHours(weekBekkHours(entry))}
 									</Table.Cell>
 								</Table.Row>
 							))}
@@ -88,13 +87,13 @@ export const TimeTable: React.FC<Props> = ({
 										key={day}
 										className={`${hoursCell} ${styles["timeTable__cell--total"]}`}
 									>
-										{bekkHoursOn(entries, day)}
+										{formatHours(bekkHoursOn(entries, day))}
 									</Table.Cell>
 								))}
 								<Table.Cell
 									className={`${hoursCell} ${styles["timeTable__cell--total"]}`}
 								>
-									{sum(entries.map(weekBekkHours))}
+									{formatHours(sum(entries.map(weekBekkHours)))}
 								</Table.Cell>
 							</Table.Row>
 							{onLockDate && (
@@ -120,11 +119,10 @@ export const TimeTable: React.FC<Props> = ({
 };
 
 const DayHeader: React.FC<{ day: IsoDate }> = ({ day }) => {
-	const date = IsoDate.toDate(day);
 	return (
 		<span className={styles.timeTable__day}>
-			<span>{formatDate(date, "EEEE", { locale: nb })}</span>
-			<span>{formatDate(date, "d. MMMM", { locale: nb })}</span>
+			<span>{IsoDate.format(day, "EEEE", { locale: nb })}</span>
+			<span>{IsoDate.format(day, "d. MMMM", { locale: nb })}</span>
 		</span>
 	);
 };

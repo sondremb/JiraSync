@@ -1,7 +1,9 @@
 import {
 	addDays,
 	eachDayOfInterval,
+	format,
 	formatISO,
+	getISODay,
 	getISOWeek,
 	getISOWeekYear,
 	parseISO,
@@ -11,6 +13,7 @@ import {
 	setISOWeekYear,
 	startOfISOWeekYear,
 	subDays,
+	type FormatOptions,
 } from "date-fns";
 import { toZonedTime, fromZonedTime } from "date-fns-tz";
 import { Brand } from "../Utils/brandedTypes";
@@ -141,6 +144,18 @@ export const IsoDate = {
 			timeZone: NORWAY_TIMEZONE,
 		}).format(IsoDate.toDate(isoDate));
 		return text.charAt(0).toUpperCase() + text.slice(1);
+	},
+	/** ISO weekday (1 = Monday, 7 = Sunday), whatever the browser's timezone. */
+	weekday(isoDate: IsoDate): number {
+		return getISODay(toZonedTime(IsoDate.toDate(isoDate), NORWAY_TIMEZONE));
+	},
+	/** date-fns `format`, but on the Norwegian calendar date rather than the browser's. */
+	format(isoDate: IsoDate, pattern: string, options?: FormatOptions): string {
+		return format(
+			toZonedTime(IsoDate.toDate(isoDate), NORWAY_TIMEZONE),
+			pattern,
+			options,
+		);
 	},
 	addDays(isoDate: IsoDate, days: number): IsoDate {
 		const date = IsoDate.toDate(isoDate);
