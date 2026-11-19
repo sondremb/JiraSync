@@ -20,7 +20,8 @@
 .hoursBox__jira {
 	position: absolute;
 	right: var(--ds-size-1);
-	bottom: 0;
+	/* Slightly below the edge (digits have no descenders) to clear the comma in Bekk hours. */
+	bottom: -0.125rem;
 	font-size: 0.875rem;
 	line-height: 1.5;
 }
