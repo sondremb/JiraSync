@@ -1,0 +1,29 @@
+{
+	"$schema": "./node_modules/oxlint/configuration_schema.json",
+	"rules": {
+		"no-restricted-globals": [
+			"error",
+			{
+				"name": "localStorage",
+				"message": "Use getSafeStorage() from src/Utils/safeStorage.ts, which falls back to a no-op store when storage is blocked."
+			}
+		],
+		"no-restricted-properties": [
+			"error",
+			{
+				"object": "window",
+				"property": "localStorage",
+				"message": "Use getSafeStorage() from src/Utils/safeStorage.ts, which falls back to a no-op store when storage is blocked."
+			}
+		]
+	},
+	"overrides": [
+		{
+			"files": ["src/Utils/safeStorage.ts"],
+			"rules": {
+				"no-restricted-globals": "off",
+				"no-restricted-properties": "off"
+			}
+		}
+	]
+}

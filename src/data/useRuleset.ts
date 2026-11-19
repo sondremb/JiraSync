@@ -8,6 +8,7 @@ import {
 	type CatalogEntry,
 } from "../policies/catalog";
 import { useDrafts } from "../policies/useDrafts";
+import { getSafeStorage } from "../Utils/safeStorage";
 
 const bundledRulesets = loadPolicies(policiesJson);
 
@@ -15,18 +16,14 @@ const selectedIdStorageKey = "selectedRulesetId";
 const selectedIdQueryKey = ["rulesets", "selectedId"];
 
 function readSelectedId(): string | null {
-	try {
-		return localStorage.getItem(selectedIdStorageKey);
-	} catch {
-		return null;
-	}
+	return getSafeStorage().getItem(selectedIdStorageKey);
 }
 
 function writeSelectedId(id: string) {
 	try {
-		localStorage.setItem(selectedIdStorageKey, id);
+		getSafeStorage().setItem(selectedIdStorageKey, id);
 	} catch {
-		// Blocked storage: the selection then only lasts for this page load.
+		// Storage full: the selection then only lasts for this page load.
 	}
 }
 

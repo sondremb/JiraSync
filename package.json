@@ -13,6 +13,7 @@
 		"clean": "rm -rf node_modules",
 		"test": "vitest",
 		"lint": "oxlint",
+		"typecheck": "tsc --noEmit",
 		"format": "oxfmt",
 		"format:check": "oxfmt --check"
 	},
