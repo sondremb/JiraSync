@@ -54,7 +54,7 @@ Pure domain logic, kept free of API clients so it can be tested with plain funct
 ### Authentication
 
 - **Jira**: OAuth 2.0 tokens stored in `sessionStorage`; refresh handled by Netlify serverless function `src/backend/jira-auth-session.ts` using httpOnly cookie refresh tokens
-- **Bekk**: Azure Entra ID via `@azure/msal-react`, managed in `src/login/bekk/`
+- **Bekk**: Azure Entra ID via `@azure/msal-react`, managed in `src/login/bekk/`. Read the Bekk user with `useBekkAccount()`, not `useMsal()`, so the fake backend works.
 
 ### API clients
 
@@ -77,14 +77,7 @@ Auth is injected via middleware on each client. Jira uses a sessionStorage-backe
 
 ### Fake backend (`src/fake/`, local dev only)
 
-`VITE_FAKE_BACKEND=true pnpm start` runs the app logged in to both systems against in-memory fake data, with no `.env`. Use it for screenshots and layout checks.
-
-- **Gate:** `isFakeBackend` (`src/Utils/envUtils.ts`) is `import.meta.env.DEV && VITE_FAKE_BACKEND === "true"`, so `pnpm build` can't turn it on. `index.tsx` dynamically imports `src/fake/browser.ts` behind it. `pnpm build` runs `scripts/check-no-fake-in-dist.mjs`, which fails if fake code reaches `dist/`.
-- **Jira and Bekk APIs, and the Jira login functions,** are faked with MSW below `fetch` (`handlers.ts`, typed with `src/generated/*.d.ts`), so the real clients, loaders and 401 retry run unchanged. A request without a handler fails. Auth function paths come from `src/login/jira/authPaths.ts`.
-- **Bekk login** is faked at a seam: in fake mode `msalInstance` is `createFakeMsal()` and `BekkEntraLogin` renders its children. Read the Bekk user with `useBekkAccount()`, never `useMsal()`.
-- **Data:** `fixtures.ts`, dated relative to today's ISO week: this week has changes to sync, an unmatched Jira worklog and an unmanaged entry; last week is locked (the lock date is its Sunday) with a day that disagrees; two weeks back is in sync. The app opens on the week after the lock date, i.e. this week. Writes and locking change `fakeStore.ts` in memory; a reload resets them.
-- **Scenarios:** open `/__fake?scenario=<name>&next=<product URL>` (served by `vitePlugin.ts`, outside the app). It writes settings to sessionStorage and redirects to `next` (default `/`). Scenarios: `default`, `local-ruleset`, `no-lock-date`, `logged-out`. `/__fake?login&next=/` logs back in, keeping the scenario. Never read fake settings from product URLs or routes.
-- **Screenshots:** take them ad hoc with a browser tool that can wait for the page, starting from `http://localhost:5173/__fake?scenario=<name>&next=<url>`. Chrome's `--headless --screenshot` doesn't work: `--virtual-time-budget` skips past the service worker start, and without it the shot is taken before the app renders.
+`VITE_FAKE_BACKEND=true pnpm start` runs the app against fake data, with no logins or `.env`. Before working on `src/fake/`, `/__fake`, the auth seams (`bekkLogin.tsx`, `authPaths.ts`) or taking screenshots, read `docs/fake-backend.md`.
 
 ### Serverless functions (`src/backend/`)
 
