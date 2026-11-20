@@ -17,6 +17,8 @@
 		// noUnused* overlap with @typescript-eslint/no-unused-vars, can disable if duplicative
 		"noUnusedLocals": true,
 		"noUnusedParameters": true,
-		"skipLibCheck": true
+		"skipLibCheck": true,
+		// scripts/*.ts run directly in Node, which only strips erasable TypeScript syntax
+		"erasableSyntaxOnly": true
 	}
 }

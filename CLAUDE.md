@@ -20,8 +20,6 @@ pnpm screenshot --scenario default / out.png  # Screenshot against the fake back
 
 Always use `pnpm`, not `npm`, `npx`, or `yarn`.
 
-Write scripts in `scripts/` as TypeScript (`.ts`), not `.js`/`.mjs`. Node runs them directly (`node scripts/foo.ts`, type stripping), so they need no build step; stick to erasable syntax (no `enum`, `namespace` or parameter properties).
-
 ## Architecture
 
 JiraSync is a React/TypeScript SPA deployed on Netlify that synchronizes time tracking between **Jira** and **Bekk Timekeeper**. It fetches data from both systems, maps Jira issues to Bekk timecodes, and lets users push Jira hours into Bekk's weekly timesheet.
