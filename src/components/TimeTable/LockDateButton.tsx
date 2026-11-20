@@ -3,6 +3,7 @@ import { Button } from "@digdir/designsystemet-react";
 import { PadlockLockedIcon, PadlockUnlockedIcon } from "@navikt/aksel-icons";
 import { useLockDate } from "../../data/useLockDate";
 import { IsoDate } from "../../date-time/IsoWeek";
+import { isLocked } from "../../reconciliation/syncPreview";
 
 interface Props {
 	day: IsoDate;
@@ -11,7 +12,7 @@ interface Props {
 
 export const LockDateButton: React.FC<Props> = ({ day, onClick }) => {
 	const { lockDate } = useLockDate();
-	const locked = lockDate === undefined || day <= lockDate;
+	const locked = isLocked(day, lockDate);
 	const label =
 		lockDate === undefined
 			? "Låsedato er ukjent"
