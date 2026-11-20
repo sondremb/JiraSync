@@ -4,6 +4,7 @@ import viteTsconfigPaths from "vite-tsconfig-paths";
 import checker from "vite-plugin-checker";
 import netlify from "@netlify/vite-plugin";
 import { tanstackRouter } from "@tanstack/router-plugin/vite";
+import { fakeBackendPlugin } from "./src/fake/vitePlugin";
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -20,6 +21,7 @@ export default defineConfig({
 			enableBuild: false,
 		}),
 		netlify(),
+		fakeBackendPlugin(),
 	],
 	build: {
 		rollupOptions: {

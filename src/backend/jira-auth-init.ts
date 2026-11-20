@@ -4,6 +4,7 @@ import * as client from "openid-client";
 import { StatusCode } from "../Utils/statuscode";
 import cookie from "cookie";
 import { cookieNames, getOpenidClientConfig } from "./utils";
+import { jiraAuthPaths } from "../login/jira/authPaths";
 
 export const handler: Handler = async () => {
 	const config = await getOpenidClientConfig();
@@ -23,7 +24,7 @@ export const handler: Handler = async () => {
 	const parameters = {
 		code_challenge: codeChallenge,
 		code_challenge_method: "S256",
-		redirect_uri: `${selfBaseUrl}/.netlify/functions/jira-auth-callback`,
+		redirect_uri: `${selfBaseUrl}${jiraAuthPaths.callback}`,
 		scope: scopes.join(" "),
 		prompt: "consent",
 	};

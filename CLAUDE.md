@@ -6,6 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```bash
 pnpm start           # Start dev server (Vite)
+VITE_FAKE_BACKEND=true pnpm start  # Dev server against the fake backend, no logins or .env needed
 pnpm build           # Build for production
 pnpm test            # Run vitest tests
 pnpm lint            # Lint with oxlint
@@ -74,19 +75,31 @@ Auth is injected via middleware on each client. Jira uses a sessionStorage-backe
 - **Tests**: no jsdom or testing-library, so keep logic in pure modules and test those.
 - **Server state**: `@tanstack/react-query` for all Jira and Bekk API calls — `useQuery` for fetches, `useMutation` + `invalidateQueries` for writes
 
+### Fake backend (`src/fake/`, local dev only)
+
+`VITE_FAKE_BACKEND=true pnpm start` runs the app logged in to both systems against in-memory fake data, with no `.env`. Use it for screenshots and layout checks.
+
+- **Gate:** `isFakeBackend` (`src/Utils/envUtils.ts`) is `import.meta.env.DEV && VITE_FAKE_BACKEND === "true"`, so `pnpm build` can't turn it on. `index.tsx` dynamically imports `src/fake/browser.ts` behind it. `pnpm build` runs `scripts/check-no-fake-in-dist.mjs`, which fails if fake code reaches `dist/`.
+- **Jira and Bekk APIs, and the Jira login functions,** are faked with MSW below `fetch` (`handlers.ts`, typed with `src/generated/*.d.ts`), so the real clients, loaders and 401 retry run unchanged. A request without a handler fails. Auth function paths come from `src/login/jira/authPaths.ts`.
+- **Bekk login** is faked at a seam: in fake mode `msalInstance` is `createFakeMsal()` and `BekkEntraLogin` renders its children. Read the Bekk user with `useBekkAccount()`, never `useMsal()`.
+- **Data:** `fixtures.ts`, dated relative to today's ISO week: this week has changes to sync, an unmatched Jira worklog and an unmanaged entry; last week is locked (the lock date is its Sunday) with a day that disagrees; two weeks back is in sync. The app opens on the week after the lock date, i.e. this week. Writes and locking change `fakeStore.ts` in memory; a reload resets them.
+- **Scenarios:** open `/__fake?scenario=<name>&next=<product URL>` (served by `vitePlugin.ts`, outside the app). It writes settings to sessionStorage and redirects to `next` (default `/`). Scenarios: `default`, `local-ruleset`, `no-lock-date`, `logged-out`. `/__fake?login&next=/` logs back in, keeping the scenario. Never read fake settings from product URLs or routes.
+- **Screenshots:** take them ad hoc with a browser tool that can wait for the page, starting from `http://localhost:5173/__fake?scenario=<name>&next=<url>`. Chrome's `--headless --screenshot` doesn't work: `--virtual-time-budget` skips past the service worker start, and without it the shot is taken before the app renders.
+
 ### Serverless functions (`src/backend/`)
 
 Netlify functions handle the Jira OAuth flow (init → callback → session refresh → logout). They run server-side to keep `JIRA_CLIENT_SECRET` out of the browser.
 
 ## Environment variables
 
-| Variable                                | Purpose                                   |
-| --------------------------------------- | ----------------------------------------- |
-| `VITE_BEKK_BASE_URL`                    | Bekk API endpoint                         |
-| `VITE_BEKK_ENTRA_*`                     | Azure Entra ID config for MSAL            |
-| `VITE_ATLASSIAN_CLOUD_ID`               | Jira cloud tenant ID                      |
-| `JIRA_CLIENT_ID` / `JIRA_CLIENT_SECRET` | Jira OAuth credentials (server-side only) |
-| `VITE_DEBUG`                            | Enables dev tools overlay                 |
+| Variable                                | Purpose                                                      |
+| --------------------------------------- | ------------------------------------------------------------ |
+| `VITE_BEKK_BASE_URL`                    | Bekk API endpoint                                            |
+| `VITE_BEKK_ENTRA_*`                     | Azure Entra ID config for MSAL                               |
+| `VITE_ATLASSIAN_CLOUD_ID`               | Jira cloud tenant ID                                         |
+| `JIRA_CLIENT_ID` / `JIRA_CLIENT_SECRET` | Jira OAuth credentials (server-side only)                    |
+| `VITE_DEBUG`                            | Enables dev tools overlay                                    |
+| `VITE_FAKE_BACKEND`                     | `true` runs `pnpm start` against the fake backend (dev only) |
 
 ## Agent skills
 

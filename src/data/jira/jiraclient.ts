@@ -4,10 +4,7 @@ import createClient from "openapi-fetch";
 import { paths } from "../../generated/jira-issues";
 import { config } from "../../Utils/envUtils";
 
-function getBaseUrl() {
-	const cloudId = config.jira.cloudId;
-	return `https://api.atlassian.com/ex/jira/${cloudId}`;
-}
+export const jiraBaseUrl = `https://api.atlassian.com/ex/jira/${config.jira.cloudId}`;
 
 async function getBearerToken(): Promise<string> {
 	const authResult = await jiraAuthenticationContext.getAccessToken();
@@ -40,6 +37,6 @@ const authMiddleWare: Middleware = {
 };
 
 export const jiraClient = createClient<paths>({
-	baseUrl: getBaseUrl(),
+	baseUrl: jiraBaseUrl,
 });
 jiraClient.use(authMiddleWare);

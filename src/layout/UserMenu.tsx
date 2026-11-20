@@ -1,4 +1,3 @@
-import { useMsal } from "@azure/msal-react";
 import { Dropdown } from "@digdir/designsystemet-react";
 import {
 	LeaveIcon,
@@ -7,6 +6,7 @@ import {
 } from "@navikt/aksel-icons";
 import React, { useState } from "react";
 import { RulesetDialog } from "../components/RulesetModal";
+import { useBekkAccount } from "../login/bekk/useBekkAccount";
 import { useLogout } from "../login/useLogout";
 
 /**
@@ -14,9 +14,8 @@ import { useLogout } from "../login/useLogout";
  * screens. Both change rarely, so they sit behind one button.
  */
 export const UserMenu: React.FC<{ className?: string }> = ({ className }) => {
-	const { instance } = useMsal();
+	const { name } = useBekkAccount();
 	const logout = useLogout();
-	const name = instance.getActiveAccount()?.name;
 	const [menuOpen, setMenuOpen] = useState(false);
 	const [rulesetOpen, setRulesetOpen] = useState(false);
 
