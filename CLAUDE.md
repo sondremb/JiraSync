@@ -15,9 +15,12 @@ pnpm format          # Format with oxfmt (pnpm format:check to verify)
 pnpm generate:bekk   # Regenerate Bekk API types from OpenAPI schema
 pnpm generate:jira   # Regenerate Jira API types from OpenAPI schema
 pnpm generate        # Calls generate:bekk and generate:jira
+pnpm screenshot --scenario default / out.png  # Screenshot against the fake backend, see docs/fake-backend.md
 ```
 
 Always use `pnpm`, not `npm`, `npx`, or `yarn`.
+
+Write scripts in `scripts/` as TypeScript (`.ts`), not `.js`/`.mjs`. Node runs them directly (`node scripts/foo.ts`, type stripping), so they need no build step; stick to erasable syntax (no `enum`, `namespace` or parameter properties).
 
 ## Architecture
 
@@ -77,7 +80,7 @@ Auth is injected via middleware on each client. Jira uses a sessionStorage-backe
 
 ### Fake backend (`src/fake/`, local dev only)
 
-`VITE_FAKE_BACKEND=true pnpm start` runs the app against fake data, with no logins or `.env`. Before working on `src/fake/`, `/__fake`, the auth seams (`bekkLogin.tsx`, `authPaths.ts`) or taking screenshots, read `docs/fake-backend.md`.
+`VITE_FAKE_BACKEND=true pnpm start` runs the app against fake data, with no logins or `.env`. Before working on `src/fake/`, `/__fake`, the auth seams (`bekkLogin.tsx`, `authPaths.ts`) or taking screenshots (`pnpm screenshot`), read `docs/fake-backend.md`.
 
 ### Serverless functions (`src/backend/`)
 
