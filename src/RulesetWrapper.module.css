@@ -1,0 +1,39 @@
+.rulesetWrapper__header {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: var(--ds-size-4);
+}
+
+.rulesetWrapper__brand {
+	gap: var(--ds-size-10);
+}
+
+/* Narrow screens: one thin row with a small title, the legend behind "?"
+ * and user and ruleset choice behind a menu. Exactly one of each pair shows;
+ * display: none also hides the other from assistive technology. */
+.rulesetWrapper__narrow {
+	display: none;
+}
+
+@media (width < 48rem) {
+	.rulesetWrapper__header {
+		align-items: center;
+	}
+
+	.rulesetWrapper__brand {
+		gap: var(--ds-size-1);
+	}
+
+	.rulesetWrapper__title {
+		font-size: var(--ds-heading-sm-font-size);
+	}
+
+	.rulesetWrapper__wide {
+		display: none;
+	}
+
+	.rulesetWrapper__narrow {
+		display: block;
+	}
+}

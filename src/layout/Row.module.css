@@ -31,3 +31,7 @@
 .row--justify-end {
 	justify-content: flex-end;
 }
+
+.row--justify-center {
+	justify-content: center;
+}

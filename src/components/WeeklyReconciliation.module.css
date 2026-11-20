@@ -1,0 +1,32 @@
+.weeklyReconciliation {
+	container-type: inline-size;
+	display: flex;
+	flex-direction: column;
+	gap: var(--ds-size-4);
+}
+
+.weeklyReconciliation__alert--centered {
+	align-self: center;
+}
+
+.weeklyReconciliation__changes {
+	margin: var(--ds-size-2) 0 0;
+}
+
+/* Exactly one of the two views shows. The 9-column table stops fitting at
+ * about 48rem; zoomed desktop gets the list too (WCAG 1.4.10).
+ * display: none also hides the other one from assistive technology.
+ * Nested selectors so these beat the components' own display rules. */
+.weeklyReconciliation .weeklyReconciliation__list {
+	display: none;
+}
+
+@container (width < 48rem) {
+	.weeklyReconciliation .weeklyReconciliation__table {
+		display: none;
+	}
+
+	.weeklyReconciliation .weeklyReconciliation__list {
+		display: flex;
+	}
+}

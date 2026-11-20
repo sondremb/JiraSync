@@ -1,0 +1,17 @@
+.rulesetBar__compact {
+	display: none;
+	flex-wrap: wrap;
+	align-items: center;
+	column-gap: var(--ds-size-2);
+	row-gap: var(--ds-size-1);
+}
+
+@media (width < 48rem) {
+	.rulesetBar {
+		display: none;
+	}
+
+	.rulesetBar__compact {
+		display: flex;
+	}
+}

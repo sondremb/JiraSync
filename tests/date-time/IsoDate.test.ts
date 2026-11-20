@@ -187,3 +187,23 @@ describe("IsoDate.addDays", () => {
 		expect(IsoDate.addDays("2025-10-26" as IsoDate, 1)).toBe("2025-10-27");
 	});
 });
+
+describe("IsoDate.weekday / format use the Norwegian calendar date", () => {
+	let originalTZ: string | undefined;
+	beforeAll(() => {
+		originalTZ = process.env.TZ;
+		// Saturday 12:00 in Oslo is already Sunday here.
+		process.env.TZ = "Pacific/Kiritimati";
+	});
+	afterAll(() => {
+		process.env.TZ = originalTZ;
+	});
+
+	test("Saturday stays Saturday", () => {
+		const saturday = IsoDate.parse("2025-02-08");
+		expect(IsoDate.weekday(saturday)).toBe(6);
+		expect(IsoDate.format(saturday, "EEEE d. MMMM")).toBe(
+			"Saturday 8. February",
+		);
+	});
+});

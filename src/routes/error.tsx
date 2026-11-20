@@ -1,8 +1,7 @@
 import React from "react";
-import { createFileRoute } from "@tanstack/react-router";
-import { P } from "../components/P";
-import { Link } from "@utdanningsdirektoratet/lisa";
-import { Link as RouterLink } from "@tanstack/react-router";
+import { createFileRoute, Link as RouterLink } from "@tanstack/react-router";
+import { Heading, Link, Paragraph } from "@digdir/designsystemet-react";
+import { Page } from "../layout/Page";
 
 export const Route = createFileRoute("/error")({
 	component: RouteComponent,
@@ -10,14 +9,16 @@ export const Route = createFileRoute("/error")({
 
 function RouteComponent() {
 	return (
-		<div>
-			Noe gikk galt 😢
-			<P>
+		<Page>
+			<Heading level={1} data-size="lg">
+				Noe gikk galt 😢
+			</Heading>
+			<Paragraph>
 				Kanskje det hjelper å{" "}
-				<Link reactRouterLink={RouterLink} url={"/logout"}>
-					Logge ut?
+				<Link asChild>
+					<RouterLink to="/logout">logge ut?</RouterLink>
 				</Link>
-			</P>
-		</div>
+			</Paragraph>
+		</Page>
 	);
 }

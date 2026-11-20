@@ -1,0 +1,22 @@
+.login {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: var(--ds-size-18);
+	min-height: 70vh;
+}
+
+/* The drawing sits right of centre in its own canvas, so nudge it left. */
+.login__illustration {
+	width: min(21.5rem, 100%);
+	min-width: 12.5rem;
+	height: auto;
+	margin-left: var(--ds-size-10);
+}
+
+@media (max-width: 40rem) {
+	.login__illustration {
+		margin-left: var(--ds-size-5);
+	}
+}

@@ -3,7 +3,7 @@ import styles from "./Row.module.css";
 
 interface RowProps extends React.HTMLAttributes<HTMLDivElement> {
 	align?: "start" | "center" | "end";
-	justify?: "start" | "between" | "end";
+	justify?: "start" | "center" | "between" | "end";
 	wrap?: boolean;
 }
 

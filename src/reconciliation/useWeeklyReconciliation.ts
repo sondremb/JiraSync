@@ -10,9 +10,16 @@ import { ProposedChange } from "./syncPreview";
 import { syncWeek } from "./syncWeek";
 import { matchJqls } from "../data/jira/matchJqls";
 
+export const reconciliationQueryKey = (week: IsoWeek, ruleset: Ruleset) => [
+	"reconciliation",
+	week,
+	ruleset.id,
+	ruleset.rules,
+];
+
 export function useWeeklyReconciliation(week: IsoWeek, ruleset: Ruleset) {
 	return useQuery({
-		queryKey: ["reconciliation", week, ruleset.id, ruleset.rules],
+		queryKey: reconciliationQueryKey(week, ruleset),
 		queryFn: () =>
 			reconcilePeriod(
 				IsoWeek.monday(week),

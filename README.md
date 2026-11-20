@@ -69,7 +69,7 @@ pnpm start
 - **TanStack React Query** — Server-state for alle API-kall
 - **TanStack Router** — Filbasert routing med code splitting
 - **openapi-typescript + openapi-fetch** — Typesikre API-klienter generert fra OpenAPI-skjemaer
-- **styled-components** + **Lisa** (Udirs designsystem) — Styling
+- **Designsystemet** (Digdir, standardtema) + CSS-moduler med BEM-navn — Styling
 - **MSAL React** — Bekk-autentisering (Azure Entra ID)
 
 ### Autentisering
@@ -81,19 +81,17 @@ Se [docs/authentication.md](docs/authentication.md) for detaljer om autentiserin
 Appen konfigureres med environment-variabler. Opprett en `.env`-fil i roten for lokal utvikling.
 Kopier [.env.example](.env.example), renamer til `.env` og fyll inn med mangelnde verdier.
 
-| Variabel                    | Beskrivelse                                            | Kontekst       |
-| --------------------------- | ------------------------------------------------------ | -------------- |
-| `NPM_TOKEN`                 | En NPM-token med tilgang til `@utdanningsdirektoratet` | Bygg av Klient |
-| `VITE_BEKK_BASE_URL`        | Bekk API-endepunkt                                     | Klient         |
-| `VITE_BEKK_ENTRA_TENANT_ID` | Azure Entra tenant ID                                  | Klient         |
-| `VITE_BEKK_ENTRA_CLIENT_ID` | Azure Entra client ID                                  | Klient         |
-| `VITE_BEKK_ENTRA_SCOPE`     | Azure Entra scope                                      | Klient         |
-| `VITE_ATLASSIAN_CLOUD_ID`   | Jira Cloud tenant ID                                   | Klient         |
-| `JIRA_CLIENT_ID`            | Jira OAuth client ID                                   | Server         |
-| `JIRA_CLIENT_SECRET`        | Jira OAuth client secret                               | Server         |
-| `VITE_DEBUG`                | Aktiver devtools-overlay                               | Klient         |
+| Variabel                    | Beskrivelse              | Kontekst |
+| --------------------------- | ------------------------ | -------- |
+| `VITE_BEKK_BASE_URL`        | Bekk API-endepunkt       | Klient   |
+| `VITE_BEKK_ENTRA_TENANT_ID` | Azure Entra tenant ID    | Klient   |
+| `VITE_BEKK_ENTRA_CLIENT_ID` | Azure Entra client ID    | Klient   |
+| `VITE_BEKK_ENTRA_SCOPE`     | Azure Entra scope        | Klient   |
+| `VITE_ATLASSIAN_CLOUD_ID`   | Jira Cloud tenant ID     | Klient   |
+| `JIRA_CLIENT_ID`            | Jira OAuth client ID     | Server   |
+| `JIRA_CLIENT_SECRET`        | Jira OAuth client secret | Server   |
+| `VITE_DEBUG`                | Aktiver devtools-overlay | Klient   |
 
-`NPM_TOKEN` må settes som en miljøvariabel på "vanlig vis", det hjelper ikke å ha den i .env-fila da pnpm ikke leser .env når den gjør install.
 Server-variablene brukes kun av Netlify Functions og eksponeres ikke til nettleseren.
 
 ## Deploy

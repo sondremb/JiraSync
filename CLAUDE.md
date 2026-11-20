@@ -9,6 +9,7 @@ pnpm start           # Start dev server (Vite)
 pnpm build           # Build for production
 pnpm test            # Run vitest tests
 pnpm lint            # Lint with oxlint
+pnpm typecheck       # Type-check with tsc
 pnpm format          # Format with oxfmt (pnpm format:check to verify)
 pnpm generate:bekk   # Regenerate Bekk API types from OpenAPI schema
 pnpm generate:jira   # Regenerate Jira API types from OpenAPI schema
@@ -32,6 +33,10 @@ JiraSync is a React/TypeScript SPA deployed on Netlify that synchronizes time tr
 ### Mapping policy (`src/policies/`)
 
 Rulesets live in `src/policies/policies.json` — a versioned JSON file validated by the zod schema in `src/policies/schema.ts`. Each ruleset is an ordered list of rules; the first matching rule wins. A rule specifies a Jira project key, an optional JQL condition, and a Bekk timecode ID. Matching is delegated to Jira's `/jql/match` API. When Jira projects add new components or epics, edit `policies.json`.
+
+### Ruleset editor (`src/policy/`, routes `/policy/*`)
+
+Employees draft rulesets, save them as local rulesets in the browser, and export the JSON for the admin. Before working on `/policy/*`, `src/policies/draft*`, `catalog.ts` or `useAllTimecodes`, read `docs/policy-editor.md`.
 
 ### Reconciliation (`src/reconciliation/`)
 
@@ -65,6 +70,8 @@ Auth is injected via middleware on each client. Jira uses a sessionStorage-backe
 
 - **Branded types** (`Utils/brandedTypes.ts`): `JiraIssueKey`, `IsoDate`, `IsoWeek`, `AccessToken` — prevent accidental mixing of string values
 - **ISO week** (`src/date-time/IsoWeek.ts`): All date handling uses Norway timezone; format is `YYYY-Www`
+- **Styling**: Digdir Designsystemet (`@digdir/designsystemet-react`, default theme, light mode only: `data-color-scheme="light"` is hardcoded in `index.html`) with icons from `@navikt/aksel-icons`. Custom styles are CSS modules (`*.module.css`) with BEM class names (`block__element--modifier`) using `--ds-*` tokens. Global base styles live in `src/global.css`. Layout primitives are in `src/layout/` (`Page`, `Row`, `Column`).
+- **Tests**: no jsdom or testing-library, so keep logic in pure modules and test those.
 - **Server state**: `@tanstack/react-query` for all Jira and Bekk API calls — `useQuery` for fetches, `useMutation` + `invalidateQueries` for writes
 
 ### Serverless functions (`src/backend/`)
@@ -80,3 +87,17 @@ Netlify functions handle the Jira OAuth flow (init → callback → session refr
 | `VITE_ATLASSIAN_CLOUD_ID`               | Jira cloud tenant ID                      |
 | `JIRA_CLIENT_ID` / `JIRA_CLIENT_SECRET` | Jira OAuth credentials (server-side only) |
 | `VITE_DEBUG`                            | Enables dev tools overlay                 |
+
+## Agent skills
+
+### Issue tracker
+
+Issues are tracked in GitHub Issues for sondremb/JiraSync, using the `gh` CLI. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Uses the five default triage labels: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human` and `wontfix`. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context: one `GLOSSARY.md` and `docs/adr/` at the repo root. See `docs/agents/domain.md`.

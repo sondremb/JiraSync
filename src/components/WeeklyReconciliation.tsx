@@ -2,23 +2,28 @@ import React, { useRef, useState } from "react";
 import {
 	Alert,
 	Button,
-	ConfirmModal,
-	FlexRow,
-	H2,
-	useNotification,
-} from "@utdanningsdirektoratet/lisa";
+	Dialog,
+	Heading,
+	Paragraph,
+} from "@digdir/designsystemet-react";
+import { EyeIcon } from "@navikt/aksel-icons";
+import { useQueryClient } from "@tanstack/react-query";
 import { formatHours, IsoDate, IsoWeek } from "../date-time/IsoWeek";
 import { TimecodeLabel } from "./TimecodeLabel";
 import { useLockDate } from "../data/useLockDate";
 import {
+	reconciliationQueryKey,
 	useSyncWeek,
 	useWeeklyReconciliation,
 } from "../reconciliation/useWeeklyReconciliation";
 import { planSync, type ProposedChange } from "../reconciliation/syncPreview";
 import { Ruleset } from "../rules";
 import { TimeTable } from "./TimeTable/TimeTable";
+import { DayList } from "./TimeTable/DayList";
 import { toGridEntries } from "./TimeTable/gridModel";
-import { P } from "./P";
+import { Column } from "../layout/Column";
+import { Row } from "../layout/Row";
+import styles from "./WeeklyReconciliation.module.css";
 
 interface Props {
 	week: IsoWeek;
@@ -40,8 +45,15 @@ export const WeeklyReconciliation: React.FC<Props> = ({ week, ruleset }) => {
 		useWeeklyReconciliation(week, ruleset);
 	const { lockDate, updateLockDate } = useLockDate();
 	const sync = useSyncWeek();
-	const notify = useNotification();
+	const queryClient = useQueryClient();
 	const submitting = useRef(false);
+	/**
+	 * `dataUpdatedAt` of the refetch that follows a successful sync. The success
+	 * message only shows for that data, so a later refetch, week or ruleset
+	 * change replaces it with the current state.
+	 */
+	const [syncedAt, setSyncedAt] = useState<number | null>(null);
+	const justSynced = syncedAt !== null && syncedAt === dataUpdatedAt;
 	const [preview, setPreview] = useState<{
 		version: string;
 		changes: ProposedChange[];
@@ -66,17 +78,13 @@ export const WeeklyReconciliation: React.FC<Props> = ({ week, ruleset }) => {
 		submitting.current = true;
 		try {
 			await sync.mutateAsync(toApply);
-			notify({
-				type: "success",
-				content: "Timene ble oppdatert!",
-			});
-		} catch (error) {
-			notify({
-				type: "error",
-				title: "Synkronisering feilet",
-				content: error instanceof Error ? error.message : String(error),
-				closeable: true,
-			});
+			// The mutation awaits the invalidation, so this is the refetched data.
+			setSyncedAt(
+				queryClient.getQueryState(reconciliationQueryKey(week, ruleset))
+					?.dataUpdatedAt ?? null,
+			);
+		} catch {
+			// Shown from `sync.error` below.
 		} finally {
 			submitting.current = false;
 			setPreview(null);
@@ -93,29 +101,50 @@ export const WeeklyReconciliation: React.FC<Props> = ({ week, ruleset }) => {
 	};
 
 	return (
-		<section aria-label="Avstemming">
+		<section aria-label="Avstemming" className={styles.weeklyReconciliation}>
 			{isPending ? (
-				<TimeTable pending entries={[]} days={IsoWeek.days(week)} />
+				<>
+					<TimeTable
+						pending
+						className={styles.weeklyReconciliation__table}
+						entries={[]}
+						days={IsoWeek.days(week)}
+					/>
+					<DayList
+						pending
+						className={styles.weeklyReconciliation__list}
+						reports={[]}
+					/>
+				</>
 			) : error ? (
-				<p role="alert">En feil oppstod: {error.message}</p>
+				<Alert data-color="danger">En feil oppstod: {error.message}</Alert>
 			) : (
 				data && (
 					<>
 						<TimeTable
+							className={styles.weeklyReconciliation__table}
 							entries={toGridEntries(data)}
 							days={data.map((report) => report.date)}
 							onLockDate={lock}
 						/>
+						<DayList
+							className={styles.weeklyReconciliation__list}
+							reports={data}
+							onLockDate={lock}
+						/>
 						{unmatchedCount > 0 && (
-							<p role="status">
+							<Alert data-color="warning">
 								{unmatchedCount} Jira-føringer mangler regel og må gjennomgås.
 								De er ikke med i synkroniseringen.
-							</p>
+							</Alert>
 						)}
 						{changes.length > 0 ? (
-							<FlexRow gap={12} className="mt-20" halign="center">
+							<Row justify="center" wrap>
 								<Button
-									pending={isFetching || sync.isPending}
+									// `loading` only shows a spinner, so block clicks while the
+									// data behind `changes` may be stale.
+									loading={isFetching || sync.isPending}
+									disabled={isFetching || sync.isPending}
 									onClick={() => {
 										void runSync(changes);
 									}}
@@ -123,51 +152,74 @@ export const WeeklyReconciliation: React.FC<Props> = ({ week, ruleset }) => {
 									Synkroniser
 								</Button>
 								<Button
-									variant="outlined"
-									icon="eye"
+									variant="secondary"
 									disabled={isFetching || sync.isPending}
 									onClick={() => {
 										setPreview({ version, changes, unmatchedCount });
 									}}
 								>
+									<EyeIcon aria-hidden />
 									Forhåndsvis
 								</Button>
-							</FlexRow>
+							</Row>
 						) : (
-							<FlexRow halign="center" className="mt-20">
-								<Alert type="success">Alt stemmer!</Alert>
-							</FlexRow>
+							!justSynced && (
+								<Alert
+									data-color="success"
+									className={styles["weeklyReconciliation__alert--centered"]}
+								>
+									Alt stemmer!
+								</Alert>
+							)
 						)}
 					</>
 				)
 			)}
-			{updateLockDate.isError && (
-				<p role="alert">Kunne ikke låse: {updateLockDate.error.message}</p>
+			{justSynced && (
+				<Alert
+					data-color="success"
+					className={styles["weeklyReconciliation__alert--centered"]}
+				>
+					Timene ble oppdatert!
+				</Alert>
 			)}
-			{updateLockDate.isSuccess && <p role="status">Timer ble låst.</p>}
-			<ConfirmModal
-				showModal={Boolean(openPreview)}
-				onCancel={closePreview}
-				title="Forslag til synkronisering"
-				confirmLabel="Oppdater Bekk-timer"
-				cancelLabel="Avbryt"
-				confirmButtonDisabled={sync.isPending}
-				onConfirm={() => {
-					void confirm();
-				}}
+			{sync.isError && (
+				<Alert data-color="danger">
+					<Heading level={2} data-size="xs">
+						Synkronisering feilet
+					</Heading>
+					<Paragraph>{sync.error.message}</Paragraph>
+				</Alert>
+			)}
+			{updateLockDate.isError && (
+				<Alert data-color="danger">
+					Kunne ikke låse: {updateLockDate.error.message}
+				</Alert>
+			)}
+			{updateLockDate.isSuccess && (
+				<Alert data-color="success">Timer ble låst.</Alert>
+			)}
+			<Dialog
+				open={Boolean(openPreview)}
+				onClose={closePreview}
+				closedby={sync.isPending ? "none" : "any"}
+				closeButton={sync.isPending ? false : undefined}
 			>
 				{preview && (
-					<>
-						<P className="mt-20">
+					<Column>
+						<Heading level={2} data-size="sm">
+							Forslag til synkronisering
+						</Heading>
+						<Paragraph>
 							Oppdaterer følgende Bekk-timer til å stemme overens med
 							Jira-timeføring:
-						</P>
+						</Paragraph>
 						{groupByDate(preview.changes).map(([date, dayChanges]) => (
 							<section key={date} aria-label={IsoDate.formatLong(date)}>
-								<H2 textStyle="title" clasName="mb-12">
+								<Heading level={3} data-size="2xs">
 									{IsoDate.formatLong(date)}
-								</H2>
-								<ul className="mt-0 mb-20">
+								</Heading>
+								<ul className={styles.weeklyReconciliation__changes}>
 									{dayChanges.map((change) => (
 										<li key={change.timecodeId}>
 											<TimecodeLabel timecodeId={change.timecodeId} />:{" "}
@@ -179,28 +231,44 @@ export const WeeklyReconciliation: React.FC<Props> = ({ week, ruleset }) => {
 							</section>
 						))}
 						{preview.unmatchedCount > 0 && (
-							<p>
+							<Paragraph>
 								{preview.unmatchedCount} Jira-føringer uten regel blir ikke
 								synkronisert.
-							</p>
+							</Paragraph>
 						)}
 						{lockDate === undefined && (
-							<p>
+							<Paragraph>
 								Låsedato er ukjent. Internt system avgjør om endringene kan
 								utføres.
-							</p>
+							</Paragraph>
 						)}
 						{lockDate &&
 							preview.changes.some((change) => change.date <= lockDate) && (
-								<p>
+								<Paragraph>
 									Noen dager er låst. Internt system avgjør om endringene kan
 									utføres.
-								</p>
+								</Paragraph>
 							)}
-						{sync.isPending && <p>Oppdaterer timer…</p>}
-					</>
+						<Row>
+							<Button
+								loading={sync.isPending}
+								onClick={() => {
+									void confirm();
+								}}
+							>
+								{sync.isPending ? "Oppdaterer timer…" : "Oppdater Bekk-timer"}
+							</Button>
+							<Button
+								variant="secondary"
+								disabled={sync.isPending}
+								onClick={closePreview}
+							>
+								Avbryt
+							</Button>
+						</Row>
+					</Column>
 				)}
-			</ConfirmModal>
+			</Dialog>
 		</section>
 	);
 };

@@ -1,0 +1,68 @@
+/* Unlayered on purpose: these base rules sit underneath Digdir's layered
+ * component styles, except where noted. */
+
+html {
+	background-color: var(--ds-color-neutral-background-default);
+}
+
+body {
+	font-family: var(--ds-font-family), system-ui, sans-serif;
+	color: var(--ds-color-neutral-text-default);
+}
+
+/* From Josh W. Comeau's CSS reset:
+ * https://www.joshwcomeau.com/css/custom-css-reset/ */
+
+/* 1. Use a more intuitive box-sizing model. */
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+/* 2. Remove default margin. Not on dialogs: they are centred with margin: auto,
+ * and this unlayered rule would beat Digdir's layered dialog styles. */
+*:not(dialog) {
+	margin: 0;
+}
+
+/* 3. Allow percentage-based heights in the application. */
+html,
+body {
+	height: 100%;
+}
+
+/* 4. Accessible line height. 5. Better text rendering. */
+body {
+	line-height: 1.5;
+	-webkit-font-smoothing: antialiased;
+}
+
+/* 6. Better media defaults. */
+img,
+picture,
+video,
+canvas,
+svg {
+	display: block;
+	max-width: 100%;
+}
+
+/* 7. Form controls use the surrounding font. */
+input,
+button,
+textarea,
+select {
+	font: inherit;
+}
+
+/* 8. Avoid text overflow. */
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	overflow-wrap: break-word;
+}
