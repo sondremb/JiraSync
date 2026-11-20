@@ -6,7 +6,7 @@
 	"type": "module",
 	"scripts": {
 		"start": "vite",
-		"build": "tsc && vite build",
+		"build": "tsc && vite build && node scripts/check-no-fake-in-dist.ts",
 		"generate": "pnpm generate:bekk && pnpm generate:jira",
 		"generate:bekk": "openapi-typescript https://api.bekk.no/timekeeper-svc/swagger/v1/swagger.json -o src/generated/bekk-timekeeper.d.ts",
 		"generate:jira": "openapi-typescript https://dac-static.atlassian.com/cloud/jira/platform/swagger-v3.v3.json -o src/generated/jira-issues.d.ts",
@@ -15,7 +15,8 @@
 		"lint": "oxlint",
 		"typecheck": "tsc --noEmit",
 		"format": "oxfmt",
-		"format:check": "oxfmt --check"
+		"format:check": "oxfmt --check",
+		"screenshot": "node scripts/screenshot.ts"
 	},
 	"keywords": [
 		"Jira",
@@ -56,10 +57,15 @@
 		"@tanstack/router-plugin": "^1.166.12",
 		"@types/react": "^18.0.0",
 		"@types/react-dom": "^18.0.0",
+		"msw": "^3.0.7",
 		"openapi-typescript": "^7.13.0",
 		"oxfmt": "^0.73.0",
 		"oxlint": "^1.88.0",
+		"playwright": "^1.65.1",
 		"typescript": "^5.9.3",
 		"vitest": "^4.0.18"
+	},
+	"engines": {
+		"node": ">=22.18.0"
 	}
 }

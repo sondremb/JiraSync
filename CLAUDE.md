@@ -6,6 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```bash
 pnpm start           # Start dev server (Vite)
+VITE_FAKE_BACKEND=true pnpm start  # Dev server against the fake backend, no logins or .env needed
 pnpm build           # Build for production
 pnpm test            # Run vitest tests
 pnpm lint            # Lint with oxlint
@@ -14,6 +15,7 @@ pnpm format          # Format with oxfmt (pnpm format:check to verify)
 pnpm generate:bekk   # Regenerate Bekk API types from OpenAPI schema
 pnpm generate:jira   # Regenerate Jira API types from OpenAPI schema
 pnpm generate        # Calls generate:bekk and generate:jira
+pnpm screenshot --scenario default / out.png  # Screenshot against the fake backend, see docs/fake-backend.md
 ```
 
 Always use `pnpm`, not `npm`, `npx`, or `yarn`.
@@ -53,7 +55,7 @@ Pure domain logic, kept free of API clients so it can be tested with plain funct
 ### Authentication
 
 - **Jira**: OAuth 2.0 tokens stored in `sessionStorage`; refresh handled by Netlify serverless function `src/backend/jira-auth-session.ts` using httpOnly cookie refresh tokens
-- **Bekk**: Azure Entra ID via `@azure/msal-react`, managed in `src/login/bekk/`
+- **Bekk**: Azure Entra ID via `@azure/msal-react`, managed in `src/login/bekk/`. Read the Bekk user with `useBekkAccount()`, not `useMsal()`, so the fake backend works.
 
 ### API clients
 
@@ -74,19 +76,24 @@ Auth is injected via middleware on each client. Jira uses a sessionStorage-backe
 - **Tests**: no jsdom or testing-library, so keep logic in pure modules and test those.
 - **Server state**: `@tanstack/react-query` for all Jira and Bekk API calls — `useQuery` for fetches, `useMutation` + `invalidateQueries` for writes
 
+### Fake backend (`src/fake/`, local dev only)
+
+`VITE_FAKE_BACKEND=true pnpm start` runs the app against fake data, with no logins or `.env`. Before working on `src/fake/`, `/__fake`, the auth seams (`bekkLogin.tsx`, `authPaths.ts`) or taking screenshots (`pnpm screenshot`), read `docs/fake-backend.md`.
+
 ### Serverless functions (`src/backend/`)
 
 Netlify functions handle the Jira OAuth flow (init → callback → session refresh → logout). They run server-side to keep `JIRA_CLIENT_SECRET` out of the browser.
 
 ## Environment variables
 
-| Variable                                | Purpose                                   |
-| --------------------------------------- | ----------------------------------------- |
-| `VITE_BEKK_BASE_URL`                    | Bekk API endpoint                         |
-| `VITE_BEKK_ENTRA_*`                     | Azure Entra ID config for MSAL            |
-| `VITE_ATLASSIAN_CLOUD_ID`               | Jira cloud tenant ID                      |
-| `JIRA_CLIENT_ID` / `JIRA_CLIENT_SECRET` | Jira OAuth credentials (server-side only) |
-| `VITE_DEBUG`                            | Enables dev tools overlay                 |
+| Variable                                | Purpose                                                      |
+| --------------------------------------- | ------------------------------------------------------------ |
+| `VITE_BEKK_BASE_URL`                    | Bekk API endpoint                                            |
+| `VITE_BEKK_ENTRA_*`                     | Azure Entra ID config for MSAL                               |
+| `VITE_ATLASSIAN_CLOUD_ID`               | Jira cloud tenant ID                                         |
+| `JIRA_CLIENT_ID` / `JIRA_CLIENT_SECRET` | Jira OAuth credentials (server-side only)                    |
+| `VITE_DEBUG`                            | Enables dev tools overlay                                    |
+| `VITE_FAKE_BACKEND`                     | `true` runs `pnpm start` against the fake backend (dev only) |
 
 ## Agent skills
 

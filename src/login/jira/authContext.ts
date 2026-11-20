@@ -1,5 +1,6 @@
 import { Brand } from "../../Utils/brandedTypes";
 import { StatusCode } from "../../Utils/statuscode";
+import { jiraAuthPaths } from "./authPaths";
 
 export type AccessToken = Brand<string, "AccessToken">;
 
@@ -73,7 +74,7 @@ function refreshFromServerOnce(): Promise<AuthenticationResult> {
 }
 
 async function refreshFromServer(): Promise<AuthenticationResult> {
-	const response = await fetch("/.netlify/functions/jira-auth-session", {
+	const response = await fetch(jiraAuthPaths.session, {
 		credentials: "include",
 	});
 
@@ -117,7 +118,7 @@ export const jiraAuthenticationContext: JiraAuthContext = {
 	invalidate: clearStorage,
 	logout: async () => {
 		clearStorage();
-		await fetch("/.netlify/functions/jira-auth-logout", {
+		await fetch(jiraAuthPaths.logout, {
 			method: "POST",
 			credentials: "include",
 		});

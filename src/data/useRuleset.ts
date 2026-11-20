@@ -19,7 +19,8 @@ function readSelectedId(): string | null {
 	return getSafeStorage().getItem(selectedIdStorageKey);
 }
 
-function writeSelectedId(id: string) {
+/** Stores the selected ruleset id. Exported for the fake backend's scenario setup. */
+export function writeSelectedId(id: string) {
 	try {
 		getSafeStorage().setItem(selectedIdStorageKey, id);
 	} catch {

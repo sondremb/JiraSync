@@ -3,6 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Button, Heading } from "@digdir/designsystemet-react";
 import emptyStateImg from "../../assets/svg/emptystate.svg";
 import { Page } from "../layout/Page";
+import { jiraLoginHref } from "../login/jira/loginHref";
 import styles from "./login.module.css";
 
 export const Route = createFileRoute("/login")({
@@ -22,7 +23,7 @@ function RouteComponent() {
 					alt=""
 				/>
 				<Button asChild>
-					<a href=".netlify/functions/jira-auth-init">Logg inn</a>
+					<a href={jiraLoginHref}>Logg inn</a>
 				</Button>
 			</div>
 		</Page>

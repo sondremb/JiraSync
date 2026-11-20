@@ -4,21 +4,32 @@ import {
 	AuthenticationResult,
 	EventType,
 	InteractionType,
+	type IPublicClientApplication,
 } from "@azure/msal-browser";
 import { MsalProvider, MsalAuthenticationTemplate } from "@azure/msal-react";
 import React from "react";
-import { config } from "../../Utils/envUtils";
+import { config, isFakeBackend } from "../../Utils/envUtils";
+import { createFakeMsal } from "../../fake/fakeMsal";
 
-// Konfigurer og opprett MSAL-instans
-export const msalInstance = new PublicClientApplication({
-	auth: {
-		clientId: config.bekk.clientId,
-		authority: `https://login.microsoftonline.com/${config.bekk.tenantId}`,
-	},
-	cache: {
-		cacheLocation: BrowserCacheLocation.LocalStorage,
-	},
-});
+/** The part of MSAL the app uses outside `BekkEntraLogin`. */
+export type BekkMsal = Pick<
+	IPublicClientApplication,
+	"getActiveAccount" | "acquireTokenSilent" | "logoutRedirect"
+>;
+
+// Konfigurer og opprett MSAL-instans. I fake mode lages den aldri, så vi
+// aldri sendes til Microsoft.
+export const msalInstance: BekkMsal = isFakeBackend
+	? createFakeMsal()
+	: new PublicClientApplication({
+			auth: {
+				clientId: config.bekk.clientId,
+				authority: `https://login.microsoftonline.com/${config.bekk.tenantId}`,
+			},
+			cache: {
+				cacheLocation: BrowserCacheLocation.LocalStorage,
+			},
+		});
 
 export function getEmployeeId(): number {
 	const idTokenClaims = msalInstance.getActiveAccount()?.idTokenClaims ?? {};
@@ -30,6 +41,21 @@ export function getEmployeeId(): number {
 }
 
 export const BekkEntraLogin = ({ children }: React.PropsWithChildren<{}>) => {
+	if (isFakeBackend) {
+		return <>{children}</>;
+	}
+	return (
+		<MsalLogin instance={msalInstance as PublicClientApplication}>
+			{children}
+		</MsalLogin>
+	);
+};
+
+// Takes the real instance as a prop so the body below can keep using MSAL's full API.
+const MsalLogin = ({
+	instance: msalInstance,
+	children,
+}: React.PropsWithChildren<{ instance: PublicClientApplication }>) => {
 	// Initialiser instansen (dette bør gjøres så tidlig som mulig)
 	msalInstance.initialize().then(() => {
 		// Sett aktiv konto dersom den finnes, men ikke enda er satt
