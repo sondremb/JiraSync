@@ -16,7 +16,11 @@ import {
 	useSyncWeek,
 	useWeeklyReconciliation,
 } from "../reconciliation/useWeeklyReconciliation";
-import { planSync, type ProposedChange } from "../reconciliation/syncPreview";
+import {
+	lockedOutOfSyncDays,
+	planSync,
+	type ProposedChange,
+} from "../reconciliation/syncPreview";
 import { Ruleset } from "../rules";
 import { TimeTable } from "./TimeTable/TimeTable";
 import { DayList } from "./TimeTable/DayList";
@@ -40,6 +44,14 @@ const groupByDate = (
 	return Array.from(groups);
 };
 
+const lockedDaysNotice = (
+	lockDate: IsoDate | undefined,
+	lockedDays: readonly IsoDate[],
+): string =>
+	lockDate === undefined
+		? "Låsedato er ukjent, så ingen timer kan synkroniseres."
+		: `Låste dager stemmer ikke med Jira og blir ikke synkronisert: ${lockedDays.map(IsoDate.formatLong).join(", ")}.`;
+
 export const WeeklyReconciliation: React.FC<Props> = ({ week, ruleset }) => {
 	const { data, error, isPending, dataUpdatedAt, isFetching } =
 		useWeeklyReconciliation(week, ruleset);
@@ -58,8 +70,10 @@ export const WeeklyReconciliation: React.FC<Props> = ({ week, ruleset }) => {
 		version: string;
 		changes: ProposedChange[];
 		unmatchedCount: number;
+		lockedDays: IsoDate[];
 	} | null>(null);
-	const changes = data ? planSync(data) : [];
+	const changes = data ? planSync(data, lockDate) : [];
+	const lockedDays = data ? lockedOutOfSyncDays(data, lockDate) : [];
 	const unmatchedCount =
 		data?.reduce((count, day) => count + day.unmatchedJiraWork.length, 0) ?? 0;
 	const version = JSON.stringify([
@@ -67,6 +81,7 @@ export const WeeklyReconciliation: React.FC<Props> = ({ week, ruleset }) => {
 		ruleset.id,
 		ruleset.rules,
 		dataUpdatedAt,
+		lockDate,
 	]);
 	const openPreview =
 		preview?.version === version && !isFetching && !isPending && !error;
@@ -138,6 +153,11 @@ export const WeeklyReconciliation: React.FC<Props> = ({ week, ruleset }) => {
 								De er ikke med i synkroniseringen.
 							</Alert>
 						)}
+						{lockedDays.length > 0 && (
+							<Alert data-color="warning">
+								{lockedDaysNotice(lockDate, lockedDays)}
+							</Alert>
+						)}
 						{changes.length > 0 ? (
 							<Row justify="center" wrap>
 								<Button
@@ -155,7 +175,12 @@ export const WeeklyReconciliation: React.FC<Props> = ({ week, ruleset }) => {
 									variant="secondary"
 									disabled={isFetching || sync.isPending}
 									onClick={() => {
-										setPreview({ version, changes, unmatchedCount });
+										setPreview({
+											version,
+											changes,
+											unmatchedCount,
+											lockedDays,
+										});
 									}}
 								>
 									<EyeIcon aria-hidden />
@@ -163,7 +188,8 @@ export const WeeklyReconciliation: React.FC<Props> = ({ week, ruleset }) => {
 								</Button>
 							</Row>
 						) : (
-							!justSynced && (
+							!justSynced &&
+							lockedDays.length === 0 && (
 								<Alert
 									data-color="success"
 									className={styles["weeklyReconciliation__alert--centered"]}
@@ -236,19 +262,11 @@ export const WeeklyReconciliation: React.FC<Props> = ({ week, ruleset }) => {
 								synkronisert.
 							</Paragraph>
 						)}
-						{lockDate === undefined && (
+						{preview.lockedDays.length > 0 && (
 							<Paragraph>
-								Låsedato er ukjent. Internt system avgjør om endringene kan
-								utføres.
+								{lockedDaysNotice(lockDate, preview.lockedDays)}
 							</Paragraph>
 						)}
-						{lockDate &&
-							preview.changes.some((change) => change.date <= lockDate) && (
-								<Paragraph>
-									Noen dager er låst. Internt system avgjør om endringene kan
-									utføres.
-								</Paragraph>
-							)}
 						<Row>
 							<Button
 								loading={sync.isPending}
