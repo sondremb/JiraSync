@@ -30,7 +30,8 @@ const initials = (name: string | undefined) =>
  * picker) and a user menu with the ruleset picker and logout.
  */
 export const AppBar: React.FC = () => {
-	const { name } = useBekkAccount();
+	const { name, photoUrl } = useBekkAccount();
+	const [photoFailed, setPhotoFailed] = useState(false);
 	const logout = useLogout();
 	const { entries } = useRuleSet();
 	const selected = entries.find((entry) => entry.isSelected);
@@ -77,8 +78,20 @@ export const AppBar: React.FC = () => {
 						aria-label="Meny"
 						title={name}
 					>
-						<Avatar aria-hidden data-size="sm">
-							{initials(name) || undefined}
+						<Avatar
+							aria-hidden
+							data-size="sm"
+							className={styles.appBar__avatar}
+						>
+							{photoUrl && !photoFailed ? (
+								<img
+									src={photoUrl}
+									alt=""
+									onError={() => setPhotoFailed(true)}
+								/>
+							) : (
+								initials(name) || undefined
+							)}
 						</Avatar>
 					</Dropdown.Trigger>
 					<Dropdown

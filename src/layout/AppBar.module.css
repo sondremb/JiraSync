@@ -45,6 +45,11 @@
 	border-radius: 999px;
 }
 
+/* Same border as the ruleset button (secondary, neutral). */
+.appBar__avatar {
+	border: 1px solid var(--ds-color-neutral-border-strong);
+}
+
 /* Narrow: the ruleset button shows only its icon (and the local tag). */
 @media (width < 48rem) {
 	.appBar {

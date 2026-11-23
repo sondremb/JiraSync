@@ -40,6 +40,13 @@ export function getEmployeeId(): number {
 	return parseInt(employeeId);
 }
 
+/**
+ * The employee's photo, as Bekk's other internal pages load it. No default
+ * image (`d_`), so a missing photo is a 404 and the caller can fall back.
+ */
+export const bekkPhotoUrl = (employeeId: number): string =>
+	`https://res.cloudinary.com/bekkimg/w_64,h_64,c_thumb,g_face/${employeeId}`;
+
 export const BekkEntraLogin = ({ children }: React.PropsWithChildren<{}>) => {
 	if (isFakeBackend) {
 		return <>{children}</>;
