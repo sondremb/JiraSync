@@ -19,6 +19,8 @@
 	padding: var(--ds-size-3);
 	border: 1px solid var(--ds-color-neutral-border-subtle);
 	border-radius: var(--ds-border-radius-md);
+	background-color: var(--ds-color-neutral-background-default);
+	box-shadow: 0 1px 2px rgb(0 0 0 / 0.04);
 }
 
 /* Same accent tint as the table header on desktop. */

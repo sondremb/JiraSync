@@ -1,5 +1,6 @@
-/* One row on wide screens, with a status stripe on the left: accent while
- * there is work to do, success when the week is settled. */
+/* One row when it fits, otherwise the parts wrap onto more rows. A status
+ * stripe on the left: accent while there is work to do, success when the
+ * week is settled. */
 .statusCard {
 	display: flex;
 	align-items: center;
@@ -70,8 +71,14 @@
 .statusCard__actions {
 	display: flex;
 	align-items: center;
+	flex-wrap: wrap;
 	gap: var(--ds-size-2);
 	margin-left: auto;
+}
+
+/* A label wraps as a whole button, never inside one. */
+.statusCard__actions > button {
+	white-space: nowrap;
 }
 
 .statusCard__message {
@@ -87,16 +94,6 @@
 	font-size: 1.25rem;
 }
 
-@media (width >= 48rem) {
-	.statusCard {
-		flex-wrap: nowrap;
-	}
-
-	.statusCard__actions {
-		flex-shrink: 0;
-	}
-}
-
 /* Narrow: the week spans the row, the actions get their own row. */
 @media (width < 48rem) {
 	.statusCard__week {
@@ -108,7 +105,7 @@
 		flex: 1 1 100%;
 	}
 
-	.statusCard__actions > :last-child {
-		flex: 1;
+	.statusCard__actions > * {
+		flex: 1 1 auto;
 	}
 }

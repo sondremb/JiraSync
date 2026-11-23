@@ -36,6 +36,16 @@
 
 	.weeklyReconciliation .weeklyReconciliation__list {
 		display: flex;
+		padding: 0;
+	}
+
+	/* The day blocks are cards themselves, so no card around them. */
+	.weeklyReconciliation__grid {
+		overflow-x: visible;
+		border: none;
+		border-radius: 0;
+		background-color: transparent;
+		box-shadow: none;
 	}
 }
 
@@ -76,7 +86,12 @@
 
 .weeklyReconciliation__syncButtons {
 	display: flex;
+	flex-wrap: wrap;
 	gap: var(--ds-size-2);
+}
+
+.weeklyReconciliation__syncButtons > button {
+	white-space: nowrap;
 }
 
 @container (width < 48rem) {
@@ -84,7 +99,7 @@
 		flex: 1 1 100%;
 	}
 
-	.weeklyReconciliation__syncButtons > :last-child {
-		flex: 1;
+	.weeklyReconciliation__syncButtons > * {
+		flex: 1 1 auto;
 	}
 }
