@@ -114,17 +114,14 @@ describe("toDayList", () => {
 		expect(list.weekBekkHours).toBe(11.5);
 	});
 
-	test("in-sync status follows DayReport.isInSync per day", () => {
+	test("days up to the lock date are locked", () => {
 		const reports = emptyWeek();
-		addManaged(reportOn(reports, monday), 201, 7.5, 7.5);
-		addManaged(reportOn(reports, tuesday), 201, 0, 7.5);
-		const list = toDayList(reports, beforeWeek);
-		expect(dayAt(list, monday).inSync).toBe(true);
-		expect(dayAt(list, tuesday).inSync).toBe(false);
-		expect(dayAt(list, days[2]).inSync).toBe(true);
+		const list = toDayList(reports, monday);
+		expect(dayAt(list, monday).locked).toBe(true);
+		expect(dayAt(list, tuesday).locked).toBe(false);
 	});
 
-	test("a day with only unmatched Jira worklogs is out of sync with no lines", () => {
+	test("a day with only unmatched Jira worklogs has no lines", () => {
 		const reports = emptyWeek();
 		reportOn(reports, monday).unmatchedJiraWork.push({
 			issueId: issue,
@@ -132,7 +129,6 @@ describe("toDayList", () => {
 			hoursWorked: 2,
 		});
 		const day = dayAt(toDayList(reports, beforeWeek), monday);
-		expect(day.inSync).toBe(false);
 		expect(day.lines).toEqual([]);
 	});
 

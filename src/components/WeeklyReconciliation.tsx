@@ -175,6 +175,7 @@ export const WeeklyReconciliation: React.FC<Props> = ({
 						className={styles.weeklyReconciliation__list}
 						reports={data ?? []}
 						lockDate={lockDate}
+						status={status}
 						onLockDate={lock}
 					/>
 				</div>

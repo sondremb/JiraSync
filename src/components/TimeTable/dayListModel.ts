@@ -1,7 +1,7 @@
 import { IsoDate } from "../../date-time/IsoWeek";
-import {
+import type {
 	DayReport,
-	type InternalTimecodeId,
+	InternalTimecodeId,
 } from "../../reconciliation/entities";
 import { isLocked } from "../../reconciliation/syncPreview";
 import {
@@ -26,7 +26,8 @@ export interface DayListDay {
 	date: IsoDate;
 	/** Bekk hours on all timecodes that day. */
 	bekkHours: number;
-	inSync: boolean;
+	/** Locked days are hatched, as on desktop. */
+	locked: boolean;
 	/** Managed timecodes first. Empty when the day has no hours. */
 	lines: DayListLine[];
 }
@@ -82,7 +83,7 @@ const toDay = (
 		kind: "day",
 		date: report.date,
 		bekkHours: sum(lines.map((line) => line.bekkHours)),
-		inSync: DayReport.isInSync(report),
+		locked,
 		lines,
 	};
 };

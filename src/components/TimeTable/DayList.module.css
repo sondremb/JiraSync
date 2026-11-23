@@ -1,70 +1,90 @@
+/* The desktop table's look, one card per day: white header with a small
+ * uppercase weekday over the date, today marked with an accent bar, locked
+ * days hatched, rows split by subtle lines. */
 .dayList {
 	display: flex;
 	flex-direction: column;
 	gap: var(--ds-size-3);
+	font-variant-numeric: tabular-nums;
 }
 
 .dayList__days {
 	display: flex;
 	flex-direction: column;
-	gap: var(--ds-size-2);
+	gap: var(--ds-size-3);
 	padding: 0;
 	list-style: none;
 }
 
 .dayList__day {
-	display: flex;
-	flex-direction: column;
-	gap: var(--ds-size-2);
-	padding: var(--ds-size-3);
+	overflow: hidden;
 	border: 1px solid var(--ds-color-neutral-border-subtle);
-	border-radius: var(--ds-border-radius-md);
+	border-radius: var(--ds-border-radius-lg);
 	background-color: var(--ds-color-neutral-background-default);
-	box-shadow: 0 1px 2px rgb(0 0 0 / 0.04);
+	box-shadow:
+		0 1px 2px rgb(0 0 0 / 0.04),
+		0 8px 24px -16px rgb(0 0 0 / 0.12);
 }
 
-/* Same accent tint as the table header on desktop. */
+.dayList__day--today {
+	box-shadow:
+		inset 0 3px 0 var(--ds-color-accent-base-default),
+		0 1px 2px rgb(0 0 0 / 0.04),
+		0 8px 24px -16px rgb(0 0 0 / 0.12);
+}
+
 .dayList__header {
 	display: flex;
 	align-items: center;
 	gap: var(--ds-size-2);
-	margin: calc(-1 * var(--ds-size-3)) calc(-1 * var(--ds-size-3)) 0;
-	padding: var(--ds-size-1) var(--ds-size-1) var(--ds-size-1) var(--ds-size-3);
-	border-radius: var(--ds-border-radius-md) var(--ds-border-radius-md) 0 0;
-	background-color: var(--ds-color-accent-surface-tinted);
+	padding: var(--ds-size-2) var(--ds-size-1) var(--ds-size-2) var(--ds-size-4);
+	border-bottom: 1px solid var(--ds-color-neutral-border-default);
+}
+
+.dayList__header--locked {
+	background-image: repeating-linear-gradient(
+		-45deg,
+		transparent 0 6px,
+		var(--ds-color-neutral-surface-tinted) 6px 12px
+	);
 }
 
 .dayList__title {
+	display: flex;
 	flex: 1;
+	flex-direction: column;
 	min-width: 0;
-	font-variant-numeric: tabular-nums;
+	font-size: inherit;
+	font-weight: inherit;
+	line-height: 1.2;
 }
 
-/* Below the weekday, smaller. */
-.dayList__date {
-	display: block;
+.dayList__weekday {
 	color: var(--ds-color-neutral-text-subtle);
 	font-size: var(--ds-body-sm-font-size);
-	font-weight: var(--ds-font-weight-regular);
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
 }
 
-.dayList__status {
+.dayList__date {
+	font-size: 1.375rem;
+	font-weight: var(--ds-font-weight-semibold);
+}
+
+.dayList__day--today .dayList__date {
+	color: var(--ds-color-accent-text-default);
+}
+
+/* Status dot and the day's hours, as in the desktop total row. */
+.dayList__hours {
+	display: inline-flex;
 	flex-shrink: 0;
-	font-size: 1.25rem;
-}
-
-.dayList__status--ok {
-	color: var(--ds-color-success-base-default);
-}
-
-.dayList__status--warning {
-	color: var(--ds-color-warning-base-default);
+	align-items: center;
+	font-size: 1.125rem;
+	font-weight: var(--ds-font-weight-semibold);
 }
 
 .dayList__lines {
-	display: flex;
-	flex-direction: column;
-	gap: var(--ds-size-2);
 	padding: 0;
 	list-style: none;
 }
@@ -74,10 +94,16 @@
 	align-items: center;
 	justify-content: space-between;
 	gap: var(--ds-size-3);
+	padding: var(--ds-size-2) var(--ds-size-3) var(--ds-size-2) var(--ds-size-4);
+}
+
+.dayList__line + .dayList__line {
+	border-top: 1px solid var(--ds-color-neutral-border-subtle);
 }
 
 .dayList__timecode {
 	min-width: 0;
+	font-weight: var(--ds-font-weight-medium);
 	overflow-wrap: anywhere;
 }
 
@@ -86,26 +112,38 @@
 }
 
 .dayList__empty {
+	padding: var(--ds-size-2) var(--ds-size-4);
 	color: var(--ds-color-neutral-text-subtle);
 }
 
-/* A thin row: the label and Sunday's lock button. */
+/* A thin row: the label and Sunday's lock button, tinted like the desktop
+ * weekend columns. */
 .dayList__day--weekend {
-	flex-direction: row;
+	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	padding-block: var(--ds-size-1);
-	background-color: var(--ds-color-neutral-surface-tinted);
+	padding: var(--ds-size-1) var(--ds-size-1) var(--ds-size-1) var(--ds-size-4);
+	background-color: var(--ds-color-neutral-background-tinted);
+	box-shadow: none;
 }
 
 .dayList__weekendLabel {
 	color: var(--ds-color-neutral-text-subtle);
+	font-size: var(--ds-body-sm-font-size);
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
 }
 
+/* Like the desktop total row. */
 .dayList__total {
 	display: flex;
 	justify-content: space-between;
-	padding-inline: var(--ds-size-3);
-	font-size: 1.25rem;
-	font-variant-numeric: tabular-nums;
+	padding: var(--ds-size-3) var(--ds-size-3) var(--ds-size-3) var(--ds-size-4);
+	border: 1px solid var(--ds-color-neutral-border-subtle);
+	border-radius: var(--ds-border-radius-lg);
+	background-color: var(--ds-color-neutral-background-tinted);
+}
+
+.dayList__total strong {
+	font-size: 1.125rem;
 }

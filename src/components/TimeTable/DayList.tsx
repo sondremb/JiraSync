@@ -1,15 +1,13 @@
 import React from "react";
 import { Heading, Paragraph, Skeleton } from "@digdir/designsystemet-react";
-import {
-	CheckmarkCircleFillIcon,
-	ExclamationmarkTriangleFillIcon,
-} from "@navikt/aksel-icons";
 import { nb } from "date-fns/locale/nb";
 import { formatHours, IsoDate } from "../../date-time/IsoWeek";
 import type { DayReport } from "../../reconciliation/entities";
 import { toDayList, type DayListDay, type DayListLine } from "./dayListModel";
 import { HoursCell } from "./HoursCell";
 import { LockDateButton } from "./LockDateButton";
+import { StatusDot } from "./StatusDot";
+import type { WeekStatus } from "./weekStatus";
 import { TimecodeName } from "./TimecodeName";
 import styles from "./DayList.module.css";
 
@@ -17,6 +15,7 @@ interface Props {
 	className?: string;
 	reports: readonly DayReport[];
 	lockDate: IsoDate | undefined;
+	status?: WeekStatus;
 	onLockDate?: (day: IsoDate) => void;
 	pending?: boolean;
 }
@@ -26,6 +25,7 @@ export const DayList: React.FC<Props> = ({
 	className,
 	reports,
 	lockDate,
+	status,
 	onLockDate,
 	pending,
 }) => {
@@ -33,12 +33,19 @@ export const DayList: React.FC<Props> = ({
 	if (pending) return <DayListSkeleton className={classes} />;
 
 	const { items, weekBekkHours } = toDayList(reports, lockDate);
+	const today = IsoDate.fromDate(new Date());
 	return (
 		<div className={classes}>
 			<ol className={styles.dayList__days}>
 				{items.map((item) =>
 					item.kind === "day" ? (
-						<Day key={item.date} day={item} onLockDate={onLockDate} />
+						<Day
+							key={item.date}
+							day={item}
+							today={item.date === today}
+							status={status}
+							onLockDate={onLockDate}
+						/>
 					) : (
 						<li
 							key={item.saturday}
@@ -75,42 +82,59 @@ const shortDate = (date: IsoDate) =>
 
 const Day: React.FC<{
 	day: DayListDay;
+	today: boolean;
+	status?: WeekStatus;
 	onLockDate?: (day: IsoDate) => void;
-}> = ({ day, onLockDate }) => (
-	<li className={styles.dayList__day}>
-		<div className={styles.dayList__header}>
-			<Heading level={2} data-size="2xs" className={styles.dayList__title}>
-				{weekdayName(day.date)} · {formatHours(day.bekkHours)} t{" "}
-				<span className={styles.dayList__date}>{shortDate(day.date)}</span>
-			</Heading>
-			{day.inSync ? (
-				<CheckmarkCircleFillIcon
-					title="Stemmer"
-					className={`${styles.dayList__status} ${styles["dayList__status--ok"]}`}
-				/>
+}> = ({ day, today, status, onLockDate }) => {
+	const dayStatus = status?.days[day.date];
+	return (
+		<li
+			className={[
+				styles.dayList__day,
+				today ? styles["dayList__day--today"] : "",
+			]
+				.filter(Boolean)
+				.join(" ")}
+		>
+			<div
+				className={[
+					styles.dayList__header,
+					day.locked ? styles["dayList__header--locked"] : "",
+				]
+					.filter(Boolean)
+					.join(" ")}
+			>
+				<Heading level={2} className={styles.dayList__title}>
+					<span className={styles.dayList__weekday}>
+						{weekdayName(day.date)}
+					</span>
+					<span className={styles.dayList__date}>
+						{shortDate(day.date)}
+						{today && <span className="ds-sr-only">, i dag</span>}
+					</span>
+				</Heading>
+				<span className={styles.dayList__hours}>
+					{dayStatus && <StatusDot status={dayStatus} />}
+					{formatHours(day.bekkHours)} t
+				</span>
+				{onLockDate && (
+					<LockDateButton day={day.date} onClick={() => onLockDate(day.date)} />
+				)}
+			</div>
+			{day.lines.length > 0 ? (
+				<ul className={styles.dayList__lines}>
+					{day.lines.map((line) => (
+						<Line key={line.id} line={line} />
+					))}
+				</ul>
 			) : (
-				<ExclamationmarkTriangleFillIcon
-					title="Stemmer ikke"
-					className={`${styles.dayList__status} ${styles["dayList__status--warning"]}`}
-				/>
+				<Paragraph data-size="sm" className={styles.dayList__empty}>
+					ingen timer
+				</Paragraph>
 			)}
-			{onLockDate && (
-				<LockDateButton day={day.date} onClick={() => onLockDate(day.date)} />
-			)}
-		</div>
-		{day.lines.length > 0 ? (
-			<ul className={styles.dayList__lines}>
-				{day.lines.map((line) => (
-					<Line key={line.id} line={line} />
-				))}
-			</ul>
-		) : (
-			<Paragraph data-size="sm" className={styles.dayList__empty}>
-				ingen timer
-			</Paragraph>
-		)}
-	</li>
-);
+		</li>
+	);
+};
 
 const Line: React.FC<{ line: DayListLine }> = ({ line }) => (
 	<li className={styles.dayList__line}>
@@ -130,7 +154,9 @@ const DayListSkeleton: React.FC<{ className: string }> = ({ className }) => (
 		<ol className={styles.dayList__days}>
 			{[0, 1, 2, 3, 4].map((i) => (
 				<li key={i} className={styles.dayList__day}>
-					<Skeleton variant="text" characters={20} />
+					<div className={styles.dayList__header}>
+						<Skeleton variant="text" characters={20} />
+					</div>
 					<div className={styles.dayList__line}>
 						<Skeleton variant="text" characters={12} />
 						<Skeleton variant="rectangle" width="3.5rem" height="2.5rem" />
