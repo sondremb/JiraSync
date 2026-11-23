@@ -53,3 +53,31 @@ export function toGridEntries(reports: readonly DayReport[]): GridEntry[] {
 	}
 	return [...entries.values()];
 }
+
+/**
+ * What one timecode on one day shows:
+ * - `empty`: no hours in either system.
+ * - `unmanaged`: Bekk hours on a timecode the ruleset doesn't manage, never synced.
+ * - `inSync`: Bekk matches Jira.
+ * - `willChange`: Bekk differs from Jira, and syncing will fix it.
+ * - `lockedDiffers`: Bekk differs from Jira, but the day is locked.
+ */
+export type CellState =
+	| "empty"
+	| "unmanaged"
+	| "inSync"
+	| "willChange"
+	| "lockedDiffers";
+
+export function cellState(
+	day: GridDay | undefined,
+	managed: boolean,
+	locked: boolean,
+): CellState {
+	const bekkHours = day?.bekkHours ?? 0;
+	const jiraHours = day?.totalJiraHours ?? 0;
+	if (bekkHours === 0 && jiraHours === 0) return "empty";
+	if (!managed) return "unmanaged";
+	if (bekkHours === jiraHours) return "inSync";
+	return locked ? "lockedDiffers" : "willChange";
+}

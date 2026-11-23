@@ -1,0 +1,64 @@
+/* Sticks to the top, slightly see-through over the page. */
+.appBar {
+	position: sticky;
+	top: 0;
+	z-index: 10;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--ds-size-4);
+	padding: var(--ds-size-2) var(--ds-size-6);
+	border-bottom: 1px solid var(--ds-color-neutral-border-subtle);
+	background-color: color-mix(
+		in srgb,
+		var(--ds-color-neutral-background-default) 85%,
+		transparent
+	);
+	backdrop-filter: blur(8px);
+}
+
+.appBar__brand {
+	display: flex;
+	align-items: center;
+	gap: var(--ds-size-2);
+}
+
+.appBar__logo {
+	display: grid;
+	place-items: center;
+	width: 2rem;
+	height: 2rem;
+	border-radius: var(--ds-border-radius-md);
+	background: linear-gradient(
+		135deg,
+		var(--ds-color-accent-base-default),
+		var(--ds-color-accent-base-active)
+	);
+	color: var(--ds-color-accent-base-contrast-default);
+	font-size: 1.25rem;
+}
+
+.appBar__actions {
+	display: flex;
+	align-items: center;
+	gap: var(--ds-size-2);
+}
+
+.appBar__ruleset {
+	border-radius: 999px;
+}
+
+.appBar__user {
+	border-radius: 999px;
+}
+
+/* Narrow: the ruleset button shows only its icon (and the local tag). */
+@media (width < 48rem) {
+	.appBar {
+		padding-inline: var(--ds-size-4);
+	}
+
+	.appBar__rulesetName {
+		display: none;
+	}
+}

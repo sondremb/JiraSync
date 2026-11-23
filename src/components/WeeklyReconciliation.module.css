@@ -2,15 +2,22 @@
 	container-type: inline-size;
 	display: flex;
 	flex-direction: column;
-	gap: var(--ds-size-4);
-}
-
-.weeklyReconciliation__alert--centered {
-	align-self: center;
+	gap: var(--ds-size-5);
 }
 
 .weeklyReconciliation__changes {
 	margin: var(--ds-size-2) 0 0;
+}
+
+/* The grid (or day list) on a white card. */
+.weeklyReconciliation__grid {
+	overflow-x: auto;
+	border: 1px solid var(--ds-color-neutral-border-subtle);
+	border-radius: var(--ds-border-radius-lg);
+	background-color: var(--ds-color-neutral-background-default);
+	box-shadow:
+		0 1px 2px rgb(0 0 0 / 0.04),
+		0 8px 24px -12px rgb(0 0 0 / 0.12);
 }
 
 /* Exactly one of the two views shows. The 9-column table stops fitting at
@@ -19,6 +26,7 @@
  * Nested selectors so these beat the components' own display rules. */
 .weeklyReconciliation .weeklyReconciliation__list {
 	display: none;
+	padding: var(--ds-size-3);
 }
 
 @container (width < 48rem) {
@@ -28,5 +36,55 @@
 
 	.weeklyReconciliation .weeklyReconciliation__list {
 		display: flex;
+	}
+}
+
+/* The sync actions, pinned to the bottom once the status card scrolls away. */
+.weeklyReconciliation__syncBar {
+	position: sticky;
+	bottom: var(--ds-size-4);
+	z-index: 5;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: var(--ds-size-3);
+	padding: var(--ds-size-3) var(--ds-size-3) var(--ds-size-3) var(--ds-size-5);
+	border: 1px solid var(--ds-color-neutral-border-subtle);
+	border-radius: var(--ds-border-radius-lg);
+	background-color: var(--ds-color-neutral-background-default);
+	box-shadow: 0 12px 32px -12px rgb(0 0 0 / 0.25);
+	animation: weeklyReconciliation__slideIn 200ms ease-out;
+}
+
+@keyframes weeklyReconciliation__slideIn {
+	from {
+		transform: translateY(1rem);
+		opacity: 0;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.weeklyReconciliation__syncBar {
+		animation: none;
+	}
+}
+
+.weeklyReconciliation__syncText {
+	margin: 0;
+}
+
+.weeklyReconciliation__syncButtons {
+	display: flex;
+	gap: var(--ds-size-2);
+}
+
+@container (width < 48rem) {
+	.weeklyReconciliation__syncButtons {
+		flex: 1 1 100%;
+	}
+
+	.weeklyReconciliation__syncButtons > :last-child {
+		flex: 1;
 	}
 }

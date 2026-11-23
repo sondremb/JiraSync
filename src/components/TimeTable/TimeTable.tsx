@@ -1,17 +1,23 @@
 import React from "react";
-import { Skeleton, Table } from "@digdir/designsystemet-react";
+import { Skeleton } from "@digdir/designsystemet-react";
 import { nb } from "date-fns/locale/nb";
 import { formatHours, IsoDate } from "../../date-time/IsoWeek";
-import { GridEntry } from "./gridModel";
-import { HoursBox } from "./HoursBox";
+import { isLocked } from "../../reconciliation/syncPreview";
+import { cellState, type GridEntry } from "./gridModel";
+import { HoursCell } from "./HoursCell";
 import { LockDateButton } from "./LockDateButton";
+import { StatusDot } from "./StatusDot";
 import { TimecodeName } from "./TimecodeName";
+import type { WeekStatus } from "./weekStatus";
 import styles from "./TimeTable.module.css";
 
 interface Props {
 	className?: string;
 	entries: GridEntry[];
 	days: IsoDate[];
+	lockDate: IsoDate | undefined;
+	/** Status dots on the totals row. */
+	status?: WeekStatus;
 	onLockDate?: (day: IsoDate) => void;
 	pending?: boolean;
 }
@@ -24,138 +30,154 @@ const bekkHoursOn = (entries: GridEntry[], day: IsoDate) =>
 const weekBekkHours = (entry: GridEntry) =>
 	sum(Object.values(entry.days).map((day) => day?.bekkHours ?? 0));
 
+const SATURDAY = 6;
+
+/** The week as a grid of timecodes by days, for wide screens. */
 export const TimeTable: React.FC<Props> = ({
 	className,
 	entries,
 	days,
+	lockDate,
+	status,
 	onLockDate,
 	pending,
 }) => {
 	const sorted = [...entries].sort(
 		(a, b) => Number(b.managed) - Number(a.managed),
 	);
-	const hoursCell = styles["timeTable__cell--hours"];
+	const today = IsoDate.fromDate(new Date());
+	const dayClass = (day: IsoDate) =>
+		[
+			styles.timeTable__day,
+			IsoDate.weekday(day) >= SATURDAY ? styles["timeTable__day--weekend"] : "",
+			// Unknown while pending, and an unknown lock date would lock every day.
+			!pending && isLocked(day, lockDate)
+				? styles["timeTable__day--locked"]
+				: "",
+			day === today ? styles["timeTable__day--today"] : "",
+		]
+			.filter(Boolean)
+			.join(" ");
 
 	return (
-		<div
+		<table
 			className={[styles.timeTable, className ?? ""].filter(Boolean).join(" ")}
+			aria-busy={pending || undefined}
 		>
-			<Table className={styles.timeTable__table}>
-				<Table.Head>
-					<Table.Row>
-						<Table.HeaderCell className={styles.timeTable__code}>
-							Kode
-						</Table.HeaderCell>
-						{days.map((day) => (
-							<Table.HeaderCell key={day} className={hoursCell}>
-								<DayHeader day={day} />
-							</Table.HeaderCell>
-						))}
-						<Table.HeaderCell className={hoursCell}>Sum</Table.HeaderCell>
-					</Table.Row>
-				</Table.Head>
-				<Table.Body>
-					{pending
-						? [0, 1].map((i) => <SkeletonRow key={i} days={days} />)
-						: sorted.map((entry) => (
-								<Table.Row key={entry.id}>
-									<Table.Cell>
-										<TimecodeName id={entry.id} />
-									</Table.Cell>
-									{days.map((day) => (
-										<Table.Cell key={day} className={hoursCell}>
-											<EntryHours entry={entry} day={day} />
-										</Table.Cell>
-									))}
-									<Table.Cell
-										className={`${hoursCell} ${styles["timeTable__cell--total"]}`}
-									>
-										{formatHours(weekBekkHours(entry))}
-									</Table.Cell>
-								</Table.Row>
-							))}
-				</Table.Body>
-				<Table.Foot className={styles.timeTable__foot}>
-					{pending ? (
-						<SkeletonRow days={days} />
-					) : (
-						<>
-							<Table.Row>
-								<Table.HeaderCell scope="row">Totalt</Table.HeaderCell>
+			<thead>
+				<tr>
+					<th scope="col" className={styles.timeTable__label}>
+						Timekode
+					</th>
+					{days.map((day) => (
+						<th key={day} scope="col" className={dayClass(day)}>
+							<DayHeader
+								day={day}
+								today={day === today}
+								onLockDate={onLockDate}
+							/>
+						</th>
+					))}
+					<th scope="col" className={styles.timeTable__label}>
+						Sum
+					</th>
+				</tr>
+			</thead>
+			<tbody>
+				{pending
+					? [0, 1].map((i) => <SkeletonRow key={i} days={days} />)
+					: sorted.map((entry) => (
+							<tr
+								key={entry.id}
+								className={
+									entry.managed
+										? undefined
+										: styles["timeTable__row--unmanaged"]
+								}
+							>
+								<th scope="row" className={styles.timeTable__code}>
+									<TimecodeName id={entry.id} />
+								</th>
 								{days.map((day) => (
-									<Table.Cell
-										key={day}
-										className={`${hoursCell} ${styles["timeTable__cell--total"]}`}
-									>
-										{formatHours(bekkHoursOn(entries, day))}
-									</Table.Cell>
+									<td key={day} className={dayClass(day)}>
+										<HoursCell
+											state={cellState(
+												entry.days[day],
+												entry.managed,
+												isLocked(day, lockDate),
+											)}
+											bekkHours={entry.days[day]?.bekkHours ?? 0}
+											jiraHours={entry.days[day]?.totalJiraHours ?? 0}
+										/>
+									</td>
 								))}
-								<Table.Cell
-									className={`${hoursCell} ${styles["timeTable__cell--total"]}`}
-								>
-									{formatHours(sum(entries.map(weekBekkHours)))}
-								</Table.Cell>
-							</Table.Row>
-							{onLockDate && (
-								<Table.Row>
-									<Table.Cell />
-									{days.map((day) => (
-										<Table.Cell key={day} className={hoursCell}>
-											<LockDateButton
-												day={day}
-												onClick={() => onLockDate(day)}
-											/>
-										</Table.Cell>
-									))}
-									<Table.Cell />
-								</Table.Row>
-							)}
-						</>
-					)}
-				</Table.Foot>
-			</Table>
-		</div>
+								<td className={styles.timeTable__sum}>
+									{formatHours(weekBekkHours(entry))}
+								</td>
+							</tr>
+						))}
+			</tbody>
+			{!pending && (
+				<tfoot>
+					<tr>
+						<th scope="row" className={styles.timeTable__code}>
+							Totalt
+						</th>
+						{days.map((day) => (
+							<td
+								key={day}
+								className={`${dayClass(day)} ${styles.timeTable__total}`}
+							>
+								<span className={styles.timeTable__totalValue}>
+									{status?.days[day] && <StatusDot status={status.days[day]} />}
+									{formatHours(bekkHoursOn(entries, day))}
+								</span>
+							</td>
+						))}
+						<td
+							className={`${styles.timeTable__sum} ${styles.timeTable__total}`}
+						>
+							{formatHours(sum(entries.map(weekBekkHours)))}
+						</td>
+					</tr>
+				</tfoot>
+			)}
+		</table>
 	);
 };
 
-const DayHeader: React.FC<{ day: IsoDate }> = ({ day }) => {
-	return (
-		<span className={styles.timeTable__day}>
-			<span>{IsoDate.format(day, "EEEE", { locale: nb })}</span>
-			<span>{IsoDate.format(day, "d. MMMM", { locale: nb })}</span>
+const DayHeader: React.FC<{
+	day: IsoDate;
+	today: boolean;
+	onLockDate?: (day: IsoDate) => void;
+}> = ({ day, today, onLockDate }) => (
+	<span className={styles.timeTable__dayHeader}>
+		<span className={styles.timeTable__weekday}>
+			{IsoDate.format(day, "EEE", { locale: nb }).replace(/\.$/, "")}
 		</span>
-	);
-};
-
-const EntryHours: React.FC<{ entry: GridEntry; day: IsoDate }> = ({
-	entry,
-	day,
-}) => {
-	const hours = entry.days[day];
-	const hasHours =
-		hours !== undefined &&
-		(hours.bekkHours !== 0 || hours.totalJiraHours !== 0);
-	return (
-		<HoursBox
-			bekkHours={hasHours ? hours.bekkHours : undefined}
-			jiraHours={hasHours && entry.managed ? hours.totalJiraHours : undefined}
-			mismatch={entry.managed && hours?.bekkHours !== hours?.totalJiraHours}
-		/>
-	);
-};
+		<span className={styles.timeTable__date}>
+			{IsoDate.format(day, "d", { locale: nb })}
+			<span className="ds-sr-only">
+				. {IsoDate.format(day, "MMMM", { locale: nb })}
+				{today ? ", i dag" : ""}
+			</span>
+		</span>
+		{onLockDate && <LockDateButton day={day} onClick={() => onLockDate(day)} />}
+	</span>
+);
 
 const SkeletonRow: React.FC<{ days: IsoDate[] }> = ({ days }) => (
-	<Table.Row>
-		<Table.Cell>
+	<tr>
+		<th scope="row" className={styles.timeTable__code}>
 			<Skeleton variant="text" characters={12} />
-		</Table.Cell>
+		</th>
 		{days.map((day) => (
-			<Table.Cell key={day} className={styles["timeTable__cell--hours"]}>
-				<Skeleton variant="rectangle" width="3.125rem" height="3.125rem" />
-			</Table.Cell>
+			<td key={day}>
+				<Skeleton variant="rectangle" width="3.5rem" height="2.5rem" />
+			</td>
 		))}
-		<Table.Cell className={styles["timeTable__cell--hours"]}>
+		<td>
 			<Skeleton variant="text" characters={2} />
-		</Table.Cell>
-	</Table.Row>
+		</td>
+	</tr>
 );

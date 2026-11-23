@@ -4,6 +4,10 @@
 	color: var(--ds-color-neutral-text-default);
 }
 
+.page--tinted {
+	background-color: var(--ds-color-neutral-background-tinted);
+}
+
 .page__content {
 	box-sizing: border-box;
 	max-width: 80rem;

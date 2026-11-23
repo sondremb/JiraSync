@@ -6,7 +6,6 @@ import {
 	Heading,
 	Paragraph,
 } from "@digdir/designsystemet-react";
-import { EyeIcon } from "@navikt/aksel-icons";
 import { useQueryClient } from "@tanstack/react-query";
 import { formatHours, IsoDate, IsoWeek } from "../date-time/IsoWeek";
 import { TimecodeLabel } from "./TimecodeLabel";
@@ -25,6 +24,9 @@ import { Ruleset } from "../rules";
 import { TimeTable } from "./TimeTable/TimeTable";
 import { DayList } from "./TimeTable/DayList";
 import { toGridEntries } from "./TimeTable/gridModel";
+import { toWeekStatus } from "./TimeTable/weekStatus";
+import { StatusCard, SyncActions, type SyncState } from "./StatusCard";
+import { useOnScreen } from "../Utils/useOnScreen";
 import { Column } from "../layout/Column";
 import { Row } from "../layout/Row";
 import styles from "./WeeklyReconciliation.module.css";
@@ -32,6 +34,8 @@ import styles from "./WeeklyReconciliation.module.css";
 interface Props {
 	week: IsoWeek;
 	ruleset: Ruleset;
+	onPreviousWeek: () => void;
+	onNextWeek: () => void;
 }
 
 const groupByDate = (
@@ -52,7 +56,12 @@ const lockedDaysNotice = (
 		? "Låsedato er ukjent, så ingen timer kan synkroniseres."
 		: `Låste dager stemmer ikke med Jira og blir ikke synkronisert: ${lockedDays.map(IsoDate.formatLong).join(", ")}.`;
 
-export const WeeklyReconciliation: React.FC<Props> = ({ week, ruleset }) => {
+export const WeeklyReconciliation: React.FC<Props> = ({
+	week,
+	ruleset,
+	onPreviousWeek,
+	onNextWeek,
+}) => {
 	const { data, error, isPending, dataUpdatedAt, isFetching } =
 		useWeeklyReconciliation(week, ruleset);
 	const { lockDate, updateLockDate } = useLockDate();
@@ -110,6 +119,25 @@ export const WeeklyReconciliation: React.FC<Props> = ({ week, ruleset }) => {
 		await runSync(preview.changes);
 	};
 
+	const status = data ? toWeekStatus(data, lockDate) : undefined;
+	const busy = isFetching || sync.isPending;
+	const syncState: SyncState = isPending
+		? { kind: "loading" }
+		: error
+			? { kind: "error" }
+			: changes.length > 0
+				? { kind: "changes", count: changes.length, busy }
+				: justSynced
+					? { kind: "synced" }
+					: lockedDays.length === 0 && unmatchedCount === 0
+						? { kind: "inSync" }
+						: { kind: "nothingToSync" };
+	const showPreview = () =>
+		setPreview({ version, changes, unmatchedCount, lockedDays });
+
+	const cardRef = useRef<HTMLElement>(null);
+	const cardOnScreen = useOnScreen(cardRef);
+
 	const lock = (day: IsoDate) => {
 		if (updateLockDate.isPending) return;
 		updateLockDate.mutate(day);
@@ -117,96 +145,43 @@ export const WeeklyReconciliation: React.FC<Props> = ({ week, ruleset }) => {
 
 	return (
 		<section aria-label="Avstemming" className={styles.weeklyReconciliation}>
-			{isPending ? (
-				<>
-					<TimeTable
-						pending
-						className={styles.weeklyReconciliation__table}
-						entries={[]}
-						days={IsoWeek.days(week)}
-					/>
-					<DayList
-						pending
-						className={styles.weeklyReconciliation__list}
-						reports={[]}
-					/>
-				</>
-			) : error ? (
+			<StatusCard
+				ref={cardRef}
+				week={week}
+				status={status}
+				sync={syncState}
+				onPreviousWeek={onPreviousWeek}
+				onNextWeek={onNextWeek}
+				onSync={() => {
+					void runSync(changes);
+				}}
+				onPreview={showPreview}
+			/>
+			{error ? (
 				<Alert data-color="danger">En feil oppstod: {error.message}</Alert>
 			) : (
-				data && (
-					<>
-						<TimeTable
-							className={styles.weeklyReconciliation__table}
-							entries={toGridEntries(data)}
-							days={data.map((report) => report.date)}
-							onLockDate={lock}
-						/>
-						<DayList
-							className={styles.weeklyReconciliation__list}
-							reports={data}
-							onLockDate={lock}
-						/>
-						{unmatchedCount > 0 && (
-							<Alert data-color="warning">
-								{unmatchedCount} Jira-føringer mangler regel og må gjennomgås.
-								De er ikke med i synkroniseringen.
-							</Alert>
-						)}
-						{lockedDays.length > 0 && (
-							<Alert data-color="warning">
-								{lockedDaysNotice(lockDate, lockedDays)}
-							</Alert>
-						)}
-						{changes.length > 0 ? (
-							<Row justify="center" wrap>
-								<Button
-									// `loading` only shows a spinner, so block clicks while the
-									// data behind `changes` may be stale.
-									loading={isFetching || sync.isPending}
-									disabled={isFetching || sync.isPending}
-									onClick={() => {
-										void runSync(changes);
-									}}
-								>
-									Synkroniser
-								</Button>
-								<Button
-									variant="secondary"
-									disabled={isFetching || sync.isPending}
-									onClick={() => {
-										setPreview({
-											version,
-											changes,
-											unmatchedCount,
-											lockedDays,
-										});
-									}}
-								>
-									<EyeIcon aria-hidden />
-									Forhåndsvis
-								</Button>
-							</Row>
-						) : (
-							!justSynced &&
-							lockedDays.length === 0 && (
-								<Alert
-									data-color="success"
-									className={styles["weeklyReconciliation__alert--centered"]}
-								>
-									Alt stemmer!
-								</Alert>
-							)
-						)}
-					</>
-				)
+				<div className={styles.weeklyReconciliation__grid}>
+					<TimeTable
+						pending={isPending}
+						className={styles.weeklyReconciliation__table}
+						entries={data ? toGridEntries(data) : []}
+						days={data ? data.map((report) => report.date) : IsoWeek.days(week)}
+						lockDate={lockDate}
+						status={status}
+						onLockDate={lock}
+					/>
+					<DayList
+						pending={isPending}
+						className={styles.weeklyReconciliation__list}
+						reports={data ?? []}
+						lockDate={lockDate}
+						onLockDate={lock}
+					/>
+				</div>
 			)}
-			{justSynced && (
-				<Alert
-					data-color="success"
-					className={styles["weeklyReconciliation__alert--centered"]}
-				>
-					Timene ble oppdatert!
+			{lockedDays.length > 0 && (
+				<Alert data-color="warning">
+					{lockedDaysNotice(lockDate, lockedDays)}
 				</Alert>
 			)}
 			{sync.isError && (
@@ -224,6 +199,26 @@ export const WeeklyReconciliation: React.FC<Props> = ({ week, ruleset }) => {
 			)}
 			{updateLockDate.isSuccess && (
 				<Alert data-color="success">Timer ble låst.</Alert>
+			)}
+			{/* The status card has the same buttons while it is on screen. */}
+			{syncState.kind === "changes" && !cardOnScreen && (
+				<div className={styles.weeklyReconciliation__syncBar}>
+					<Paragraph className={styles.weeklyReconciliation__syncText}>
+						<strong>
+							{changes.length} {changes.length === 1 ? "endring" : "endringer"}
+						</strong>{" "}
+						klare til Timekeeper
+					</Paragraph>
+					<div className={styles.weeklyReconciliation__syncButtons}>
+						<SyncActions
+							sync={syncState}
+							onSync={() => {
+								void runSync(changes);
+							}}
+							onPreview={showPreview}
+						/>
+					</div>
+				</div>
 			)}
 			<Dialog
 				open={Boolean(openPreview)}
@@ -290,3 +285,36 @@ export const WeeklyReconciliation: React.FC<Props> = ({ week, ruleset }) => {
 		</section>
 	);
 };
+
+/** The week while the lock date (and so the first week to show) is loading. */
+export const WeeklyReconciliationPending: React.FC<{
+	week: IsoWeek;
+	onPreviousWeek: () => void;
+	onNextWeek: () => void;
+}> = ({ week, onPreviousWeek, onNextWeek }) => (
+	<section aria-label="Avstemming" className={styles.weeklyReconciliation}>
+		<StatusCard
+			week={week}
+			sync={{ kind: "loading" }}
+			onPreviousWeek={onPreviousWeek}
+			onNextWeek={onNextWeek}
+			onSync={() => {}}
+			onPreview={() => {}}
+		/>
+		<div className={styles.weeklyReconciliation__grid}>
+			<TimeTable
+				pending
+				className={styles.weeklyReconciliation__table}
+				entries={[]}
+				days={IsoWeek.days(week)}
+				lockDate={undefined}
+			/>
+			<DayList
+				pending
+				className={styles.weeklyReconciliation__list}
+				reports={[]}
+				lockDate={undefined}
+			/>
+		</div>
+	</section>
+);

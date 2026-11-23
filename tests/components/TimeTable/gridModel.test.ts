@@ -5,7 +5,10 @@ import {
 	type InternalTimecodeId,
 	type JiraIssueId,
 } from "../../../src/reconciliation/entities";
-import { toGridEntries } from "../../../src/components/TimeTable/gridModel";
+import {
+	cellState,
+	toGridEntries,
+} from "../../../src/components/TimeTable/gridModel";
 
 const monday = IsoDate.parse("2025-02-03");
 const tuesday = IsoDate.parse("2025-02-04");
@@ -84,5 +87,34 @@ describe("toGridEntries", () => {
 		expect(() => toGridEntries([first, second])).toThrow(
 			"inconsistent management",
 		);
+	});
+});
+
+describe("cellState", () => {
+	const day = (bekkHours: number, totalJiraHours: number) => ({
+		bekkHours,
+		totalJiraHours,
+	});
+
+	test("no hours in either system is empty, managed or not, locked or not", () => {
+		expect(cellState(undefined, true, false)).toBe("empty");
+		expect(cellState(day(0, 0), true, true)).toBe("empty");
+		expect(cellState(day(0, 0), false, false)).toBe("empty");
+	});
+
+	test("unmanaged hours are never compared with Jira", () => {
+		expect(cellState(day(2.5, 0), false, false)).toBe("unmanaged");
+		expect(cellState(day(2.5, 0), false, true)).toBe("unmanaged");
+	});
+
+	test("matching hours are in sync, locked or not", () => {
+		expect(cellState(day(7.5, 7.5), true, false)).toBe("inSync");
+		expect(cellState(day(7.5, 7.5), true, true)).toBe("inSync");
+	});
+
+	test("differing hours change, unless the day is locked", () => {
+		expect(cellState(day(0, 5), true, false)).toBe("willChange");
+		expect(cellState(day(2, 0), true, false)).toBe("willChange");
+		expect(cellState(day(0, 5), true, true)).toBe("lockedDiffers");
 	});
 });

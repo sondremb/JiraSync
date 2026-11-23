@@ -8,7 +8,7 @@ import { nb } from "date-fns/locale/nb";
 import { formatHours, IsoDate } from "../../date-time/IsoWeek";
 import type { DayReport } from "../../reconciliation/entities";
 import { toDayList, type DayListDay, type DayListLine } from "./dayListModel";
-import { HoursBox } from "./HoursBox";
+import { HoursCell } from "./HoursCell";
 import { LockDateButton } from "./LockDateButton";
 import { TimecodeName } from "./TimecodeName";
 import styles from "./DayList.module.css";
@@ -16,6 +16,7 @@ import styles from "./DayList.module.css";
 interface Props {
 	className?: string;
 	reports: readonly DayReport[];
+	lockDate: IsoDate | undefined;
 	onLockDate?: (day: IsoDate) => void;
 	pending?: boolean;
 }
@@ -24,13 +25,14 @@ interface Props {
 export const DayList: React.FC<Props> = ({
 	className,
 	reports,
+	lockDate,
 	onLockDate,
 	pending,
 }) => {
 	const classes = [styles.dayList, className ?? ""].filter(Boolean).join(" ");
 	if (pending) return <DayListSkeleton className={classes} />;
 
-	const { items, weekBekkHours } = toDayList(reports);
+	const { items, weekBekkHours } = toDayList(reports, lockDate);
 	return (
 		<div className={classes}>
 			<ol className={styles.dayList__days}>
@@ -115,10 +117,10 @@ const Line: React.FC<{ line: DayListLine }> = ({ line }) => (
 		<span className={styles.dayList__timecode}>
 			<TimecodeName id={line.id} />
 		</span>
-		<HoursBox
+		<HoursCell
+			state={line.state}
 			bekkHours={line.bekkHours}
-			jiraHours={line.jiraHours}
-			mismatch={line.mismatch}
+			jiraHours={line.jiraHours ?? 0}
 		/>
 	</li>
 );
@@ -131,7 +133,7 @@ const DayListSkeleton: React.FC<{ className: string }> = ({ className }) => (
 					<Skeleton variant="text" characters={20} />
 					<div className={styles.dayList__line}>
 						<Skeleton variant="text" characters={12} />
-						<Skeleton variant="rectangle" width="3.125rem" height="3.125rem" />
+						<Skeleton variant="rectangle" width="3.5rem" height="2.5rem" />
 					</div>
 				</li>
 			))}

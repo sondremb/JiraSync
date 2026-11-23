@@ -84,6 +84,22 @@ export const IsoWeek = {
 		const nextMonday = addDays(mondayDate, 7);
 		return IsoWeek.fromDate(nextMonday);
 	},
+	/** Short Norwegian date range: "23.–29. nov", or "30. nov–6. des" across months. */
+	formatRange(week: IsoWeek): string {
+		const monday = IsoWeek.monday(week);
+		const sunday = IsoWeek.sunday(week);
+		const month = (date: IsoDate) =>
+			new Intl.DateTimeFormat("nb-NO", {
+				month: "short",
+				timeZone: NORWAY_TIMEZONE,
+			})
+				.format(IsoDate.toDate(date))
+				.replace(/\.$/, "");
+		const day = (date: IsoDate) => IsoDate.format(date, "d");
+		return month(monday) === month(sunday)
+			? `${day(monday)}.–${day(sunday)}. ${month(sunday)}`
+			: `${day(monday)}. ${month(monday)}–${day(sunday)}. ${month(sunday)}`;
+	},
 	previous(week: IsoWeek): IsoWeek {
 		const monday = IsoWeek.monday(week);
 		const mondayDate = IsoDate.toDate(monday);
