@@ -6,11 +6,7 @@ import {
 	Heading,
 	Tag,
 } from "@digdir/designsystemet-react";
-import {
-	ArrowsSquarepathIcon,
-	LeaveIcon,
-	TasklistIcon,
-} from "@navikt/aksel-icons";
+import { LeaveIcon, TasklistIcon } from "@navikt/aksel-icons";
 import { RulesetDialog } from "../components/RulesetModal";
 import { useRuleSet } from "../data/useRuleset";
 import { useBekkAccount } from "../login/bekk/useBekkAccount";
@@ -41,9 +37,6 @@ export const AppBar: React.FC = () => {
 	return (
 		<header className={styles.appBar}>
 			<div className={styles.appBar__brand}>
-				<span className={styles.appBar__logo} aria-hidden>
-					<ArrowsSquarepathIcon />
-				</span>
 				<Heading level={1} data-size="xs">
 					Jirasync
 				</Heading>
