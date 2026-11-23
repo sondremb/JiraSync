@@ -1,5 +1,6 @@
 import React from "react";
 import styles from "./Page.module.css";
+import { classNames } from "../Utils/classNames";
 
 interface Props {
 	/** Full-width bar above the content, such as `AppBar`. */
@@ -13,11 +14,7 @@ export const Page: React.FC<React.PropsWithChildren<Props>> = ({
 	tinted,
 	children,
 }) => (
-	<div
-		className={[styles.page, tinted ? styles["page--tinted"] : ""]
-			.filter(Boolean)
-			.join(" ")}
-	>
+	<div className={classNames(styles.page, tinted && styles["page--tinted"])}>
 		{header}
 		<div className={styles.page__content}>{children}</div>
 	</div>

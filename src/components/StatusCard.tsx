@@ -12,6 +12,7 @@ import type { WeekStatus } from "./TimeTable/weekStatus";
 import type { SyncState } from "./syncState";
 import { formatChangeCount } from "./syncMessages";
 import styles from "./StatusCard.module.css";
+import { classNames } from "../Utils/classNames";
 
 interface Props {
 	week: IsoWeek;
@@ -39,13 +40,11 @@ export const StatusCard = React.forwardRef<HTMLElement, Props>(
 			<section
 				ref={ref}
 				aria-label="Status for uka"
-				className={[
+				className={classNames(
 					styles.statusCard,
-					settled ? styles["statusCard--settled"] : "",
-					sync.kind === "loading" ? styles["statusCard--loading"] : "",
-				]
-					.filter(Boolean)
-					.join(" ")}
+					settled && styles["statusCard--settled"],
+					sync.kind === "loading" && styles["statusCard--loading"],
+				)}
 			>
 				<nav aria-label="Uke" className={styles.statusCard__week}>
 					<Button

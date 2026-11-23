@@ -10,6 +10,7 @@ import { StatusMark } from "./StatusMark";
 import { TimecodeName } from "./TimecodeName";
 import type { WeekStatus } from "./weekStatus";
 import styles from "./TimeTable.module.css";
+import { classNames } from "../../Utils/classNames";
 
 interface Props {
 	className?: string;
@@ -47,21 +48,17 @@ export const TimeTable: React.FC<Props> = ({
 	);
 	const today = IsoDate.fromDate(new Date());
 	const dayClass = (day: IsoDate) =>
-		[
+		classNames(
 			styles.timeTable__day,
-			IsoDate.weekday(day) >= SATURDAY ? styles["timeTable__day--weekend"] : "",
+			IsoDate.weekday(day) >= SATURDAY && styles["timeTable__day--weekend"],
 			// Unknown while pending, and an unknown lock date would lock every day.
-			!pending && isLocked(day, lockDate)
-				? styles["timeTable__day--locked"]
-				: "",
-			day === today ? styles["timeTable__day--today"] : "",
-		]
-			.filter(Boolean)
-			.join(" ");
+			!pending && isLocked(day, lockDate) && styles["timeTable__day--locked"],
+			day === today && styles["timeTable__day--today"],
+		);
 
 	return (
 		<table
-			className={[styles.timeTable, className ?? ""].filter(Boolean).join(" ")}
+			className={classNames(styles.timeTable, className)}
 			aria-busy={pending || undefined}
 		>
 			<thead>

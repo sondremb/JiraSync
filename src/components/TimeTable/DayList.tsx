@@ -10,6 +10,7 @@ import { StatusMark } from "./StatusMark";
 import type { WeekStatus } from "./weekStatus";
 import { TimecodeName } from "./TimecodeName";
 import styles from "./DayList.module.css";
+import { classNames } from "../../Utils/classNames";
 
 interface Props {
 	className?: string;
@@ -29,7 +30,7 @@ export const DayList: React.FC<Props> = ({
 	onLockDate,
 	pending,
 }) => {
-	const classes = [styles.dayList, className ?? ""].filter(Boolean).join(" ");
+	const classes = classNames(styles.dayList, className);
 	if (pending) return <DayListSkeleton className={classes} />;
 
 	const { items, weekBekkHours } = toDayList(reports, lockDate);
@@ -89,20 +90,16 @@ const Day: React.FC<{
 	const dayStatus = status?.days[day.date];
 	return (
 		<li
-			className={[
+			className={classNames(
 				styles.dayList__day,
-				today ? styles["dayList__day--today"] : "",
-			]
-				.filter(Boolean)
-				.join(" ")}
+				today && styles["dayList__day--today"],
+			)}
 		>
 			<div
-				className={[
+				className={classNames(
 					styles.dayList__header,
-					day.locked ? styles["dayList__header--locked"] : "",
-				]
-					.filter(Boolean)
-					.join(" ")}
+					day.locked && styles["dayList__header--locked"],
+				)}
 			>
 				<Heading level={2} className={styles.dayList__title}>
 					<span className={styles.dayList__weekday}>
