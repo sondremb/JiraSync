@@ -50,9 +50,11 @@
 	white-space: nowrap;
 }
 
+/* Wraps within its own space first; the actions only drop to their own row
+ * when the counts would get narrower than this. */
 .statusCard__counts {
 	display: flex;
-	flex: 1 1 auto;
+	flex: 1 1 16rem;
 	flex-wrap: wrap;
 	gap: var(--ds-size-1) var(--ds-size-3);
 	min-width: 0;

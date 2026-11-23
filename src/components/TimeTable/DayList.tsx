@@ -6,7 +6,7 @@ import type { DayReport } from "../../reconciliation/entities";
 import { toDayList, type DayListDay, type DayListLine } from "./dayListModel";
 import { HoursCell } from "./HoursCell";
 import { LockDateButton } from "./LockDateButton";
-import { StatusDot } from "./StatusDot";
+import { StatusMark } from "./StatusMark";
 import type { WeekStatus } from "./weekStatus";
 import { TimecodeName } from "./TimecodeName";
 import styles from "./DayList.module.css";
@@ -114,7 +114,7 @@ const Day: React.FC<{
 					</span>
 				</Heading>
 				<span className={styles.dayList__hours}>
-					{dayStatus && <StatusDot status={dayStatus} />}
+					{dayStatus && <StatusMark status={dayStatus} />}
 					{formatHours(day.bekkHours)} t
 				</span>
 				{onLockDate && (

@@ -7,7 +7,7 @@ import {
 	EyeIcon,
 } from "@navikt/aksel-icons";
 import { formatHours, IsoWeek } from "../date-time/IsoWeek";
-import { StatusDot, type StatusTone } from "./TimeTable/StatusDot";
+import { StatusMark, type StatusTone } from "./TimeTable/StatusMark";
 import type { WeekStatus } from "./TimeTable/weekStatus";
 import styles from "./StatusCard.module.css";
 
@@ -114,7 +114,7 @@ const StatusCounts: React.FC<{ status: WeekStatus }> = ({ status }) => {
 		<ul className={styles.statusCard__counts}>
 			{counts.map((count) => (
 				<li key={count.text} className={styles.statusCard__count}>
-					<StatusDot tone={count.tone} />
+					<StatusMark tone={count.tone} />
 					{count.text}
 				</li>
 			))}

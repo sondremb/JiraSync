@@ -6,7 +6,7 @@ import { isLocked } from "../../reconciliation/syncPreview";
 import { cellState, type GridEntry } from "./gridModel";
 import { HoursCell } from "./HoursCell";
 import { LockDateButton } from "./LockDateButton";
-import { StatusDot } from "./StatusDot";
+import { StatusMark } from "./StatusMark";
 import { TimecodeName } from "./TimecodeName";
 import type { WeekStatus } from "./weekStatus";
 import styles from "./TimeTable.module.css";
@@ -129,7 +129,9 @@ export const TimeTable: React.FC<Props> = ({
 								className={`${dayClass(day)} ${styles.timeTable__total}`}
 							>
 								<span className={styles.timeTable__totalValue}>
-									{status?.days[day] && <StatusDot status={status.days[day]} />}
+									{status?.days[day] && (
+										<StatusMark status={status.days[day]} />
+									)}
 									{formatHours(bekkHoursOn(entries, day))}
 								</span>
 							</td>
