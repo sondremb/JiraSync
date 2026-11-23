@@ -1,20 +1,13 @@
-/* Sticks to the top, slightly see-through over the page. */
+/* Scrolls away with the page: its actions are rare, and the week needs the
+ * vertical space. */
 .appBar {
-	position: sticky;
-	top: 0;
-	z-index: 10;
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
 	gap: var(--ds-size-4);
 	padding: var(--ds-size-2) var(--ds-size-6);
 	border-bottom: 1px solid var(--ds-color-neutral-border-subtle);
-	background-color: color-mix(
-		in srgb,
-		var(--ds-color-neutral-background-default) 85%,
-		transparent
-	);
-	backdrop-filter: blur(8px);
+	background-color: var(--ds-color-neutral-background-default);
 }
 
 .appBar__brand {
