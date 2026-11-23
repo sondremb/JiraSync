@@ -9,17 +9,8 @@ import {
 import { formatHours, IsoWeek } from "../date-time/IsoWeek";
 import { StatusMark, type StatusTone } from "./TimeTable/StatusMark";
 import type { WeekStatus } from "./TimeTable/weekStatus";
+import type { SyncState } from "./syncState";
 import styles from "./StatusCard.module.css";
-
-/** What the card's right-hand side shows. */
-export type SyncState =
-	| { kind: "loading" }
-	| { kind: "error" }
-	| { kind: "changes"; count: number; busy: boolean }
-	| { kind: "synced" }
-	| { kind: "inSync" }
-	/** Nothing to sync, but not all is well: locked days or unmatched worklogs. */
-	| { kind: "nothingToSync" };
 
 interface Props {
 	week: IsoWeek;
@@ -40,7 +31,7 @@ export const StatusCard = React.forwardRef<HTMLElement, Props>(
 		{ week, status, sync, onPreviousWeek, onNextWeek, onSync, onPreview },
 		ref,
 	) {
-		const { week: number } = IsoWeek.toParts(week);
+		const { week: weekNumber } = IsoWeek.toParts(week);
 		const settled = sync.kind === "inSync" || sync.kind === "synced";
 		return (
 			<section
@@ -65,7 +56,7 @@ export const StatusCard = React.forwardRef<HTMLElement, Props>(
 						<ArrowLeftIcon aria-hidden />
 					</Button>
 					<div className={styles.statusCard__heading} aria-live="polite">
-						<h2 className={styles.statusCard__title}>Uke {number}</h2>
+						<h2 className={styles.statusCard__title}>Uke {weekNumber}</h2>
 						<span className={styles.statusCard__meta}>
 							{IsoWeek.formatRange(week)}
 							{status && ` · ${formatHours(status.bekkHours)} t ført`}

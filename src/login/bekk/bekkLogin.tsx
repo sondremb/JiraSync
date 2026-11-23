@@ -31,13 +31,23 @@ export const msalInstance: BekkMsal = isFakeBackend
 			},
 		});
 
+/** The `employeeId` claim of the account's ID token, if it has a usable one. */
+export function employeeIdOf(
+	account: ReturnType<BekkMsal["getActiveAccount"]>,
+): number | undefined {
+	const employeeId = Number.parseInt(
+		String(account?.idTokenClaims?.["employeeId"] ?? ""),
+		10,
+	);
+	return Number.isNaN(employeeId) ? undefined : employeeId;
+}
+
 export function getEmployeeId(): number {
-	const idTokenClaims = msalInstance.getActiveAccount()?.idTokenClaims ?? {};
-	const employeeId = idTokenClaims["employeeId"] as string;
-	if (!employeeId) {
+	const employeeId = employeeIdOf(msalInstance.getActiveAccount());
+	if (employeeId === undefined) {
 		throw new Error("No employee ID found!");
 	}
-	return parseInt(employeeId);
+	return employeeId;
 }
 
 /**

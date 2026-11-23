@@ -23,11 +23,11 @@
 }
 
 .appBar__ruleset {
-	border-radius: 999px;
+	border-radius: var(--ds-border-radius-full);
 }
 
 .appBar__user {
-	border-radius: 999px;
+	border-radius: var(--ds-border-radius-full);
 }
 
 /* Same border as the ruleset button (secondary, neutral). */

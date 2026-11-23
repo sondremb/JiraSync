@@ -1,6 +1,11 @@
 import { useMsal } from "@azure/msal-react";
 import { isFakeBackend } from "../../Utils/envUtils";
-import { bekkPhotoUrl, msalInstance, type BekkMsal } from "./bekkLogin";
+import {
+	bekkPhotoUrl,
+	employeeIdOf,
+	msalInstance,
+	type BekkMsal,
+} from "./bekkLogin";
 
 export interface BekkAccount {
 	name: string | undefined;
@@ -12,11 +17,13 @@ export interface BekkAccount {
 
 function accountFrom(instance: BekkMsal): BekkAccount {
 	const account = instance.getActiveAccount();
-	const employeeId = Number(account?.idTokenClaims?.["employeeId"]);
+	const employeeId = employeeIdOf(account);
 	return {
 		name: account?.name,
 		photoUrl:
-			!isFakeBackend && employeeId ? bekkPhotoUrl(employeeId) : undefined,
+			!isFakeBackend && employeeId !== undefined
+				? bekkPhotoUrl(employeeId)
+				: undefined,
 		logout: () =>
 			instance.logoutRedirect({
 				// Land on /logout (outside BekkEntraLogin) rather than "/", which would log straight back in

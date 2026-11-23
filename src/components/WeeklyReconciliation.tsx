@@ -25,7 +25,8 @@ import { TimeTable } from "./TimeTable/TimeTable";
 import { DayList } from "./TimeTable/DayList";
 import { toGridEntries } from "./TimeTable/gridModel";
 import { toWeekStatus } from "./TimeTable/weekStatus";
-import { StatusCard, SyncActions, type SyncState } from "./StatusCard";
+import { StatusCard, SyncActions } from "./StatusCard";
+import { toSyncState } from "./syncState";
 import { useOnScreen } from "../Utils/useOnScreen";
 import { Column } from "../layout/Column";
 import { Row } from "../layout/Row";
@@ -120,18 +121,15 @@ export const WeeklyReconciliation: React.FC<Props> = ({
 	};
 
 	const status = data ? toWeekStatus(data, lockDate) : undefined;
-	const busy = isFetching || sync.isPending;
-	const syncState: SyncState = isPending
-		? { kind: "loading" }
-		: error
-			? { kind: "error" }
-			: changes.length > 0
-				? { kind: "changes", count: changes.length, busy }
-				: justSynced
-					? { kind: "synced" }
-					: lockedDays.length === 0 && unmatchedCount === 0
-						? { kind: "inSync" }
-						: { kind: "nothingToSync" };
+	const syncState = toSyncState({
+		isPending,
+		hasError: Boolean(error),
+		changeCount: changes.length,
+		busy: isFetching || sync.isPending,
+		justSynced,
+		lockedDayCount: lockedDays.length,
+		unmatchedCount,
+	});
 	const showPreview = () =>
 		setPreview({ version, changes, unmatchedCount, lockedDays });
 
