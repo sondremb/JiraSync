@@ -18,6 +18,10 @@ Infer the repo from `git remote -v`; `gh` does this automatically when run insid
 
 File issues only into the user's own repo. Never file into `mattpocock/skills` (the repo these skills come from) unless the user owns it. In a fork, `gh` can default to the upstream parent, so before the first `gh issue create` of a session, check the target with `gh repo view --json nameWithOwner` and confirm it with the user if it is not their repo.
 
+## Creating a pull request
+
+- **Screenshots**: reference each image in the body as `![alt](./shot.png)` and pass `--attach ./shot.png` (once per image) to `gh pr create`/`gh pr edit` (`gh` 2.99+). gh uploads them and rewrites each reference to the uploaded URL, so the PR goes up with its images in place. Take the shots with `pnpm screenshot` (see `docs/fake-backend.md`).
+
 ## Pull requests as a triage surface
 
 **PRs as a request surface: no.** _(Set to `yes` if this repo treats external PRs as feature requests; `/triage` reads this flag.)_
