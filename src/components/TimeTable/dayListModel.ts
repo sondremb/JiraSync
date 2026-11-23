@@ -26,7 +26,7 @@ export interface DayListDay {
 	date: IsoDate;
 	/** Bekk hours on all timecodes that day. */
 	bekkHours: number;
-	/** Locked days are hatched, as on desktop. */
+	/** Locked days get a muted date, as on desktop. */
 	locked: boolean;
 	/** Managed timecodes first. Empty when the day has no hours. */
 	lines: DayListLine[];

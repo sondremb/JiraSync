@@ -72,12 +72,9 @@
 	background-color: var(--ds-color-neutral-background-tinted);
 }
 
-.timeTable__day--locked {
-	background-image: repeating-linear-gradient(
-		-45deg,
-		transparent 0 6px,
-		var(--ds-color-neutral-surface-tinted) 6px 12px
-	);
+/* Locked: a muted date next to the closed padlock, the cells unchanged. */
+.timeTable thead .timeTable__day--locked .timeTable__date {
+	color: var(--ds-color-neutral-text-subtle);
 }
 
 .timeTable thead .timeTable__day--today {

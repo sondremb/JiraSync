@@ -1,6 +1,6 @@
 /* The desktop table's look, one card per day: white header with a small
  * uppercase weekday over the date, today marked with an accent bar, locked
- * days hatched, rows split by subtle lines. */
+ * days with a muted date, rows split by subtle lines. */
 .dayList {
 	display: flex;
 	flex-direction: column;
@@ -41,12 +41,9 @@
 	border-bottom: 1px solid var(--ds-color-neutral-border-default);
 }
 
-.dayList__header--locked {
-	background-image: repeating-linear-gradient(
-		-45deg,
-		transparent 0 6px,
-		var(--ds-color-neutral-surface-tinted) 6px 12px
-	);
+/* Locked: a muted date next to the closed padlock, as on desktop. */
+.dayList__header--locked .dayList__date {
+	color: var(--ds-color-neutral-text-subtle);
 }
 
 .dayList__title {
