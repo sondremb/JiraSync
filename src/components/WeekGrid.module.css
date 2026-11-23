@@ -1,0 +1,38 @@
+/* The grid (or day list) on a white card. The container queries use the
+ * width of the enclosing reconciliation section. */
+.weekGrid {
+	overflow-x: auto;
+	border: 1px solid var(--ds-color-neutral-border-subtle);
+	border-radius: var(--ds-border-radius-lg);
+	background-color: var(--ds-color-neutral-background-default);
+	box-shadow: var(--ds-shadow-sm);
+}
+
+/* Exactly one of the two views shows. The 9-column table stops fitting at
+ * about 48rem; zoomed desktop gets the list too (WCAG 1.4.10).
+ * display: none also hides the other one from assistive technology.
+ * Nested selectors so these beat the components' own display rules. */
+.weekGrid .weekGrid__list {
+	display: none;
+	padding: var(--ds-size-3);
+}
+
+@container (width < 48rem) {
+	.weekGrid .weekGrid__table {
+		display: none;
+	}
+
+	.weekGrid .weekGrid__list {
+		display: flex;
+		padding: 0;
+	}
+
+	/* The day blocks are cards themselves, so no card around them. */
+	.weekGrid {
+		overflow-x: visible;
+		border: none;
+		border-radius: 0;
+		background-color: transparent;
+		box-shadow: none;
+	}
+}

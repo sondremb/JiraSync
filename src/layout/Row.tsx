@@ -1,5 +1,6 @@
 import React from "react";
 import styles from "./Row.module.css";
+import { classNames } from "../Utils/classNames";
 
 interface RowProps extends React.HTMLAttributes<HTMLDivElement> {
 	align?: "start" | "center" | "end";
@@ -14,14 +15,12 @@ export const Row: React.FC<RowProps> = ({
 	className,
 	...rest
 }) => {
-	const classes = [
+	const classes = classNames(
 		styles.row,
 		styles[`row--align-${align}`],
 		styles[`row--justify-${justify}`],
-		wrap ? styles["row--wrap"] : "",
-		className ?? "",
-	]
-		.filter(Boolean)
-		.join(" ");
+		wrap && styles["row--wrap"],
+		className,
+	);
 	return <div className={classes} {...rest} />;
 };

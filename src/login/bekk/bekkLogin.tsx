@@ -10,6 +10,7 @@ import { MsalProvider, MsalAuthenticationTemplate } from "@azure/msal-react";
 import React from "react";
 import { config, isFakeBackend } from "../../Utils/envUtils";
 import { createFakeMsal } from "../../fake/fakeMsal";
+import { employeeIdOf, type EmployeeId } from "./employeeId";
 
 /** The part of MSAL the app uses outside `BekkEntraLogin`. */
 export type BekkMsal = Pick<
@@ -31,14 +32,20 @@ export const msalInstance: BekkMsal = isFakeBackend
 			},
 		});
 
-export function getEmployeeId(): number {
-	const idTokenClaims = msalInstance.getActiveAccount()?.idTokenClaims ?? {};
-	const employeeId = idTokenClaims["employeeId"] as string;
-	if (!employeeId) {
+export function getEmployeeId(): EmployeeId {
+	const employeeId = employeeIdOf(msalInstance.getActiveAccount());
+	if (employeeId === undefined) {
 		throw new Error("No employee ID found!");
 	}
-	return parseInt(employeeId);
+	return employeeId;
 }
+
+/**
+ * The employee's photo, as Bekk's other internal pages load it. No default
+ * image (`d_`), so a missing photo is a 404 and the caller can fall back.
+ */
+export const bekkPhotoUrl = (employeeId: EmployeeId): string =>
+	`https://res.cloudinary.com/bekkimg/w_64,h_64,c_thumb,g_face/${employeeId}`;
 
 export const BekkEntraLogin = ({ children }: React.PropsWithChildren<{}>) => {
 	if (isFakeBackend) {

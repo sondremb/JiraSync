@@ -1,0 +1,113 @@
+/* One row when it fits, otherwise the parts wrap onto more rows. A status
+ * stripe on the left: accent while there is work to do, success when the
+ * week is settled. */
+.statusCard {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: var(--ds-size-2) var(--ds-size-5);
+	padding: var(--ds-size-2) var(--ds-size-3) var(--ds-size-2) var(--ds-size-4);
+	border: 1px solid var(--ds-color-neutral-border-subtle);
+	border-left: 4px solid var(--ds-color-accent-base-default);
+	border-radius: var(--ds-border-radius-lg);
+	background-color: var(--ds-color-neutral-background-default);
+	box-shadow: var(--ds-shadow-xs);
+}
+
+.statusCard--settled {
+	border-left-color: var(--ds-color-success-base-default);
+}
+
+.statusCard--loading {
+	border-left-color: var(--ds-color-neutral-border-default);
+}
+
+.statusCard__week {
+	display: flex;
+	align-items: center;
+	gap: var(--ds-size-1);
+}
+
+.statusCard__heading {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	min-width: 7.5rem;
+	line-height: 1.2;
+}
+
+.statusCard__title {
+	font-size: 1.375rem;
+	font-weight: var(--ds-font-weight-semibold);
+	letter-spacing: -0.01em;
+	white-space: nowrap;
+}
+
+.statusCard__meta {
+	color: var(--ds-color-neutral-text-subtle);
+	font-size: var(--ds-body-sm-font-size);
+	font-variant-numeric: tabular-nums;
+	white-space: nowrap;
+}
+
+/* Wraps within its own space first; the actions only drop to their own row
+ * when the counts would get narrower than this. */
+.statusCard__counts {
+	display: flex;
+	flex: 1 1 16rem;
+	flex-wrap: wrap;
+	gap: var(--ds-size-1) var(--ds-size-3);
+	min-width: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.statusCard__count {
+	display: inline-flex;
+	align-items: center;
+	color: var(--ds-color-neutral-text-subtle);
+	font-size: var(--ds-body-sm-font-size);
+	white-space: nowrap;
+}
+
+.statusCard__actions {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: var(--ds-size-2);
+	margin-left: auto;
+}
+
+/* A label wraps as a whole button, never inside one. */
+.statusCard__actions > button {
+	white-space: nowrap;
+}
+
+.statusCard__message {
+	display: flex;
+	align-items: center;
+	gap: var(--ds-size-2);
+	padding-inline: var(--ds-size-2);
+	font-weight: var(--ds-font-weight-semibold);
+}
+
+.statusCard__ok {
+	color: var(--ds-color-success-base-default);
+	font-size: 1.25rem;
+}
+
+/* Narrow: the week spans the row, the actions get their own row. */
+@media (width < 48rem) {
+	.statusCard__week {
+		flex: 1 1 100%;
+		justify-content: space-between;
+	}
+
+	.statusCard__actions {
+		flex: 1 1 100%;
+	}
+
+	.statusCard__actions > * {
+		flex: 1 1 auto;
+	}
+}

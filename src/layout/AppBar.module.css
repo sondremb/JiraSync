@@ -1,0 +1,47 @@
+/* Scrolls away with the page: its actions are rare, and the week needs the
+ * vertical space. */
+.appBar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--ds-size-4);
+	padding: var(--ds-size-2) var(--ds-size-6);
+	border-bottom: 1px solid var(--ds-color-neutral-border-subtle);
+	background-color: var(--ds-color-neutral-background-default);
+}
+
+.appBar__brand {
+	display: flex;
+	align-items: center;
+	gap: var(--ds-size-2);
+}
+
+.appBar__actions {
+	display: flex;
+	align-items: center;
+	gap: var(--ds-size-2);
+}
+
+.appBar__ruleset {
+	border-radius: var(--ds-border-radius-full);
+}
+
+.appBar__user {
+	border-radius: var(--ds-border-radius-full);
+}
+
+/* Same border as the ruleset button (secondary, neutral). */
+.appBar__avatar {
+	border: 1px solid var(--ds-color-neutral-border-strong);
+}
+
+/* Narrow: the ruleset button shows only its icon (and the local tag). */
+@media (width < 48rem) {
+	.appBar {
+		padding-inline: var(--ds-size-4);
+	}
+
+	.appBar__rulesetName {
+		display: none;
+	}
+}

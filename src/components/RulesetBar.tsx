@@ -11,56 +11,39 @@ import { Column } from "../layout/Column";
 import { Row } from "../layout/Row";
 import { type CatalogEntry } from "../policies/catalog";
 import { SendStatusMessage, useSendRuleset } from "../policy/SendToSondre";
-import { RulesetModal } from "./RulesetModal";
 import styles from "./RulesetBar.module.css";
 
 /**
- * Which ruleset the reconciliation uses. A local one only works for this user,
- * so say so here too, where its effect is seen.
+ * A local ruleset only works for this user, so say so where its effect is
+ * seen. The ruleset name and picker are in the `AppBar`; a bundled ruleset
+ * needs nothing more.
  *
- * Narrow screens show only a one-line warning for a local ruleset; the choice
- * itself is in the user menu.
+ * Narrow screens show only a one-line warning.
  */
 export const RulesetBar: React.FC = () => {
 	const { entries } = useRuleSet();
 	const selected = entries.find((entry) => entry.isSelected);
+	if (!selected || selected.kind === "bundled") return null;
 	return (
 		<>
 			<div className={styles.rulesetBar}>
-				<Row justify="between" align="start" wrap>
-					{selected ? <Summary entry={selected} /> : <span />}
-					<RulesetModal />
-				</Row>
+				<LocalSummary entry={selected} />
 			</div>
-			{selected && selected.kind !== "bundled" && (
-				<div className={styles.rulesetBar__compact}>
-					<Tag data-color="warning" data-size="sm">
-						{selected.kind === "edited" ? "Endrede regler" : "Lokale regler"}
-					</Tag>
-					<Paragraph data-size="sm">
-						<strong>{selected.ruleset.name}</strong> gjelder bare hos deg.{" "}
-						<DsLink asChild>
-							<RouterLink to="/policy/$id" params={{ id: selected.ruleset.id }}>
-								Se regelsett
-							</RouterLink>
-						</DsLink>
-					</Paragraph>
-				</div>
-			)}
+			<div className={styles.rulesetBar__compact}>
+				<Tag data-color="warning" data-size="sm">
+					{selected.kind === "edited" ? "Endrede regler" : "Lokale regler"}
+				</Tag>
+				<Paragraph data-size="sm">
+					<strong>{selected.ruleset.name}</strong> gjelder bare hos deg.{" "}
+					<DsLink asChild>
+						<RouterLink to="/policy/$id" params={{ id: selected.ruleset.id }}>
+							Se regelsett
+						</RouterLink>
+					</DsLink>
+				</Paragraph>
+			</div>
 		</>
 	);
-};
-
-const Summary: React.FC<{ entry: CatalogEntry }> = ({ entry }) => {
-	const { ruleset, kind } = entry;
-	if (kind === "bundled") {
-		return (
-			<Paragraph>
-				Regler: <strong>{ruleset.name}</strong>
-			</Paragraph>
-		);
-	}
-	return <LocalSummary entry={entry} />;
 };
 
 const LocalSummary: React.FC<{ entry: CatalogEntry }> = ({ entry }) => {

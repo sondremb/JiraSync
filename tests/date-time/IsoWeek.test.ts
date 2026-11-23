@@ -286,3 +286,17 @@ describe(".previous", () => {
 		expect(IsoWeek.previous("2024-W02" as IsoWeek)).toBe("2024-W01");
 	});
 });
+
+describe(".formatRange", () => {
+	test("a week within one month names the month once", () => {
+		expect(IsoWeek.formatRange("2026-W48" as IsoWeek)).toBe("23.–29. nov");
+	});
+
+	test("a week across months names both", () => {
+		expect(IsoWeek.formatRange("2026-W49" as IsoWeek)).toBe("30. nov–6. des");
+	});
+
+	test("a week across years", () => {
+		expect(IsoWeek.formatRange("2026-W53" as IsoWeek)).toBe("28. des–3. jan");
+	});
+});

@@ -6,8 +6,10 @@ import {
 	type JiraIssueId,
 } from "../../src/reconciliation/entities";
 import {
+	groupChangesByDate,
 	lockedOutOfSyncDays,
 	planSync,
+	type ProposedChange,
 } from "../../src/reconciliation/syncPreview";
 
 const monday = IsoDate.parse("2025-02-03");
@@ -124,5 +126,28 @@ describe("lockedOutOfSyncDays", () => {
 				undefined,
 			),
 		).toEqual([monday, wednesday]);
+	});
+});
+
+describe("groupChangesByDate", () => {
+	const change = (date: IsoDate, timecodeId: number): ProposedChange => ({
+		date,
+		timecodeId: timecodeId as InternalTimecodeId,
+		currentHours: 0,
+		targetHours: 1,
+	});
+
+	test("groups by day in order of first appearance", () => {
+		const a = change(tuesday, 1);
+		const b = change(monday, 2);
+		const c = change(tuesday, 3);
+		expect(groupChangesByDate([a, b, c])).toEqual([
+			[tuesday, [a, c]],
+			[monday, [b]],
+		]);
+	});
+
+	test("no changes, no groups", () => {
+		expect(groupChangesByDate([])).toEqual([]);
 	});
 });

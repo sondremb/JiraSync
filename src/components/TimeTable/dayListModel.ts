@@ -1,9 +1,15 @@
 import { IsoDate } from "../../date-time/IsoWeek";
-import {
+import type {
 	DayReport,
-	type InternalTimecodeId,
+	InternalTimecodeId,
 } from "../../reconciliation/entities";
-import { toGridEntries, type GridEntry } from "./gridModel";
+import { isLocked } from "../../reconciliation/syncPreview";
+import {
+	cellState,
+	toGridEntries,
+	type CellState,
+	type GridEntry,
+} from "./gridModel";
 
 /** One timecode on one day. */
 export interface DayListLine {
@@ -12,7 +18,7 @@ export interface DayListLine {
 	bekkHours: number;
 	/** Omitted for unmanaged timecodes, as on desktop. */
 	jiraHours?: number;
-	mismatch: boolean;
+	state: CellState;
 }
 
 export interface DayListDay {
@@ -20,7 +26,8 @@ export interface DayListDay {
 	date: IsoDate;
 	/** Bekk hours on all timecodes that day. */
 	bekkHours: number;
-	inSync: boolean;
+	/** Locked days get a muted date, as on desktop. */
+	locked: boolean;
 	/** Managed timecodes first. Empty when the day has no hours. */
 	lines: DayListLine[];
 }
@@ -46,29 +53,37 @@ const SUNDAY = 7;
 
 const sum = (values: number[]) => values.reduce((a, b) => a + b, 0);
 
-const toLine = (entry: GridEntry, date: IsoDate): DayListLine | undefined => {
+const toLine = (
+	entry: GridEntry,
+	date: IsoDate,
+	locked: boolean,
+): DayListLine | undefined => {
 	const hours = entry.days[date];
-	if (!hours || (hours.bekkHours === 0 && hours.totalJiraHours === 0)) {
-		return undefined;
-	}
+	const state = cellState(hours, entry.managed, locked);
+	if (!hours || state === "empty") return undefined;
 	return {
 		id: entry.id,
 		managed: entry.managed,
 		bekkHours: hours.bekkHours,
 		jiraHours: entry.managed ? hours.totalJiraHours : undefined,
-		mismatch: entry.managed && hours.bekkHours !== hours.totalJiraHours,
+		state,
 	};
 };
 
-const toDay = (report: DayReport, entries: GridEntry[]): DayListDay => {
+const toDay = (
+	report: DayReport,
+	entries: GridEntry[],
+	lockDate: IsoDate | undefined,
+): DayListDay => {
+	const locked = isLocked(report.date, lockDate);
 	const lines = entries
-		.map((entry) => toLine(entry, report.date))
+		.map((entry) => toLine(entry, report.date, locked))
 		.filter((line) => line !== undefined);
 	return {
 		kind: "day",
 		date: report.date,
 		bekkHours: sum(lines.map((line) => line.bekkHours)),
-		inSync: DayReport.isInSync(report),
+		locked,
 		lines,
 	};
 };
@@ -78,11 +93,14 @@ const isEmpty = (day: DayListDay, report: DayReport) =>
 	day.lines.length === 0 && report.unmatchedJiraWork.length === 0;
 
 /** The mobile view of a week: one block per day, empty weekends collapsed. */
-export function toDayList(reports: readonly DayReport[]): DayList {
+export function toDayList(
+	reports: readonly DayReport[],
+	lockDate: IsoDate | undefined,
+): DayList {
 	const entries = toGridEntries(reports).sort(
 		(a, b) => Number(b.managed) - Number(a.managed),
 	);
-	const days = reports.map((report) => toDay(report, entries));
+	const days = reports.map((report) => toDay(report, entries, lockDate));
 
 	const items: DayListItem[] = [];
 	for (let i = 0; i < days.length; i++) {

@@ -12,17 +12,7 @@ const Content: React.FC = () => (
 	</Column>
 );
 
-/** A "Velg regler" button that opens the ruleset picker. */
-export const RulesetModal: React.FC = () => (
-	<Dialog.TriggerContext>
-		<Dialog.Trigger variant="secondary">Velg regler</Dialog.Trigger>
-		<Dialog closedby="any">
-			<Content />
-		</Dialog>
-	</Dialog.TriggerContext>
-);
-
-/** The ruleset picker, opened from elsewhere, such as the user menu. */
+/** The ruleset picker, opened from the `AppBar`. */
 export const RulesetDialog: React.FC<{
 	open: boolean;
 	onClose: () => void;

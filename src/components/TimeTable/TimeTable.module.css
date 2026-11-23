@@ -1,42 +1,107 @@
-/* Scrolls sideways on narrow screens instead of squeezing the days. */
 .timeTable {
-	overflow-x: auto;
-}
-
-.timeTable__table {
 	width: 100%;
+	border-collapse: collapse;
+	font-variant-numeric: tabular-nums;
 }
 
-.timeTable__code {
-	width: 25%;
-}
-
-.timeTable__cell--hours {
+.timeTable th,
+.timeTable td {
+	padding: var(--ds-size-2);
+	border-bottom: 1px solid var(--ds-color-neutral-border-subtle);
 	text-align: center;
+	vertical-align: middle;
 }
 
-.timeTable__cell--hours > * {
+.timeTable thead th {
+	padding-block: var(--ds-size-3) var(--ds-size-1);
+	border-bottom-color: var(--ds-color-neutral-border-default);
+	font-weight: var(--ds-font-weight-regular);
+}
+
+.timeTable td > * {
 	margin-inline: auto;
 }
 
-.timeTable__cell--total {
-	font-size: 1.5rem;
-	font-variant-numeric: tabular-nums;
+/* "Timekode" and "Sum" column headers. */
+.timeTable__label {
+	color: var(--ds-color-neutral-text-subtle);
+	font-size: var(--ds-body-sm-font-size);
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+}
+
+.timeTable .timeTable__label:first-child,
+.timeTable .timeTable__code {
+	width: 24%;
+	padding-left: var(--ds-size-5);
+	text-align: left;
+}
+
+.timeTable__code {
+	font-weight: var(--ds-font-weight-medium);
+}
+
+.timeTable__row--unmanaged .timeTable__code {
+	color: var(--ds-color-neutral-text-subtle);
+}
+
+.timeTable tbody tr:hover > * {
+	background-color: var(--ds-color-accent-surface-tinted);
+}
+
+.timeTable__dayHeader {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.timeTable__weekday {
+	color: var(--ds-color-neutral-text-subtle);
+	font-size: var(--ds-body-sm-font-size);
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+}
+
+.timeTable__date {
+	font-size: 1.375rem;
+	font-weight: var(--ds-font-weight-semibold);
+	line-height: 1.2;
+}
+
+.timeTable__day--weekend {
+	background-color: var(--ds-color-neutral-background-tinted);
+}
+
+/* Locked: a muted date next to the closed padlock, the cells unchanged. */
+.timeTable thead .timeTable__day--locked .timeTable__date {
+	color: var(--ds-color-neutral-text-subtle);
+}
+
+.timeTable thead .timeTable__day--today {
+	box-shadow: inset 0 3px 0 var(--ds-color-accent-base-default);
+}
+
+.timeTable thead .timeTable__day--today .timeTable__date {
+	color: var(--ds-color-accent-text-default);
+}
+
+.timeTable__sum {
 	font-weight: var(--ds-font-weight-semibold);
 }
 
-.timeTable__day {
-	display: flex;
-	flex-direction: column;
-	text-transform: capitalize;
+.timeTable tfoot th,
+.timeTable tfoot td {
+	border-bottom: none;
+	background-color: var(--ds-color-neutral-background-tinted);
 }
 
-/* Header in the accent colour, totals row neutral. Digdir uses the header
- * background for both, so set it per section. */
-.timeTable__table > thead {
-	--dsc-table-header-background: var(--ds-color-accent-surface-tinted);
+.timeTable__total {
+	font-size: 1.125rem;
+	font-weight: var(--ds-font-weight-semibold);
 }
 
-.timeTable__foot {
-	--dsc-table-header-background: var(--ds-color-neutral-surface-tinted);
+/* Status dot and hours, centred together. */
+.timeTable__totalValue {
+	display: inline-flex;
+	align-items: center;
 }

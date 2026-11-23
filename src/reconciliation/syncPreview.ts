@@ -52,3 +52,14 @@ export function lockedOutOfSyncDays(
 		)
 		.map((report) => report.date);
 }
+
+/** The changes per day, in the order the days first appear. */
+export const groupChangesByDate = (
+	changes: readonly ProposedChange[],
+): [IsoDate, ProposedChange[]][] => {
+	const groups = new Map<IsoDate, ProposedChange[]>();
+	for (const change of changes) {
+		groups.set(change.date, [...(groups.get(change.date) ?? []), change]);
+	}
+	return Array.from(groups);
+};

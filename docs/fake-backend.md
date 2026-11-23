@@ -27,6 +27,5 @@
   - It starts its own Vite dev server with the fake backend on a free port, so no `pnpm start` is needed, opens `/__fake?scenario=<name>&next=<product URL>` in headless Chrome via Playwright, and waits for the redirect, network idle and no Designsystemet skeletons (`.ds-skeleton`). Pass `--wait-for` for anything else the page needs.
   - It uses the installed Chrome, falling back to Playwright's Chromium (`pnpm exec playwright install chromium`). It forces `VITE_DEBUG` off so the router devtools stay out of the shot. `--width`/`--height` set the viewport (default 1280×800).
   - Example: `pnpm screenshot --scenario local-ruleset --full-page /policy policy.png`.
-  - To put a shot in a PR, reference it in the body as `![alt](./policy.png)` and pass `--attach ./policy.png` to `gh pr create`/`gh pr edit` (gh 2.99+). gh uploads it and rewrites the reference to the uploaded URL.
   - Chrome's own `--headless --screenshot` doesn't work: `--virtual-time-budget` skips past the service worker start, and without it the shot is taken before the app renders.
 - **Tests:** `tests/fake/` tests the fixtures through reconciliation, the store's writes and `/__fake` settings parsing.

@@ -1,0 +1,55 @@
+/* Sticky within the page's reconciliation section, so it sits at the end
+ * of it. The container queries use that section's width. */
+.stickySyncBar {
+	position: sticky;
+	bottom: var(--ds-size-4);
+	z-index: 5;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: var(--ds-size-3);
+	padding: var(--ds-size-3) var(--ds-size-3) var(--ds-size-3) var(--ds-size-5);
+	border: 1px solid var(--ds-color-neutral-border-subtle);
+	border-radius: var(--ds-border-radius-lg);
+	background-color: var(--ds-color-neutral-background-default);
+	box-shadow: var(--ds-shadow-lg);
+	animation: stickySyncBar__slideIn 200ms ease-out;
+}
+
+@keyframes stickySyncBar__slideIn {
+	from {
+		transform: translateY(1rem);
+		opacity: 0;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.stickySyncBar {
+		animation: none;
+	}
+}
+
+.stickySyncBar__text {
+	margin: 0;
+}
+
+.stickySyncBar__buttons {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--ds-size-2);
+}
+
+.stickySyncBar__buttons > button {
+	white-space: nowrap;
+}
+
+@container (width < 48rem) {
+	.stickySyncBar__buttons {
+		flex: 1 1 100%;
+	}
+
+	.stickySyncBar__buttons > * {
+		flex: 1 1 auto;
+	}
+}

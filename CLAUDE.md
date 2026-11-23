@@ -99,7 +99,11 @@ Netlify functions handle the Jira OAuth flow (init → callback → session refr
 
 ### Issue tracker
 
-Issues are tracked in GitHub Issues for sondremb/JiraSync, using the `gh` CLI. See `docs/agents/issue-tracker.md`.
+Issues are tracked in GitHub Issues for sondremb/JiraSync, using the `gh` CLI. Read an issue with `gh issue view <n> --json title,body,comments`. See `docs/agents/issue-tracker.md`.
+
+### Pull requests
+
+PR screenshots go up with `gh pr create`/`gh pr edit --attach`. See `docs/agents/issue-tracker.md`.
 
 ### Triage labels
 

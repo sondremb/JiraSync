@@ -1,14 +1,14 @@
 import React, { useState } from "react";
-import { Button, Paragraph } from "@digdir/designsystemet-react";
-import { ArrowLeftIcon, ArrowRightIcon } from "@navikt/aksel-icons";
-import { WeeklyReconciliation } from "./components/WeeklyReconciliation";
+import {
+	WeeklyReconciliation,
+	WeeklyReconciliationPending,
+} from "./components/WeeklyReconciliation";
 import { RulesetBar } from "./components/RulesetBar";
 import { AnnouncementBanner } from "./announcements/AnnouncementBanner";
 import { useLockDate } from "./data/useLockDate";
 import { useRuleSet } from "./data/useRuleset";
 import { rulesetKey } from "./policies/catalog";
 import { IsoWeek } from "./date-time/IsoWeek";
-import styles from "./App.module.css";
 
 interface Props {
 	initialWeek: IsoWeek;
@@ -23,7 +23,6 @@ export const App: React.FC<Props> = ({ initialWeek }) => {
 	if (!lockDateLoading && startWeek === undefined) setStartWeek(initialWeek);
 	const [navigatedWeek, setNavigatedWeek] = useState<IsoWeek | undefined>();
 	const weekAndYear = navigatedWeek ?? startWeek ?? initialWeek;
-	const { week, year } = IsoWeek.toParts(weekAndYear);
 
 	const onNextWeekClick = () => setNavigatedWeek(IsoWeek.next(weekAndYear));
 	const onPreviousWeekClick = () =>
@@ -33,31 +32,22 @@ export const App: React.FC<Props> = ({ initialWeek }) => {
 		<>
 			<AnnouncementBanner />
 			<RulesetBar />
-			<nav
-				aria-label="Uke"
-				className={styles.weekNav}
-				data-color="accent"
-				data-size="md"
-			>
-				<Button variant="tertiary" onClick={onPreviousWeekClick}>
-					<ArrowLeftIcon aria-hidden />
-					Forrige
-				</Button>
-				<div className={styles.weekNav__current} aria-live="polite">
-					<Paragraph className={styles.weekNav__label}>UKE {week}</Paragraph>
-					<Paragraph className={styles.weekNav__label}>{year}</Paragraph>
-				</div>
-				<Button variant="tertiary" onClick={onNextWeekClick}>
-					Neste
-					<ArrowRightIcon aria-hidden />
-				</Button>
-			</nav>
-			{selectedRuleset && !lockDateLoading && (
-				<WeeklyReconciliation
-					key={`${weekAndYear}-${rulesetKey(selectedRuleset)}`}
+			{lockDateLoading ? (
+				<WeeklyReconciliationPending
 					week={weekAndYear}
-					ruleset={selectedRuleset}
+					onPreviousWeek={onPreviousWeekClick}
+					onNextWeek={onNextWeekClick}
 				/>
+			) : (
+				selectedRuleset && (
+					<WeeklyReconciliation
+						key={`${weekAndYear}-${rulesetKey(selectedRuleset)}`}
+						week={weekAndYear}
+						ruleset={selectedRuleset}
+						onPreviousWeek={onPreviousWeekClick}
+						onNextWeek={onNextWeekClick}
+					/>
+				)
 			)}
 		</>
 	);

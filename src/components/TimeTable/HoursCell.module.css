@@ -1,0 +1,66 @@
+.hoursCell {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: var(--ds-size-1);
+	box-sizing: border-box;
+	min-width: 3.5rem;
+	min-height: 2.5rem;
+	padding-inline: var(--ds-size-2);
+	border-radius: var(--ds-border-radius-md);
+	font-size: 1.125rem;
+	font-variant-numeric: tabular-nums;
+	line-height: 1.2;
+}
+
+.hoursCell__empty {
+	color: var(--ds-color-neutral-border-default);
+}
+
+.hoursCell--unmanaged {
+	border: 1px dashed var(--ds-color-neutral-border-default);
+	color: var(--ds-color-neutral-text-subtle);
+}
+
+.hoursCell--inSync {
+	background-color: var(--ds-color-success-surface-tinted);
+	color: var(--ds-color-success-text-default);
+}
+
+.hoursCell__check {
+	font-size: 0.875rem;
+}
+
+/* Bekk hours struck through above the Jira hours they become. */
+.hoursCell--differs {
+	flex-direction: column;
+	gap: 0;
+	padding-block: 0.125rem;
+}
+
+.hoursCell--willChange {
+	background-color: var(--ds-color-warning-surface-tinted);
+	box-shadow: inset 0 0 0 1px var(--ds-color-warning-border-default);
+	color: var(--ds-color-warning-text-default);
+}
+
+.hoursCell--lockedDiffers {
+	background-color: var(--ds-color-neutral-surface-tinted);
+	color: var(--ds-color-neutral-text-subtle);
+}
+
+.hoursCell__from {
+	font-size: 0.8125rem;
+	text-decoration: line-through;
+	opacity: 0.75;
+}
+
+.hoursCell__to {
+	font-weight: var(--ds-font-weight-semibold);
+}
+
+.hoursCell--willChange .hoursCell__to::before {
+	content: "→ ";
+	font-weight: var(--ds-font-weight-regular);
+	opacity: 0.6;
+}
