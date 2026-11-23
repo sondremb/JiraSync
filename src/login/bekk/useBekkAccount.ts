@@ -1,11 +1,7 @@
 import { useMsal } from "@azure/msal-react";
 import { isFakeBackend } from "../../Utils/envUtils";
-import {
-	bekkPhotoUrl,
-	employeeIdOf,
-	msalInstance,
-	type BekkMsal,
-} from "./bekkLogin";
+import { bekkPhotoUrl, msalInstance, type BekkMsal } from "./bekkLogin";
+import { employeeIdOf } from "./employeeId";
 
 export interface BekkAccount {
 	name: string | undefined;
