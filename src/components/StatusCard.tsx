@@ -10,6 +10,7 @@ import { formatHours, IsoWeek } from "../date-time/IsoWeek";
 import { StatusMark, type StatusTone } from "./TimeTable/StatusMark";
 import type { WeekStatus } from "./TimeTable/weekStatus";
 import type { SyncState } from "./syncState";
+import { formatChangeCount } from "./syncMessages";
 import styles from "./StatusCard.module.css";
 
 interface Props {
@@ -18,8 +19,9 @@ interface Props {
 	sync: SyncState;
 	onPreviousWeek: () => void;
 	onNextWeek: () => void;
-	onSync: () => void;
-	onPreview: () => void;
+	/** Only called in the "changes" state, so optional while loading. */
+	onSync?: () => void;
+	onPreview?: () => void;
 }
 
 /**
@@ -116,8 +118,8 @@ const StatusCounts: React.FC<{ status: WeekStatus }> = ({ status }) => {
 /** The sync buttons, or a message when there is nothing to sync. */
 export const SyncActions: React.FC<{
 	sync: SyncState;
-	onSync: () => void;
-	onPreview: () => void;
+	onSync?: () => void;
+	onPreview?: () => void;
 }> = ({ sync, onSync, onPreview }) => {
 	switch (sync.kind) {
 		case "changes":
@@ -134,8 +136,7 @@ export const SyncActions: React.FC<{
 						disabled={sync.busy}
 						onClick={onSync}
 					>
-						Synkroniser {sync.count}{" "}
-						{sync.count === 1 ? "endring" : "endringer"}
+						Synkroniser {formatChangeCount(sync.count)}
 					</Button>
 				</>
 			);
