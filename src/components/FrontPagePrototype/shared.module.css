@@ -1,0 +1,123 @@
+/* PROTOTYPE, throw away. */
+
+.appBar {
+	position: sticky;
+	top: 0;
+	z-index: 10;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--ds-size-4);
+	padding: var(--ds-size-2) var(--ds-size-6);
+	border-bottom: 1px solid var(--ds-color-neutral-border-subtle);
+	background-color: color-mix(
+		in srgb,
+		var(--ds-color-neutral-background-default) 85%,
+		transparent
+	);
+	backdrop-filter: blur(8px);
+}
+
+.appBar__brand {
+	display: flex;
+	align-items: center;
+	gap: var(--ds-size-2);
+}
+
+.appBar__logo {
+	display: grid;
+	place-items: center;
+	width: 2rem;
+	height: 2rem;
+	border-radius: var(--ds-border-radius-md);
+	background: linear-gradient(
+		135deg,
+		var(--ds-color-accent-base-default),
+		var(--ds-color-accent-base-active)
+	);
+	color: var(--ds-color-accent-base-contrast-default);
+	font-weight: var(--ds-font-weight-semibold);
+}
+
+.appBar__name {
+	font-size: 1.25rem;
+	font-weight: var(--ds-font-weight-semibold);
+	letter-spacing: -0.01em;
+}
+
+.appBar__right {
+	display: flex;
+	align-items: center;
+	gap: var(--ds-size-2);
+}
+
+.appBar__ruleset {
+	display: flex;
+	align-items: center;
+	gap: var(--ds-size-2);
+	padding: var(--ds-size-1) var(--ds-size-3);
+	border: 1px solid var(--ds-color-neutral-border-subtle);
+	border-radius: 999px;
+	background: var(--ds-color-neutral-background-default);
+	color: var(--ds-color-neutral-text-default);
+	font-size: var(--ds-body-sm-font-size);
+	cursor: pointer;
+}
+
+.appBar__ruleset:hover {
+	background: var(--ds-color-neutral-surface-hover);
+}
+
+.appBar__avatarButton {
+	padding: 0;
+	border-radius: 999px;
+}
+
+@media (width < 48rem) {
+	.appBar {
+		padding-inline: var(--ds-size-4);
+	}
+
+	.appBar__ruleset span {
+		display: none;
+	}
+}
+
+.changeList {
+	display: flex;
+	flex-direction: column;
+	gap: var(--ds-size-3);
+}
+
+.changeList__items {
+	display: flex;
+	flex-direction: column;
+	gap: var(--ds-size-1);
+	margin-top: var(--ds-size-1);
+	padding: 0;
+	list-style: none;
+}
+
+.changeList__item {
+	display: flex;
+	justify-content: space-between;
+	gap: var(--ds-size-3);
+	padding: var(--ds-size-1) 0;
+	border-bottom: 1px dashed var(--ds-color-neutral-border-subtle);
+}
+
+.changeList__code {
+	min-width: 0;
+}
+
+.changeList__hours {
+	display: flex;
+	gap: var(--ds-size-2);
+	white-space: nowrap;
+	font-variant-numeric: tabular-nums;
+}
+
+.changeList__from {
+	color: var(--ds-color-neutral-text-subtle);
+	text-decoration: line-through;
+}

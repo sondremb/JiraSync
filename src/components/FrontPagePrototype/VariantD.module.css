@@ -1,0 +1,159 @@
+/* PROTOTYPE, throw away. */
+
+/* The slim status card: one row, white, with a thin status stripe on the left. */
+.slim {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: var(--ds-size-2) var(--ds-size-5);
+	padding: var(--ds-size-2) var(--ds-size-3) var(--ds-size-2) var(--ds-size-4);
+	border: 1px solid var(--ds-color-neutral-border-subtle);
+	border-left: 4px solid var(--ds-color-accent-base-default);
+	border-radius: var(--ds-border-radius-lg);
+	background: var(--ds-color-neutral-background-default);
+	box-shadow: 0 1px 2px rgb(0 0 0 / 0.04);
+}
+
+.slim--ok,
+.slim--synced {
+	border-left-color: var(--ds-color-success-base-default);
+}
+
+.slim--loading {
+	border-left-color: var(--ds-color-neutral-border-default);
+}
+
+.slim__week {
+	display: flex;
+	align-items: center;
+	gap: var(--ds-size-1);
+}
+
+.slim__heading {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	min-width: 7.5rem;
+	line-height: 1.2;
+}
+
+.slim__title {
+	font-size: 1.375rem;
+	font-weight: var(--ds-font-weight-semibold);
+	letter-spacing: -0.01em;
+	text-align: center;
+	white-space: nowrap;
+}
+
+.slim__meta {
+	color: var(--ds-color-neutral-text-subtle);
+	font-size: var(--ds-body-sm-font-size);
+	font-variant-numeric: tabular-nums;
+	white-space: nowrap;
+}
+
+.slim__actions {
+	display: flex;
+	align-items: center;
+	gap: var(--ds-size-2);
+	margin-left: auto;
+}
+
+.slim__message {
+	display: flex;
+	align-items: center;
+	gap: var(--ds-size-2);
+	padding-inline: var(--ds-size-2);
+	font-weight: var(--ds-font-weight-semibold);
+}
+
+.slim__okIcon {
+	color: var(--ds-color-success-base-default);
+	font-size: 1.25rem;
+}
+
+.slim__error {
+	flex: 1 1 100%;
+}
+
+.chips {
+	flex: 1 1 auto;
+	min-width: 0;
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--ds-size-1) var(--ds-size-3);
+	padding: 0;
+	list-style: none;
+}
+
+.chip {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.375rem;
+	color: var(--ds-color-neutral-text-subtle);
+	font-size: var(--ds-body-sm-font-size);
+	white-space: nowrap;
+}
+
+.chip__dot {
+	width: 0.5rem;
+	height: 0.5rem;
+	border-radius: 999px;
+}
+
+.chip__dot--warning {
+	background: var(--ds-color-warning-base-default);
+}
+
+.chip__dot--success {
+	background: var(--ds-color-success-base-default);
+}
+
+.chip__dot--danger {
+	background: var(--ds-color-danger-base-default);
+}
+
+.chip__dot--neutral {
+	background: var(--ds-color-neutral-base-default);
+}
+
+@media (width >= 48rem) {
+	.slim {
+		flex-wrap: nowrap;
+	}
+
+	.slim__actions {
+		flex-shrink: 0;
+	}
+}
+
+@media (width < 48rem) {
+	.slim__week {
+		flex: 1 1 100%;
+		justify-content: space-between;
+	}
+
+	.slim__actions {
+		flex: 1 1 100%;
+	}
+
+	.slim__actions > :last-child {
+		flex: 1;
+	}
+}
+
+/* B's action bar, faded away while the card (with the same buttons) is visible. */
+.stickyBar {
+	position: sticky;
+	bottom: 0;
+	z-index: 5;
+	transition:
+		transform 200ms ease,
+		opacity 200ms ease;
+}
+
+.stickyBar--hidden {
+	transform: translateY(1rem);
+	opacity: 0;
+	pointer-events: none;
+}
