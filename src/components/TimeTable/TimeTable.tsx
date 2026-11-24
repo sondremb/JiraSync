@@ -1,4 +1,5 @@
 import React from "react";
+import type { LockDate } from "../../reconciliation/syncPreview";
 import { Skeleton } from "@digdir/designsystemet-react";
 import { nb } from "date-fns/locale/nb";
 import { formatHours, IsoDate } from "../../date-time/IsoWeek";
@@ -16,7 +17,7 @@ interface Props {
 	className?: string;
 	entries: GridEntry[];
 	days: IsoDate[];
-	lockDate: IsoDate | undefined;
+	lockDate: LockDate;
 	/** Status dots on the totals row. */
 	status?: WeekStatus;
 	onLockDate?: (day: IsoDate) => void;

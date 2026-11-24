@@ -135,7 +135,8 @@ export function createFakeStore({
 		bekkEntries: (from, to) =>
 			[...entries.values()].filter((entry) => inRange(entry.date, from, to)),
 		writeBekkHours: (date, timecodeId, hours) => {
-			if (lockDate === undefined || date <= lockDate) {
+			// Like Bekk: no lock date means nothing is locked yet.
+			if (lockDate !== undefined && date <= lockDate) {
 				return [`Timene for ${date} er låst`];
 			}
 			if (hours === 0) {

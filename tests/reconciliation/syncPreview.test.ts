@@ -106,6 +106,14 @@ describe("planSync", () => {
 	test("proposes nothing while the lock date is unknown", () => {
 		expect(planSync([mismatchOn(wednesday)], undefined)).toEqual([]);
 	});
+
+	test("proposes changes on every day when nothing is locked yet", () => {
+		expect(
+			planSync([mismatchOn(monday), mismatchOn(wednesday)], null).map(
+				(change) => change.date,
+			),
+		).toEqual([monday, wednesday]);
+	});
 });
 
 describe("lockedOutOfSyncDays", () => {
@@ -126,6 +134,12 @@ describe("lockedOutOfSyncDays", () => {
 				undefined,
 			),
 		).toEqual([monday, wednesday]);
+	});
+
+	test("lists no days when nothing is locked yet", () => {
+		expect(
+			lockedOutOfSyncDays([mismatchOn(monday), mismatchOn(wednesday)], null),
+		).toEqual([]);
 	});
 });
 

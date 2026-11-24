@@ -1,4 +1,5 @@
 import { IsoDate } from "../../date-time/IsoWeek";
+import type { LockDate } from "../../reconciliation/syncPreview";
 import type {
 	DayReport,
 	InternalTimecodeId,
@@ -73,7 +74,7 @@ const toLine = (
 const toDay = (
 	report: DayReport,
 	entries: GridEntry[],
-	lockDate: IsoDate | undefined,
+	lockDate: LockDate,
 ): DayListDay => {
 	const locked = isLocked(report.date, lockDate);
 	const lines = entries
@@ -95,7 +96,7 @@ const isEmpty = (day: DayListDay, report: DayReport) =>
 /** The mobile view of a week: one block per day, empty weekends collapsed. */
 export function toDayList(
 	reports: readonly DayReport[],
-	lockDate: IsoDate | undefined,
+	lockDate: LockDate,
 ): DayList {
 	const entries = toGridEntries(reports).sort(
 		(a, b) => Number(b.managed) - Number(a.managed),

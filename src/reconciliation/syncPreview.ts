@@ -12,9 +12,15 @@ export interface ProposedChange {
 	targetHours: number;
 }
 
+/**
+ * The employee's lock date. `null` when nothing is locked yet (a new employee),
+ * `undefined` while it is unknown (loading or failed to load).
+ */
+export type LockDate = IsoDate | null | undefined;
+
 /** Bekk entries on or before the lock date are immutable; an unknown lock date locks every day. */
-export const isLocked = (date: IsoDate, lockDate: IsoDate | undefined) =>
-	lockDate === undefined || date <= lockDate;
+export const isLocked = (date: IsoDate, lockDate: LockDate) =>
+	lockDate === undefined || (lockDate !== null && date <= lockDate);
 
 const managedMismatches = (report: DayReport): ProposedChange[] =>
 	Array.from(report.comparisons.values()).flatMap((comparison) => {
@@ -33,7 +39,7 @@ const managedMismatches = (report: DayReport): ProposedChange[] =>
 
 export function planSync(
 	reports: readonly DayReport[],
-	lockDate: IsoDate | undefined,
+	lockDate: LockDate,
 ): ProposedChange[] {
 	return reports
 		.filter((report) => !isLocked(report.date, lockDate))
@@ -43,7 +49,7 @@ export function planSync(
 /** Locked days whose managed hours differ from Jira: out of sync, but `planSync` skips them. */
 export function lockedOutOfSyncDays(
 	reports: readonly DayReport[],
-	lockDate: IsoDate | undefined,
+	lockDate: LockDate,
 ): IsoDate[] {
 	return reports
 		.filter(

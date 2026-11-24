@@ -95,7 +95,7 @@ describe("fake fixtures", () => {
 		expect(lockedOutOfSyncDays(reports, store.lockDate())).not.toEqual([]);
 	});
 
-	test("the lock date is unknown in the no-lock-date scenario", () => {
+	test("nothing is locked in the no-lock-date scenario", () => {
 		const store = createFakeStore({ today, scenario: "no-lock-date" });
 		expect(store.lockDate()).toBeUndefined();
 	});
@@ -132,6 +132,18 @@ describe("fake store writes", () => {
 
 		expect(store.writeBekkHours(lockDate, 1003649, 3)).not.toEqual([]);
 		expect(store.bekkEntries(lockDate, lockDate)).toEqual(before);
+	});
+
+	test("with no lock date, writes on any day are saved", () => {
+		const store = createFakeStore({ today, scenario: "no-lock-date" });
+		const longAgo = IsoWeek.monday(inSyncWeek);
+
+		expect(store.writeBekkHours(longAgo, 1003649, 3)).toEqual([]);
+		expect(store.bekkEntries(longAgo, longAgo)).toContainEqual({
+			date: longAgo,
+			timecodeId: 1003649,
+			hours: 3,
+		});
 	});
 
 	test("locking hours moves the lock date", () => {

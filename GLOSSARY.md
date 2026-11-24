@@ -19,7 +19,7 @@ Hours an employee registered on one Bekk timecode on one day.
 _Avoid_: Internal work, internal hours, timesheet row
 
 **Lock date** _(UI: låsedato)_:
-The last day whose Bekk entries the employee has finalised. Bekk entries on or before the lock date are immutable. A lock date can only be a Sunday or the last day of a month.
+The last day whose Bekk entries the employee has finalised. Bekk entries on or before the lock date are immutable. A lock date can only be a Sunday or the last day of a month. An employee who has never locked has no lock date, and nothing is locked. That is not the same as an unknown lock date, one that is still loading or failed to load.
 _Avoid_: Locked week, submission date
 
 ### Mapping
