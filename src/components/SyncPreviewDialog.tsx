@@ -1,4 +1,5 @@
 import React from "react";
+import type { LockDate } from "../reconciliation/entities";
 import {
 	Button,
 	Dialog,
@@ -17,7 +18,7 @@ import styles from "./SyncPreviewDialog.module.css";
 interface Props {
 	/** Open while set. */
 	preview: SyncPreview | null;
-	lockDate: IsoDate | undefined;
+	lockDate: LockDate;
 	syncing: boolean;
 	onConfirm: () => void;
 	onClose: () => void;

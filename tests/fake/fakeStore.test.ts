@@ -10,6 +10,7 @@ import {
 	DayReport,
 	type InternalTimecodeId,
 	type JiraIssueId,
+	LockDate,
 } from "../../src/reconciliation/entities";
 import {
 	lockedOutOfSyncDays,
@@ -69,7 +70,7 @@ describe("fake fixtures", () => {
 		const store = createFakeStore({ today, scenario: "default" });
 		const reports = await reconcile(store, currentWeek);
 
-		const changes = planSync(reports, store.lockDate());
+		const changes = planSync(reports, LockDate.of(store.lockDate()));
 		expect(changes.some((c) => c.currentHours === 0)).toBe(true);
 		expect(changes.some((c) => c.targetHours === 0)).toBe(true);
 		expect(changes.some((c) => c.currentHours > 0 && c.targetHours > 0)).toBe(
@@ -91,13 +92,15 @@ describe("fake fixtures", () => {
 		const store = createFakeStore({ today, scenario: "default" });
 		const reports = await reconcile(store, lockedWeek);
 
-		expect(planSync(reports, store.lockDate())).toEqual([]);
-		expect(lockedOutOfSyncDays(reports, store.lockDate())).not.toEqual([]);
+		expect(planSync(reports, LockDate.of(store.lockDate()))).toEqual([]);
+		expect(
+			lockedOutOfSyncDays(reports, LockDate.of(store.lockDate())),
+		).not.toEqual([]);
 	});
 
-	test("the lock date is unknown in the no-lock-date scenario", () => {
+	test("nothing is locked in the no-lock-date scenario", () => {
 		const store = createFakeStore({ today, scenario: "no-lock-date" });
-		expect(store.lockDate()).toBeUndefined();
+		expect(store.lockDate()).toBeNull();
 	});
 });
 
@@ -106,7 +109,7 @@ describe("fake store writes", () => {
 		const store = createFakeStore({ today, scenario: "default" });
 		const changes = planSync(
 			await reconcile(store, currentWeek),
-			store.lockDate(),
+			LockDate.of(store.lockDate()),
 		);
 
 		await syncWeek(changes, async (change) => {
@@ -120,7 +123,7 @@ describe("fake store writes", () => {
 		});
 
 		const after = await reconcile(store, currentWeek);
-		expect(planSync(after, store.lockDate())).toEqual([]);
+		expect(planSync(after, LockDate.of(store.lockDate()))).toEqual([]);
 		// Unmanaged Bekk hours are left alone
 		expect(after.some((r) => r.unmanagedInternals.length > 0)).toBe(true);
 	});
@@ -132,6 +135,18 @@ describe("fake store writes", () => {
 
 		expect(store.writeBekkHours(lockDate, 1003649, 3)).not.toEqual([]);
 		expect(store.bekkEntries(lockDate, lockDate)).toEqual(before);
+	});
+
+	test("with no lock date, writes on any day are saved", () => {
+		const store = createFakeStore({ today, scenario: "no-lock-date" });
+		const twoWeeksAgo = IsoWeek.monday(inSyncWeek);
+
+		expect(store.writeBekkHours(twoWeeksAgo, 1003649, 3)).toEqual([]);
+		expect(store.bekkEntries(twoWeeksAgo, twoWeeksAgo)).toContainEqual({
+			date: twoWeeksAgo,
+			timecodeId: 1003649,
+			hours: 3,
+		});
 	});
 
 	test("locking hours moves the lock date", () => {

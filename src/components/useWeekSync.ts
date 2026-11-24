@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import type { LockDate } from "../reconciliation/entities";
 import { useQueryClient } from "@tanstack/react-query";
 import { IsoDate, IsoWeek } from "../date-time/IsoWeek";
 import {
@@ -28,7 +29,7 @@ export interface SyncPreview {
 export const useWeekSync = (
 	week: IsoWeek,
 	ruleset: Ruleset,
-	lockDate: IsoDate | undefined,
+	lockDate: LockDate,
 ) => {
 	const { data, error, isPending, dataUpdatedAt, isFetching } =
 		useWeeklyReconciliation(week, ruleset);

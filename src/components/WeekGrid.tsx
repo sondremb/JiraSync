@@ -1,4 +1,5 @@
 import React from "react";
+import type { LockDate } from "../reconciliation/entities";
 import { IsoDate, IsoWeek } from "../date-time/IsoWeek";
 import type { DayReport } from "../reconciliation/entities";
 import { TimeTable } from "./TimeTable/TimeTable";
@@ -11,7 +12,7 @@ interface Props {
 	week: IsoWeek;
 	/** Undefined while loading. */
 	reports: readonly DayReport[] | undefined;
-	lockDate: IsoDate | undefined;
+	lockDate: LockDate;
 	status?: WeekStatus;
 	onLockDate?: (day: IsoDate) => void;
 }

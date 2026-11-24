@@ -1,10 +1,11 @@
 import React from "react";
+import type { LockDate } from "../reconciliation/entities";
 import { Alert, Heading, Paragraph } from "@digdir/designsystemet-react";
 import { IsoDate } from "../date-time/IsoWeek";
 import { lockedDaysNotice } from "./syncMessages";
 
 interface Props {
-	lockDate: IsoDate | undefined;
+	lockDate: LockDate;
 	/** Days that differ from Jira but are locked, so are not synced. */
 	lockedDays: readonly IsoDate[];
 	syncError: Error | null;

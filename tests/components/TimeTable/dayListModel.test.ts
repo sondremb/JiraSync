@@ -4,6 +4,7 @@ import {
 	DayReport,
 	type InternalTimecodeId,
 	type JiraIssueId,
+	LockDate,
 } from "../../../src/reconciliation/entities";
 import {
 	toDayList,
@@ -14,7 +15,7 @@ import {
 const week = IsoWeek.fromDate(IsoDate.toDate(IsoDate.parse("2025-02-03")));
 const days = IsoWeek.days(week);
 const [monday, tuesday, , , , saturday, sunday] = days;
-const beforeWeek = IsoDate.parse("2025-01-31");
+const beforeWeek = LockDate.of(IsoDate.parse("2025-01-31"));
 const issue = 101 as JiraIssueId;
 const timecode = (id: number) => id as InternalTimecodeId;
 
@@ -116,7 +117,7 @@ describe("toDayList", () => {
 
 	test("days up to the lock date are locked", () => {
 		const reports = emptyWeek();
-		const list = toDayList(reports, monday);
+		const list = toDayList(reports, LockDate.of(monday));
 		expect(dayAt(list, monday).locked).toBe(true);
 		expect(dayAt(list, tuesday).locked).toBe(false);
 	});
@@ -174,7 +175,7 @@ describe("toDayList", () => {
 	test("a differing line on a locked day is locked, not changing", () => {
 		const reports = emptyWeek();
 		addManaged(reportOn(reports, monday), 201, 5, 7.5);
-		const [line] = dayAt(toDayList(reports, monday), monday).lines;
+		const [line] = dayAt(toDayList(reports, LockDate.of(monday)), monday).lines;
 		expect(line.state).toBe("lockedDiffers");
 	});
 

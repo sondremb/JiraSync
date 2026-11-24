@@ -1,8 +1,8 @@
 import React from "react";
+import { LockDate } from "../../reconciliation/entities";
 import { Skeleton } from "@digdir/designsystemet-react";
 import { nb } from "date-fns/locale/nb";
 import { formatHours, IsoDate } from "../../date-time/IsoWeek";
-import { isLocked } from "../../reconciliation/syncPreview";
 import { cellState, type GridEntry } from "./gridModel";
 import { HoursCell } from "./HoursCell";
 import { LockDateButton } from "./LockDateButton";
@@ -16,7 +16,7 @@ interface Props {
 	className?: string;
 	entries: GridEntry[];
 	days: IsoDate[];
-	lockDate: IsoDate | undefined;
+	lockDate: LockDate;
 	/** Status dots on the totals row. */
 	status?: WeekStatus;
 	onLockDate?: (day: IsoDate) => void;
@@ -52,7 +52,9 @@ export const TimeTable: React.FC<Props> = ({
 			styles.timeTable__day,
 			IsoDate.weekday(day) >= SATURDAY && styles["timeTable__day--weekend"],
 			// Unknown while pending, and an unknown lock date would lock every day.
-			!pending && isLocked(day, lockDate) && styles["timeTable__day--locked"],
+			!pending &&
+				LockDate.isLocked(lockDate, day) &&
+				styles["timeTable__day--locked"],
 			day === today && styles["timeTable__day--today"],
 		);
 
@@ -101,7 +103,7 @@ export const TimeTable: React.FC<Props> = ({
 											state={cellState(
 												entry.days[day],
 												entry.managed,
-												isLocked(day, lockDate),
+												LockDate.isLocked(lockDate, day),
 											)}
 											bekkHours={entry.days[day]?.bekkHours ?? 0}
 											jiraHours={entry.days[day]?.totalJiraHours ?? 0}

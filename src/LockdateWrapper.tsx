@@ -6,9 +6,10 @@ import { RulesetWrapper } from "./RulesetWrapper";
 
 export const LockdateWrapper: React.FC = () => {
 	const { lockDate, error } = useLockDate();
-	const initialWeek = lockDate
-		? IsoWeek.fromIsoDate(IsoDate.addDays(lockDate, 1))
-		: IsoWeek.fromDate(new Date());
+	const initialWeek =
+		lockDate.kind === "date"
+			? IsoWeek.fromIsoDate(IsoDate.addDays(lockDate.date, 1))
+			: IsoWeek.fromDate(new Date());
 
 	return (
 		<RulesetWrapper>

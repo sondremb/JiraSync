@@ -5,6 +5,7 @@ import {
 	InternalTimecodeId,
 	JiraIssueId,
 	JiraWork,
+	LockDate,
 	ManagedTimecodeDayComparison,
 } from "../../src/reconciliation/entities";
 
@@ -66,5 +67,23 @@ describe("DayReport.isInSync", () => {
 		});
 
 		expect(DayReport.isInSync(report)).toBe(true);
+	});
+});
+
+describe("LockDate.isLocked", () => {
+	const sunday = IsoDate.parse("2025-02-02");
+	const monday = IsoDate.parse("2025-02-03");
+
+	test("locks days on or before the lock date", () => {
+		expect(LockDate.isLocked(LockDate.of(sunday), sunday)).toBe(true);
+		expect(LockDate.isLocked(LockDate.of(sunday), monday)).toBe(false);
+	});
+
+	test("locks no day when nothing is locked yet", () => {
+		expect(LockDate.isLocked(LockDate.none, sunday)).toBe(false);
+	});
+
+	test("locks every day while the lock date is unknown", () => {
+		expect(LockDate.isLocked(LockDate.unknown, monday)).toBe(true);
 	});
 });
