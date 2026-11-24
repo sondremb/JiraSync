@@ -1,10 +1,9 @@
 import { IsoDate } from "../../date-time/IsoWeek";
-import type { LockDate } from "../../reconciliation/syncPreview";
+import { LockDate } from "../../reconciliation/entities";
 import type {
 	DayReport,
 	InternalTimecodeId,
 } from "../../reconciliation/entities";
-import { isLocked } from "../../reconciliation/syncPreview";
 import {
 	cellState,
 	toGridEntries,
@@ -76,7 +75,7 @@ const toDay = (
 	entries: GridEntry[],
 	lockDate: LockDate,
 ): DayListDay => {
-	const locked = isLocked(report.date, lockDate);
+	const locked = LockDate.isLocked(lockDate, report.date);
 	const lines = entries
 		.map((entry) => toLine(entry, report.date, locked))
 		.filter((line) => line !== undefined);

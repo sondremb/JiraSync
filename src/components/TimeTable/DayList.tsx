@@ -1,5 +1,5 @@
 import React from "react";
-import type { LockDate } from "../../reconciliation/syncPreview";
+import type { LockDate } from "../../reconciliation/entities";
 import { Heading, Paragraph, Skeleton } from "@digdir/designsystemet-react";
 import { nb } from "date-fns/locale/nb";
 import { formatHours, IsoDate } from "../../date-time/IsoWeek";

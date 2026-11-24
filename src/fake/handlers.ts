@@ -301,7 +301,9 @@ function bekkHandlers(store: FakeStore) {
 				>({
 					employeeId: fakeBekkAccount.employeeId,
 					// Noon in Norway, so the date is the same in any browser timezone
-					lockDate: lockDate && IsoDate.toDate(lockDate).toISOString(),
+					lockDate: lockDate
+						? IsoDate.toDate(lockDate).toISOString()
+						: undefined,
 				});
 			}),
 		),

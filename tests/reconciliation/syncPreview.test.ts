@@ -4,6 +4,7 @@ import {
 	DayReport,
 	type InternalTimecodeId,
 	type JiraIssueId,
+	LockDate,
 } from "../../src/reconciliation/entities";
 import {
 	groupChangesByDate,
@@ -67,7 +68,9 @@ describe("planSync", () => {
 			hoursWorked: 4,
 		});
 
-		expect(planSync([firstDay, nextDay], IsoDate.parse("2025-02-02"))).toEqual([
+		expect(
+			planSync([firstDay, nextDay], LockDate.of(IsoDate.parse("2025-02-02"))),
+		).toEqual([
 			{ date: monday, timecodeId: firstCode, currentHours: 5, targetHours: 2 },
 			{ date: monday, timecodeId: secondCode, currentHours: 3, targetHours: 0 },
 			{ date: tuesday, timecodeId: firstCode, currentHours: 0, targetHours: 3 },
@@ -81,19 +84,21 @@ describe("planSync", () => {
 			date: monday,
 			hoursWorked: 2,
 		});
-		expect(planSync([unmatchedOnly], IsoDate.parse("2025-02-02"))).toEqual([]);
+		expect(
+			planSync([unmatchedOnly], LockDate.of(IsoDate.parse("2025-02-02"))),
+		).toEqual([]);
 	});
 
 	test("proposes no change on the lock date", () => {
-		expect(planSync([mismatchOn(tuesday)], tuesday)).toEqual([]);
+		expect(planSync([mismatchOn(tuesday)], LockDate.of(tuesday))).toEqual([]);
 	});
 
 	test("proposes no change before the lock date", () => {
-		expect(planSync([mismatchOn(monday)], tuesday)).toEqual([]);
+		expect(planSync([mismatchOn(monday)], LockDate.of(tuesday))).toEqual([]);
 	});
 
 	test("proposes a change after the lock date", () => {
-		expect(planSync([mismatchOn(wednesday)], tuesday)).toEqual([
+		expect(planSync([mismatchOn(wednesday)], LockDate.of(tuesday))).toEqual([
 			{
 				date: wednesday,
 				timecodeId: firstCode,
@@ -104,12 +109,12 @@ describe("planSync", () => {
 	});
 
 	test("proposes nothing while the lock date is unknown", () => {
-		expect(planSync([mismatchOn(wednesday)], undefined)).toEqual([]);
+		expect(planSync([mismatchOn(wednesday)], LockDate.unknown)).toEqual([]);
 	});
 
 	test("proposes changes on every day when nothing is locked yet", () => {
 		expect(
-			planSync([mismatchOn(monday), mismatchOn(wednesday)], null).map(
+			planSync([mismatchOn(monday), mismatchOn(wednesday)], LockDate.none).map(
 				(change) => change.date,
 			),
 		).toEqual([monday, wednesday]);
@@ -122,7 +127,7 @@ describe("lockedOutOfSyncDays", () => {
 		expect(
 			lockedOutOfSyncDays(
 				[inSync, mismatchOn(tuesday), mismatchOn(wednesday)],
-				tuesday,
+				LockDate.of(tuesday),
 			),
 		).toEqual([tuesday]);
 	});
@@ -131,14 +136,17 @@ describe("lockedOutOfSyncDays", () => {
 		expect(
 			lockedOutOfSyncDays(
 				[mismatchOn(monday), mismatchOn(wednesday)],
-				undefined,
+				LockDate.unknown,
 			),
 		).toEqual([monday, wednesday]);
 	});
 
 	test("lists no days when nothing is locked yet", () => {
 		expect(
-			lockedOutOfSyncDays([mismatchOn(monday), mismatchOn(wednesday)], null),
+			lockedOutOfSyncDays(
+				[mismatchOn(monday), mismatchOn(wednesday)],
+				LockDate.none,
+			),
 		).toEqual([]);
 	});
 });

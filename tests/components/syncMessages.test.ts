@@ -1,4 +1,5 @@
 import { describe, expect, test } from "vitest";
+import { LockDate } from "../../src/reconciliation/entities";
 import { IsoDate } from "../../src/date-time/IsoWeek";
 import {
 	formatChangeCount,
@@ -17,13 +18,13 @@ describe("lockedDaysNotice", () => {
 	const tuesday = IsoDate.parse("2025-02-04");
 
 	test("says nothing can sync when the lock date is unknown", () => {
-		expect(lockedDaysNotice(undefined, [monday])).toBe(
+		expect(lockedDaysNotice(LockDate.unknown, [monday])).toBe(
 			"Låsedato er ukjent, så ingen timer kan synkroniseres.",
 		);
 	});
 
 	test("lists the locked days otherwise", () => {
-		expect(lockedDaysNotice(tuesday, [monday, tuesday])).toBe(
+		expect(lockedDaysNotice(LockDate.of(tuesday), [monday, tuesday])).toBe(
 			`Låste dager stemmer ikke med Jira og blir ikke synkronisert: ${IsoDate.formatLong(monday)}, ${IsoDate.formatLong(tuesday)}.`,
 		);
 	});

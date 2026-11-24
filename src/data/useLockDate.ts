@@ -1,19 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { IsoDate } from "../date-time/IsoWeek";
 import { bekkClient } from "./bekkclient";
 import { getEmployeeId } from "../login/bekk/bekkLogin";
 import { lockInternalHours } from "./lockInternalHours";
-import type { LockDate } from "../reconciliation/syncPreview";
-
-/** `undefined` until loaded, `null` when the employee has locked nothing yet. */
-const lockDateOf = (
-	data: { lockDate?: string | null } | undefined,
-): LockDate =>
-	data === undefined
-		? undefined
-		: data.lockDate
-			? IsoDate.fromDate(new Date(data.lockDate))
-			: null;
+import { lockDateFromBekk } from "./lockDateFromBekk";
 
 export const useLockDate = () => {
 	const queryClient = useQueryClient();
@@ -26,7 +15,7 @@ export const useLockDate = () => {
 				{ params: { path: { employeeId: getEmployeeId() } } },
 			);
 			if (!response.ok || !data) throw new Error("Failed to fetch lock date");
-			// No lock date is valid: nothing is locked yet (a new employee).
+			// A response without a lock date is valid: nothing is locked yet.
 			return data;
 		},
 	});
@@ -39,7 +28,7 @@ export const useLockDate = () => {
 	});
 
 	return {
-		lockDate: lockDateOf(data),
+		lockDate: lockDateFromBekk(data),
 		error,
 		isLoading,
 		isFetching,

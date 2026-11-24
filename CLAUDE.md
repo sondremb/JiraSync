@@ -44,7 +44,7 @@ Employees draft rulesets, save them as local rulesets in the browser, and export
 
 Pure domain logic, kept free of API clients so it can be tested with plain functions (tests live in `tests/reconciliation/`).
 
-- `entities.ts` — `JiraWork`, `InternalWork` (Bekk), `DayReport`, `ManagedTimecodeDayComparison`. A `DayReport` has per-timecode `comparisons` (Jira vs Bekk hours), plus `unmanagedInternals` (Bekk hours on timecodes the policy doesn't manage — never touched) and `unmatchedJiraWork` (Jira worklogs no rule matches — a day with any of these is not in sync).
+- `entities.ts` — `JiraWork`, `InternalWork` (Bekk), `DayReport`, `ManagedTimecodeDayComparison`. A `DayReport` has per-timecode `comparisons` (Jira vs Bekk hours), plus `unmanagedInternals` (Bekk hours on timecodes the policy doesn't manage — never touched) and `unmatchedJiraWork` (Jira worklogs no rule matches — a day with any of these is not in sync). `LockDate` is `unknown` (loading or failed, locks every day), `none` (never locked) or a `date`.
 - `contracts.ts` — `Policy` (`matchIssues`, `selectManaged`) and the loader function types injected into reconciliation.
 - `reconcile.ts` — `reconcilePeriod` loads Jira worklogs, matches issues via the policy, loads Bekk worklogs, and builds `DayReport[]`. It throws on invariant failures (policy missed an issue, or matched a timecode it doesn't manage).
 - `implementation/jqlPolicy.ts` — the `Policy` implementation backed by a `Ruleset`.

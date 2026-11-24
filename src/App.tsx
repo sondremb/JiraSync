@@ -17,8 +17,8 @@ interface Props {
 export const App: React.FC<Props> = ({ initialWeek }) => {
 	const { isLoading: lockDateLoading } = useLockDate();
 	const { selectedRuleset } = useRuleSet();
-	// Start on the week after the lock date, but only the first time it loads:
-	// locking a week later must not move the user's view.
+	// Fix the start week once the lock date first finishes loading (initialWeek
+	// depends on it). Locking a week later must not move the user's view.
 	const [startWeek, setStartWeek] = useState<IsoWeek | undefined>();
 	if (!lockDateLoading && startWeek === undefined) setStartWeek(initialWeek);
 	const [navigatedWeek, setNavigatedWeek] = useState<IsoWeek | undefined>();

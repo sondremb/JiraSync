@@ -1,5 +1,5 @@
 import React from "react";
-import type { LockDate } from "../reconciliation/syncPreview";
+import type { LockDate } from "../reconciliation/entities";
 import {
 	Button,
 	Dialog,

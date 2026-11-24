@@ -52,7 +52,8 @@ export interface FakeStore {
 	bekkEntries(from: IsoDate, to: IsoDate): FakeBekkEntry[];
 	/** Sets the hours, or deletes the entry at 0. Returns validation messages, empty when saved. */
 	writeBekkHours(date: IsoDate, timecodeId: number, hours: number): string[];
-	lockDate(): IsoDate | undefined;
+	/** `null` when the employee has never locked. */
+	lockDate(): IsoDate | null;
 	lockHours(lockDate: IsoDate): void;
 	timecodes(): readonly FakeTimecode[];
 	projects(): readonly { key: string; name: string }[];
@@ -96,9 +97,9 @@ export function createFakeStore({
 		});
 	}
 
-	let lockDate: IsoDate | undefined =
+	let lockDate: IsoDate | null =
 		scenario === "no-lock-date"
-			? undefined
+			? null
 			: IsoWeek.sunday(IsoWeek.previous(currentWeek));
 
 	const inRange = (date: IsoDate, from: IsoDate, to: IsoDate) =>
@@ -136,7 +137,7 @@ export function createFakeStore({
 			[...entries.values()].filter((entry) => inRange(entry.date, from, to)),
 		writeBekkHours: (date, timecodeId, hours) => {
 			// Like Bekk: no lock date means nothing is locked yet.
-			if (lockDate !== undefined && date <= lockDate) {
+			if (lockDate !== null && date <= lockDate) {
 				return [`Timene for ${date} er låst`];
 			}
 			if (hours === 0) {

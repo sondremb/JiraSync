@@ -1,5 +1,5 @@
 import React from "react";
-import type { LockDate } from "../reconciliation/syncPreview";
+import type { LockDate } from "../reconciliation/entities";
 import { Alert, Heading, Paragraph } from "@digdir/designsystemet-react";
 import { IsoDate } from "../date-time/IsoWeek";
 import { lockedDaysNotice } from "./syncMessages";

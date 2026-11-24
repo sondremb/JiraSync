@@ -72,3 +72,31 @@ export const DayReport = {
 		return noMismatchedInternal && noUnmatchedJira;
 	},
 };
+
+/**
+ * The employee's lock date. `none` when nothing is locked yet (a new employee),
+ * `unknown` while it is loading or failed to load.
+ */
+export type LockDate =
+	| { kind: "unknown" }
+	| { kind: "none" }
+	| { kind: "date"; date: IsoDate };
+export const LockDate = {
+	unknown: { kind: "unknown" } as LockDate,
+	none: { kind: "none" } as LockDate,
+	/** A lock date from a date, or `none` for `null`. */
+	of(date: IsoDate | null): LockDate {
+		return date === null ? LockDate.none : { kind: "date", date };
+	},
+	/** Bekk entries on or before the lock date are immutable; an unknown lock date locks every day. */
+	isLocked(lockDate: LockDate, date: IsoDate): boolean {
+		switch (lockDate.kind) {
+			case "unknown":
+				return true;
+			case "none":
+				return false;
+			case "date":
+				return date <= lockDate.date;
+		}
+	},
+};

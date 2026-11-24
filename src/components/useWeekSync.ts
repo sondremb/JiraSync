@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import type { LockDate } from "../reconciliation/syncPreview";
+import type { LockDate } from "../reconciliation/entities";
 import { useQueryClient } from "@tanstack/react-query";
 import { IsoDate, IsoWeek } from "../date-time/IsoWeek";
 import {

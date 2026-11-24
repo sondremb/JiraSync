@@ -4,13 +4,14 @@ import {
 	DayReport,
 	type InternalTimecodeId,
 	type JiraIssueId,
+	LockDate,
 } from "../../../src/reconciliation/entities";
 import { toWeekStatus } from "../../../src/components/TimeTable/weekStatus";
 
 // 2025-02-03 is a Monday.
 const week = IsoWeek.fromDate(IsoDate.toDate(IsoDate.parse("2025-02-03")));
 const [monday, tuesday, wednesday, thursday, friday] = IsoWeek.days(week);
-const beforeWeek = IsoDate.parse("2025-01-31");
+const beforeWeek = LockDate.of(IsoDate.parse("2025-01-31"));
 const issue = 101 as JiraIssueId;
 const timecode = 201 as InternalTimecodeId;
 
@@ -63,7 +64,7 @@ describe("toWeekStatus", () => {
 	test("a locked day that differs is not synced, but counted", () => {
 		const status = toWeekStatus(
 			[managed(monday, 0, 4), managed(tuesday, 0, 4)],
-			monday,
+			LockDate.of(monday),
 		);
 		expect(status.days).toEqual({
 			[monday]: "lockedDiffers",

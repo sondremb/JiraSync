@@ -2,6 +2,7 @@ import React, { useRef } from "react";
 import { Alert } from "@digdir/designsystemet-react";
 import { IsoDate, IsoWeek } from "../date-time/IsoWeek";
 import { useLockDate } from "../data/useLockDate";
+import { LockDate } from "../reconciliation/entities";
 import { Ruleset } from "../rules";
 import { toWeekStatus } from "./TimeTable/weekStatus";
 import { StatusCard } from "./StatusCard";
@@ -103,6 +104,6 @@ export const WeeklyReconciliationPending: React.FC<WeekNavigation> = ({
 			onPreviousWeek={onPreviousWeek}
 			onNextWeek={onNextWeek}
 		/>
-		<WeekGrid week={week} reports={undefined} lockDate={undefined} />
+		<WeekGrid week={week} reports={undefined} lockDate={LockDate.unknown} />
 	</section>
 );

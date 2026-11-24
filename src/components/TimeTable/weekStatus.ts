@@ -1,8 +1,7 @@
 import type { IsoDate } from "../../date-time/IsoWeek";
-import type { LockDate } from "../../reconciliation/syncPreview";
+import { LockDate } from "../../reconciliation/entities";
 import { DayReport } from "../../reconciliation/entities";
 import {
-	isLocked,
 	lockedOutOfSyncDays,
 	planSync,
 } from "../../reconciliation/syncPreview";
@@ -58,7 +57,8 @@ const dayStatus = (
 	if (report.unmatchedJiraWork.length > 0) return "unmatched";
 	if (willChange) return "willChange";
 	const inSync = DayReport.isInSync(report);
-	if (!inSync && isLocked(report.date, lockDate)) return "lockedDiffers";
+	if (!inSync && LockDate.isLocked(lockDate, report.date))
+		return "lockedDiffers";
 	return hasHours(report) ? "inSync" : "empty";
 };
 

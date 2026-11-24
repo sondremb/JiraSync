@@ -2,6 +2,7 @@ import { IsoDate } from "../date-time/IsoWeek";
 import {
 	type DayReport,
 	type InternalTimecodeId,
+	LockDate,
 	ManagedTimecodeDayComparison,
 } from "./entities";
 
@@ -11,16 +12,6 @@ export interface ProposedChange {
 	currentHours: number;
 	targetHours: number;
 }
-
-/**
- * The employee's lock date. `null` when nothing is locked yet (a new employee),
- * `undefined` while it is unknown (loading or failed to load).
- */
-export type LockDate = IsoDate | null | undefined;
-
-/** Bekk entries on or before the lock date are immutable; an unknown lock date locks every day. */
-export const isLocked = (date: IsoDate, lockDate: LockDate) =>
-	lockDate === undefined || (lockDate !== null && date <= lockDate);
 
 const managedMismatches = (report: DayReport): ProposedChange[] =>
 	Array.from(report.comparisons.values()).flatMap((comparison) => {
@@ -42,7 +33,7 @@ export function planSync(
 	lockDate: LockDate,
 ): ProposedChange[] {
 	return reports
-		.filter((report) => !isLocked(report.date, lockDate))
+		.filter((report) => !LockDate.isLocked(lockDate, report.date))
 		.flatMap(managedMismatches);
 }
 
@@ -54,7 +45,8 @@ export function lockedOutOfSyncDays(
 	return reports
 		.filter(
 			(report) =>
-				isLocked(report.date, lockDate) && managedMismatches(report).length > 0,
+				LockDate.isLocked(lockDate, report.date) &&
+				managedMismatches(report).length > 0,
 		)
 		.map((report) => report.date);
 }

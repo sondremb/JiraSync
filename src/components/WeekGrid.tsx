@@ -1,5 +1,5 @@
 import React from "react";
-import type { LockDate } from "../reconciliation/syncPreview";
+import type { LockDate } from "../reconciliation/entities";
 import { IsoDate, IsoWeek } from "../date-time/IsoWeek";
 import type { DayReport } from "../reconciliation/entities";
 import { TimeTable } from "./TimeTable/TimeTable";
