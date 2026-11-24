@@ -14,8 +14,8 @@ export const useLockDate = () => {
 				"/timesheets/lockdates/{employeeId}",
 				{ params: { path: { employeeId: getEmployeeId() } } },
 			);
-			if (!response.ok || !data?.lockDate)
-				throw new Error("Failed to fetch lock date");
+			if (!response.ok || !data) throw new Error("Failed to fetch lock date");
+			// No lock date is valid: nothing has been locked yet (a new employee).
 			return data;
 		},
 	});

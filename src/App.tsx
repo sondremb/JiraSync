@@ -32,7 +32,9 @@ export const App: React.FC<Props> = ({ initialWeek }) => {
 		<>
 			<AnnouncementBanner />
 			<RulesetBar />
-			{lockDateLoading ? (
+			{/* Gate on the first load only: a refetch (e.g. after an error, when
+			    WeeklyReconciliation mounts) must not unmount the table again. */}
+			{startWeek === undefined ? (
 				<WeeklyReconciliationPending
 					week={weekAndYear}
 					onPreviousWeek={onPreviousWeekClick}
