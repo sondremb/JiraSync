@@ -20,7 +20,7 @@ File issues only into the user's own repo. Never file into `mattpocock/skills` (
 
 ## Starting an issue
 
-- **Branch from the remote**: `git fetch && git switch -c <n>-<slug> origin/main`. Local `main` often lags behind merged PRs.
+- **Work in a new worktree branched from `origin/main`**, named `<n>-<slug>`: see `docs/agents/worktrees.md`. Local `main` often lags behind merged PRs. If the user asks you to work in the current checkout instead, use `git fetch && git switch -c <n>-<slug> origin/main`.
 - **Decisions made in chat**: when the user answers one of the issue's open questions in chat, post the answer on the issue (`gh issue comment <n>`), so the issue stays the spec a reviewer checks against.
 
 ## Creating a pull request
