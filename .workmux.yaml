@@ -1,0 +1,25 @@
+# workmux project config. See docs/agents/worktrees.md.
+# Run `git fetch` before `workmux add` so origin/main is current.
+
+# Branch new worktrees from the remote: local main often lags behind merged PRs.
+base_branch: origin/main
+
+files:
+  # Copied, not symlinked, so a worktree can't change the main checkout's .env.
+  # Missing in a fresh clone; the fake backend runs without it.
+  copy:
+    - .env
+
+# Left: agent. Right top: dev server. Right bottom: shell for git.
+# The server runs the fake backend, which works on any port and without .env.
+# Real logins need port 5173, see docs/agents/worktrees.md.
+panes:
+  - command: <agent>
+    focus: true
+  - command: VITE_FAKE_BACKEND=true pnpm start
+    split: horizontal
+  - split: vertical
+
+post_create:
+  - "<global>"
+  - pnpm install --frozen-lockfile --prefer-offline
