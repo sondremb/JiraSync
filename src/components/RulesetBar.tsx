@@ -31,7 +31,7 @@ export const RulesetBar: React.FC = () => {
 			</div>
 			<div className={styles.rulesetBar__compact}>
 				<Tag data-color="warning" data-size="sm">
-					{selected.kind === "edited" ? "Endrede regler" : "Lokale regler"}
+					{selected.overridesBundled ? "Endrede regler" : "Lokale regler"}
 				</Tag>
 				<Paragraph data-size="sm">
 					<strong>{selected.ruleset.name}</strong> gjelder bare hos deg.{" "}
@@ -47,7 +47,7 @@ export const RulesetBar: React.FC = () => {
 };
 
 const LocalSummary: React.FC<{ entry: CatalogEntry }> = ({ entry }) => {
-	const { ruleset, kind } = entry;
+	const { ruleset, overridesBundled } = entry;
 	const sending = useSendRuleset();
 	return (
 		<Column gap="small">
@@ -56,12 +56,12 @@ const LocalSummary: React.FC<{ entry: CatalogEntry }> = ({ entry }) => {
 					Regler: <strong>{ruleset.name}</strong>
 				</Paragraph>
 				<Tag data-color="warning" data-size="sm">
-					{kind === "edited" ? "endret, bare hos deg" : "bare hos deg"}
+					{overridesBundled ? "endret, bare hos deg" : "bare hos deg"}
 				</Tag>
 			</Row>
 			<Row wrap>
 				<Paragraph data-size="sm">
-					{kind === "edited"
+					{overridesBundled
 						? "Endringene gjelder bare deg til Sondre har lagt dem inn. Når de er lagt inn, kan du forkaste kopien din."
 						: "Regelsettet gjelder bare deg til Sondre har lagt det inn."}
 				</Paragraph>

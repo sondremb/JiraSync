@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import { IsoDate } from "../../src/date-time/IsoWeek";
-import type { InternalTimecodeId } from "../../src/reconciliation/entities";
+import type { BekkTimecodeId } from "../../src/reconciliation/entities";
 import { bekkClient } from "../../src/data/bekkclient";
-import { writeInternalHours } from "../../src/data/writeInternalHours";
+import { writeBekkHours } from "../../src/data/writeBekkHours";
 
 vi.mock("../../src/data/bekkclient", () => ({
 	bekkClient: { PUT: vi.fn(), DELETE: vi.fn() },
@@ -13,7 +13,7 @@ const remove = vi.mocked(bekkClient.DELETE);
 const date = IsoDate.parse("2025-02-03");
 const change = {
 	date,
-	timecodeId: 201 as InternalTimecodeId,
+	timecodeId: 201 as BekkTimecodeId,
 	currentHours: 2,
 	targetHours: 3,
 };
@@ -23,13 +23,13 @@ beforeEach(() => {
 	remove.mockReset();
 });
 
-describe("writeInternalHours", () => {
+describe("writeBekkHours", () => {
 	test("puts Jira target hours on a mismatched timecode", async () => {
 		put.mockResolvedValue({
 			response: { ok: true },
 			data: { validationInfo: [] },
 		} as never);
-		await writeInternalHours(change);
+		await writeBekkHours(change);
 		expect(put).toHaveBeenCalledExactlyOnceWith(
 			"/timesheets/employee/{employeeId}",
 			{
@@ -42,7 +42,7 @@ describe("writeInternalHours", () => {
 
 	test("deletes hours when Jira target is zero", async () => {
 		remove.mockResolvedValue({ response: { ok: true } } as never);
-		await writeInternalHours({ ...change, targetHours: 0 });
+		await writeBekkHours({ ...change, targetHours: 0 });
 		expect(remove).toHaveBeenCalledExactlyOnceWith(
 			"/timesheets/employee/{employeeId}",
 			{
@@ -60,18 +60,14 @@ describe("writeInternalHours", () => {
 				response: { ok: true },
 				data: { validationInfo: ["Comment required"] },
 			} as never);
-		await expect(writeInternalHours(change)).rejects.toThrow(
-			"Internal System rejected",
-		);
-		await expect(writeInternalHours(change)).rejects.toThrow(
-			"Comment required",
-		);
+		await expect(writeBekkHours(change)).rejects.toThrow("Bekk rejected");
+		await expect(writeBekkHours(change)).rejects.toThrow("Comment required");
 	});
 
 	test("rejects a successful HTTP response without the update result", async () => {
 		put.mockResolvedValue({ response: { ok: true }, data: undefined } as never);
-		await expect(writeInternalHours(change)).rejects.toThrow(
-			"Internal System rejected the update",
+		await expect(writeBekkHours(change)).rejects.toThrow(
+			"Bekk rejected the update",
 		);
 	});
 });

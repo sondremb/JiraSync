@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import { IsoDate } from "../../src/date-time/IsoWeek";
 import { bekkClient } from "../../src/data/bekkclient";
-import { loadInternalWorklogs } from "../../src/data/loadInternalWorklogs";
+import { loadBekkEntries } from "../../src/data/loadBekkEntries";
 
 vi.mock("../../src/data/bekkclient", () => ({ bekkClient: { GET: vi.fn() } }));
 vi.mock("../../src/login/bekk/bekkLogin", () => ({ getEmployeeId: () => 42 }));
@@ -14,7 +14,7 @@ beforeEach(() => {
 	get.mockReset();
 });
 
-describe("loadInternalWorklogs", () => {
+describe("loadBekkEntries", () => {
 	test("flattens multiple timecodes and preserves repeated entries", async () => {
 		get.mockResolvedValue(
 			ok({
@@ -34,7 +34,7 @@ describe("loadInternalWorklogs", () => {
 			}),
 		);
 
-		await expect(loadInternalWorklogs(from, to)).resolves.toEqual([
+		await expect(loadBekkEntries(from, to)).resolves.toEqual([
 			{ timecodeId: 201, date: from, hoursWorked: 2 },
 			{ timecodeId: 201, date: from, hoursWorked: 3 },
 			{ timecodeId: 202, date: to, hoursWorked: 1 },
@@ -49,18 +49,18 @@ describe("loadInternalWorklogs", () => {
 
 	test("accepts a successful timesheet with no entries", async () => {
 		get.mockResolvedValue(ok({ timecodeTimeEntries: [] }));
-		await expect(loadInternalWorklogs(from, to)).resolves.toEqual([]);
+		await expect(loadBekkEntries(from, to)).resolves.toEqual([]);
 	});
 
 	test("rejects failures and absent timesheet data", async () => {
 		get
 			.mockResolvedValueOnce({ response: { ok: false } } as never)
 			.mockResolvedValueOnce(ok({}));
-		await expect(loadInternalWorklogs(from, to)).rejects.toThrow(
-			"Failed to load Internal timesheet",
+		await expect(loadBekkEntries(from, to)).rejects.toThrow(
+			"Failed to load Bekk timesheet",
 		);
-		await expect(loadInternalWorklogs(from, to)).rejects.toThrow(
-			"Failed to load Internal timesheet",
+		await expect(loadBekkEntries(from, to)).rejects.toThrow(
+			"Failed to load Bekk timesheet",
 		);
 	});
 
@@ -75,8 +75,8 @@ describe("loadInternalWorklogs", () => {
 				],
 			}),
 		);
-		await expect(loadInternalWorklogs(from, to)).rejects.toThrow(
-			"Invalid Internal timesheet entry",
+		await expect(loadBekkEntries(from, to)).rejects.toThrow(
+			"Invalid Bekk timesheet entry",
 		);
 	});
 
@@ -91,7 +91,7 @@ describe("loadInternalWorklogs", () => {
 				],
 			}),
 		);
-		await expect(loadInternalWorklogs(from, to)).rejects.toThrow(
+		await expect(loadBekkEntries(from, to)).rejects.toThrow(
 			"outside requested range",
 		);
 	});
@@ -110,7 +110,7 @@ describe("loadInternalWorklogs", () => {
 				],
 			}),
 		);
-		await expect(loadInternalWorklogs(from, to)).resolves.toEqual([
+		await expect(loadBekkEntries(from, to)).resolves.toEqual([
 			{ date: from, timecodeId: 201, hoursWorked: 1 },
 			{ date: to, timecodeId: 201, hoursWorked: 2 },
 		]);
@@ -127,7 +127,7 @@ describe("loadInternalWorklogs", () => {
 				],
 			}),
 		);
-		await expect(loadInternalWorklogs(from, to)).resolves.toEqual([
+		await expect(loadBekkEntries(from, to)).resolves.toEqual([
 			{ date: from, timecodeId: 201, hoursWorked: 1 },
 		]);
 	});
@@ -154,11 +154,11 @@ describe("loadInternalWorklogs", () => {
 					],
 				}),
 			);
-		await expect(loadInternalWorklogs(from, to)).rejects.toThrow(
-			"Invalid Internal timesheet entry",
+		await expect(loadBekkEntries(from, to)).rejects.toThrow(
+			"Invalid Bekk timesheet entry",
 		);
-		await expect(loadInternalWorklogs(from, to)).rejects.toThrow(
-			"Internal timecode ID mismatch",
+		await expect(loadBekkEntries(from, to)).rejects.toThrow(
+			"Bekk timecode ID mismatch",
 		);
 	});
 });

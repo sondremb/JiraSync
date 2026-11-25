@@ -2,7 +2,7 @@ import { describe, expect, test } from "vitest";
 import { IsoDate } from "../../../src/date-time/IsoWeek";
 import {
 	DayReport,
-	type InternalTimecodeId,
+	type BekkTimecodeId,
 	type JiraIssueId,
 } from "../../../src/reconciliation/entities";
 import {
@@ -12,8 +12,8 @@ import {
 
 const monday = IsoDate.parse("2025-02-03");
 const tuesday = IsoDate.parse("2025-02-04");
-const managed = 201 as InternalTimecodeId;
-const unmanaged = 202 as InternalTimecodeId;
+const managed = 201 as BekkTimecodeId;
+const unmanaged = 202 as BekkTimecodeId;
 const issue = 101 as JiraIssueId;
 
 describe("toGridEntries", () => {
@@ -21,8 +21,8 @@ describe("toGridEntries", () => {
 		const first = DayReport.empty(monday);
 		first.comparisons.set(managed, {
 			timecodeId: managed,
-			internalHoursWorked: 3,
-			matchedWork: [
+			bekkHours: 3,
+			matchedWorklogs: [
 				{ issueId: issue, date: monday, hoursWorked: 1 },
 				{ issueId: issue, date: monday, hoursWorked: 2 },
 			],
@@ -30,8 +30,8 @@ describe("toGridEntries", () => {
 		const second = DayReport.empty(tuesday);
 		second.comparisons.set(managed, {
 			timecodeId: managed,
-			internalHoursWorked: 2,
-			matchedWork: [],
+			bekkHours: 2,
+			matchedWorklogs: [],
 		});
 
 		expect(toGridEntries([first, second])).toEqual([
@@ -48,7 +48,7 @@ describe("toGridEntries", () => {
 
 	test("sums unmanaged entries and leaves their Jira hours at zero", () => {
 		const report = DayReport.empty(monday);
-		report.unmanagedInternals.push(
+		report.unmanagedEntries.push(
 			{ timecodeId: unmanaged, date: monday, hoursWorked: 1 },
 			{ timecodeId: unmanaged, date: monday, hoursWorked: 2 },
 		);
@@ -63,7 +63,7 @@ describe("toGridEntries", () => {
 
 	test("empty days and unmatched Jira work do not create misleading grid rows", () => {
 		const report = DayReport.empty(monday);
-		report.unmatchedJiraWork.push({
+		report.unmatchedJiraWorklogs.push({
 			issueId: issue,
 			date: monday,
 			hoursWorked: 2,
@@ -75,11 +75,11 @@ describe("toGridEntries", () => {
 		const first = DayReport.empty(monday);
 		first.comparisons.set(managed, {
 			timecodeId: managed,
-			internalHoursWorked: 1,
-			matchedWork: [],
+			bekkHours: 1,
+			matchedWorklogs: [],
 		});
 		const second = DayReport.empty(tuesday);
-		second.unmanagedInternals.push({
+		second.unmanagedEntries.push({
 			timecodeId: managed,
 			date: tuesday,
 			hoursWorked: 1,

@@ -11,12 +11,12 @@ export const PolicyKindTags: React.FC<{ entry: CatalogEntry }> = ({
 				dine regler
 			</Tag>
 		)}
-		{entry.kind === "draft" && (
+		{entry.kind === "local" && !entry.overridesBundled && (
 			<Tag data-color="warning" data-size="sm">
 				bare hos deg
 			</Tag>
 		)}
-		{entry.kind === "edited" && (
+		{entry.overridesBundled && (
 			<Tag data-color="warning" data-size="sm">
 				endret, bare hos deg
 			</Tag>

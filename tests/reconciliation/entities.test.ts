@@ -2,34 +2,34 @@ import { describe, expect, test } from "vitest";
 import { IsoDate } from "../../src/date-time/IsoWeek";
 import {
 	DayReport,
-	InternalTimecodeId,
+	BekkTimecodeId,
 	JiraIssueId,
-	JiraWork,
+	JiraWorklog,
 	LockDate,
 	ManagedTimecodeDayComparison,
 } from "../../src/reconciliation/entities";
 
 const date = IsoDate.parse("2025-02-03");
 const issue = 101 as JiraIssueId;
-const timecode = 201 as InternalTimecodeId;
-const otherTimecode = 202 as InternalTimecodeId;
+const timecode = 201 as BekkTimecodeId;
+const otherTimecode = 202 as BekkTimecodeId;
 
-function work(hoursWorked: number): JiraWork {
+function work(hoursWorked: number): JiraWorklog {
 	return { issueId: issue, date, hoursWorked };
 }
 
 describe("ManagedTimecodeDayComparison", () => {
-	test("compares Internal hours against the sum of all mapped Jira worklogs", () => {
+	test("compares Bekk hours against the sum of all mapped Jira worklogs", () => {
 		const comparison = {
 			timecodeId: timecode,
-			internalHoursWorked: 3,
-			matchedWork: [work(1), work(2)],
+			bekkHours: 3,
+			matchedWorklogs: [work(1), work(2)],
 		};
 
 		expect(ManagedTimecodeDayComparison.jiraHoursWorked(comparison)).toBe(3);
 		expect(ManagedTimecodeDayComparison.isInSync(comparison)).toBe(true);
 
-		comparison.internalHoursWorked = 2;
+		comparison.bekkHours = 2;
 		expect(ManagedTimecodeDayComparison.isInSync(comparison)).toBe(false);
 	});
 });
@@ -39,13 +39,13 @@ describe("DayReport.isInSync", () => {
 		const report = DayReport.empty(date);
 		report.comparisons.set(timecode, {
 			timecodeId: timecode,
-			internalHoursWorked: 2,
-			matchedWork: [work(2)],
+			bekkHours: 2,
+			matchedWorklogs: [work(2)],
 		});
 		report.comparisons.set(otherTimecode, {
 			timecodeId: otherTimecode,
-			internalHoursWorked: 1,
-			matchedWork: [work(2)],
+			bekkHours: 1,
+			matchedWorklogs: [work(2)],
 		});
 
 		expect(DayReport.isInSync(report)).toBe(false);
@@ -53,14 +53,14 @@ describe("DayReport.isInSync", () => {
 
 	test("requires review for unmatched Jira work even without comparisons", () => {
 		const report = DayReport.empty(date);
-		report.unmatchedJiraWork.push(work(1));
+		report.unmatchedJiraWorklogs.push(work(1));
 
 		expect(DayReport.isInSync(report)).toBe(false);
 	});
 
-	test("ignores unmanaged Internal entries when determining sync status", () => {
+	test("ignores unmanaged Bekk entries when determining sync status", () => {
 		const report = DayReport.empty(date);
-		report.unmanagedInternals.push({
+		report.unmanagedEntries.push({
 			timecodeId: otherTimecode,
 			date,
 			hoursWorked: 4,

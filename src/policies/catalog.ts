@@ -2,38 +2,50 @@ import { type Ruleset } from "../rules";
 
 /**
  * - `bundled`: shipped in policies.json
- * - `draft`: only exists as a local draft
- * - `edited`: a local draft that has the same id as a bundled ruleset and overrides it locally
+ * - `local`: saved in this browser
  */
-export type CatalogKind = "bundled" | "draft" | "edited";
+export type CatalogKind = "bundled" | "local";
 
 export interface CatalogEntry {
 	ruleset: Ruleset;
 	kind: CatalogKind;
+	/** A local ruleset with the same id as a bundled one, which it overrides. Always `false` for bundled rulesets. */
+	overridesBundled: boolean;
 	isSelected: boolean;
 }
 
-/** Bundled rulesets and local drafts as one list, with the user's selected ruleset first. */
+/** Bundled and local rulesets as one list, with the user's selected ruleset first. */
 export function buildCatalog(
 	bundled: readonly Ruleset[],
-	drafts: readonly Ruleset[],
+	localRulesets: readonly Ruleset[],
 	selectedId: string | undefined,
 ): CatalogEntry[] {
-	const draftsById = new Map(drafts.map((d) => [d.id as string, d]));
+	const localById = new Map(localRulesets.map((l) => [l.id as string, l]));
 	const bundledIds = new Set(bundled.map((r) => r.id as string));
 
 	const entries: CatalogEntry[] = [
 		...bundled.map((ruleset): CatalogEntry => {
-			const override = draftsById.get(ruleset.id);
+			const override = localById.get(ruleset.id);
 			return override
-				? { ruleset: override, kind: "edited", isSelected: false }
-				: { ruleset, kind: "bundled", isSelected: false };
+				? {
+						ruleset: override,
+						kind: "local",
+						overridesBundled: true,
+						isSelected: false,
+					}
+				: {
+						ruleset,
+						kind: "bundled",
+						overridesBundled: false,
+						isSelected: false,
+					};
 		}),
-		...drafts
-			.filter((d) => !bundledIds.has(d.id))
+		...localRulesets
+			.filter((l) => !bundledIds.has(l.id))
 			.map((ruleset): CatalogEntry => ({
 				ruleset,
-				kind: "draft",
+				kind: "local",
+				overridesBundled: false,
 				isSelected: false,
 			})),
 	].map((entry) => ({ ...entry, isSelected: entry.ruleset.id === selectedId }));
@@ -50,27 +62,27 @@ export function findEntry(
 }
 
 /**
- * The ruleset with `selectedId`, with local drafts overriding bundled rulesets
+ * The ruleset with `selectedId`, with local rulesets overriding bundled rulesets
  * the same way as in `buildCatalog`. `undefined` when nothing is selected or the
- * selected ruleset no longer exists (for example a deleted draft).
+ * selected ruleset no longer exists (for example a deleted local ruleset).
  */
 export function resolveSelected(
 	bundled: readonly Ruleset[],
-	drafts: readonly Ruleset[],
+	localRulesets: readonly Ruleset[],
 	selectedId: string | null | undefined,
 ): Ruleset | undefined {
 	if (!selectedId) {
 		return undefined;
 	}
 	return (
-		drafts.find((d) => d.id === selectedId) ??
+		localRulesets.find((l) => l.id === selectedId) ??
 		bundled.find((r) => r.id === selectedId)
 	);
 }
 
 /**
  * A short key that changes whenever the ruleset's id or rules change, so views
- * keyed on it remount when a selected draft is edited.
+ * keyed on it remount when a selected local ruleset is edited.
  */
 export function rulesetKey(ruleset: Ruleset): string {
 	const text = JSON.stringify([ruleset.id, ruleset.rules]);

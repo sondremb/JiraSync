@@ -1,15 +1,11 @@
 import { IsoDate } from "../date-time/IsoWeek";
 import { groupBy, unique } from "../Utils/arrayUtils";
-import {
-	LoadJiraWorklogs,
-	LoadPolicy,
-	LoadInternalWorklogs,
-} from "./contracts";
+import { LoadJiraWorklogs, LoadPolicy, LoadBekkEntries } from "./contracts";
 import {
 	DayReport,
-	InternalWork,
-	JiraWork,
-	InternalTimecodeId,
+	BekkEntry,
+	JiraWorklog,
+	BekkTimecodeId,
 	ManagedTimecodeDayComparison,
 	JiraMatchResult,
 } from "./entities";
@@ -19,7 +15,7 @@ export async function reconcilePeriod(
 	to: IsoDate,
 	loadJiraWorklogs: LoadJiraWorklogs,
 	loadPolicy: LoadPolicy,
-	loadInternalWorklogs: LoadInternalWorklogs,
+	loadBekkEntries: LoadBekkEntries,
 ): Promise<DayReport[]> {
 	const policy = await loadPolicy();
 
@@ -32,13 +28,13 @@ export async function reconcilePeriod(
 		);
 	}
 
-	const internalWork = await loadInternalWorklogs(from, to);
+	const bekkEntries = await loadBekkEntries(from, to);
 
 	const matchedTimecodeIds = [...matchResultByIssueId.values()]
 		.filter((match) => match.isMatched)
 		.map((match) => match.timecodeId);
 	const allRelevantTimecodes = unique([
-		...internalWork.map((work) => work.timecodeId),
+		...bekkEntries.map((work) => work.timecodeId),
 		...matchedTimecodeIds,
 	]);
 	const managedTimecodes = await policy.selectManaged(allRelevantTimecodes);
@@ -48,32 +44,32 @@ export async function reconcilePeriod(
 		);
 	}
 
-	return reconcileInternal(
+	return reconcileDays(
 		from,
 		to,
-		internalWork,
+		bekkEntries,
 		jiraWorkLogs,
 		matchResultByIssueId,
 		managedTimecodes,
 	);
 }
 
-export function reconcileInternal(
+export function reconcileDays(
 	from: IsoDate,
 	to: IsoDate,
-	internalWorklogs: InternalWork[],
-	jiraWorklogs: JiraWork[],
+	bekkEntries: BekkEntry[],
+	jiraWorklogs: JiraWorklog[],
 	matchResultByIssueId: JiraMatchResult,
-	managedTimecodeIds: Set<InternalTimecodeId>,
+	managedTimecodeIds: Set<BekkTimecodeId>,
 ): DayReport[] {
-	const internalWorkByDate = groupBy(internalWorklogs, (work) => work.date);
+	const bekkEntriesByDate = groupBy(bekkEntries, (work) => work.date);
 	const jiraWorkByDate = groupBy(jiraWorklogs, (work) => work.date);
 
 	const days = IsoDate.range(from, to);
 	return days.map((day) =>
 		createDayReport(
 			day,
-			internalWorkByDate.get(day) ?? [],
+			bekkEntriesByDate.get(day) ?? [],
 			jiraWorkByDate.get(day) ?? [],
 			matchResultByIssueId,
 			managedTimecodeIds,
@@ -83,41 +79,38 @@ export function reconcileInternal(
 
 function createDayReport(
 	date: IsoDate,
-	internalWork: InternalWork[],
-	jiraWork: JiraWork[],
+	bekkEntries: BekkEntry[],
+	jiraWork: JiraWorklog[],
 	matchResultByIssueId: JiraMatchResult,
-	managedTimecodeIds: Set<InternalTimecodeId>,
+	managedTimecodeIds: Set<BekkTimecodeId>,
 ): DayReport {
 	const report = DayReport.empty(date);
 
-	internalWork.forEach((work) => {
+	bekkEntries.forEach((work) => {
 		if (!managedTimecodeIds.has(work.timecodeId)) {
-			report.unmanagedInternals.push(work);
+			report.unmanagedEntries.push(work);
 			return;
 		}
 		const comparison = getOrCreateComparison(report, work.timecodeId);
-		comparison.internalHoursWorked += work.hoursWorked;
+		comparison.bekkHours += work.hoursWorked;
 	});
 
 	jiraWork.forEach((work) => {
 		// invariant: all issues in worklog have a match result
 		const matchResult = matchResultByIssueId.get(work.issueId)!;
 		if (!matchResult.isMatched) {
-			report.unmatchedJiraWork.push(work);
+			report.unmatchedJiraWorklogs.push(work);
 			return;
 		}
-		// invariant: a Policy can only match to Internal Timecodes that are Managed
+		// invariant: a Policy can only match to Bekk Timecodes that are Managed
 		const comparison = getOrCreateComparison(report, matchResult.timecodeId);
-		comparison.matchedWork.push(work);
+		comparison.matchedWorklogs.push(work);
 	});
 
 	return report;
 }
 
-function getOrCreateComparison(
-	report: DayReport,
-	timecodeId: InternalTimecodeId,
-) {
+function getOrCreateComparison(report: DayReport, timecodeId: BekkTimecodeId) {
 	let comparison = report.comparisons.get(timecodeId);
 	if (comparison === undefined) {
 		comparison = ManagedTimecodeDayComparison.empty(timecodeId);

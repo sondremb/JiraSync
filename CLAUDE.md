@@ -28,13 +28,13 @@ JiraSync is a React/TypeScript SPA deployed on Netlify that synchronizes time tr
 
 1. User authenticates via **Jira OAuth** (Atlassian OIDC) and **Bekk MSAL** (Azure Entra ID)
 2. `useWeeklyReconciliation` hook fetches Jira worklogs and Bekk timesheet entries for a given ISO week
-3. The selected mapping policy (`src/policies/policies.json`) routes Jira issues → Bekk timecodes via JQL matching
+3. The selected policy (a ruleset, either bundled from `src/policies/policies.json` or local) routes Jira worklogs → Bekk timecodes via JQL matching
 4. `reconcilePeriod` compares the two datasets and produces `DayReport[]`
 5. `WeeklyReconciliation` renders the weekly grid, sync preview, and locking controls
 
-### Mapping policy (`src/policies/`)
+### Rulesets (`src/policies/`)
 
-Rulesets live in `src/policies/policies.json` — a versioned JSON file validated by the zod schema in `src/policies/schema.ts`. Each ruleset is an ordered list of rules; the first matching rule wins. A rule specifies a Jira project key, an optional JQL condition, and a Bekk timecode ID. Matching is delegated to Jira's `/jql/match` API. When Jira projects add new components or epics, edit `policies.json`.
+A ruleset is the current kind of **policy**. `src/policies/policies.json` holds the **bundled rulesets** — a versioned JSON file validated by the zod schema in `src/policies/schema.ts`. Each ruleset is an ordered list of rules; the first matching rule wins. A rule specifies a Jira project key, an optional JQL condition, and a Bekk timecode ID. Matching is delegated to Jira's `/jql/match` API. When Jira projects add new components or epics, edit `policies.json`.
 
 ### Ruleset editor (`src/policy/`, routes `/policy/*`)
 
@@ -44,13 +44,13 @@ Employees draft rulesets, save them as local rulesets in the browser, and export
 
 Pure domain logic, kept free of API clients so it can be tested with plain functions (tests live in `tests/reconciliation/`).
 
-- `entities.ts` — `JiraWork`, `InternalWork` (Bekk), `DayReport`, `ManagedTimecodeDayComparison`. A `DayReport` has per-timecode `comparisons` (Jira vs Bekk hours), plus `unmanagedInternals` (Bekk hours on timecodes the policy doesn't manage — never touched) and `unmatchedJiraWork` (Jira worklogs no rule matches — a day with any of these is not in sync). `LockDate` is `unknown` (loading or failed, locks every day), `none` (never locked) or a `date`.
+- `entities.ts` — `JiraWorklog`, `BekkEntry`, `BekkTimecodeId`, `DayReport`, `ManagedTimecodeDayComparison`. A `DayReport` has per-timecode `comparisons` (Jira vs Bekk hours), plus `unmanagedEntries` (Bekk entries on timecodes the policy doesn't manage — never touched) and `unmatchedJiraWorklogs` (Jira worklogs no rule matches — a day with any of these is not in sync). `LockDate` is `unknown` (loading or failed, locks every day), `none` (never locked) or a `date`.
 - `contracts.ts` — `Policy` (`matchIssues`, `selectManaged`) and the loader function types injected into reconciliation.
-- `reconcile.ts` — `reconcilePeriod` loads Jira worklogs, matches issues via the policy, loads Bekk worklogs, and builds `DayReport[]`. It throws on invariant failures (policy missed an issue, or matched a timecode it doesn't manage).
+- `reconcile.ts` — `reconcilePeriod` loads Jira worklogs, matches issues via the policy, loads Bekk entries, and builds `DayReport[]`. It throws on invariant failures (policy missed an issue, or matched a timecode it doesn't manage).
 - `implementation/jqlPolicy.ts` — the `Policy` implementation backed by a `Ruleset`.
 - `syncPreview.ts` — `planSync` turns reports into `ProposedChange[]` (date, timecode, current → target hours). Jira hours are the source of truth; only managed timecodes with differing hours produce changes.
 - `syncWeek.ts` — applies changes sequentially via an injected `write`; on failure it throws with how many entries were already updated.
-- `useWeeklyReconciliation.ts` — React Query glue: `useWeeklyReconciliation(week, ruleset)` query and `useSyncWeek()` mutation (invalidates the `["reconciliation"]` queries). The concrete loaders/writers are in `src/data/` (`jira/loadJiraWorklogs`, `loadInternalWorklogs`, `writeInternalHours`).
+- `useWeeklyReconciliation.ts` — React Query glue: `useWeeklyReconciliation(week, ruleset)` query and `useSyncWeek()` mutation (invalidates the `["reconciliation"]` queries). The concrete loaders/writers are in `src/data/` (`jira/loadJiraWorklogs`, `loadBekkEntries`, `writeBekkHours`).
 
 ### Authentication
 

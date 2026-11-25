@@ -1,5 +1,5 @@
 import { IsoDate } from "../../date-time/IsoWeek";
-import { JiraIssueId, JiraWork } from "../../reconciliation/entities";
+import { JiraIssueId, JiraWorklog } from "../../reconciliation/entities";
 import { jiraClient } from "./jiraclient";
 import { components } from "../../generated/jira-issues";
 
@@ -10,7 +10,7 @@ export async function loadIssueWorklogs(
 	from: IsoDate,
 	to: IsoDate,
 	accountId: string,
-): Promise<JiraWork[]> {
+): Promise<JiraWorklog[]> {
 	const startedAfter =
 		IsoDate.toDateAt(from, { hours: 0, minutes: 0 }).getTime() - 1;
 	const dayAfterTo = IsoDate.addDays(to, 1);
@@ -18,7 +18,7 @@ export async function loadIssueWorklogs(
 		hours: 0,
 		minutes: 0,
 	}).getTime();
-	const work: JiraWork[] = [];
+	const work: JiraWorklog[] = [];
 	let startAt = 0;
 
 	// Each page advances startAt or the operation fails; return when total is reached.

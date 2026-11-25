@@ -2,7 +2,7 @@ import { describe, expect, test } from "vitest";
 import { IsoDate, IsoWeek } from "../../../src/date-time/IsoWeek";
 import {
 	DayReport,
-	type InternalTimecodeId,
+	type BekkTimecodeId,
 	type JiraIssueId,
 	LockDate,
 } from "../../../src/reconciliation/entities";
@@ -17,7 +17,7 @@ const days = IsoWeek.days(week);
 const [monday, tuesday, , , , saturday, sunday] = days;
 const beforeWeek = LockDate.of(IsoDate.parse("2025-01-31"));
 const issue = 101 as JiraIssueId;
-const timecode = (id: number) => id as InternalTimecodeId;
+const timecode = (id: number) => id as BekkTimecodeId;
 
 const emptyWeek = () => days.map((date) => DayReport.empty(date));
 
@@ -35,15 +35,15 @@ const addManaged = (
 ) => {
 	report.comparisons.set(timecode(id), {
 		timecodeId: timecode(id),
-		internalHoursWorked: bekkHours,
-		matchedWork: jiraHours
+		bekkHours: bekkHours,
+		matchedWorklogs: jiraHours
 			? [{ issueId: issue, date: report.date, hoursWorked: jiraHours }]
 			: [],
 	});
 };
 
 const addUnmanaged = (report: DayReport, id: number, hours: number) => {
-	report.unmanagedInternals.push({
+	report.unmanagedEntries.push({
 		timecodeId: timecode(id),
 		date: report.date,
 		hoursWorked: hours,
@@ -87,7 +87,7 @@ describe("toDayList", () => {
 
 		test("unmatched Jira worklogs keep both days", () => {
 			const reports = emptyWeek();
-			reportOn(reports, saturday).unmatchedJiraWork.push({
+			reportOn(reports, saturday).unmatchedJiraWorklogs.push({
 				issueId: issue,
 				date: saturday,
 				hoursWorked: 1,
@@ -124,7 +124,7 @@ describe("toDayList", () => {
 
 	test("a day with only unmatched Jira worklogs has no lines", () => {
 		const reports = emptyWeek();
-		reportOn(reports, monday).unmatchedJiraWork.push({
+		reportOn(reports, monday).unmatchedJiraWorklogs.push({
 			issueId: issue,
 			date: monday,
 			hoursWorked: 2,

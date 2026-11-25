@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { bekkClient } from "./bekkclient";
 import { getEmployeeId } from "../login/bekk/bekkLogin";
-import { lockInternalHours } from "./lockInternalHours";
+import { lockBekkHours } from "./lockBekkHours";
 import { lockDateFromBekk } from "./lockDateFromBekk";
 
 export const useLockDate = () => {
@@ -21,7 +21,7 @@ export const useLockDate = () => {
 	});
 
 	const updateLockDate = useMutation({
-		mutationFn: lockInternalHours,
+		mutationFn: lockBekkHours,
 		onSuccess: async () => {
 			await queryClient.invalidateQueries({ queryKey: ["bekk", "lockdate"] });
 		},

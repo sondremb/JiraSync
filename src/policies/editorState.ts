@@ -1,6 +1,6 @@
 import { type JiraProjectKey } from "../data/issue";
 import { Rule, type Jql } from "../rules";
-import { type BekkId } from "../types";
+import { type BekkTimecodeId } from "../reconciliation/entities";
 import { type CatalogEntry } from "./catalog";
 import { type DraftValidation, DraftRuleset } from "./draft";
 
@@ -49,7 +49,7 @@ export function effectiveJql(projectKey: string, jql: string): Jql | undefined {
 	return Rule.toFullJql({
 		projectKey: key as JiraProjectKey,
 		jql: (jql.trim() || undefined) as Jql | undefined,
-		timecode: 0 as BekkId, // irrelevant for the JQL string
+		timecode: 0 as BekkTimecodeId, // irrelevant for the JQL string
 	});
 }
 

@@ -37,7 +37,7 @@ The current kind of policy: an ordered list of rules, each pairing a Jira projec
 _Avoid_: Policy file, rule list
 
 **Managed timecode**:
-A Bekk timecode whose hours Jira owns under the selected policy. Its Bekk entries should always equal the matched Jira worklogs. The policy decides which timecodes it manages: these must include every timecode it matches worklogs to, and may include others, such as timecodes retired by a contract change.
+A Bekk timecode whose hours Jira owns under the selected policy. Its Bekk entries should always equal the matched Jira worklogs. The policy decides which timecodes it manages: these must include every timecode it matches worklogs to, and may include others, such as timecodes retired by a policy change.
 _Avoid_: Synced timecode, mapped timecode
 
 **Unmanaged entry**:

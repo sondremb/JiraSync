@@ -33,26 +33,30 @@ describe("buildCatalog", () => {
 		expect(catalog[0].isSelected).toBe(true);
 	});
 
-	test("appends draft-only rulesets after the bundled ones", () => {
+	test("appends local-only rulesets after the bundled ones", () => {
 		const catalog = buildCatalog(bundled, [ruleset("mine")], undefined);
 		expect(catalog.map((e) => [e.ruleset.id, e.kind])).toEqual([
 			["a", "bundled"],
 			["b", "bundled"],
 			["c", "bundled"],
-			["mine", "draft"],
+			["mine", "local"],
 		]);
 	});
 
-	test("a draft with a bundled id overrides it in place", () => {
+	test("a local ruleset with a bundled id overrides it in place", () => {
 		const catalog = buildCatalog(bundled, [ruleset("b", "My b")], undefined);
 		expect(catalog.map((e) => e.ruleset.id)).toEqual(["a", "b", "c"]);
-		expect(catalog[1]).toMatchObject({ kind: "edited" });
+		expect(catalog[1]).toMatchObject({ kind: "local", overridesBundled: true });
 		expect(catalog[1].ruleset.name).toBe("My b");
 	});
 
-	test("selection can point at a draft", () => {
+	test("selection can point at a local ruleset", () => {
 		const catalog = buildCatalog(bundled, [ruleset("mine")], "mine");
-		expect(catalog[0]).toMatchObject({ kind: "draft", isSelected: true });
+		expect(catalog[0]).toMatchObject({
+			kind: "local",
+			overridesBundled: false,
+			isSelected: true,
+		});
 	});
 
 	test("findEntry looks up by id", () => {
@@ -74,7 +78,7 @@ describe("resolveSelected", () => {
 		expect(resolveSelected(bundled, [], "b")?.name).toBe("B");
 	});
 
-	test("finds a draft-only ruleset", () => {
+	test("finds a local-only ruleset", () => {
 		expect(resolveSelected(bundled, [ruleset("mine")], "mine")?.id).toBe(
 			"mine",
 		);
@@ -90,7 +94,7 @@ describe("resolveSelected", () => {
 		expect(resolveSelected(bundled, [], "b")?.name).toBe("B");
 	});
 
-	test("a selected draft that was deleted gives undefined", () => {
+	test("a selected local ruleset that was deleted gives undefined", () => {
 		expect(resolveSelected(bundled, [], "mine")).toBeUndefined();
 	});
 });
