@@ -55,7 +55,7 @@ Pure domain logic, kept free of API clients so it can be tested with plain funct
 ### Authentication
 
 - **Jira**: OAuth 2.0 tokens stored in `sessionStorage`; refresh handled by Netlify serverless function `src/backend/jira-auth-session.ts` using httpOnly cookie refresh tokens
-- **Bekk**: Azure Entra ID via `@azure/msal-react`, managed in `src/login/bekk/`. Read the Bekk user with `useBekkAccount()`, not `useMsal()`, so the fake backend works.
+- **Bekk**: Azure Entra ID via `@azure/msal-react`, managed in `src/login/bekk/`. `useBekkAccount()` reads the Bekk user.
 
 ### API clients
 
@@ -70,11 +70,11 @@ Auth is injected via middleware on each client. Jira uses a sessionStorage-backe
 
 ### Key patterns
 
-- **Branded types** (`Utils/brandedTypes.ts`): `JiraIssueKey`, `IsoDate`, `IsoWeek`, `AccessToken` — prevent accidental mixing of string values
-- **ISO week** (`src/date-time/IsoWeek.ts`): All date handling uses Norway timezone; format is `YYYY-Www`
-- **Styling**: Digdir Designsystemet (`@digdir/designsystemet-react`, default theme, light mode only: `data-color-scheme="light"` is hardcoded in `index.html`) with icons from `@navikt/aksel-icons`. Custom styles are CSS modules (`*.module.css`) with BEM class names (`block__element--modifier`) using `--ds-*` tokens. Global base styles live in `src/global.css`. Layout primitives are in `src/layout/` (`Page`, `Row`, `Column`).
-- **Tests**: no jsdom or testing-library, so keep logic in pure modules and test those.
-- **Server state**: `@tanstack/react-query` for all Jira and Bekk API calls — `useQuery` for fetches, `useMutation` + `invalidateQueries` for writes
+Coding rules live in `CODING_STANDARDS.md`, which review checks against.
+
+- **Branded types**: `src/Utils/brandedTypes.ts`. **Dates and ISO weeks**: `src/date-time/IsoWeek.ts`. **Shared helpers**: `src/Utils/`.
+- **Styling**: Digdir Designsystemet, default theme, light mode only (`data-color-scheme="light"` is hardcoded in `index.html`). Global base styles live in `src/global.css`. Layout primitives are in `src/layout/` (`Page`, `Row`, `Column`).
+- **Tests**: vitest, no jsdom or testing-library.
 
 ### Fake backend (`src/fake/`, local dev only)
 
