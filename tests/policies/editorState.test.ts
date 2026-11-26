@@ -10,14 +10,16 @@ import {
 	takenIds,
 } from "../../src/policies/editorState";
 import { type Ruleset, type RulesetId } from "../../src/rules";
-import { type BekkId } from "../../src/types";
+import { type BekkTimecodeId } from "../../src/reconciliation/entities";
 
 function ruleset(id: string, name = id): Ruleset {
 	return {
 		id: id as RulesetId,
 		name,
 		description: "Beskrivelse",
-		rules: [{ projectKey: "ABC" as JiraProjectKey, timecode: 12 as BekkId }],
+		rules: [
+			{ projectKey: "ABC" as JiraProjectKey, timecode: 12 as BekkTimecodeId },
+		],
 	};
 }
 

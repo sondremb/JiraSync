@@ -2,7 +2,7 @@ import type { IsoDate } from "../../date-time/IsoWeek";
 import {
 	ManagedTimecodeDayComparison,
 	type DayReport,
-	type InternalTimecodeId,
+	type BekkTimecodeId,
 } from "../../reconciliation/entities";
 
 export interface GridDay {
@@ -11,14 +11,14 @@ export interface GridDay {
 }
 
 export interface GridEntry {
-	id: InternalTimecodeId;
+	id: BekkTimecodeId;
 	managed: boolean;
 	days: Partial<Record<IsoDate, GridDay>>;
 }
 
 export function toGridEntries(reports: readonly DayReport[]): GridEntry[] {
-	const entries = new Map<InternalTimecodeId, GridEntry>();
-	const getEntry = (id: InternalTimecodeId, managed: boolean): GridEntry => {
+	const entries = new Map<BekkTimecodeId, GridEntry>();
+	const getEntry = (id: BekkTimecodeId, managed: boolean): GridEntry => {
 		let entry = entries.get(id);
 		if (!entry) {
 			entry = { id, managed, days: {} };
@@ -38,11 +38,11 @@ export function toGridEntries(reports: readonly DayReport[]): GridEntry[] {
 				bekkHours: 0,
 				totalJiraHours: 0,
 			});
-			day.bekkHours += comparison.internalHoursWorked;
+			day.bekkHours += comparison.bekkHours;
 			day.totalJiraHours +=
 				ManagedTimecodeDayComparison.jiraHoursWorked(comparison);
 		}
-		for (const work of report.unmanagedInternals) {
+		for (const work of report.unmanagedEntries) {
 			const entry = getEntry(work.timecodeId, false);
 			const day = (entry.days[report.date] ??= {
 				bekkHours: 0,

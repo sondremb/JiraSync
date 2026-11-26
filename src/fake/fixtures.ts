@@ -2,7 +2,7 @@ import policiesJson from "../policies/policies.json";
 import { loadPolicies } from "../policies/schema";
 import type { Ruleset, RulesetId } from "../rules";
 import type { JiraProjectKey } from "../data/issue";
-import type { BekkId } from "../types";
+import type { BekkTimecodeId } from "../reconciliation/entities";
 import { fakeBekkAccount } from "./fakeAccount";
 
 /**
@@ -240,14 +240,17 @@ export const fakeLocalRuleset: Ruleset = {
 	rules: [
 		{
 			projectKey: "PASX" as JiraProjectKey,
-			timecode: pasxNew as BekkId,
+			timecode: pasxNew as BekkTimecodeId,
 			comment: "Alt på PASX",
 		},
-		{ projectKey: "PASP" as JiraProjectKey, timecode: paspNew as BekkId },
-		{ projectKey: "SO" as JiraProjectKey, timecode: so as BekkId },
+		{
+			projectKey: "PASP" as JiraProjectKey,
+			timecode: paspNew as BekkTimecodeId,
+		},
+		{ projectKey: "SO" as JiraProjectKey, timecode: so as BekkTimecodeId },
 		{
 			projectKey: "INTERN" as JiraProjectKey,
-			timecode: unmanagedTimecode as BekkId,
+			timecode: unmanagedTimecode as BekkTimecodeId,
 			comment: "Fagdager",
 		},
 	],

@@ -2,21 +2,21 @@ import { describe, expect, test } from "vitest";
 import { IsoDate } from "../../src/date-time/IsoWeek";
 import {
 	DayReport,
-	InternalTimecodeId,
+	BekkTimecodeId,
 	JiraIssueId,
-	JiraWork,
+	JiraWorklog,
 	ManagedTimecodeDayComparison,
 	JiraMatchResult,
 } from "../../src/reconciliation/entities";
-import { reconcileInternal } from "../../src/reconciliation/reconcile";
+import { reconcileDays } from "../../src/reconciliation/reconcile";
 
 const monday = IsoDate.parse("2025-02-03");
 const tuesday = IsoDate.parse("2025-02-04");
 const wednesday = IsoDate.parse("2025-02-05");
 const issue = 101 as JiraIssueId;
 const otherIssue = 102 as JiraIssueId;
-const timecode = 201 as InternalTimecodeId;
-const otherTimecode = 202 as InternalTimecodeId;
+const timecode = 201 as BekkTimecodeId;
+const otherTimecode = 202 as BekkTimecodeId;
 
 function mapped(...ids: JiraIssueId[]): JiraMatchResult {
 	return new Map(
@@ -28,13 +28,13 @@ function jira(
 	issueId: JiraIssueId,
 	date: IsoDate,
 	hoursWorked: number,
-): JiraWork {
+): JiraWorklog {
 	return { issueId, date, hoursWorked };
 }
 
-describe("reconcileInternal", () => {
+describe("reconcileDays", () => {
 	test("returns an in-sync report for each day of an empty period", () => {
-		const reports = reconcileInternal(
+		const reports = reconcileDays(
 			monday,
 			wednesday,
 			[],
@@ -60,7 +60,7 @@ describe("reconcileInternal", () => {
 			jira(issue, monday, 2),
 			jira(otherIssue, monday, 2),
 		];
-		const [report] = reconcileInternal(
+		const [report] = reconcileDays(
 			monday,
 			monday,
 			[{ timecodeId: timecode, date: monday, hoursWorked: 5 }],
@@ -71,15 +71,15 @@ describe("reconcileInternal", () => {
 		const comparison = report.comparisons.get(timecode);
 
 		expect(report.comparisons.size).toBe(1);
-		expect(comparison?.matchedWork).toEqual(worklogs);
+		expect(comparison?.matchedWorklogs).toEqual(worklogs);
 		expect(
 			comparison && ManagedTimecodeDayComparison.jiraHoursWorked(comparison),
 		).toBe(5);
 		expect(DayReport.isInSync(report)).toBe(true);
 	});
 
-	test("adds repeated Internal entries for the same day and timecode", () => {
-		const [report] = reconcileInternal(
+	test("adds repeated Bekk entries for the same day and timecode", () => {
+		const [report] = reconcileDays(
 			monday,
 			monday,
 			[
@@ -91,12 +91,12 @@ describe("reconcileInternal", () => {
 			new Set([timecode]),
 		);
 
-		expect(report.comparisons.get(timecode)?.internalHoursWorked).toBe(5);
+		expect(report.comparisons.get(timecode)?.bekkHours).toBe(5);
 		expect(DayReport.isInSync(report)).toBe(true);
 	});
 
 	test("treats absent hours on either side as zero", () => {
-		const [report] = reconcileInternal(
+		const [report] = reconcileDays(
 			monday,
 			monday,
 			[{ timecodeId: otherTimecode, date: monday, hoursWorked: 3 }],
@@ -105,8 +105,8 @@ describe("reconcileInternal", () => {
 			new Set([timecode, otherTimecode]),
 		);
 
-		expect(report.comparisons.get(timecode)?.internalHoursWorked).toBe(0);
-		expect(report.comparisons.get(otherTimecode)?.matchedWork).toEqual([]);
+		expect(report.comparisons.get(timecode)?.bekkHours).toBe(0);
+		expect(report.comparisons.get(otherTimecode)?.matchedWorklogs).toEqual([]);
 		expect(DayReport.isInSync(report)).toBe(false);
 	});
 
@@ -114,7 +114,7 @@ describe("reconcileInternal", () => {
 		const unmatched = jira(otherIssue, monday, 1);
 		const matches = mapped(issue);
 		matches.set(otherIssue, { isMatched: false });
-		const [report] = reconcileInternal(
+		const [report] = reconcileDays(
 			monday,
 			monday,
 			[{ timecodeId: timecode, date: monday, hoursWorked: 2 }],
@@ -123,20 +123,20 @@ describe("reconcileInternal", () => {
 			new Set([timecode]),
 		);
 
-		expect(report.unmatchedJiraWork).toEqual([unmatched]);
+		expect(report.unmatchedJiraWorklogs).toEqual([unmatched]);
 		expect(
 			ManagedTimecodeDayComparison.isInSync(report.comparisons.get(timecode)!),
 		).toBe(true);
 		expect(DayReport.isInSync(report)).toBe(false);
 	});
 
-	test("shows unmanaged Internal entries without affecting sync status", () => {
+	test("shows unmanaged Bekk entries without affecting sync status", () => {
 		const unmanaged = {
 			timecodeId: otherTimecode,
 			date: monday,
 			hoursWorked: 4,
 		};
-		const [report] = reconcileInternal(
+		const [report] = reconcileDays(
 			monday,
 			monday,
 			[{ timecodeId: timecode, date: monday, hoursWorked: 2 }, unmanaged],
@@ -145,13 +145,13 @@ describe("reconcileInternal", () => {
 			new Set([timecode]),
 		);
 
-		expect(report.unmanagedInternals).toEqual([unmanaged]);
+		expect(report.unmanagedEntries).toEqual([unmanaged]);
 		expect(report.comparisons.has(otherTimecode)).toBe(false);
 		expect(DayReport.isInSync(report)).toBe(true);
 	});
 
 	test("keeps daily comparisons separate across an empty day", () => {
-		const reports = reconcileInternal(
+		const reports = reconcileDays(
 			monday,
 			wednesday,
 			[
@@ -174,6 +174,6 @@ describe("reconcileInternal", () => {
 			false,
 		]);
 		expect(reports[1].comparisons.size).toBe(0);
-		expect(reports[2].comparisons.get(timecode)?.internalHoursWorked).toBe(1);
+		expect(reports[2].comparisons.get(timecode)?.bekkHours).toBe(1);
 	});
 });

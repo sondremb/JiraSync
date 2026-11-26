@@ -2,7 +2,7 @@ import type { IsoDate } from "../date-time/IsoWeek";
 import { getEmployeeId } from "../login/bekk/bekkLogin";
 import { bekkClient } from "./bekkclient";
 
-export async function lockInternalHours(lockDate: IsoDate): Promise<void> {
+export async function lockBekkHours(lockDate: IsoDate): Promise<void> {
 	const { response, data } = await bekkClient.PUT("/timesheets/lockhours", {
 		params: { query: { employeeId: getEmployeeId(), lockDate } },
 	});

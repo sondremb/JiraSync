@@ -2,15 +2,15 @@ import { IsoDate } from "../date-time/IsoWeek";
 import { Brand } from "../Utils/brandedTypes";
 
 export type JiraIssueId = Brand<number, "jiraIssueId">;
-export interface JiraWork {
+export interface JiraWorklog {
 	issueId: JiraIssueId;
 	date: IsoDate;
 	hoursWorked: number;
 }
 
-export type InternalTimecodeId = Brand<number, "internalTimecodeID">;
-export interface InternalWork {
-	timecodeId: InternalTimecodeId;
+export type BekkTimecodeId = Brand<number, "bekkTimecodeId">;
+export interface BekkEntry {
+	timecodeId: BekkTimecodeId;
 	date: IsoDate;
 	hoursWorked: number;
 }
@@ -18,24 +18,24 @@ export interface InternalWork {
 export type JiraMatchResult = Map<JiraIssueId, IssueMatchResult>;
 
 export type IssueMatchResult =
-	| { isMatched: true; timecodeId: InternalTimecodeId }
+	| { isMatched: true; timecodeId: BekkTimecodeId }
 	| { isMatched: false };
 
 export interface ManagedTimecodeDayComparison {
-	timecodeId: InternalTimecodeId;
-	internalHoursWorked: number;
-	matchedWork: JiraWork[];
+	timecodeId: BekkTimecodeId;
+	bekkHours: number;
+	matchedWorklogs: JiraWorklog[];
 }
 export const ManagedTimecodeDayComparison = {
-	empty(timecodeId: InternalTimecodeId): ManagedTimecodeDayComparison {
+	empty(timecodeId: BekkTimecodeId): ManagedTimecodeDayComparison {
 		return {
 			timecodeId,
-			internalHoursWorked: 0,
-			matchedWork: [],
+			bekkHours: 0,
+			matchedWorklogs: [],
 		};
 	},
 	jiraHoursWorked(comparison: ManagedTimecodeDayComparison): number {
-		return comparison.matchedWork.reduce(
+		return comparison.matchedWorklogs.reduce(
 			(sum, jiraWork) => sum + jiraWork.hoursWorked,
 			0,
 		);
@@ -43,33 +43,33 @@ export const ManagedTimecodeDayComparison = {
 	isInSync(comparison: ManagedTimecodeDayComparison): boolean {
 		return (
 			ManagedTimecodeDayComparison.jiraHoursWorked(comparison) ===
-			comparison.internalHoursWorked
+			comparison.bekkHours
 		);
 	},
 };
 
 export interface DayReport {
 	date: IsoDate;
-	comparisons: Map<InternalTimecodeId, ManagedTimecodeDayComparison>;
-	unmanagedInternals: InternalWork[];
-	unmatchedJiraWork: JiraWork[];
+	comparisons: Map<BekkTimecodeId, ManagedTimecodeDayComparison>;
+	unmanagedEntries: BekkEntry[];
+	unmatchedJiraWorklogs: JiraWorklog[];
 }
 export const DayReport = {
 	empty(date: IsoDate): DayReport {
 		return {
 			date,
 			comparisons: new Map(),
-			unmanagedInternals: [],
-			unmatchedJiraWork: [],
+			unmanagedEntries: [],
+			unmatchedJiraWorklogs: [],
 		};
 	},
 	isInSync(report: DayReport): boolean {
 		const comparisons = Array.from(report.comparisons.values());
-		const noMismatchedInternal = comparisons.every((comparison) =>
+		const noMismatchedBekk = comparisons.every((comparison) =>
 			ManagedTimecodeDayComparison.isInSync(comparison),
 		);
-		const noUnmatchedJira = report.unmatchedJiraWork.length === 0;
-		return noMismatchedInternal && noUnmatchedJira;
+		const noUnmatchedJira = report.unmatchedJiraWorklogs.length === 0;
+		return noMismatchedBekk && noUnmatchedJira;
 	},
 };
 

@@ -8,7 +8,7 @@ import {
 } from "../../src/policies/draftStore";
 import { type Ruleset, type RulesetId } from "../../src/rules";
 import { type JiraProjectKey } from "../../src/data/issue";
-import { type BekkId } from "../../src/types";
+import { type BekkTimecodeId } from "../../src/reconciliation/entities";
 
 function fakeStorage(
 	initial?: string,
@@ -27,7 +27,9 @@ function ruleset(id: string, name = id): Ruleset {
 	return {
 		id: id as RulesetId,
 		name,
-		rules: [{ projectKey: "AAA" as JiraProjectKey, timecode: 1 as BekkId }],
+		rules: [
+			{ projectKey: "AAA" as JiraProjectKey, timecode: 1 as BekkTimecodeId },
+		],
 	};
 }
 

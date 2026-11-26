@@ -2,7 +2,7 @@ import { describe, expect, test, vi } from "vitest";
 import { JiraProjectKey } from "../../../src/data/issue";
 import { Jql, Ruleset, RulesetId } from "../../../src/rules";
 import {
-	InternalTimecodeId,
+	BekkTimecodeId,
 	JiraIssueId,
 } from "../../../src/reconciliation/entities";
 import { createJqlPolicy } from "../../../src/reconciliation/implementation/jqlPolicy";
@@ -10,8 +10,8 @@ import { createJqlPolicy } from "../../../src/reconciliation/implementation/jqlP
 const firstIssue = 101 as JiraIssueId;
 const secondIssue = 102 as JiraIssueId;
 const unexpectedIssue = 103 as JiraIssueId;
-const firstTimecode = 201 as InternalTimecodeId;
-const secondTimecode = 202 as InternalTimecodeId;
+const firstTimecode = 201 as BekkTimecodeId;
+const secondTimecode = 202 as BekkTimecodeId;
 
 const ruleset: Ruleset = {
 	id: "test-policy" as RulesetId,
@@ -102,7 +102,7 @@ describe("createJqlPolicy", () => {
 			await policy.selectManaged([
 				firstTimecode,
 				secondTimecode,
-				9999 as InternalTimecodeId,
+				9999 as BekkTimecodeId,
 			]),
 		).toEqual(new Set([firstTimecode, secondTimecode]));
 	});

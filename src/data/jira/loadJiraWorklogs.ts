@@ -1,5 +1,5 @@
 import { IsoDate } from "../../date-time/IsoWeek";
-import { JiraWork } from "../../reconciliation/entities";
+import { JiraWorklog } from "../../reconciliation/entities";
 import { loadAccountId } from "./loadAccountId";
 import { loadWorkedIssueIds } from "./loadWorkedIssueIds";
 import { loadIssueWorklogs } from "./loadIssueWorklogs";
@@ -7,7 +7,7 @@ import { loadIssueWorklogs } from "./loadIssueWorklogs";
 export async function loadJiraWorklogs(
 	from: IsoDate,
 	to: IsoDate,
-): Promise<JiraWork[]> {
+): Promise<JiraWorklog[]> {
 	const [accountId, issueIds] = await Promise.all([
 		loadAccountId(),
 		loadWorkedIssueIds(from, to),

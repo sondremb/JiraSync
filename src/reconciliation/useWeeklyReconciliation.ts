@@ -1,8 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { IsoWeek } from "../date-time/IsoWeek";
-import { loadInternalWorklogs } from "../data/loadInternalWorklogs";
+import { loadBekkEntries } from "../data/loadBekkEntries";
 import { loadJiraWorklogs } from "../data/jira/loadJiraWorklogs";
-import { writeInternalHours } from "../data/writeInternalHours";
+import { writeBekkHours } from "../data/writeBekkHours";
 import { Ruleset } from "../rules";
 import { createJqlPolicy } from "./implementation/jqlPolicy";
 import { reconcilePeriod } from "./reconcile";
@@ -26,7 +26,7 @@ export function useWeeklyReconciliation(week: IsoWeek, ruleset: Ruleset) {
 				IsoWeek.sunday(week),
 				loadJiraWorklogs,
 				async () => createJqlPolicy(ruleset, matchJqls),
-				loadInternalWorklogs,
+				loadBekkEntries,
 			),
 	});
 }
@@ -35,7 +35,7 @@ export function useSyncWeek() {
 	const client = useQueryClient();
 	return useMutation({
 		mutationFn: (changes: readonly ProposedChange[]) =>
-			syncWeek(changes, writeInternalHours),
+			syncWeek(changes, writeBekkHours),
 		onSettled: async () => {
 			await client.invalidateQueries({ queryKey: ["reconciliation"] });
 		},

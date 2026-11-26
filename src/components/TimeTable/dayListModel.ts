@@ -1,9 +1,6 @@
 import { IsoDate } from "../../date-time/IsoWeek";
 import { LockDate } from "../../reconciliation/entities";
-import type {
-	DayReport,
-	InternalTimecodeId,
-} from "../../reconciliation/entities";
+import type { DayReport, BekkTimecodeId } from "../../reconciliation/entities";
 import {
 	cellState,
 	toGridEntries,
@@ -13,7 +10,7 @@ import {
 
 /** One timecode on one day. */
 export interface DayListLine {
-	id: InternalTimecodeId;
+	id: BekkTimecodeId;
 	managed: boolean;
 	bekkHours: number;
 	/** Omitted for unmanaged timecodes, as on desktop. */
@@ -90,7 +87,7 @@ const toDay = (
 
 /** Unmatched Jira worklogs count as hours, so a weekend with them still shows. */
 const isEmpty = (day: DayListDay, report: DayReport) =>
-	day.lines.length === 0 && report.unmatchedJiraWork.length === 0;
+	day.lines.length === 0 && report.unmatchedJiraWorklogs.length === 0;
 
 /** The mobile view of a week: one block per day, empty weekends collapsed. */
 export function toDayList(

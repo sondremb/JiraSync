@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { type JiraProjectKey } from "../data/issue";
 import { type Ruleset, type Rule, type RulesetId, type Jql } from "../rules";
-import { type BekkId } from "../types";
+import { type BekkTimecodeId } from "../reconciliation/entities";
 
 export const ruleSchema = z.object({
 	projectKey: z.string().min(1),
@@ -31,7 +31,7 @@ export function loadPolicies(raw: unknown): Ruleset[] {
 		rules: r.rules.map((rule): Rule => ({
 			projectKey: rule.projectKey as JiraProjectKey,
 			jql: rule.jql as Jql | undefined,
-			timecode: rule.timecode as BekkId,
+			timecode: rule.timecode as BekkTimecodeId,
 			comment: rule.comment,
 		})),
 	}));

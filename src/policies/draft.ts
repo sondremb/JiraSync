@@ -1,6 +1,6 @@
 import { type JiraProjectKey } from "../data/issue";
 import { type Jql, type Rule, type Ruleset, type RulesetId } from "../rules";
-import { type BekkId } from "../types";
+import { type BekkTimecodeId } from "../reconciliation/entities";
 
 /**
  * Editable, possibly incomplete form of a ruleset. Everything here is plain
@@ -215,7 +215,7 @@ function toRule(rule: DraftRule): Rule {
 	return {
 		projectKey: rule.projectKey.trim() as JiraProjectKey,
 		...(jql ? { jql: jql as Jql } : {}),
-		timecode: rule.timecode as BekkId,
+		timecode: rule.timecode as BekkTimecodeId,
 		...(comment ? { comment } : {}),
 	};
 }

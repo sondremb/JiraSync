@@ -49,7 +49,8 @@ export const useWeekSync = (
 	const changes = data ? planSync(data, lockDate) : [];
 	const lockedDays = data ? lockedOutOfSyncDays(data, lockDate) : [];
 	const unmatchedCount =
-		data?.reduce((count, day) => count + day.unmatchedJiraWork.length, 0) ?? 0;
+		data?.reduce((count, day) => count + day.unmatchedJiraWorklogs.length, 0) ??
+		0;
 	/** The preview only stays open while the data it was planned from is current. */
 	const version = JSON.stringify([
 		week,

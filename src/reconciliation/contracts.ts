@@ -1,26 +1,24 @@
 import { IsoDate } from "../date-time/IsoWeek";
 import {
-	InternalTimecodeId,
-	InternalWork,
+	BekkTimecodeId,
+	BekkEntry,
 	JiraIssueId,
-	JiraWork,
+	JiraWorklog,
 	JiraMatchResult,
 } from "./entities";
 
 export interface Policy {
 	matchIssues: (issues: JiraIssueId[]) => Promise<JiraMatchResult>;
-	selectManaged: (
-		ids: InternalTimecodeId[],
-	) => Promise<Set<InternalTimecodeId>>;
+	selectManaged: (ids: BekkTimecodeId[]) => Promise<Set<BekkTimecodeId>>;
 }
 export type LoadPolicy = () => Promise<Policy>;
 
 export type LoadJiraWorklogs = (
 	from: IsoDate,
 	to: IsoDate,
-) => Promise<JiraWork[]>;
+) => Promise<JiraWorklog[]>;
 
-export type LoadInternalWorklogs = (
+export type LoadBekkEntries = (
 	from: IsoDate,
 	to: IsoDate,
-) => Promise<InternalWork[]>;
+) => Promise<BekkEntry[]>;

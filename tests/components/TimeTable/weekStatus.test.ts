@@ -2,7 +2,7 @@ import { describe, expect, test } from "vitest";
 import { IsoDate, IsoWeek } from "../../../src/date-time/IsoWeek";
 import {
 	DayReport,
-	type InternalTimecodeId,
+	type BekkTimecodeId,
 	type JiraIssueId,
 	LockDate,
 } from "../../../src/reconciliation/entities";
@@ -13,14 +13,14 @@ const week = IsoWeek.fromDate(IsoDate.toDate(IsoDate.parse("2025-02-03")));
 const [monday, tuesday, wednesday, thursday, friday] = IsoWeek.days(week);
 const beforeWeek = LockDate.of(IsoDate.parse("2025-01-31"));
 const issue = 101 as JiraIssueId;
-const timecode = 201 as InternalTimecodeId;
+const timecode = 201 as BekkTimecodeId;
 
 const managed = (date: IsoDate, bekkHours: number, jiraHours: number) => {
 	const report = DayReport.empty(date);
 	report.comparisons.set(timecode, {
 		timecodeId: timecode,
-		internalHoursWorked: bekkHours,
-		matchedWork: jiraHours
+		bekkHours: bekkHours,
+		matchedWorklogs: jiraHours
 			? [{ issueId: issue, date, hoursWorked: jiraHours }]
 			: [],
 	});
@@ -29,7 +29,7 @@ const managed = (date: IsoDate, bekkHours: number, jiraHours: number) => {
 
 const unmatched = (date: IsoDate) => {
 	const report = managed(date, 7.5, 7.5);
-	report.unmatchedJiraWork.push({ issueId: issue, date, hoursWorked: 1 });
+	report.unmatchedJiraWorklogs.push({ issueId: issue, date, hoursWorked: 1 });
 	return report;
 };
 
@@ -78,8 +78,8 @@ describe("toWeekStatus", () => {
 		const report = unmatched(monday);
 		report.comparisons.set(timecode, {
 			timecodeId: timecode,
-			internalHoursWorked: 0,
-			matchedWork: [{ issueId: issue, date: monday, hoursWorked: 3 }],
+			bekkHours: 0,
+			matchedWorklogs: [{ issueId: issue, date: monday, hoursWorked: 3 }],
 		});
 		const status = toWeekStatus([report], beforeWeek);
 		expect(status.days[monday]).toBe("unmatched");
@@ -88,8 +88,8 @@ describe("toWeekStatus", () => {
 
 	test("week hours include unmanaged Bekk hours but not Jira hours", () => {
 		const report = managed(monday, 1, 4);
-		report.unmanagedInternals.push({
-			timecodeId: 202 as InternalTimecodeId,
+		report.unmanagedEntries.push({
+			timecodeId: 202 as BekkTimecodeId,
 			date: monday,
 			hoursWorked: 2.5,
 		});

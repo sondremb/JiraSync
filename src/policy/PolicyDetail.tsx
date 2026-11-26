@@ -134,11 +134,11 @@ const NotSharedNotice: React.FC<{ entry: CatalogEntry }> = ({ entry }) => {
 					Gjelder bare deg
 				</Heading>
 				<Paragraph>
-					{entry.kind === "edited"
+					{entry.overridesBundled
 						? "Endringene dine finnes bare i denne nettleseren."
 						: "Regelsettet finnes bare i denne nettleseren."}{" "}
 					Det gjelder for alle først når Sondre har lagt det inn i appen.
-					{entry.kind === "edited" &&
+					{entry.overridesBundled &&
 						" Når endringene er lagt inn, kan du forkaste kopien din under «Rediger»."}
 				</Paragraph>
 				<Button data-size="sm" onClick={() => sending.send(entry.ruleset)}>

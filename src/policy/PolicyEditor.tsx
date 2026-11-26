@@ -322,7 +322,7 @@ const DeleteDraft: React.FC<{ entry: CatalogEntry }> = ({ entry }) => {
 	const dialogRef = useRef<HTMLDialogElement>(null);
 	const deleteDraft = useDeleteDraft();
 	const { id } = entry.ruleset;
-	const isEditedCopy = entry.kind === "edited";
+	const isEditedCopy = entry.overridesBundled;
 
 	return (
 		<Dialog.TriggerContext>

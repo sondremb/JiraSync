@@ -3,24 +3,24 @@ import { IsoDate } from "../../src/date-time/IsoWeek";
 import { Policy } from "../../src/reconciliation/contracts";
 import {
 	DayReport,
-	InternalTimecodeId,
+	BekkTimecodeId,
 	JiraIssueId,
-	JiraWork,
+	JiraWorklog,
 } from "../../src/reconciliation/entities";
 import { reconcilePeriod } from "../../src/reconciliation/reconcile";
 
 const date = IsoDate.parse("2025-02-03");
 const issue = 101 as JiraIssueId;
 const otherIssue = 102 as JiraIssueId;
-const timecode = 201 as InternalTimecodeId;
-const worklogs: JiraWork[] = [
+const timecode = 201 as BekkTimecodeId;
+const worklogs: JiraWorklog[] = [
 	{ issueId: issue, date, hoursWorked: 1 },
 	{ issueId: issue, date, hoursWorked: 2 },
 	{ issueId: otherIssue, date, hoursWorked: 2 },
 ];
 
 const selectOnly =
-	(...managed: InternalTimecodeId[]): Policy["selectManaged"] =>
+	(...managed: BekkTimecodeId[]): Policy["selectManaged"] =>
 	async (ids) =>
 		new Set(ids.filter((id) => managed.includes(id)));
 
@@ -37,7 +37,7 @@ describe("reconcilePeriod", () => {
 			selectManaged: selectOnly(timecode),
 		};
 		const loadJiraWorklogs = vi.fn().mockResolvedValue(worklogs);
-		const loadInternalWorklogs = vi
+		const loadBekkEntries = vi
 			.fn()
 			.mockResolvedValue([{ timecodeId: timecode, date, hoursWorked: 5 }]);
 
@@ -46,18 +46,18 @@ describe("reconcilePeriod", () => {
 			date,
 			loadJiraWorklogs,
 			async () => policy,
-			loadInternalWorklogs,
+			loadBekkEntries,
 		);
 
 		expect(loadJiraWorklogs).toHaveBeenCalledWith(date, date);
-		expect(loadInternalWorklogs).toHaveBeenCalledWith(date, date);
+		expect(loadBekkEntries).toHaveBeenCalledWith(date, date);
 		expect(matchIssues).toHaveBeenCalledExactlyOnceWith([issue, otherIssue]);
-		expect(report.comparisons.get(timecode)?.matchedWork).toEqual(worklogs);
+		expect(report.comparisons.get(timecode)?.matchedWorklogs).toEqual(worklogs);
 		expect(DayReport.isInSync(report)).toBe(true);
 	});
 
 	test("asks the policy about the distinct union of worked and matched timecodes", async () => {
-		const workedTimecode = 202 as InternalTimecodeId;
+		const workedTimecode = 202 as BekkTimecodeId;
 		const selectManaged = vi
 			.fn<Policy["selectManaged"]>()
 			.mockResolvedValue(new Set([timecode, workedTimecode]));
@@ -132,7 +132,7 @@ describe("reconcilePeriod", () => {
 				new Map([[issue, { isMatched: true, timecodeId: timecode }]]),
 			selectManaged: selectOnly(timecode),
 		};
-		const loadInternalWorklogs = vi.fn().mockResolvedValue([]);
+		const loadBekkEntries = vi.fn().mockResolvedValue([]);
 
 		await expect(
 			reconcilePeriod(
@@ -140,13 +140,13 @@ describe("reconcilePeriod", () => {
 				date,
 				async () => worklogs,
 				async () => policy,
-				loadInternalWorklogs,
+				loadBekkEntries,
 			),
 		).rejects.toThrow("policy did not provide match for all issues");
-		expect(loadInternalWorklogs).not.toHaveBeenCalled();
+		expect(loadBekkEntries).not.toHaveBeenCalled();
 	});
 
-	test.each(["policy", "Jira worklogs", "matcher", "Internal worklogs"])(
+	test.each(["policy", "Jira worklogs", "matcher", "Bekk worklogs"])(
 		"propagates a failed %s operation instead of returning an in-sync day",
 		async (failedOperation) => {
 			const failure = new Error(`${failedOperation} failed`);
@@ -170,7 +170,7 @@ describe("reconcilePeriod", () => {
 						return policy;
 					},
 					async () => {
-						if (failedOperation === "Internal worklogs") throw failure;
+						if (failedOperation === "Bekk worklogs") throw failure;
 						return [];
 					},
 				),

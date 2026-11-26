@@ -34,7 +34,7 @@ To achieve the goal:
 - Internal hours on timecodes outside the selected policy are shown explicitly but do not affect its sync status. Jira worklogs that match no rule are shown explicitly and require review.
 - For the initial Jira-to-Internal sync operation, Jira hours are the proposed target. A preview shows the affected dates, timecodes, and changes before writing. The Internal System decides whether a write is permitted, including on locked dates.
 
-**Open:** The domain document currently calls a rule list a _Contract_. Confirm whether that means an actual business contract, or whether _mapping policy/ruleset_ is the clearer name. Effective-dated reassignment and the treatment of historical rule changes also need explicit rules before implementation.
+**Open:** Effective-dated reassignment and the treatment of historical rule changes also need explicit rules before implementation.
 
 ## 3. Boundaries
 

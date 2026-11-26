@@ -1,14 +1,14 @@
 import { IsoDate } from "../date-time/IsoWeek";
 import {
 	type DayReport,
-	type InternalTimecodeId,
+	type BekkTimecodeId,
 	LockDate,
 	ManagedTimecodeDayComparison,
 } from "./entities";
 
 export interface ProposedChange {
 	date: IsoDate;
-	timecodeId: InternalTimecodeId;
+	timecodeId: BekkTimecodeId;
 	currentHours: number;
 	targetHours: number;
 }
@@ -17,12 +17,12 @@ const managedMismatches = (report: DayReport): ProposedChange[] =>
 	Array.from(report.comparisons.values()).flatMap((comparison) => {
 		const targetHours =
 			ManagedTimecodeDayComparison.jiraHoursWorked(comparison);
-		if (comparison.internalHoursWorked === targetHours) return [];
+		if (comparison.bekkHours === targetHours) return [];
 		return [
 			{
 				date: report.date,
 				timecodeId: comparison.timecodeId,
-				currentHours: comparison.internalHoursWorked,
+				currentHours: comparison.bekkHours,
 				targetHours,
 			},
 		];

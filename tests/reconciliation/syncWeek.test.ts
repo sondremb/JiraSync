@@ -1,25 +1,25 @@
 import { describe, expect, test, vi } from "vitest";
 import { IsoDate } from "../../src/date-time/IsoWeek";
-import type { InternalTimecodeId } from "../../src/reconciliation/entities";
+import type { BekkTimecodeId } from "../../src/reconciliation/entities";
 import { syncWeek } from "../../src/reconciliation/syncWeek";
 
 const date = IsoDate.parse("2025-02-03");
 const changes = [
 	{
 		date,
-		timecodeId: 201 as InternalTimecodeId,
+		timecodeId: 201 as BekkTimecodeId,
 		currentHours: 1,
 		targetHours: 2,
 	},
 	{
 		date,
-		timecodeId: 202 as InternalTimecodeId,
+		timecodeId: 202 as BekkTimecodeId,
 		currentHours: 3,
 		targetHours: 0,
 	},
 	{
 		date,
-		timecodeId: 203 as InternalTimecodeId,
+		timecodeId: 203 as BekkTimecodeId,
 		currentHours: 0,
 		targetHours: 4,
 	},

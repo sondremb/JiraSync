@@ -36,17 +36,16 @@ export interface WeekStatus {
 
 const bekkHoursOf = (report: DayReport) =>
 	Array.from(report.comparisons.values()).reduce(
-		(sum, comparison) => sum + comparison.internalHoursWorked,
+		(sum, comparison) => sum + comparison.bekkHours,
 		0,
-	) +
-	report.unmanagedInternals.reduce((sum, work) => sum + work.hoursWorked, 0);
+	) + report.unmanagedEntries.reduce((sum, work) => sum + work.hoursWorked, 0);
 
 const hasHours = (report: DayReport) =>
-	report.unmanagedInternals.some((work) => work.hoursWorked !== 0) ||
+	report.unmanagedEntries.some((work) => work.hoursWorked !== 0) ||
 	Array.from(report.comparisons.values()).some(
 		(comparison) =>
-			comparison.internalHoursWorked !== 0 ||
-			comparison.matchedWork.some((work) => work.hoursWorked !== 0),
+			comparison.bekkHours !== 0 ||
+			comparison.matchedWorklogs.some((work) => work.hoursWorked !== 0),
 	);
 
 const dayStatus = (
@@ -54,7 +53,7 @@ const dayStatus = (
 	lockDate: LockDate,
 	willChange: boolean,
 ): DayStatus => {
-	if (report.unmatchedJiraWork.length > 0) return "unmatched";
+	if (report.unmatchedJiraWorklogs.length > 0) return "unmatched";
 	if (willChange) return "willChange";
 	const inSync = DayReport.isInSync(report);
 	if (!inSync && LockDate.isLocked(lockDate, report.date))
@@ -84,7 +83,7 @@ export function toWeekStatus(
 		daysToSync: changedDays.size,
 		daysInSync: statuses.filter((status) => status === "inSync").length,
 		unmatchedWorklogs: reports.reduce(
-			(count, report) => count + report.unmatchedJiraWork.length,
+			(count, report) => count + report.unmatchedJiraWorklogs.length,
 			0,
 		),
 		lockedDaysDiffering: lockedOutOfSyncDays(reports, lockDate).length,

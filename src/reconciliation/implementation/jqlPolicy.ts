@@ -1,11 +1,6 @@
 import { Jql, Rule, Ruleset } from "../../rules";
 import { Policy } from "../contracts";
-import {
-	InternalTimecodeId,
-	JiraIssueId,
-	IssueMatchResult,
-	JiraMatchResult,
-} from "../entities";
+import { JiraIssueId, IssueMatchResult, JiraMatchResult } from "../entities";
 
 type MatchJqls = (
 	issues: JiraIssueId[],
@@ -17,9 +12,7 @@ export function createJqlPolicy(
 	matchJqls: MatchJqls,
 ): Policy {
 	const rules = ruleset.rules;
-	const ruleTimecodes = new Set(
-		rules.map((rule) => rule.timecode as InternalTimecodeId),
-	);
+	const ruleTimecodes = new Set(rules.map((rule) => rule.timecode));
 
 	async function matchIssues(issues: JiraIssueId[]): Promise<JiraMatchResult> {
 		if (issues.length === 0) return new Map();

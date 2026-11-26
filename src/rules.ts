@@ -1,5 +1,5 @@
 import { JiraProjectKey } from "./data/issue";
-import { BekkId } from "./types";
+import { BekkTimecodeId } from "./reconciliation/entities";
 import { Brand } from "./Utils/brandedTypes";
 
 export type RulesetId = Brand<string, "RulesetId">;
@@ -15,7 +15,7 @@ export interface Ruleset {
 export interface Rule {
 	projectKey: JiraProjectKey;
 	jql?: Jql;
-	timecode: BekkId;
+	timecode: BekkTimecodeId;
 	comment?: string;
 }
 

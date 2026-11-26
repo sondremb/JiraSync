@@ -8,7 +8,7 @@ import { reconcilePeriod } from "../../src/reconciliation/reconcile";
 import { createJqlPolicy } from "../../src/reconciliation/implementation/jqlPolicy";
 import {
 	DayReport,
-	type InternalTimecodeId,
+	type BekkTimecodeId,
 	type JiraIssueId,
 	LockDate,
 } from "../../src/reconciliation/entities";
@@ -54,7 +54,7 @@ function reconcile(store: FakeStore, week: IsoWeek) {
 		async () =>
 			store.bekkEntries(from, to).map((entry) => ({
 				date: entry.date,
-				timecodeId: entry.timecodeId as InternalTimecodeId,
+				timecodeId: entry.timecodeId as BekkTimecodeId,
 				hoursWorked: entry.hours,
 			})),
 	);
@@ -76,8 +76,8 @@ describe("fake fixtures", () => {
 		expect(changes.some((c) => c.currentHours > 0 && c.targetHours > 0)).toBe(
 			true,
 		);
-		expect(reports.some((r) => r.unmatchedJiraWork.length > 0)).toBe(true);
-		expect(reports.some((r) => r.unmanagedInternals.length > 0)).toBe(true);
+		expect(reports.some((r) => r.unmatchedJiraWorklogs.length > 0)).toBe(true);
+		expect(reports.some((r) => r.unmanagedEntries.length > 0)).toBe(true);
 	});
 
 	test("two weeks back is in sync", async () => {
@@ -125,7 +125,7 @@ describe("fake store writes", () => {
 		const after = await reconcile(store, currentWeek);
 		expect(planSync(after, LockDate.of(store.lockDate()))).toEqual([]);
 		// Unmanaged Bekk hours are left alone
-		expect(after.some((r) => r.unmanagedInternals.length > 0)).toBe(true);
+		expect(after.some((r) => r.unmanagedEntries.length > 0)).toBe(true);
 	});
 
 	test("writes on or before the lock date are rejected and change nothing", () => {
