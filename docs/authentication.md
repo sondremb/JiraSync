@@ -1,153 +1,156 @@
-# Autentisering
+# Authentication
 
-JiraSync autentiserer mot to systemer: Jira (Atlassian) og Bekk Timekeeper (Azure Entra ID). De to flytene er helt uavhengige av hverandre.
+JiraSync logs in to two systems: Jira (Atlassian OAuth 2.0) and Bekk Timekeeper (Azure Entra ID). The two flows are independent of each other.
 
-## Jira (Atlassian OAuth 2.0 med PKCE)
+## Jira (Atlassian OAuth 2.0 with PKCE)
 
-Jira-autentisering bruker OAuth 2.0 Authorization Code Grant med PKCE. Hele OAuth-flyten kjører server-side via Netlify Functions for å holde `JIRA_CLIENT_SECRET` utenfor nettleseren.
+Jira login uses the OAuth 2.0 authorization code grant with PKCE. The token exchange runs in Netlify functions, so `JIRA_CLIENT_SECRET` never reaches the browser.
 
-Se Atlassian-dokumentasjon om [OAuth 2.0 (3LO) apps](https://developer.atlassian.com/cloud/jira/platform/oauth-2-3lo-apps/).
+See Atlassian's docs on [OAuth 2.0 (3LO) apps](https://developer.atlassian.com/cloud/jira/platform/oauth-2-3lo-apps/).
 
-### Flyt
+### Function paths
+
+The functions are served at Netlify's default paths, `/.netlify/functions/jira-auth-*`. The app, the functions and the fake backend all read them from `jiraAuthPaths` in `src/login/jira/authPaths.ts`, so refer to that rather than writing a path out. #27 moves them to stable `/api` routes (see [ADR 0006](adr/0006-the-backend-is-served-under-api-routes.md)).
+
+| Function             | File                                | What it does                                                          |
+| -------------------- | ----------------------------------- | --------------------------------------------------------------------- |
+| `jira-auth-init`     | `src/backend/jira-auth-init.ts`     | Starts the flow: creates the PKCE verifier and redirects to Atlassian |
+| `jira-auth-callback` | `src/backend/jira-auth-callback.ts` | Receives Atlassian's callback and exchanges the code for tokens       |
+| `jira-auth-session`  | `src/backend/jira-auth-session.ts`  | Gets a new access token with the refresh token cookie                 |
+| `jira-auth-logout`   | `src/backend/jira-auth-logout.ts`   | Deletes the refresh token cookie                                      |
+
+### Flow
 
 ```mermaid
 ---
-title: Atlassian auth flyt
+title: Jira login
 config:
        subGraphTitleMargin:
               bottom: 12
 ---
 flowchart TB
-       init((bruker treffer /))
-       finish((rendre innhold))
+       init((user opens /))
+       finish((render the page))
 
-       subgraph getAccessToken [funksjon getAccessToken]
-              accessTokenCheck{Har gyldig access token i session storage?}
-              save[lagre access token i session storage]
+       subgraph getAccessToken [getAccessToken]
+              accessTokenCheck{Valid access token in sessionStorage?}
+              save[store the access token in sessionStorage]
        end
        init --> accessTokenCheck
-       accessTokenCheck -->|ja| finish
-       subgraph auth-session [be /jira-auth-session]
-              refreshTokenCheck{Har gyldig refresh token i cookie?}
-              refreshTokenCheck -->|ja| fetchAccessToken[gjør kall for å hente access token og ny refresh token]
-              fetchAccessToken --> setRefreshToken1[Set-Cookie med ny refresh token]
-              setRefreshToken1 --> returnAccessToken[returnerer access token i response body]
+       accessTokenCheck -->|yes| finish
+       subgraph auth-session [backend: jira-auth-session]
+              refreshTokenCheck{Valid refresh token in cookie?}
+              refreshTokenCheck -->|yes| fetchAccessToken[get an access token and a new refresh token]
+              fetchAccessToken --> setRefreshToken1[Set-Cookie with the new refresh token]
+              setRefreshToken1 --> returnAccessToken[return the access token in the response body]
        end
-       subgraph login [fe /login]
-              button[bruker trykker lenke for å starte flyt]
+       subgraph login [frontend: /login]
+              button[user clicks the link that starts the flow]
        end
-       subgraph auth-init [be /jira-auth-init]
-              createChallenge[lager codeChallenge og codeVerifier]
+       subgraph auth-init [backend: jira-auth-init]
+              createChallenge[create codeChallenge and codeVerifier]
               createChallenge --> setVerifier[Set-Cookie codeVerifier]
        end
        subgraph atlassian
-              consent[Bruker gir samtykke]
+              consent[user gives consent]
        end
-       subgraph auth-callback [be /jira-auth-callback]
-              verify[sjekker codeChallenge i URL mot codeVerifier fra cookie]
-              verify --> setRefreshToken2[Set-Cookie med refresh token]
+       subgraph auth-callback [backend: jira-auth-callback]
+              verify[exchange the code and the codeVerifier cookie for tokens]
+              verify --> setRefreshToken2[Set-Cookie with the refresh token]
        end
-       refreshTokenCheck -->|nei| r([redirect]) --> login
+       refreshTokenCheck -->|no| r([redirect]) --> login
        button -->|redirect| createChallenge
        setVerifier -->|redirect| consent
        consent -->|redirect| verify
        returnAccessToken --> save
        save --> finish
-       accessTokenCheck -->|nei| x([API-kall]) --> refreshTokenCheck
+       accessTokenCheck -->|no| x([API call]) --> refreshTokenCheck
        setRefreshToken2 -->|redirect| init
 ```
 
-### Token-håndtering i nettleseren
+### Tokens in the browser
 
-Klienten (`src/login/jira/authContext.ts`) håndterer token-livssyklusen:
+`src/login/jira/authContext.ts` manages the access token:
 
-1. **Hent token**: Sjekker om det finnes et gyldig access token i `sessionStorage`
-2. **Bruk cached token**: Hvis tokenet er gyldig i mer enn 60 sekunder til, returneres det direkte. Marginen hindrer at tokenet utløper mens forespørselen er underveis
-3. **Refresh**: Hvis tokenet er utløpt (eller nær utløp), kaller `/.netlify/functions/jira-auth-session` som bruker refresh token-cookien til å hente nytt access token + refresh token. Parallelle kall deler én refresh-request, siden refresh tokens roteres og samtidige refreshes ellers ville ugyldiggjort hverandre
-4. **Lagre**: Nytt access token og utløpstid lagres i `sessionStorage`
+1. **Read:** looks for an access token in `sessionStorage`.
+2. **Use the cached token** if it is valid for more than 60 more seconds. The margin keeps the token from expiring while a request is in flight.
+3. **Refresh** if the token has expired or is about to: calls `jira-auth-session`, which uses the refresh token cookie to get a new access token and a new refresh token. Concurrent calls share one refresh request, because refresh tokens rotate and simultaneous refreshes would invalidate each other.
+4. **Store** the new access token and its expiry in `sessionStorage`.
 
-#### 401 fra Jira
+Access tokens last 1 hour. Refresh tokens last 90 days, live only in an httpOnly cookie, and can't be read from JavaScript.
 
-Et token som ser gyldig ut lokalt kan likevel være avvist av Jira (f.eks. tilbakekalt, eller et gammelt token i `sessionStorage` etter endret klient-ID/miljø). Hvis Jira svarer 401, kaller Jira-klienten (`src/data/jira/jiraclient.ts`) `invalidate()` for å slette det cachede tokenet, henter et nytt og prøver request én gang til. Feiler den igjen, returneres feilen til kalleren; det skjer ingen automatisk redirect til `/login`.
+#### A 401 from Jira
 
-Access tokens i `sessionStorage` er kortlevde (1 time). Refresh tokens er langvarige (90 dager), lagres kun i httpOnly cookies, og er ikke tilgjengelige fra JavaScript.
+A token that looks valid locally can still be rejected by Jira, for example when it has been revoked, or when an old token is left in `sessionStorage` after the client ID or environment changed. On a 401, the Jira client (`src/data/jira/jiraclient.ts`) calls `invalidate()` to drop the cached token, gets a new one and retries the request once. If the retry fails too, the error goes to the caller. There is no automatic redirect to `/login`.
 
 ### Logout
 
-`/.netlify/functions/jira-auth-logout` sletter refresh token-cookien. Klienten sletter access token fra `sessionStorage`.
+`jira-auth-logout` deletes the refresh token cookie, and the client deletes the access token from `sessionStorage`.
 
 ### Scopes
 
-- `read:jira-work` — Lese worklogs
-- `read:jira-user` — Lese brukerinfo
-- `offline_access` — Få refresh token
+- `read:jira-work`: read issues and worklogs
+- `read:jira-user`: read user details
+- `offline_access`: get a refresh token
 
-### Serverless-funksjoner
+### Configuration
 
-| Funksjon             | Fil                                 | Beskrivelse                                                    |
-| -------------------- | ----------------------------------- | -------------------------------------------------------------- |
-| `jira-auth-init`     | `src/backend/jira-auth-init.ts`     | Starter OAuth-flyten, genererer PKCE, redirecter til Atlassian |
-| `jira-auth-callback` | `src/backend/jira-auth-callback.ts` | Mottar callback fra Atlassian, bytter code mot tokens          |
-| `jira-auth-session`  | `src/backend/jira-auth-session.ts`  | Refresher access token via refresh token cookie                |
-| `jira-auth-logout`   | `src/backend/jira-auth-logout.ts`   | Sletter refresh token cookie                                   |
+- `JIRA_CLIENT_ID` and `JIRA_CLIENT_SECRET`: an Atlassian OAuth app with the scopes above. Set as environment variables in Netlify.
+- `VITE_ATLASSIAN_CLOUD_ID`: the Cloud ID of the Jira Cloud site.
+- `OVERRIDE_DEPLOY_URL`: the base URL the OAuth redirect returns to. Set it to `http://localhost:5173` locally. On Netlify, the deploy's own URL is used.
 
-### Konfigurasjon
+## Bekk (Azure Entra ID with MSAL)
 
-- `JIRA_CLIENT_ID` og `JIRA_CLIENT_SECRET` - Må tilhøre en app med relevante scopes konfigurert. Settes som environment-variabler i Netlify.
-- `VITE_ATLASSIAN_CLOUD_ID` - Cloud Id til den aktuelle Jira Cloud-instansen.
+Bekk login uses Azure Entra ID through MSAL (Microsoft Authentication Library). It runs entirely in the browser, with no server-side part.
 
-## Bekk (Azure Entra ID via MSAL)
-
-Bekk-autentisering bruker Azure Entra ID med MSAL (Microsoft Authentication Library). Hele flyten kjører i nettleseren — ingen server-side komponenter.
-
-### Flyt
+### Flow
 
 ```
-Bruker åpner appen
+User opens the app
        │
        ▼
-MsalAuthenticationTemplate sjekker innlogging
-       │  Ikke innlogget? → Redirect til Azure login
+MsalAuthenticationTemplate checks for a login
+       │  Not logged in? → redirect to the Azure login page
        ▼
-Azure Entra ID login-side
-       │  Bruker logger inn med Bekk-konto
+Azure Entra ID login page
+       │  User logs in with their Bekk account
        ▼
-Redirect tilbake til appen
-       │  MSAL lagrer tokens i localStorage
-       │  Setter aktiv konto
+Redirect back to the app
+       │  MSAL stores the tokens in localStorage
+       │  and sets the active account
        ▼
-Appen er klar
+The app is ready
 ```
 
-### Oppsett (`src/login/bekk/bekkLogin.tsx`)
+### Setup (`src/login/bekk/bekkLogin.tsx`)
 
-MSAL-instansen er en modul-singleton (`msalInstance`) konfigurert med:
+The MSAL instance is a module-level singleton (`msalInstance`) configured with:
 
-- `clientId` — App registration client ID fra Azure
-- `authority` — `https://login.microsoftonline.com/{tenantId}`
-- `cacheLocation` — `localStorage`
+- `clientId`: the app registration's client ID in Azure
+- `authority`: `https://login.microsoftonline.com/{tenantId}`
+- `cacheLocation`: `localStorage`
 
-`BekkEntraLogin`-komponenten wrapper appen og håndterer automatisk redirect til innlogging.
+The `BekkEntraLogin` component wraps the app and redirects to the login page when needed. Components read the logged-in Bekk user with `useBekkAccount()`, which also works against the fake backend.
 
 ### Employee ID
 
-`getEmployeeId()` leser `employeeId`-claimet fra ID-tokenet til den aktive MSAL-kontoen. Denne brukes for å hente riktig brukers data fra Bekk Timekeeper API.
+`getEmployeeId()` reads the `employeeId` claim from the active MSAL account's ID token. The Bekk Timekeeper API uses it to identify the employee.
 
-Viktig: Kall `getEmployeeId()` inne i `queryFn`, ikke på hook-nivå — MSAL-instansen må være ferdig initialisert.
+Call `getEmployeeId()` inside `queryFn`, not at the hook level: MSAL must have finished initialising.
 
-### Token-refresh
+### Token refresh
 
-MSAL håndterer token-refresh automatisk via `acquireTokenSilent()`. Bekk API-klienten (`src/data/bekkclient.ts`) kaller dette i middleware før hvert API-kall.
+MSAL refreshes tokens through `acquireTokenSilent()`. The Bekk API client (`src/data/bekkclient.ts`) calls it in middleware before every request.
 
-### Azure-registreringer
+### Azure app registrations
 
-| Miljø | App registration                                                                                                                                                               |
-| ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Prod  | [97690193-50da-4eda-b961-519d047cc8ce](https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/~/Overview/appId/97690193-50da-4eda-b961-519d047cc8ce) |
-| Dev   | [05d0e69d-bb21-43b6-bdd0-5eed364561c0](https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/~/Overview/appId/05d0e69d-bb21-43b6-bdd0-5eed364561c0) |
+| Environment | App registration                                                                                                                                                               |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Prod        | [97690193-50da-4eda-b961-519d047cc8ce](https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/~/Overview/appId/97690193-50da-4eda-b961-519d047cc8ce) |
+| Dev         | [05d0e69d-bb21-43b6-bdd0-5eed364561c0](https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/~/Overview/appId/05d0e69d-bb21-43b6-bdd0-5eed364561c0) |
 
-### Konfigurasjon
+### Configuration
 
-- `VITE_BEKK_ENTRA_TENANT_ID` — Azure tenant ID
-- `VITE_BEKK_ENTRA_CLIENT_ID` — App registration client ID
-- `VITE_BEKK_ENTRA_SCOPE` — API scope for Bekk Timekeeper
+- `VITE_BEKK_ENTRA_TENANT_ID`: Azure tenant ID
+- `VITE_BEKK_ENTRA_CLIENT_ID`: app registration client ID
+- `VITE_BEKK_ENTRA_SCOPE`: API scope for Bekk Timekeeper

@@ -12,7 +12,7 @@ Employees can't change bundled rulesets live. They draft a ruleset, save it as a
   - `src/policies/catalog.ts`: merges bundled and local rulesets. A local ruleset whose id matches a bundled one overrides it locally and is marked as such.
 - **Storage:**
   - Local rulesets: localStorage `jirasync.drafts`, via `draftStore.ts` and `useDrafts.ts`, the single React Query source.
-  - Selected ruleset: its id, in `localStorage["selectedRulesetId"]`.
+  - Selected policy: the ruleset id, in `localStorage["selectedRulesetId"]`.
   - `useRuleSet` (`src/data/useRuleset.ts`) resolves the selection across bundled and local rulesets, so a local ruleset can be used in the sync view.
 - **Rules:**
   - Ruleset ids are immutable once saved. "Lagre som kopi" makes a new id.
