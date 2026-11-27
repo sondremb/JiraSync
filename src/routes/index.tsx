@@ -1,7 +1,7 @@
 import React from "react";
 import { createFileRoute } from "@tanstack/react-router";
+import { App } from "../App";
 import { BekkEntraLogin } from "../login/bekk/bekkLogin";
-import { LockdateWrapper } from "../LockdateWrapper";
 import { requireAuth } from "../login/requireAuth";
 
 export const Route = createFileRoute("/")({
@@ -12,7 +12,7 @@ export const Route = createFileRoute("/")({
 function Component() {
 	return (
 		<BekkEntraLogin>
-			<LockdateWrapper />
+			<App />
 		</BekkEntraLogin>
 	);
 }

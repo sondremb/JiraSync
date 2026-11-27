@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { IsoDate } from "../../src/date-time/IsoWeek";
+import { IsoDate, IsoWeek } from "../../src/date-time/IsoWeek";
 import {
 	DayReport,
 	BekkTimecodeId,
@@ -85,5 +85,32 @@ describe("LockDate.isLocked", () => {
 
 	test("locks every day while the lock date is unknown", () => {
 		expect(LockDate.isLocked(LockDate.unknown, monday)).toBe(true);
+	});
+});
+
+describe("LockDate.startWeek", () => {
+	const today = new Date("2025-03-12T12:00:00Z");
+
+	test("opens on the week of the first unlocked day", () => {
+		const sunday = IsoDate.parse("2025-02-02");
+		expect(LockDate.startWeek(LockDate.of(sunday), today)).toBe(
+			IsoWeek.fromIsoDate(IsoDate.parse("2025-02-03")),
+		);
+	});
+
+	test("stays in the lock date's week when it is mid-week", () => {
+		const wednesday = IsoDate.parse("2025-02-05");
+		expect(LockDate.startWeek(LockDate.of(wednesday), today)).toBe(
+			IsoWeek.fromIsoDate(wednesday),
+		);
+	});
+
+	test("opens on this week without a lock date", () => {
+		expect(LockDate.startWeek(LockDate.none, today)).toBe(
+			IsoWeek.fromDate(today),
+		);
+		expect(LockDate.startWeek(LockDate.unknown, today)).toBe(
+			IsoWeek.fromDate(today),
+		);
 	});
 });

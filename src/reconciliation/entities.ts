@@ -1,4 +1,4 @@
-import { IsoDate } from "../date-time/IsoWeek";
+import { IsoDate, IsoWeek } from "../date-time/IsoWeek";
 import { Brand } from "../Utils/brandedTypes";
 
 export type JiraIssueId = Brand<number, "jiraIssueId">;
@@ -98,5 +98,11 @@ export const LockDate = {
 			case "date":
 				return date <= lockDate.date;
 		}
+	},
+	/** The week to open on: the one holding the first unlocked day, or the week of `today` without a lock date. */
+	startWeek(lockDate: LockDate, today: Date): IsoWeek {
+		return lockDate.kind === "date"
+			? IsoWeek.fromIsoDate(IsoDate.addDays(lockDate.date, 1))
+			: IsoWeek.fromDate(today);
 	},
 };
