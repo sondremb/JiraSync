@@ -22,12 +22,12 @@ Always use `pnpm`, not `npm`, `npx`, or `yarn`.
 
 ## Architecture
 
-JiraSync is a React/TypeScript SPA deployed on Netlify that synchronizes time tracking between **Jira** and **Bekk Timekeeper**. It fetches data from both systems, maps Jira issues to Bekk timecodes, and lets users push Jira hours into Bekk's weekly timesheet.
+JiraSync is a React/TypeScript SPA deployed on Netlify that synchronizes time tracking between **Jira** and **Bekk Timekeeper**. It loads Jira worklogs and Bekk entries, maps Jira issues to Bekk timecodes with the selected policy, and syncs the Jira hours into Bekk. Sync only goes from Jira to Bekk.
 
 ### Data flow
 
-1. User authenticates via **Jira OAuth** (Atlassian OIDC) and **Bekk MSAL** (Azure Entra ID)
-2. `useWeeklyReconciliation` hook fetches Jira worklogs and Bekk timesheet entries for a given ISO week
+1. User logs in via **Jira OAuth** (Atlassian OAuth 2.0 with PKCE) and **Bekk MSAL** (Azure Entra ID)
+2. `useWeeklyReconciliation` hook loads Jira worklogs and Bekk entries for a given ISO week
 3. The selected policy (a ruleset, either bundled from `src/policies/policies.json` or local) routes Jira worklogs → Bekk timecodes via JQL matching
 4. `reconcilePeriod` compares the two datasets and produces `DayReport[]`
 5. `WeeklyReconciliation` renders the weekly grid, sync preview, and locking controls
@@ -48,11 +48,13 @@ Pure domain logic, kept free of API clients so it can be tested with plain funct
 - `contracts.ts` — `Policy` (`matchIssues`, `selectManaged`) and the loader function types injected into reconciliation.
 - `reconcile.ts` — `reconcilePeriod` loads Jira worklogs, matches issues via the policy, loads Bekk entries, and builds `DayReport[]`. It throws on invariant failures (policy missed an issue, or matched a timecode it doesn't manage).
 - `implementation/jqlPolicy.ts` — the `Policy` implementation backed by a `Ruleset`.
-- `syncPreview.ts` — `planSync` turns reports into `ProposedChange[]` (date, timecode, current → target hours). Jira hours are the source of truth; only managed timecodes with differing hours produce changes.
+- `syncPreview.ts` — `planSync` turns reports into `ProposedChange[]` (date, timecode, current → target hours). Jira hours are the source of truth; only managed timecodes with differing hours on unlocked days produce changes (ADR 0001).
 - `syncWeek.ts` — applies changes sequentially via an injected `write`; on failure it throws with how many entries were already updated.
 - `useWeeklyReconciliation.ts` — React Query glue: `useWeeklyReconciliation(week, ruleset)` query and `useSyncWeek()` mutation (invalidates the `["reconciliation"]` queries). The concrete loaders/writers are in `src/data/` (`jira/loadJiraWorklogs`, `loadBekkEntries`, `writeBekkHours`).
 
 ### Authentication
+
+The login flows, token handling and function paths are in `docs/authentication.md`. Read it before working on `src/login/` or `src/backend/`.
 
 - **Jira**: OAuth 2.0 tokens stored in `sessionStorage`; refresh handled by Netlify serverless function `src/backend/jira-auth-session.ts` using httpOnly cookie refresh tokens
 - **Bekk**: Azure Entra ID via `@azure/msal-react`, managed in `src/login/bekk/`. `useBekkAccount()` reads the Bekk user.
@@ -94,6 +96,7 @@ Netlify functions handle the Jira OAuth flow (init → callback → session refr
 | `JIRA_CLIENT_ID` / `JIRA_CLIENT_SECRET` | Jira OAuth credentials (server-side only)                    |
 | `VITE_DEBUG`                            | Enables dev tools overlay                                    |
 | `VITE_FAKE_BACKEND`                     | `true` runs `pnpm start` against the fake backend (dev only) |
+| `OVERRIDE_DEPLOY_URL`                   | OAuth redirect base URL, `http://localhost:5173` locally     |
 
 ## Agent skills
 
@@ -107,4 +110,4 @@ Uses the five default triage labels: `needs-triage`, `needs-info`, `ready-for-ag
 
 ### Domain docs
 
-Single-context: one `GLOSSARY.md` and `docs/adr/` at the repo root. See `docs/agents/domain.md`.
+Single-context: one `GLOSSARY.md` and `docs/adr/` at the repo root. See `docs/agents/domain.md`. `docs/how-employees-log-hours.md` explains how employees log and lock hours, which sets the domain's deadlines.

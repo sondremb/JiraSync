@@ -1,0 +1,3 @@
+# The browser reconciles the employee's own hours
+
+JiraSync reconciles only the signed-in employee's own hours, in the browser, with the access that employee already has in Jira and Bekk. It keeps no server-side copy of worklogs, timesheets, Jira tokens or reconciliation history, and it has no manager role or manager-employee relations. Jira and Bekk stay authoritative for their own data, access rights and locking. We chose this because a server that stores hours, or acts on behalf of other employees, would need its own authorization and data protection, and no feature needs it yet. A month review for managers (#43) or a shared policy store (#35) would have to revisit this.

@@ -1,101 +1,101 @@
 # JiraSync
 
-React/TypeScript-app som synkroniserer timeføring mellom Jira og Bekk Timekeeper. Appen henter worklogs fra Jira og timeføringer fra Bekk, mapper Jira-saker til Bekk-timekoder, og lar brukeren pushe timer inn i Bekks ukentlige timeark.
+JiraSync keeps an employee's Bekk timesheet in line with the hours they log in Jira. It loads Jira worklogs and Bekk entries for a week, uses a policy to work out which Bekk timecode each Jira worklog belongs to, shows the days that are out of sync, and writes the Jira hours into Bekk Timekeeper.
 
-## Forutsetninger
+The domain terms (policy, ruleset, managed timecode, in sync, lock date and so on) are defined in [GLOSSARY.md](GLOSSARY.md).
 
-- Node.js 20+
-- pnpm (`corepack enable` aktiverer riktig versjon)
-- Tilgang til Jira (Atlassian) og Bekk Timekeeper
-- Environment-variabler (se [Konfigurasjon](#konfigurasjon))
+## Prerequisites
 
-## Kom i gang
+- Node.js, the version in [.nvmrc](.nvmrc)
+- pnpm (`corepack enable` picks the version in `package.json`)
+- Access to Udir's Jira (Atlassian) and to Bekk Timekeeper, for running against the real systems
 
-Sett opp nødvendige konfigurasjoner først (se [Konfigurasjon](#konfigurasjon))
+## Getting started
+
+To try the app without logins or configuration, run it against the fake backend, which serves made-up data from memory:
 
 ```bash
 pnpm install
+VITE_FAKE_BACKEND=true pnpm start
+```
+
+To run against the real Jira and Bekk, set up a `.env` first (see [Configuration](#configuration)) and run:
+
+```bash
 pnpm start
 ```
 
-## Begreper
-
-| Begrep                 | Betydning                                                                                                                                                                  |
-| ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Atlassian              | Leverandør av Jira, Confluence, mm. Brukes også for å betegne hele det "økosystemet".                                                                                      |
-| Ansatt-id, employee id | Unik numerisk id for en ansatt i Bekk, f.eks. `1545`                                                                                                                       |
-| Timer, Timekeeper      | Bekks timeføringsløsning. Den vanlige klient-løsningen ligger bak URLene timer.bekk.no og timekeeper.bekk.no                                                               |
-| Timekode               | En kode i Bekk Timekeeper som representerer et prosjekt eller en aktivitet man fører timer på.                                                                             |
-| Timekode id            | En unik numerisk ID for en timekode                                                                                                                                        |
-| Timekode-kode          | Unik tekstlig kode for en timekode. Prefikset med forkortelse for prosjekt eller kunde. F.eks. `KOM1000` for kompetansebygging.                                            |
-| Låsedato, lockdate     | Dato for låsing av timer i Timekeeper. Timeføringer på låsedatoen eller tidligere kan ikke endres.                                                                         |
-| Issue                  | En sak i Jira. Kalles også ticket, lapp, oppgave.                                                                                                                          |
-| Issue Id               | Unik numerisk id for et issue, f.eks. `123`.                                                                                                                               |
-| Issue Key              | Unik betegnelse for et issue. Består av en Project Key og et løpenummer, f.eks. `ITOPS-42`.                                                                                |
-| Project                | En samling issues i Jira, typisk knyttet til et team eller et produkt. Tilgang begrenses ofte på prosjekt-nivå, så man kun kan se issues i prosjekter man er med i.        |
-| Project Key            | Unik forkortelse som betegner et Jira-prosjekt, f.eks. `ITOPS` for "IT Operations Helpdesk".                                                                               |
-| Worklog                | En enkelt timeføring på et enkelt Jira-issue. Merk forskjell mot Bekk: Jira støtter flere worklogs per issue per dag, mens Bekk har ett antall timer per timekode per dag. |
+Real logins only work on `http://localhost:5173`, because the Jira and Entra redirect URIs are registered for that address.
 
 ## Scripts
 
-| Script               | Beskrivelse                              |
-| -------------------- | ---------------------------------------- |
-| `pnpm start`         | Start Vite dev-server                    |
-| `pnpm build`         | Generer API-typer og bygg for produksjon |
-| `pnpm test`          | Kjør tester (Vitest)                     |
-| `pnpm generate`      | Regenerer API-typer fra OpenAPI-skjemaer |
-| `pnpm generate:bekk` | Regenerer kun Bekk-typer                 |
-| `pnpm generate:jira` | Regenerer kun Jira-typer                 |
+| Script                                 | Description                                                               |
+| -------------------------------------- | ------------------------------------------------------------------------- |
+| `pnpm start`                           | Start the Vite dev server                                                 |
+| `VITE_FAKE_BACKEND=true pnpm start`    | Start the dev server against the fake backend                             |
+| `pnpm build`                           | Type-check and build for production, then check no fake code is in `dist` |
+| `pnpm test`                            | Run the tests (Vitest)                                                    |
+| `pnpm lint`                            | Lint with oxlint                                                          |
+| `pnpm typecheck`                       | Type-check with tsc                                                       |
+| `pnpm format`                          | Format with oxfmt (`pnpm format:check` only checks)                       |
+| `pnpm generate`                        | Regenerate the Jira and Bekk API types from their OpenAPI schemas         |
+| `pnpm generate:bekk`                   | Regenerate the Bekk types only                                            |
+| `pnpm generate:jira`                   | Regenerate the Jira types only                                            |
+| `pnpm screenshot <product URL> <file>` | Screenshot a page against the fake backend                                |
 
-## Arkitektur
+The generated API types are committed, so a fresh checkout builds without `pnpm generate`.
 
-- Autentiserer mot Bekk og Atlassian, se [docs/authentication.md](docs/authentication.md)
-- Gjør kall mot Bekk Timekeeper og Jira rett fra nettleser
-- Finner ut hvilken Bekk timekode en Jira issue tilhører
-- Samler sammen alle Jira issues for en gitt timekode
-- Sammenligner faktisk Bekk-timeføring med forventet (basert på Jira-timeføring)
+## Architecture
 
-### Sentrale deler
+- The browser logs in to Jira and Bekk and calls both APIs directly with the employee's own access. See [docs/authentication.md](docs/authentication.md).
+- A small set of Netlify functions (`src/backend/`) runs the Jira OAuth flow, so the client secret stays on the server.
+- The selected policy matches Jira issues to Bekk timecodes. Matching is done by Jira's JQL API.
+- Reconciliation compares the matched Jira hours with the Bekk entries day by day and proposes changes. Syncing writes them to Bekk.
+- Employees can draft their own rulesets in the browser and export them for review.
 
-- **`src/timecode-map.ts`** — Kjernelogikk som mapper Jira-prosjekter, komponenter og epics til Bekk-timekoder. Oppdateres når Jira-prosjekter endrer struktur.
-- **`src/data/useWeek.ts`** — Henter data fra begge systemer for en gitt ISO-uke.
-- **`src/Utils/stateUtils.ts`** — Slår sammen Jira- og Bekk-data til en samlet visning.
-- **`src/components/TimeTable/`** — Ukentlig rutenett som viser og synkroniserer timer.
-- **`src/backend/`** — Netlify-funksjoner som håndterer Jira OAuth-flyten server-side.
+### Main parts
 
-### Teknologivalg
+- **`src/reconciliation/`**: the domain logic: comparing Jira and Bekk per day, and planning and applying a sync. Pure functions with tests.
+- **`src/policies/`**: the bundled rulesets (`policies.json`), their schema and the drafting logic.
+- **`src/policy/`**: the ruleset editor pages (`/policy/*`).
+- **`src/components/`**: the weekly view, with the grid, sync preview and locking.
+- **`src/data/`**: the Jira and Bekk API clients and loaders.
+- **`src/login/`**: Jira and Bekk login.
+- **`src/backend/`**: the Netlify functions for Jira OAuth.
+- **`src/fake/`**: the fake backend, for local development only.
 
-- **Vite** — Bundler og dev-server
-- **TanStack React Query** — Server-state for alle API-kall
-- **TanStack Router** — Filbasert routing med code splitting
-- **openapi-typescript + openapi-fetch** — Typesikre API-klienter generert fra OpenAPI-skjemaer
-- **Designsystemet** (Digdir, standardtema) + CSS-moduler med BEM-navn — Styling
-- **MSAL React** — Bekk-autentisering (Azure Entra ID)
+Decisions and the reasons behind them are recorded in [docs/adr/](docs/adr/).
 
-### Autentisering
+### Technology
 
-Se [docs/authentication.md](docs/authentication.md) for detaljer om autentiseringsflyten mot Jira og Bekk.
+- **Vite**: bundler and dev server
+- **TanStack React Query**: server state for all API calls
+- **TanStack Router**: file-based routing with code splitting
+- **openapi-typescript + openapi-fetch**: typed API clients generated from OpenAPI schemas
+- **Designsystemet** (Digdir, default theme) and CSS modules with BEM class names: styling
+- **MSAL React**: Bekk login (Azure Entra ID)
 
-## Konfigurasjon
+## Configuration
 
-Appen konfigureres med environment-variabler. Opprett en `.env`-fil i roten for lokal utvikling.
-Kopier [.env.example](.env.example), renamer til `.env` og fyll inn med mangelnde verdier.
+The app reads its configuration from environment variables. For local development, copy [.env.example](.env.example) to `.env` and fill in the missing values.
 
-| Variabel                    | Beskrivelse              | Kontekst |
-| --------------------------- | ------------------------ | -------- |
-| `VITE_BEKK_BASE_URL`        | Bekk API-endepunkt       | Klient   |
-| `VITE_BEKK_ENTRA_TENANT_ID` | Azure Entra tenant ID    | Klient   |
-| `VITE_BEKK_ENTRA_CLIENT_ID` | Azure Entra client ID    | Klient   |
-| `VITE_BEKK_ENTRA_SCOPE`     | Azure Entra scope        | Klient   |
-| `VITE_ATLASSIAN_CLOUD_ID`   | Jira Cloud tenant ID     | Klient   |
-| `JIRA_CLIENT_ID`            | Jira OAuth client ID     | Server   |
-| `JIRA_CLIENT_SECRET`        | Jira OAuth client secret | Server   |
-| `VITE_DEBUG`                | Aktiver devtools-overlay | Klient   |
+| Variable                    | Description                                                    | Used by |
+| --------------------------- | -------------------------------------------------------------- | ------- |
+| `VITE_BEKK_BASE_URL`        | Bekk Timekeeper API URL                                        | Browser |
+| `VITE_BEKK_ENTRA_TENANT_ID` | Azure Entra tenant ID                                          | Browser |
+| `VITE_BEKK_ENTRA_CLIENT_ID` | Azure Entra client ID                                          | Browser |
+| `VITE_BEKK_ENTRA_SCOPE`     | Azure Entra scope for the Bekk API                             | Browser |
+| `VITE_ATLASSIAN_CLOUD_ID`   | Jira Cloud ID                                                  | Browser |
+| `VITE_DEBUG`                | `true` shows the dev tools overlay                             | Browser |
+| `VITE_FAKE_BACKEND`         | `true` runs `pnpm start` against the fake backend (dev only)   | Browser |
+| `JIRA_CLIENT_ID`            | Jira OAuth client ID                                           | Server  |
+| `JIRA_CLIENT_SECRET`        | Jira OAuth client secret                                       | Server  |
+| `OVERRIDE_DEPLOY_URL`       | Base URL for the OAuth redirect, e.g. `http://localhost:5173`. | Server  |
 
-Server-variablene brukes kun av Netlify Functions og eksponeres ikke til nettleseren.
+Server variables are read only by the Netlify functions and never reach the browser. Without `OVERRIDE_DEPLOY_URL`, the functions use the URL Netlify gives the deploy.
 
 ## Deploy
 
-Appen deployes automatisk til Netlify. `netlify.toml` definerer build-kommando, publish-mappe (`dist/`) og plassering av serverless-funksjoner (`src/backend/`).
+Netlify deploys the app automatically. `netlify.toml` sets the build command, the publish folder (`dist/`), the functions folder (`src/backend/`) and the fallback that serves `index.html` for deep links.
 
-CI kjører tester via GitHub Actions på pull requests.
+GitHub Actions runs the tests, lint, typecheck, format check and build on every pull request.
