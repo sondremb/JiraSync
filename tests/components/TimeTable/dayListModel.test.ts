@@ -63,7 +63,30 @@ describe("toDayList", () => {
 		test("an empty weekend becomes one row that keeps the Sunday lock", () => {
 			const list = toDayList(emptyWeek(), beforeWeek);
 			expect(list.items).toHaveLength(6);
-			expect(list.items.at(-1)).toEqual({ kind: "weekend", saturday, sunday });
+			expect(list.items.at(-1)).toEqual({
+				kind: "weekend",
+				saturday,
+				lockableDays: [sunday],
+			});
+		});
+
+		test("a collapsed weekend keeps the lock on a Saturday that ends the month", () => {
+			// 2026-02-28 is a Saturday, and 2026-03-01 a Sunday.
+			const monthEnd = IsoWeek.days(
+				IsoWeek.fromIsoDate(IsoDate.parse("2026-02-28")),
+			);
+			const list = toDayList(
+				monthEnd.map((date) => DayReport.empty(date)),
+				LockDate.none,
+			);
+			expect(list.items.at(-1)).toEqual({
+				kind: "weekend",
+				saturday: IsoDate.parse("2026-02-28"),
+				lockableDays: [
+					IsoDate.parse("2026-02-28"),
+					IsoDate.parse("2026-03-01"),
+				],
+			});
 		});
 
 		test("Bekk hours on Saturday keep both days", () => {
@@ -113,6 +136,21 @@ describe("toDayList", () => {
 		expect(dayAt(list, monday).bekkHours).toBe(7.5);
 		expect(dayAt(list, tuesday).bekkHours).toBe(4);
 		expect(list.weekBekkHours).toBe(11.5);
+	});
+
+	test("only Sundays and month ends are lockable", () => {
+		// 2025-03-31 is a Monday that ends the month.
+		const week = IsoWeek.fromIsoDate(IsoDate.parse("2025-03-31"));
+		const reports = IsoWeek.days(week).map((date) => DayReport.empty(date));
+		addManaged(reports[5], 201, 1, 1); // keep the weekend apart
+		const lockable = toDayList(reports, LockDate.none)
+			.items.filter((item) => item.kind === "day")
+			.filter((day) => day.lockable)
+			.map((day) => day.date);
+		expect(lockable).toEqual([
+			IsoDate.parse("2025-03-31"),
+			IsoDate.parse("2025-04-06"),
+		]);
 	});
 
 	test("days up to the lock date are locked", () => {

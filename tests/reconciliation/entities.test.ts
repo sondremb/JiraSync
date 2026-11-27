@@ -88,6 +88,32 @@ describe("LockDate.isLocked", () => {
 	});
 });
 
+describe("LockDate.canLockThrough", () => {
+	const canLock = (date: string) =>
+		LockDate.canLockThrough(IsoDate.parse(date));
+
+	test("allows Sundays", () => {
+		expect(canLock("2025-02-02")).toBe(true);
+		expect(canLock("2025-02-09")).toBe(true);
+	});
+
+	test("allows the last day of a month on any weekday", () => {
+		expect(canLock("2025-01-31")).toBe(true); // Friday
+		expect(canLock("2025-02-28")).toBe(true); // Friday, not a leap year
+		expect(canLock("2024-02-29")).toBe(true); // Thursday, leap year
+		expect(canLock("2025-12-31")).toBe(true); // Wednesday, year end
+		expect(canLock("2026-02-28")).toBe(true); // Saturday
+	});
+
+	test("refuses other days", () => {
+		expect(canLock("2025-02-03")).toBe(false); // Monday
+		expect(canLock("2025-02-08")).toBe(false); // Saturday
+		expect(canLock("2025-04-29")).toBe(false); // Tuesday before a month end
+		expect(canLock("2024-02-28")).toBe(false); // leap year, not the last day
+		expect(canLock("2025-12-30")).toBe(false);
+	});
+});
+
 describe("LockDate.startWeek", () => {
 	const today = new Date("2025-03-12T12:00:00Z");
 
