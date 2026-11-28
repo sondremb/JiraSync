@@ -1,27 +1,15 @@
 import { describe, expect, test } from "vitest";
-import { IsoDate } from "../../src/date-time/IsoWeek";
+import { IsoDate, IsoMonth } from "../../src/date-time/IsoWeek";
 import { LockDate } from "../../src/reconciliation/entities";
 import {
 	monthsClosedByLock,
 	overtimeOutcome,
 	planLock,
-	YearMonth,
 	type OvertimeSummary,
 } from "../../src/overtime/overtime";
 
 const d = IsoDate.parse;
-
-describe("YearMonth", () => {
-	test("last day handles month lengths and leap years", () => {
-		expect(YearMonth.lastDay({ year: 2026, month: 11 })).toBe("2026-11-30");
-		expect(YearMonth.lastDay({ year: 2028, month: 2 })).toBe("2028-02-29");
-		expect(YearMonth.lastDay({ year: 2026, month: 12 })).toBe("2026-12-31");
-	});
-
-	test("names the month in Norwegian", () => {
-		expect(YearMonth.name({ year: 2026, month: 11 })).toBe("november");
-	});
-});
+const m = IsoMonth.parse;
 
 describe("monthsClosedByLock", () => {
 	test("a Sunday lock inside a month closes nothing", () => {
@@ -30,13 +18,13 @@ describe("monthsClosedByLock", () => {
 
 	test("locking through the last day of a month closes it", () => {
 		expect(monthsClosedByLock(d("2026-11-22"), d("2026-11-30"))).toEqual([
-			{ year: 2026, month: 11 },
+			m("2026-11"),
 		]);
 	});
 
 	test("a Sunday lock past a month end closes that month", () => {
 		expect(monthsClosedByLock(d("2026-11-29"), d("2026-12-06"))).toEqual([
-			{ year: 2026, month: 11 },
+			m("2026-11"),
 		]);
 	});
 
@@ -46,15 +34,13 @@ describe("monthsClosedByLock", () => {
 
 	test("a lock across two month ends closes both, across the year", () => {
 		expect(monthsClosedByLock(d("2026-11-29"), d("2027-01-03"))).toEqual([
-			{ year: 2026, month: 11 },
-			{ year: 2026, month: 12 },
+			m("2026-11"),
+			m("2026-12"),
 		]);
 	});
 
 	test("without a lock date, only the month the lock date ends counts", () => {
-		expect(monthsClosedByLock(null, d("2026-11-30"))).toEqual([
-			{ year: 2026, month: 11 },
-		]);
+		expect(monthsClosedByLock(null, d("2026-11-30"))).toEqual([m("2026-11")]);
 		expect(monthsClosedByLock(null, d("2026-11-29"))).toEqual([]);
 	});
 });
@@ -75,7 +61,7 @@ describe("planLock", () => {
 	test("a lock that closes a month signs its overtime", () => {
 		expect(planLock(lockedThrough, d("2026-11-30"))).toEqual({
 			kind: "sign-overtime",
-			month: { year: 2026, month: 11 },
+			month: m("2026-11"),
 		});
 	});
 
@@ -90,7 +76,7 @@ describe("planLock", () => {
 describe("overtimeOutcome", () => {
 	// November 2026 as Bekk dev reported it, and what Timekeeper signed.
 	const november: OvertimeSummary = {
-		month: { year: 2026, month: 11 },
+		month: m("2026-11"),
 		fromWeek: 44,
 		toWeek: 48,
 		overtimeHours: 9.5,
@@ -134,7 +120,7 @@ describe("overtimeOutcome", () => {
 	test("a month without overtime signs zero hours", () => {
 		const october: OvertimeSummary = {
 			...november,
-			month: { year: 2026, month: 10 },
+			month: m("2026-10"),
 			overtimeHours: 0,
 			flexBalanceHours: 5,
 			mandatoryFlex: 0,

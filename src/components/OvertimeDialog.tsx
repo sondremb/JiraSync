@@ -71,7 +71,7 @@ const OvertimeDialogBody: React.FC<
 	if (summary.data) {
 		return (
 			<OvertimeSigningForm
-				key={`${summary.data.month.year}-${summary.data.month.month}`}
+				key={summary.data.month}
 				summary={summary.data}
 				{...props}
 			/>

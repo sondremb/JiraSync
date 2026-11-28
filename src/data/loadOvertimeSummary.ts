@@ -1,6 +1,7 @@
 import type { components } from "../generated/bekk-timekeeper";
 import { getEmployeeId } from "../login/bekk/bekkLogin";
-import type { OvertimeSummary, YearMonth } from "../overtime/overtime";
+import { IsoMonth } from "../date-time/IsoWeek";
+import type { OvertimeSummary } from "../overtime/overtime";
 import { bekkClient } from "./bekkclient";
 
 type BekkOvertimeSummary = components["schemas"]["OvertimeSummaryViewModel"];
@@ -13,7 +14,7 @@ export const overtimeSummaryFromBekk = (
 	const payoutHours = clearing?.flexBalanceForPayout ?? 0;
 	const deletedHours = clearing?.flexBalanceForDeletion ?? 0;
 	return {
-		month: { year: summary.year, month: summary.month },
+		month: IsoMonth.fromParts(summary),
 		fromWeek: summary.fromWeek,
 		toWeek: summary.toWeek,
 		overtimeHours: summary.overtimeHours,
@@ -28,12 +29,12 @@ export const overtimeSummaryFromBekk = (
 };
 
 export async function loadOvertimeSummary(
-	month: YearMonth,
+	month: IsoMonth,
 ): Promise<OvertimeSummary> {
 	const employeeId = getEmployeeId();
 	const { data, response } = await bekkClient.GET(
 		"/overtime/employees/{employeeId}/summary",
-		{ params: { path: { employeeId }, query: month } },
+		{ params: { path: { employeeId }, query: IsoMonth.toParts(month) } },
 	);
 	if (!response.ok || !data) {
 		throw new Error(`Kunne ikke hente overtid (${response.status})`);

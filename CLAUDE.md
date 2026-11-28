@@ -74,7 +74,7 @@ Auth is injected via middleware on each client. Jira uses a sessionStorage-backe
 
 Coding rules live in `CODING_STANDARDS.md`, which review checks against.
 
-- **Branded types**: `src/Utils/brandedTypes.ts`. **Dates and ISO weeks**: `src/date-time/IsoWeek.ts`. **Shared helpers**: `src/Utils/`.
+- **Branded types**: `src/Utils/brandedTypes.ts`. **Dates, ISO weeks and months**: `src/date-time/IsoWeek.ts`. **Shared helpers**: `src/Utils/`.
 - **Styling**: Digdir Designsystemet, default theme, light mode only (`data-color-scheme="light"` is hardcoded in `index.html`). Global base styles live in `src/global.css`. Layout primitives are in `src/layout/` (`Page`, `Row`, `Column`).
 - **Tests**: vitest, no jsdom or testing-library.
 

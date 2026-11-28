@@ -1,16 +1,12 @@
 import { useState } from "react";
-import type { IsoDate } from "../date-time/IsoWeek";
+import type { IsoDate, IsoMonth } from "../date-time/IsoWeek";
 import { useLockDate } from "../data/useLockDate";
-import {
-	planLock,
-	type SignedOvertime,
-	type YearMonth,
-} from "../overtime/overtime";
+import { planLock, type SignedOvertime } from "../overtime/overtime";
 
 /** A lock that waits for the employee to sign the month's overtime. */
 export interface OvertimeSigning {
 	lockDate: IsoDate;
-	month: YearMonth;
+	month: IsoMonth;
 }
 
 /**

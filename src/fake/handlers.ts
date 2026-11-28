@@ -1,7 +1,7 @@
 import { http, HttpResponse } from "msw";
 import type { paths as BekkPaths } from "../generated/bekk-timekeeper";
 import type { paths as JiraPaths } from "../generated/jira-issues";
-import { IsoDate } from "../date-time/IsoWeek";
+import { IsoDate, IsoMonth } from "../date-time/IsoWeek";
 import { jiraBaseUrl } from "../data/jira/jiraclient";
 import { jiraAuthPaths } from "../login/jira/authPaths";
 import { config } from "../Utils/envUtils";
@@ -366,15 +366,15 @@ function bekkHandlers(store: FakeStore) {
 			bekk("/overtime/employees/:employeeId/summary"),
 			bekkAuthorized(({ request }) => {
 				const params = new URL(request.url).searchParams;
-				const month = {
+				const month = IsoMonth.fromParts({
 					year: Number(params.get("year")),
 					month: Number(params.get("month")),
-				};
+				});
 				const summary = store.overtimeSummary(month);
 				return HttpResponse.json<
 					Bekk<"/overtime/employees/{employeeId}/summary", "get">
 				>({
-					...month,
+					...IsoMonth.toParts(month),
 					fromWeek: summary.fromWeek,
 					toWeek: summary.toWeek,
 					flexBalanceHours: summary.flexBalanceHours,

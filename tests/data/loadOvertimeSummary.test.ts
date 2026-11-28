@@ -22,7 +22,7 @@ const november = {
 describe("overtimeSummaryFromBekk", () => {
 	test("maps the hours for signing", () => {
 		expect(overtimeSummaryFromBekk(november)).toEqual({
-			month: { year: 2026, month: 11 },
+			month: "2026-11",
 			fromWeek: 44,
 			toWeek: 48,
 			overtimeHours: 9.5,

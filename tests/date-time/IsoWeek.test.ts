@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
-import { IsoDate, IsoWeek } from "../../src/date-time/IsoWeek";
+import { IsoDate, IsoMonth, IsoWeek } from "../../src/date-time/IsoWeek";
 
 describe(".toParts", () => {
 	test("It splits single digit weeks", () => {
@@ -298,5 +298,39 @@ describe(".formatRange", () => {
 
 	test("a week across years", () => {
 		expect(IsoWeek.formatRange("2026-W53" as IsoWeek)).toBe("28. des–3. jan");
+	});
+});
+
+describe("IsoMonth", () => {
+	const m = IsoMonth.parse;
+
+	test.each(["2026-1", "2026-00", "2026-13", "26-11", "2026-11-01"])(
+		"It rejects %s",
+		(input) => {
+			expect(IsoMonth.isValid(input)).toBe(false);
+		},
+	);
+
+	test("It round-trips through parts", () => {
+		expect(IsoMonth.fromParts({ year: 2026, month: 3 })).toBe("2026-03");
+		expect(IsoMonth.toParts(m("2026-03"))).toEqual({ year: 2026, month: 3 });
+	});
+
+	test("It takes the month of a date", () => {
+		expect(IsoMonth.fromIsoDate(IsoDate.parse("2026-11-30"))).toBe("2026-11");
+	});
+
+	test("The last day handles month lengths and leap years", () => {
+		expect(IsoMonth.lastDay(m("2026-11"))).toBe("2026-11-30");
+		expect(IsoMonth.lastDay(m("2028-02"))).toBe("2028-02-29");
+		expect(IsoMonth.lastDay(m("2026-12"))).toBe("2026-12-31");
+	});
+
+	test("The next month crosses the year", () => {
+		expect(IsoMonth.next(m("2026-12"))).toBe("2027-01");
+	});
+
+	test("It names the month in Norwegian", () => {
+		expect(IsoMonth.name(m("2026-11"))).toBe("november");
 	});
 });

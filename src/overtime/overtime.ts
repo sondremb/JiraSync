@@ -1,36 +1,5 @@
-import { IsoDate, NORWAY_TIMEZONE } from "../date-time/IsoWeek";
+import { IsoMonth, type IsoDate } from "../date-time/IsoWeek";
 import type { LockDate } from "../reconciliation/entities";
-
-/** A calendar month; `month` is 1–12. */
-export interface YearMonth {
-	year: number;
-	month: number;
-}
-
-export const YearMonth = {
-	of(date: IsoDate): YearMonth {
-		const [year, month] = date.split("-").map((part) => parseInt(part, 10));
-		return { year, month };
-	},
-	lastDay({ year, month }: YearMonth): IsoDate {
-		const days = new Date(Date.UTC(year, month, 0)).getUTCDate();
-		return IsoDate.parse(
-			`${year}-${String(month).padStart(2, "0")}-${String(days).padStart(2, "0")}`,
-		);
-	},
-	next({ year, month }: YearMonth): YearMonth {
-		return month === 12
-			? { year: year + 1, month: 1 }
-			: { year, month: month + 1 };
-	},
-	/** The month's Norwegian name in lower case: "november". */
-	name({ year, month }: YearMonth): string {
-		return new Intl.DateTimeFormat("nb-NO", {
-			month: "long",
-			timeZone: NORWAY_TIMEZONE,
-		}).format(new Date(Date.UTC(year, month - 1, 15)));
-	},
-};
 
 /**
  * The months a lock from `previous` through `next` closes: those whose last day
@@ -43,18 +12,18 @@ export const YearMonth = {
 export function monthsClosedByLock(
 	previous: IsoDate | null,
 	next: IsoDate,
-): YearMonth[] {
+): IsoMonth[] {
 	if (previous === null) {
-		const month = YearMonth.of(next);
-		return YearMonth.lastDay(month) === next ? [month] : [];
+		const month = IsoMonth.fromIsoDate(next);
+		return IsoMonth.lastDay(month) === next ? [month] : [];
 	}
-	const closed: YearMonth[] = [];
+	const closed: IsoMonth[] = [];
 	for (
-		let month = YearMonth.of(previous);
-		YearMonth.lastDay(month) <= next;
-		month = YearMonth.next(month)
+		let month = IsoMonth.fromIsoDate(previous);
+		IsoMonth.lastDay(month) <= next;
+		month = IsoMonth.next(month)
 	) {
-		if (YearMonth.lastDay(month) > previous) closed.push(month);
+		if (IsoMonth.lastDay(month) > previous) closed.push(month);
 	}
 	return closed;
 }
@@ -66,7 +35,7 @@ export type LockPlan =
 	/** The lock closes no month, so needs no overtime signing. */
 	| { kind: "lock" }
 	/** The lock closes one month, whose overtime must be signed in the same request. */
-	| { kind: "sign-overtime"; month: YearMonth }
+	| { kind: "sign-overtime"; month: IsoMonth }
 	/** The lock closes several months, but one request can only sign one: lock through `firstMonthEnd` first. */
 	| { kind: "one-month-at-a-time"; firstMonthEnd: IsoDate };
 
@@ -80,13 +49,13 @@ export function planLock(lockDate: LockDate, day: IsoDate): LockPlan {
 	if (closed.length === 1) return { kind: "sign-overtime", month: closed[0] };
 	return {
 		kind: "one-month-at-a-time",
-		firstMonthEnd: YearMonth.lastDay(closed[0]),
+		firstMonthEnd: IsoMonth.lastDay(closed[0]),
 	};
 }
 
 /** Bekk's overtime for one month, before it is signed. */
 export interface OvertimeSummary {
-	month: YearMonth;
+	month: IsoMonth;
 	/** The ISO weeks the month's overtime is counted over. */
 	fromWeek: number;
 	toWeek: number;
@@ -109,7 +78,7 @@ export type OvertimeChoice =
 	| { kind: "flex" }
 	| { kind: "split"; flexHours: number };
 
-/** The body that signs a month's overtime: totals, mandatory hours included. */
+/** The body that signs a month's overtime: totals, mandatory hours included. `month` is 1–12, as Bekk takes it. */
 export interface SignedOvertime {
 	year: number;
 	month: number;
@@ -149,7 +118,7 @@ export function overtimeOutcome(
 		summary.mandatoryPayout + summary.allocatable - chosenFlex;
 	const flexHours = summary.mandatoryFlex + chosenFlex;
 	return {
-		signed: { ...summary.month, payoutHours, flexHours },
+		signed: { ...IsoMonth.toParts(summary.month), payoutHours, flexHours },
 		payoutHours,
 		flexBalanceHours: summary.flexBalanceHours + flexHours,
 	};

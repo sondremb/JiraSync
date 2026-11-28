@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { IsoDate } from "../../src/date-time/IsoWeek";
+import { IsoDate, IsoMonth } from "../../src/date-time/IsoWeek";
 import {
 	oneMonthAtATimeNotice,
 	overtimeDialogTitle,
@@ -9,7 +9,7 @@ describe("lock messages", () => {
 	test("titles the overtime dialog with the month and its weeks", () => {
 		expect(
 			overtimeDialogTitle({
-				month: { year: 2026, month: 11 },
+				month: IsoMonth.parse("2026-11"),
 				fromWeek: 44,
 				toWeek: 48,
 				overtimeHours: 9.5,
