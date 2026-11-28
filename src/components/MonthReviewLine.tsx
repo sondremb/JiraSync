@@ -13,13 +13,23 @@ interface Props {
 
 /**
  * Whether the billing month is in sync, under the status card: a quiet line
- * when it is, a tinted panel when it isn't.
+ * when it is, a tinted panel when it isn't. The live region is always
+ * rendered, so a screen reader announces the message when it arrives.
  */
 export const MonthReviewLine: React.FC<Props> = ({ message, onShowWeek }) => {
-	if (!message) return null;
+	return (
+		<div aria-live="polite" className={styles.liveRegion}>
+			{message && <MessageLine message={message} onShowWeek={onShowWeek} />}
+		</div>
+	);
+};
+
+const MessageLine: React.FC<{
+	message: MonthReviewMessage;
+	onShowWeek: (week: IsoWeek) => void;
+}> = ({ message, onShowWeek }) => {
 	return (
 		<p
-			aria-live="polite"
 			className={classNames(
 				styles.monthReview,
 				styles[`monthReview--${message.tone}`],
@@ -33,7 +43,7 @@ export const MonthReviewLine: React.FC<Props> = ({ message, onShowWeek }) => {
 						typeof part === "string" ? (
 							<React.Fragment key={index}>{part}</React.Fragment>
 						) : (
-							<Link key={part.week} asChild>
+							<Link key={`${index}-${part.week}`} asChild>
 								<button
 									type="button"
 									className={styles.monthReview__week}

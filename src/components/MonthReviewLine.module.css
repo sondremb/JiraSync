@@ -1,3 +1,8 @@
+/* Leaves no box, so an empty live region adds no gap to the layout. */
+.liveRegion {
+	display: contents;
+}
+
 /* In sync, a quiet line tucked under the status card. Out of sync, a tinted
  * panel with the status card's left stripe: easy to spot, but not an alert. */
 .monthReview {
@@ -16,8 +21,9 @@
 
 .monthReview--danger {
 	padding: var(--ds-size-2) var(--ds-size-4);
-	border: 1px solid var(--ds-color-danger-border-subtle);
-	border-left: 4px solid var(--ds-color-danger-base-default);
+	border: var(--ds-border-width-default) solid
+		var(--ds-color-danger-border-subtle);
+	border-left: var(--ds-size-1) solid var(--ds-color-danger-base-default);
 	border-radius: var(--ds-border-radius-lg);
 	background-color: var(--ds-color-danger-surface-tinted);
 	color: var(--ds-color-danger-text-default);
