@@ -123,3 +123,13 @@ export function overtimeOutcome(
 		flexBalanceHours: summary.flexBalanceHours + flexHours,
 	};
 }
+
+/**
+ * The split slider's step. A range input snaps to multiples of its step and
+ * can't reach a max between them, so the step must divide `allocatable`.
+ */
+export function splitStep(allocatable: number): number | "any" {
+	return (
+		[0.5, 0.25].find((step) => Number.isInteger(allocatable / step)) ?? "any"
+	);
+}

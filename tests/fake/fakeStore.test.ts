@@ -176,8 +176,9 @@ describe("fake store writes", () => {
 		expect(store.lockHours(monthEnd, signed)).toEqual([]);
 		expect(store.lockDate()).toBe(monthEnd);
 		expect(store.overtimeSummary(november)).toMatchObject({
+			mandatoryPayout: 0,
+			mandatoryFlex: 0,
 			allocatable: 0,
-			signed,
 		});
 	});
 
@@ -195,7 +196,7 @@ describe("fake store writes", () => {
 		expect(store.overtimeSummary(IsoMonth.parse("2026-12"))).toMatchObject({
 			fromWeek: 49,
 			toWeek: 52,
-			halfYearClearing: { payout: 2, deletion: 0 },
+			halfYearClearing: { payoutHours: 2, deletedHours: 0 },
 		});
 	});
 });

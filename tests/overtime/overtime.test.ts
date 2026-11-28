@@ -5,6 +5,7 @@ import {
 	monthsClosedByLock,
 	overtimeOutcome,
 	planLock,
+	splitStep,
 	type OvertimeSummary,
 } from "../../src/overtime/overtime";
 
@@ -133,5 +134,20 @@ describe("overtimeOutcome", () => {
 			payoutHours: 0,
 			flexHours: 0,
 		});
+	});
+});
+
+describe("splitStep", () => {
+	test("steps in half hours when they reach every split", () => {
+		expect(splitStep(7.5)).toBe(0.5);
+		expect(splitStep(0)).toBe(0.5);
+	});
+
+	test("steps in quarter hours when half hours can't reach the max", () => {
+		expect(splitStep(7.75)).toBe(0.25);
+	});
+
+	test("steps freely when no step reaches the max", () => {
+		expect(splitStep(7.6)).toBe("any");
 	});
 });

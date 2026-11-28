@@ -6,6 +6,11 @@ import { bekkClient } from "./bekkclient";
 
 type BekkOvertimeSummary = components["schemas"]["OvertimeSummaryViewModel"];
 
+/**
+ * Bekk's summary as the hours to sign. A month that was signed before still
+ * gets signed again with whatever `hoursForSigning` Bekk reports, so
+ * `signingResult` is left out (docs/how-employees-log-hours.md).
+ */
 export const overtimeSummaryFromBekk = (
 	summary: BekkOvertimeSummary,
 ): OvertimeSummary => {

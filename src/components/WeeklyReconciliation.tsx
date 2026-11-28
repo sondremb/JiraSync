@@ -1,7 +1,6 @@
 import React, { useRef } from "react";
 import { Alert } from "@digdir/designsystemet-react";
 import { IsoWeek } from "../date-time/IsoWeek";
-import { useLockDate } from "../data/useLockDate";
 import { LockDate } from "../reconciliation/entities";
 import { Ruleset } from "../rules";
 import { toWeekStatus } from "./TimeTable/weekStatus";
@@ -32,8 +31,8 @@ export const WeeklyReconciliation: React.FC<Props> = ({
 	onPreviousWeek,
 	onNextWeek,
 }) => {
-	const { lockDate } = useLockDate();
-	const lockFlow = useLockFlow();
+	const lockFlow = useLockFlow(week);
+	const { lockDate } = lockFlow;
 	const weekSync = useWeekSync(week, ruleset, lockDate);
 	const { data, error } = weekSync;
 	const status = data ? toWeekStatus(data, lockDate) : undefined;
@@ -68,7 +67,7 @@ export const WeeklyReconciliation: React.FC<Props> = ({
 				lockDate={lockDate}
 				lockedDays={weekSync.lockedDays}
 				syncError={weekSync.syncError}
-				lockError={lockFlow.signing ? null : lockFlow.lockError}
+				lockError={lockFlow.gridError}
 				locked={lockFlow.locked}
 				refusedUntil={lockFlow.refusedUntil}
 			/>
@@ -87,9 +86,9 @@ export const WeeklyReconciliation: React.FC<Props> = ({
 				onClose={weekSync.closePreview}
 			/>
 			<OvertimeDialog
-				signing={lockFlow.signing}
+				month={lockFlow.signingMonth}
 				locking={lockFlow.locking}
-				lockError={lockFlow.lockError}
+				lockError={lockFlow.dialogError}
 				onConfirm={lockFlow.confirmSigning}
 				onClose={lockFlow.closeSigning}
 			/>

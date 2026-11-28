@@ -385,8 +385,8 @@ function bekkHandlers(store: FakeStore) {
 						allocatable: summary.allocatable,
 						...(summary.halfYearClearing && {
 							halfYearFlexClearing: {
-								flexBalanceForPayout: summary.halfYearClearing.payout,
-								flexBalanceForDeletion: summary.halfYearClearing.deletion,
+								flexBalanceForPayout: summary.halfYearClearing.payoutHours,
+								flexBalanceForDeletion: summary.halfYearClearing.deletedHours,
 							},
 						}),
 					},

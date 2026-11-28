@@ -4,13 +4,13 @@ import { getEmployeeId } from "../login/bekk/bekkLogin";
 import { lockBekkHours } from "./lockBekkHours";
 import type { IsoDate } from "../date-time/IsoWeek";
 import type { SignedOvertime } from "../overtime/overtime";
+import { lockDateFromBekk } from "./lockDateFromBekk";
 
 export interface LockRequest {
 	lockDate: IsoDate;
 	/** Required when the lock closes a month. */
 	signedOvertime?: SignedOvertime;
 }
-import { lockDateFromBekk } from "./lockDateFromBekk";
 
 export const useLockDate = () => {
 	const queryClient = useQueryClient();

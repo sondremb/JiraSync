@@ -1,41 +1,43 @@
 import { useState } from "react";
-import type { IsoDate, IsoMonth } from "../date-time/IsoWeek";
+import type { IsoDate, IsoMonth, IsoWeek } from "../date-time/IsoWeek";
 import { useLockDate } from "../data/useLockDate";
 import { planLock, type SignedOvertime } from "../overtime/overtime";
+import { lockNotices, type LockAttempt } from "./lockMessages";
 
 /** A lock that waits for the employee to sign the month's overtime. */
-export interface OvertimeSigning {
+interface OvertimeSigning {
 	lockDate: IsoDate;
 	month: IsoMonth;
 }
 
 /**
- * Locking through a day: straight away, through the overtime dialog when the
- * lock closes a month, or refused when it closes several.
+ * Locking through a day of `week`: straight away, through the overtime dialog
+ * when the lock closes a month, or refused when it closes several. Owns the
+ * lock date, so the week and the lock read the same one.
  */
-export const useLockFlow = () => {
+export const useLockFlow = (week: IsoWeek) => {
 	const { lockDate, updateLockDate } = useLockDate();
 	const [signing, setSigning] = useState<OvertimeSigning | null>(null);
-	/** The first month end, when a lock across several was refused. */
-	const [refusedUntil, setRefusedUntil] = useState<IsoDate | null>(null);
+	const [attempt, setAttempt] = useState<LockAttempt | null>(null);
 
 	const lock = (day: IsoDate) => {
 		if (updateLockDate.isPending) return;
 		const plan = planLock(lockDate, day);
-		setRefusedUntil(null);
+		if (plan.kind === "unknown-lock-date") return;
+		updateLockDate.reset();
+		setAttempt({
+			week,
+			refusedUntil:
+				plan.kind === "one-month-at-a-time" ? plan.firstMonthEnd : null,
+		});
 		switch (plan.kind) {
-			case "unknown-lock-date":
-				return;
 			case "lock":
 				updateLockDate.mutate({ lockDate: day });
 				return;
 			case "sign-overtime":
-				updateLockDate.reset();
 				setSigning({ lockDate: day, month: plan.month });
 				return;
 			case "one-month-at-a-time":
-				updateLockDate.reset();
-				setRefusedUntil(plan.firstMonthEnd);
 				return;
 		}
 	};
@@ -56,14 +58,19 @@ export const useLockFlow = () => {
 	};
 
 	return {
+		lockDate,
 		lock,
-		signing,
+		/** The month whose overtime the dialog signs, while it's open. */
+		signingMonth: signing?.month ?? null,
 		confirmSigning,
 		closeSigning,
 		locking: updateLockDate.isPending,
-		/** Shown in the dialog while it's open, below the grid otherwise. */
-		lockError: updateLockDate.error,
-		locked: updateLockDate.isSuccess,
-		refusedUntil,
+		...lockNotices({
+			week,
+			attempt,
+			signingOpen: signing !== null,
+			error: updateLockDate.error,
+			succeeded: updateLockDate.isSuccess,
+		}),
 	};
 };

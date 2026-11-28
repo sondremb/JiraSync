@@ -11,11 +11,12 @@ import {
 	Paragraph,
 	Spinner,
 } from "@digdir/designsystemet-react";
-import { formatHours } from "../date-time/IsoWeek";
+import { formatHours, type IsoMonth } from "../date-time/IsoWeek";
 import { useOvertimeSummary } from "../data/useOvertimeSummary";
 import {
 	chosenFlexHours,
 	overtimeOutcome,
+	splitStep,
 	type OvertimeChoice,
 	type OvertimeSummary,
 	type SignedOvertime,
@@ -24,12 +25,11 @@ import { Column } from "../layout/Column";
 import { Row } from "../layout/Row";
 import { classNames } from "../Utils/classNames";
 import { overtimeDialogTitle } from "./lockMessages";
-import type { OvertimeSigning } from "./useLockFlow";
 import styles from "./OvertimeDialog.module.css";
 
 interface Props {
-	/** Open while set. */
-	signing: OvertimeSigning | null;
+	/** The month to sign; open while set. */
+	month: IsoMonth | null;
 	locking: boolean;
 	lockError: Error | null;
 	onConfirm: (signed: SignedOvertime) => void;
@@ -37,37 +37,24 @@ interface Props {
 }
 
 /** Signs the overtime of the month a lock closes, then locks. Modelled on Timekeeper's dialog. */
-export const OvertimeDialog: React.FC<Props> = ({
-	signing,
-	locking,
-	lockError,
-	onConfirm,
-	onClose,
-}) => {
-	const summary = useOvertimeSummary(signing?.month ?? null);
-	return (
-		<Dialog
-			open={signing !== null}
-			onClose={onClose}
-			closedby={locking ? "none" : "any"}
-			closeButton={locking ? false : undefined}
-		>
-			{signing && (
-				<OvertimeDialogBody
-					summary={summary}
-					locking={locking}
-					lockError={lockError}
-					onConfirm={onConfirm}
-					onClose={onClose}
-				/>
-			)}
-		</Dialog>
-	);
-};
+export const OvertimeDialog: React.FC<Props> = ({ month, ...props }) => (
+	<Dialog
+		open={month !== null}
+		onClose={props.onClose}
+		closedby={props.locking ? "none" : "any"}
+		closeButton={props.locking ? false : undefined}
+	>
+		{month && <OvertimeDialogBody month={month} {...props} />}
+	</Dialog>
+);
 
-const OvertimeDialogBody: React.FC<
-	Omit<Props, "signing"> & { summary: ReturnType<typeof useOvertimeSummary> }
-> = ({ summary, ...props }) => {
+type BodyProps = Omit<Props, "month">;
+
+const OvertimeDialogBody: React.FC<BodyProps & { month: IsoMonth }> = ({
+	month,
+	...props
+}) => {
+	const summary = useOvertimeSummary(month);
 	if (summary.data) {
 		return (
 			<OvertimeSigningForm
@@ -102,7 +89,7 @@ const choiceLabels: Record<ChoiceKind, string> = {
 };
 
 const OvertimeSigningForm: React.FC<
-	Omit<Props, "signing"> & { summary: OvertimeSummary }
+	BodyProps & { summary: OvertimeSummary }
 > = ({ summary, locking, lockError, onConfirm, onClose }) => {
 	const [choice, setChoice] = useState<OvertimeChoice>({ kind: "payout" });
 	const outcome = overtimeOutcome(summary, choice);
@@ -176,7 +163,7 @@ const OvertimeSigningForm: React.FC<
 						className={styles.overtimeDialog__slider}
 						min={0}
 						max={summary.allocatable}
-						step={0.5}
+						step={splitStep(summary.allocatable)}
 						value={flexHours}
 						disabled={locking}
 						onChange={(event) =>
