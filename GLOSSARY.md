@@ -26,6 +26,14 @@ _Avoid_: Locked week, submission date
 Deciding how a month's overtime is taken, as payout or flex hours, when a lock closes that month. Bekk requires it in the lock request itself, as totals that include the mandatory hours.
 _Avoid_: Overtime approval, overtime allocation
 
+**Billing month** _(UI: måned)_:
+A calendar month, from the first to the last day. The hours billed for a month cover exactly these days, and employees lock through its last day.
+_Avoid_: Month (when an overtime month could be meant), lock month
+
+**Overtime month**:
+The whole ISO weeks Bekk counts overtime over for a month: from the week that contains the month's first day to the last whole week inside the month. Overtime is counted over completed weeks, so it can start before the billing month and end before it does, but it is signed off when the employee locks through the billing month's last day.
+_Avoid_: Month (when a billing month could be meant), overtime period
+
 ### Mapping
 
 **Policy**:

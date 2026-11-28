@@ -26,6 +26,7 @@
   - Read fake settings only from sessionStorage, never from product URLs or routes.
 - **Screenshots:** `pnpm screenshot [--scenario <name>] [--full-page] [--wait-for <selector>] <product URL> <out.png>` (`scripts/screenshot.ts`).
   - It starts its own Vite dev server with the fake backend on a free port, so no `pnpm start` is needed, opens `/__fake?scenario=<name>&next=<product URL>` in headless Chrome via Playwright, and waits for the redirect, network idle and no Designsystemet skeletons (`.ds-skeleton`). Pass `--wait-for` for anything else the page needs.
+  - `--date YYYY-MM-DD` fixes the browser's clock to noon that day. The fixtures follow, so the app looks as it would on that date. Use it for anything tied to the calendar, such as the month check, which only shows around a month end (`--date 2026-12-31` shows December out of sync).
   - It uses the installed Chrome, falling back to Playwright's Chromium (`pnpm exec playwright install chromium`). It forces `VITE_DEBUG` off so the router devtools stay out of the shot. `--width`/`--height` set the viewport (default 1280×800).
   - Example: `pnpm screenshot --scenario local-ruleset --full-page /policy policy.png`.
   - Chrome's own `--headless --screenshot` doesn't work: `--virtual-time-budget` skips past the service worker start, and without it the shot is taken before the app renders.

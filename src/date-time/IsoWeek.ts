@@ -17,6 +17,7 @@ import {
 } from "date-fns";
 import { toZonedTime, fromZonedTime } from "date-fns-tz";
 import { Brand } from "../Utils/brandedTypes";
+import { capitalize } from "../Utils/capitalize";
 
 /** The timezone every date and week is computed in, whatever the browser's. */
 export const NORWAY_TIMEZONE = "Europe/Oslo";
@@ -183,7 +184,7 @@ export const IsoDate = {
 			month: "long",
 			timeZone: NORWAY_TIMEZONE,
 		}).format(IsoDate.toDate(isoDate));
-		return text.charAt(0).toUpperCase() + text.slice(1);
+		return capitalize(text);
 	},
 	/** ISO weekday (1 = Monday, 7 = Sunday), whatever the browser's timezone. */
 	weekday(isoDate: IsoDate): number {
@@ -238,6 +239,14 @@ export const IsoMonth = {
 	/** The month's last day. */
 	lastDay(month: IsoMonth): IsoDate {
 		return IsoDate.addDays(IsoMonth.firstDay(IsoMonth.next(month)), -1);
+	},
+	/** Every ISO week with a day in the month, in order. */
+	weeks(month: IsoMonth): IsoWeek[] {
+		const last = IsoWeek.fromIsoDate(IsoMonth.lastDay(month));
+		const weeks = [IsoWeek.fromIsoDate(IsoMonth.firstDay(month))];
+		while (weeks[weeks.length - 1] !== last)
+			weeks.push(IsoWeek.next(weeks[weeks.length - 1]));
+		return weeks;
 	},
 	/** The month after. */
 	next(month: IsoMonth): IsoMonth {

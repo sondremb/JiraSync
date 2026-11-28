@@ -61,6 +61,7 @@ export const App: React.FC = () => {
 					ruleset={selectedRuleset}
 					onPreviousWeek={onPreviousWeekClick}
 					onNextWeek={onNextWeekClick}
+					onShowWeek={setNavigatedWeek}
 				/>
 			)}
 		</Page>

@@ -1,0 +1,49 @@
+/* Leaves no box, so an empty live region adds no gap to the layout. */
+.liveRegion {
+	display: contents;
+}
+
+/* In sync, a quiet line tucked under the status card. Out of sync, a tinted
+ * panel with the status card's left stripe: easy to spot, but not an alert. */
+.monthReview {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: var(--ds-size-1) var(--ds-size-2);
+	font-size: var(--ds-body-sm-font-size);
+}
+
+.monthReview--success {
+	margin-top: calc(-1 * var(--ds-size-3));
+	padding-inline: var(--ds-size-4);
+	color: var(--ds-color-success-text-default);
+}
+
+.monthReview--danger {
+	padding: var(--ds-size-2) var(--ds-size-4);
+	border: var(--ds-border-width-default) solid
+		var(--ds-color-danger-border-subtle);
+	border-left: var(--ds-size-1) solid var(--ds-color-danger-base-default);
+	border-radius: var(--ds-border-radius-lg);
+	background-color: var(--ds-color-danger-surface-tinted);
+	color: var(--ds-color-danger-text-default);
+	font-size: var(--ds-body-md-font-size);
+}
+
+/* The status mark's own margin is replaced by the gap. */
+.monthReview > :first-child {
+	margin-right: 0;
+}
+
+.monthReview__title {
+	font-weight: var(--ds-font-weight-semibold);
+}
+
+/* A week link inside the sentence, as text rather than a button. */
+.monthReview__week {
+	padding: 0;
+	border: none;
+	background: none;
+	font: inherit;
+	cursor: pointer;
+}

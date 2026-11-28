@@ -1,7 +1,8 @@
 // The dev server of this checkout. See docs/agents/worktrees.md.
 //
 //   pnpm dev:url (node scripts/dev-server.ts url)
-//                                  prints the URL of the dev server started from this checkout
+//                                  prints the URL of the dev server started from this checkout,
+//                                  and whether it runs the fake or the real backend
 //   node scripts/dev-server.ts fake  (re)starts it against the fake backend, on any free port
 //   node scripts/dev-server.ts real  (re)starts it against the real Jira and Bekk dev on port 5173,
 //                                    stopping whatever else listens there first
@@ -48,8 +49,15 @@ function cwdOf(pid: string): string {
 	return line?.slice(1) ?? "";
 }
 
+/** Which backend a dev server runs, from the VITE_FAKE_BACKEND in its environment. */
+function backendOf(pid: string): "fake" | "real" {
+	const env = run("ps", ["eww", "-o", "command=", "-p", pid]);
+	return env.split(/\s+/).includes("VITE_FAKE_BACKEND=true") ? "fake" : "real";
+}
+
 /**
- * The localhost URL of the dev server whose cwd is this checkout, or undefined.
+ * The localhost URL of the dev server whose cwd is this checkout and its
+ * backend, "http://localhost:5173/ (fake backend)", or undefined.
  * Vite listens on localhost; the Netlify plugin's wildcard (*:port) listener is skipped.
  */
 function devUrl(): string | undefined {
@@ -67,7 +75,7 @@ function devUrl(): string | undefined {
 			.split("\n")
 			.filter((l) => l.startsWith("n") && !l.startsWith("n*"))
 			.map((l) => l.slice(l.lastIndexOf(":") + 1))[0];
-		if (port) return `http://localhost:${port}/`;
+		if (port) return `http://localhost:${port}/ (${backendOf(pid)} backend)`;
 	}
 	return undefined;
 }

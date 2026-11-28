@@ -37,7 +37,7 @@ After the PR is merged: `git worktree remove ../JiraSync__worktrees/<n>-<slug>` 
 `scripts/dev-server.ts` handles this worktree's dev server, so agents don't have to find ports or panes:
 
 ```bash
-pnpm dev:url                   # the URL of the dev server running from this worktree
+pnpm dev:url                   # the URL of the dev server running from this worktree, and its backend
 node scripts/dev-server.ts real  # restart it against the real backends on 5173
 node scripts/dev-server.ts fake  # restart it against the fake backend
 ```

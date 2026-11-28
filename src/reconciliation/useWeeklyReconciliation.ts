@@ -1,4 +1,9 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+	queryOptions,
+	useMutation,
+	useQuery,
+	useQueryClient,
+} from "@tanstack/react-query";
 import { IsoWeek } from "../date-time/IsoWeek";
 import { loadBekkEntries } from "../data/loadBekkEntries";
 import { loadJiraWorklogs } from "../data/jira/loadJiraWorklogs";
@@ -17,8 +22,9 @@ export const reconciliationQueryKey = (week: IsoWeek, ruleset: Ruleset) => [
 	ruleset.rules,
 ];
 
-export function useWeeklyReconciliation(week: IsoWeek, ruleset: Ruleset) {
-	return useQuery({
+/** The week's reconciliation query, shared by the week view and the month review. */
+export const weeklyReconciliationQuery = (week: IsoWeek, ruleset: Ruleset) =>
+	queryOptions({
 		queryKey: reconciliationQueryKey(week, ruleset),
 		queryFn: () =>
 			reconcilePeriod(
@@ -29,6 +35,9 @@ export function useWeeklyReconciliation(week: IsoWeek, ruleset: Ruleset) {
 				loadBekkEntries,
 			),
 	});
+
+export function useWeeklyReconciliation(week: IsoWeek, ruleset: Ruleset) {
+	return useQuery(weeklyReconciliationQuery(week, ruleset));
 }
 
 export function useSyncWeek() {
