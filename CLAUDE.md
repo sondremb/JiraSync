@@ -102,7 +102,7 @@ Netlify functions handle the Jira OAuth flow (init → callback → session refr
 
 ### Issues and pull requests
 
-Issues live in GitHub Issues for sondremb/JiraSync, used through the `gh` CLI. Before starting an issue or a feature, or opening a PR, read `docs/agents/issue-tracker.md`; it covers branch names and what to report when done. Issues are worked in git worktrees (workmux, or plain git): see `docs/agents/worktrees.md`.
+Issues live in GitHub Issues for sondremb/JiraSync, used through the `gh` CLI. Read an issue with `gh issue view <n> --json title,body,labels,comments`, which includes the body (off a terminal, `--comments` prints only the comments). Before starting an issue or a feature, or opening a PR, read `docs/agents/issue-tracker.md`; it covers branch names and what to report when done. Issues are worked in git worktrees (workmux, or plain git): see `docs/agents/worktrees.md`.
 
 ### Triage labels
 
