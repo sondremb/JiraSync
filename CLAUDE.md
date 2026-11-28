@@ -5,8 +5,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 ```bash
-pnpm start           # Start dev server (Vite)
-VITE_FAKE_BACKEND=true pnpm start  # Dev server against the fake backend, no logins or .env needed
+pnpm start           # Dev server against the real Jira and Bekk dev, port 5173 only
+pnpm start:fake      # Dev server against the fake backend, no logins or .env needed
 pnpm build           # Build for production
 pnpm test            # Run vitest tests
 pnpm lint            # Lint with oxlint
@@ -80,7 +80,7 @@ Coding rules live in `CODING_STANDARDS.md`, which review checks against.
 
 ### Fake backend (`src/fake/`, local dev only)
 
-`VITE_FAKE_BACKEND=true pnpm start` runs the app against fake data, with no logins or `.env`. Before working on `src/fake/`, `/__fake`, the auth seams (`bekkLogin.tsx`, `authPaths.ts`) or taking screenshots (`pnpm screenshot`), read `docs/fake-backend.md`.
+`pnpm start:fake` runs the app against fake data, with no logins or `.env`. Before working on `src/fake/`, `/__fake`, the auth seams (`bekkLogin.tsx`, `authPaths.ts`) or taking screenshots (`pnpm screenshot`), read `docs/fake-backend.md`.
 
 ### Serverless functions (`src/backend/`)
 
@@ -88,21 +88,21 @@ Netlify functions handle the Jira OAuth flow (init → callback → session refr
 
 ## Environment variables
 
-| Variable                                | Purpose                                                      |
-| --------------------------------------- | ------------------------------------------------------------ |
-| `VITE_BEKK_BASE_URL`                    | Bekk API endpoint                                            |
-| `VITE_BEKK_ENTRA_*`                     | Azure Entra ID config for MSAL                               |
-| `VITE_ATLASSIAN_CLOUD_ID`               | Jira cloud tenant ID                                         |
-| `JIRA_CLIENT_ID` / `JIRA_CLIENT_SECRET` | Jira OAuth credentials (server-side only)                    |
-| `VITE_DEBUG`                            | Enables dev tools overlay                                    |
-| `VITE_FAKE_BACKEND`                     | `true` runs `pnpm start` against the fake backend (dev only) |
-| `OVERRIDE_DEPLOY_URL`                   | OAuth redirect base URL, `http://localhost:5173` locally     |
+| Variable                                | Purpose                                                        |
+| --------------------------------------- | -------------------------------------------------------------- |
+| `VITE_BEKK_BASE_URL`                    | Bekk API endpoint                                              |
+| `VITE_BEKK_ENTRA_*`                     | Azure Entra ID config for MSAL                                 |
+| `VITE_ATLASSIAN_CLOUD_ID`               | Jira cloud tenant ID                                           |
+| `JIRA_CLIENT_ID` / `JIRA_CLIENT_SECRET` | Jira OAuth credentials (server-side only)                      |
+| `VITE_DEBUG`                            | Enables dev tools overlay                                      |
+| `VITE_FAKE_BACKEND`                     | `true` runs the fake backend (dev only), see `pnpm start:fake` |
+| `OVERRIDE_DEPLOY_URL`                   | OAuth redirect base URL, `http://localhost:5173` locally       |
 
 ## Agent skills
 
 ### Issues and pull requests
 
-Issues live in GitHub Issues for sondremb/JiraSync, used through the `gh` CLI. Before starting an issue or opening a PR, read `docs/agents/issue-tracker.md`. Issues are worked in git worktrees (workmux, or plain git): see `docs/agents/worktrees.md`.
+Issues live in GitHub Issues for sondremb/JiraSync, used through the `gh` CLI. Before starting an issue or a feature, or opening a PR, read `docs/agents/issue-tracker.md`; it covers branch names and what to report when done. Issues are worked in git worktrees (workmux, or plain git): see `docs/agents/worktrees.md`.
 
 ### Triage labels
 

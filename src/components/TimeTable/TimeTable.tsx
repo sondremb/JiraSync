@@ -201,7 +201,9 @@ const DayHeader: React.FC<{
 				{today ? ", i dag" : ""}
 			</span>
 		</span>
-		{onLockDate && <LockDateButton day={day} onClick={() => onLockDate(day)} />}
+		{onLockDate && LockDate.canLockThrough(day) && (
+			<LockDateButton day={day} onClick={() => onLockDate(day)} />
+		)}
 	</span>
 );
 

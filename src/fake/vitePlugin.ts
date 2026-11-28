@@ -16,7 +16,7 @@ const entryPageHtml = `<!doctype html>
 `;
 
 /**
- * Dev-server-only support for the fake backend (`VITE_FAKE_BACKEND=true pnpm start`):
+ * Dev-server-only support for the fake backend (`pnpm start:fake`):
  * - `/mockServiceWorker.js`, MSW's worker, served from node_modules so it never lands in `dist/`
  * - `/__fake?scenario=<name>&next=<url>`, the entry page that sets up a scenario
  */

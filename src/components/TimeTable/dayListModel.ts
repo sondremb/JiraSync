@@ -37,6 +37,8 @@ export interface DayListDay {
 	bekkHours: number;
 	/** Locked days get a muted date, as on desktop. */
 	locked: boolean;
+	/** Whether the day can be a lock date, so it gets a lock button. */
+	lockable: boolean;
 	/** Managed timecodes first. Empty when the day has no hours. */
 	lines: DayListLine[];
 	/** Issues no rule matches, shown below the lines, as on desktop. */
@@ -47,8 +49,11 @@ export interface DayListDay {
 export interface DayListWeekend {
 	kind: "weekend";
 	saturday: IsoDate;
-	/** Locking through Sunday is the common end-of-week action, so keep it. */
-	sunday: IsoDate;
+	/**
+	 * The days in the row that can be a lock date: always Sunday, the common
+	 * end-of-week lock, and Saturday first when it ends a month.
+	 */
+	lockableDays: IsoDate[];
 }
 
 export type DayListItem = DayListDay | DayListWeekend;
@@ -96,6 +101,7 @@ const toDay = (
 		date: report.date,
 		bekkHours: sum(lines.map((line) => line.bekkHours)),
 		locked,
+		lockable: LockDate.canLockThrough(report.date),
 		lines,
 		unmatched: unmatchedRows.flatMap((row) => {
 			const jiraHours = row.days[report.date];
@@ -132,7 +138,11 @@ export function toDayList(
 			isEmpty(day) &&
 			isEmpty(next)
 		) {
-			items.push({ kind: "weekend", saturday: day.date, sunday: next.date });
+			items.push({
+				kind: "weekend",
+				saturday: day.date,
+				lockableDays: [day.date, next.date].filter(LockDate.canLockThrough),
+			});
 			i++;
 		} else {
 			items.push(day);
