@@ -30,7 +30,7 @@ File issues only into the user's own repo. Never file into `mattpocock/skills` (
 
 ## Handing off
 
-When the work is done and the PR is open, end with both links: the PR, and the app running from this worktree (`pnpm dev:url`, see `docs/agents/worktrees.md`). If no dev server is running, start one with `sh scripts/dev-server.sh fake`.
+When the work is done and the PR is open, end with both links: the PR, and the app running from this worktree (`pnpm dev:url`, see `docs/agents/worktrees.md`). If no dev server is running, start one with `node scripts/dev-server.ts fake`.
 
 ## Pull requests as a triage surface
 

@@ -34,12 +34,12 @@ After the PR is merged: `git worktree remove ../JiraSync__worktrees/<n>-<slug>` 
 - `pnpm start` runs against the real Jira and Bekk dev (the `.env` points at `api.bekk.dev`). Real logins only work on port 5173: the Jira OAuth and Entra redirect URIs are registered for `http://localhost:5173`. So only one worktree at a time can run it, and it fails instead of moving to another port when 5173 is taken.
 - Generated types (`src/generated/`, `src/routeTree.gen.ts`) are committed, so a fresh worktree builds without `pnpm generate`.
 
-`scripts/dev-server.sh` handles this worktree's dev server, so agents don't have to find ports or panes:
+`scripts/dev-server.ts` handles this worktree's dev server, so agents don't have to find ports or panes:
 
 ```bash
 pnpm dev:url                   # the URL of the dev server running from this worktree
-sh scripts/dev-server.sh real  # restart it against the real backends on 5173
-sh scripts/dev-server.sh fake  # restart it against the fake backend
+node scripts/dev-server.ts real  # restart it against the real backends on 5173
+node scripts/dev-server.ts fake  # restart it against the fake backend
 ```
 
 `real` stops whatever else listens on 5173 (usually another worktree's server) and says which checkout it came from; pass that on to the user. `real` and `fake` restart the server in the window's dev-server pane, so they need the workmux tmux window. The server's output, errors included, also goes to `.dev-server.log` in the worktree; read it when the app misbehaves. When the user asks to try a worktree against Bekk dev, or against the real backends, run `real` and give them the URL.
