@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest";
 import policiesJson from "../../src/policies/policies.json";
 import { loadPolicies } from "../../src/policies/schema";
-import { IsoWeek } from "../../src/date-time/IsoWeek";
+import { IsoDate, IsoWeek } from "../../src/date-time/IsoWeek";
 import { createFakeStore, type FakeStore } from "../../src/fake/fakeStore";
 import { fixtureRulesetId } from "../../src/fake/fixtures";
 import { reconcilePeriod } from "../../src/reconciliation/reconcile";
@@ -159,5 +159,43 @@ describe("fake store writes", () => {
 		expect(
 			store.writeBekkHours(IsoWeek.monday(currentWeek), 1003649, 1),
 		).not.toEqual([]);
+	});
+
+	test("a lock that closes a month needs its overtime signed", () => {
+		// Locked through 2026-11-15, the Sunday of week 46
+		const store = createFakeStore({ today, scenario: "default" });
+		const monthEnd = IsoDate.parse("2026-11-30");
+		const november = { year: 2026, month: 11 };
+
+		expect(store.lockHours(monthEnd)).toEqual([
+			"Signering av overtid må angis når måneden låses.",
+		]);
+		expect(store.lockDate()).toBe(IsoWeek.sunday(lockedWeek));
+
+		const signed = { ...november, payoutHours: 6, flexHours: 3.5 };
+		expect(store.lockHours(monthEnd, signed)).toEqual([]);
+		expect(store.lockDate()).toBe(monthEnd);
+		expect(store.overtimeSummary(november)).toMatchObject({
+			allocatable: 0,
+			signed,
+		});
+	});
+
+	test("overtime months span the ISO weeks whose Sunday is in the month", () => {
+		const store = createFakeStore({ today, scenario: "default" });
+		expect(store.overtimeSummary({ year: 2026, month: 11 })).toMatchObject({
+			fromWeek: 44,
+			toWeek: 48,
+			allocatable: 7.5,
+		});
+		expect(store.overtimeSummary({ year: 2026, month: 10 })).toMatchObject({
+			fromWeek: 40,
+			toWeek: 43,
+		});
+		expect(store.overtimeSummary({ year: 2026, month: 12 })).toMatchObject({
+			fromWeek: 49,
+			toWeek: 52,
+			halfYearClearing: { payout: 2, deletion: 0 },
+		});
 	});
 });

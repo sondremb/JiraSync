@@ -1,0 +1,39 @@
+.overtimeDialog__hours {
+	margin: 0;
+	border-block: var(--ds-border-width-default) solid
+		var(--ds-color-neutral-border-subtle);
+}
+
+.overtimeDialog__row {
+	display: flex;
+	justify-content: space-between;
+	gap: var(--ds-size-4);
+	padding-block: var(--ds-size-2);
+}
+
+.overtimeDialog__row + .overtimeDialog__row {
+	border-top: var(--ds-border-width-default) solid
+		var(--ds-color-neutral-border-subtle);
+}
+
+.overtimeDialog__row dd {
+	margin: 0;
+	font-weight: 600;
+}
+
+.overtimeDialog__row--part {
+	padding-inline-start: var(--ds-size-4);
+}
+
+.overtimeDialog__slider {
+	width: 100%;
+	accent-color: var(--ds-color-accent-base-default);
+}
+
+.overtimeDialog__result {
+	margin-top: var(--ds-size-2);
+}
+
+.overtimeDialog__card {
+	min-width: 8rem;
+}

@@ -17,6 +17,7 @@ Locking sets the employee's lock date. Bekk entries on or before the lock date c
 
 - **Weekly:** employees lock through Sunday after each week, usually on Monday morning (the soft deadline is 09:00). Bekk only accepts the lock if the week has at least 37.5 paid hours. Almost every timecode counts as paid, including billable work and time off.
 - **Monthly:** employees also lock through the last day of the month. On the first day of the next month, managers check the hours that will be billed, which requires every employee's hours to be in sync. Fixing hours after the month has ended is possible but unwelcome.
+- **Overtime:** a lock that closes a month (one that moves the lock date past a month's last day) must also sign that month's overtime, in the same request. Overtime is counted over the ISO weeks whose Sunday falls in the month. Some of it is mandatory: hours that pay back owed flex hours, and hours that must be paid out. The employee splits the rest between payout and their flex balance. In July and December, signing also triggers the half-year flex clearing, which pays out or deletes flex hours. A signed month can't be signed again, and one lock can only sign one month.
 - **Unlocking** moves the lock date back, usually to the Friday before the week that needs fixing. Most employees can't unlock their own hours and ask a manager.
 
 ## Policy changes

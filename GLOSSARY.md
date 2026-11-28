@@ -22,6 +22,10 @@ _Avoid_: Internal work, internal hours, timesheet row
 The last day whose Bekk entries the employee has finalised. Bekk entries on or before the lock date are immutable. A lock date can only be a Sunday or the last day of a month. An employee who has never locked has no lock date, and nothing is locked. That is not the same as an unknown lock date, one that is still loading or failed to load.
 _Avoid_: Locked week, submission date
 
+**Overtime signing** _(UI: signering av overtid)_:
+Deciding how a month's overtime is taken, as payout or flex hours, when a lock closes that month. Bekk requires it in the lock request itself, as totals that include the mandatory hours.
+_Avoid_: Overtime approval, overtime allocation
+
 ### Mapping
 
 **Policy**:

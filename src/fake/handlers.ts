@@ -9,6 +9,7 @@ import { fakeBekkAccount } from "./fakeAccount";
 import { fakeBekkAccessToken } from "./fakeMsal";
 import type { FakeStore } from "./fakeStore";
 import { readFakeSettings, writeFakeSettings } from "./settings";
+import type { SignedOvertime } from "../overtime/overtime";
 
 /** The 200 JSON body of an operation in the generated API types. */
 type Ok<Operation> = Operation extends {
@@ -333,13 +334,62 @@ function bekkHandlers(store: FakeStore) {
 
 		http.put(
 			bekk("/timesheets/lockhours"),
-			bekkAuthorized(({ request }) => {
+			bekkAuthorized(async ({ request }) => {
 				const lockDate = new URL(request.url).searchParams.get("lockDate");
 				if (!lockDate) return new HttpResponse(null, { status: 400 });
-				store.lockHours(IsoDate.parse(lockDate.slice(0, 10)));
+				const text = await request.text();
+				const signed = text ? (JSON.parse(text) as SignedOvertime) : undefined;
+				const errors = store.lockHours(
+					IsoDate.parse(lockDate.slice(0, 10)),
+					signed,
+				);
+				if (errors.length > 0) {
+					// Like Bekk's error body, without the developer details.
+					return HttpResponse.json(
+						{
+							appname: "timekeeper-svc",
+							userMessage: errors[0],
+							statusCode: 400,
+						},
+						{ status: 400 },
+					);
+				}
 				return HttpResponse.json<Bekk<"/timesheets/lockhours", "put">>({
 					timesheetSuccessfullyLocked: true,
+					userMessage: "Timesheet was successfully locked",
 					timesheetLockDate: IsoDate.toDate(store.lockDate()!).toISOString(),
+				});
+			}),
+		),
+
+		http.get(
+			bekk("/overtime/employees/:employeeId/summary"),
+			bekkAuthorized(({ request }) => {
+				const params = new URL(request.url).searchParams;
+				const month = {
+					year: Number(params.get("year")),
+					month: Number(params.get("month")),
+				};
+				const summary = store.overtimeSummary(month);
+				return HttpResponse.json<
+					Bekk<"/overtime/employees/{employeeId}/summary", "get">
+				>({
+					...month,
+					fromWeek: summary.fromWeek,
+					toWeek: summary.toWeek,
+					flexBalanceHours: summary.flexBalanceHours,
+					overtimeHours: summary.overtimeHours,
+					hoursForSigning: {
+						mandatoryPayout: summary.mandatoryPayout,
+						mandatoryFlex: summary.mandatoryFlex,
+						allocatable: summary.allocatable,
+						...(summary.halfYearClearing && {
+							halfYearFlexClearing: {
+								flexBalanceForPayout: summary.halfYearClearing.payout,
+								flexBalanceForDeletion: summary.halfYearClearing.deletion,
+							},
+						}),
+					},
 				});
 			}),
 		),

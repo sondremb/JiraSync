@@ -12,6 +12,11 @@ import {
 } from "./fixtures";
 import { matchesIssue, parseJql } from "./jql";
 import type { FakeScenario } from "./settings";
+import {
+	monthsClosedByLock,
+	YearMonth,
+	type SignedOvertime,
+} from "../overtime/overtime";
 
 export interface FakeWorklog {
 	id: number;
@@ -28,6 +33,31 @@ export interface FakeBekkEntry {
 	timecodeId: number;
 	hours: number;
 }
+
+export interface FakeOvertimeSummary {
+	month: YearMonth;
+	fromWeek: number;
+	toWeek: number;
+	flexBalanceHours: number;
+	overtimeHours: number;
+	mandatoryPayout: number;
+	mandatoryFlex: number;
+	allocatable: number;
+	/** July and December only. */
+	halfYearClearing?: { payout: number; deletion: number };
+	signed?: SignedOvertime;
+}
+
+/** Like Bekk: a month's overtime counts the ISO weeks whose Sunday is in the month. */
+const overtimeWeeks = (month: YearMonth) => {
+	const sundays = IsoDate.range(
+		IsoDate.parse(`${month.year}-${String(month.month).padStart(2, "0")}-01`),
+		YearMonth.lastDay(month),
+	).filter((date) => IsoDate.weekday(date) === 7);
+	const week = (date: IsoDate) =>
+		IsoWeek.toParts(IsoWeek.fromIsoDate(date)).week;
+	return { fromWeek: week(sundays[0]), toWeek: week(sundays.at(-1)!) };
+};
 
 export interface JqlMatch {
 	matchedIssues: number[];
@@ -54,7 +84,10 @@ export interface FakeStore {
 	writeBekkHours(date: IsoDate, timecodeId: number, hours: number): string[];
 	/** `null` when the employee has never locked. */
 	lockDate(): IsoDate | null;
-	lockHours(lockDate: IsoDate): void;
+	/** Like Bekk: a lock that closes a month must sign its overtime. Returns validation messages, empty when locked. */
+	lockHours(lockDate: IsoDate, signedOvertime?: SignedOvertime): string[];
+	/** The month's overtime: November 2026's numbers from Bekk dev while unsigned, zero once signed. */
+	overtimeSummary(month: YearMonth): FakeOvertimeSummary;
 	timecodes(): readonly FakeTimecode[];
 	projects(): readonly { key: string; name: string }[];
 }
@@ -102,6 +135,9 @@ export function createFakeStore({
 			? null
 			: IsoWeek.sunday(IsoWeek.previous(currentWeek));
 
+	const signedMonths = new Map<string, SignedOvertime>();
+	const monthKey = ({ year, month }: YearMonth) => `${year}-${month}`;
+
 	const inRange = (date: IsoDate, from: IsoDate, to: IsoDate) =>
 		date >= from && date <= to;
 
@@ -148,8 +184,47 @@ export function createFakeStore({
 			return [];
 		},
 		lockDate: () => lockDate,
-		lockHours: (date) => {
+		lockHours: (date, signedOvertime) => {
+			const closed = monthsClosedByLock(lockDate, date);
+			if (closed.length > 0 && !signedOvertime) {
+				return ["Signering av overtid må angis når måneden låses."];
+			}
+			if (closed.length > 1) {
+				return ["Overtid kan bare signeres for én måned om gangen."];
+			}
+			if (
+				signedOvertime &&
+				closed.length === 1 &&
+				monthKey(closed[0]) !== monthKey(signedOvertime)
+			) {
+				return [`Overtiden må signeres for ${monthKey(closed[0])}.`];
+			}
+			if (closed.length === 1 && signedOvertime) {
+				signedMonths.set(monthKey(closed[0]), signedOvertime);
+			}
 			lockDate = date;
+			return [];
+		},
+		overtimeSummary: (month) => {
+			const signed = signedMonths.get(monthKey(month));
+			const clearing =
+				month.month === 7 || month.month === 12
+					? { halfYearClearing: { payout: 2, deletion: 0 } }
+					: {};
+			return {
+				month,
+				...overtimeWeeks(month),
+				flexBalanceHours: -0.5,
+				overtimeHours: 9.5,
+				...(signed
+					? { mandatoryPayout: 0, mandatoryFlex: 0, allocatable: 0, signed }
+					: {
+							mandatoryPayout: 1.5,
+							mandatoryFlex: 0.5,
+							allocatable: 7.5,
+							...clearing,
+						}),
+			};
 		},
 		timecodes: () => fakeTimecodes,
 		projects: () => fakeProjects,

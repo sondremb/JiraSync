@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
 import { Alert } from "@digdir/designsystemet-react";
-import { IsoDate, IsoWeek } from "../date-time/IsoWeek";
+import { IsoWeek } from "../date-time/IsoWeek";
 import { useLockDate } from "../data/useLockDate";
 import { LockDate } from "../reconciliation/entities";
 import { Ruleset } from "../rules";
@@ -12,6 +12,8 @@ import { StickySyncBar } from "./StickySyncBar";
 import { SyncPreviewDialog } from "./SyncPreviewDialog";
 import { useWeekSync } from "./useWeekSync";
 import { useOnScreen } from "../Utils/useOnScreen";
+import { OvertimeDialog } from "./OvertimeDialog";
+import { useLockFlow } from "./useLockFlow";
 import styles from "./WeeklyReconciliation.module.css";
 
 interface WeekNavigation {
@@ -30,18 +32,14 @@ export const WeeklyReconciliation: React.FC<Props> = ({
 	onPreviousWeek,
 	onNextWeek,
 }) => {
-	const { lockDate, updateLockDate } = useLockDate();
+	const { lockDate } = useLockDate();
+	const lockFlow = useLockFlow();
 	const weekSync = useWeekSync(week, ruleset, lockDate);
 	const { data, error } = weekSync;
 	const status = data ? toWeekStatus(data, lockDate) : undefined;
 
 	const cardRef = useRef<HTMLElement>(null);
 	const cardOnScreen = useOnScreen(cardRef);
-
-	const lock = (day: IsoDate) => {
-		if (updateLockDate.isPending) return;
-		updateLockDate.mutate(day);
-	};
 
 	return (
 		<section aria-label="Avstemming" className={styles.weeklyReconciliation}>
@@ -63,15 +61,16 @@ export const WeeklyReconciliation: React.FC<Props> = ({
 					reports={data}
 					lockDate={lockDate}
 					status={status}
-					onLockDate={lock}
+					onLockDate={lockFlow.lock}
 				/>
 			)}
 			<ReconciliationAlerts
 				lockDate={lockDate}
 				lockedDays={weekSync.lockedDays}
 				syncError={weekSync.syncError}
-				lockError={updateLockDate.error}
-				locked={updateLockDate.isSuccess}
+				lockError={lockFlow.signing ? null : lockFlow.lockError}
+				locked={lockFlow.locked}
+				refusedUntil={lockFlow.refusedUntil}
 			/>
 			{!cardOnScreen && (
 				<StickySyncBar
@@ -86,6 +85,13 @@ export const WeeklyReconciliation: React.FC<Props> = ({
 				syncing={weekSync.syncing}
 				onConfirm={weekSync.confirmPreview}
 				onClose={weekSync.closePreview}
+			/>
+			<OvertimeDialog
+				signing={lockFlow.signing}
+				locking={lockFlow.locking}
+				lockError={lockFlow.lockError}
+				onConfirm={lockFlow.confirmSigning}
+				onClose={lockFlow.closeSigning}
 			/>
 		</section>
 	);
