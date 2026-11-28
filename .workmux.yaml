@@ -16,7 +16,8 @@ files:
 panes:
   - command: <agent>
     focus: true
-  - command: VITE_FAKE_BACKEND=true pnpm start
+  # Output also goes to .dev-server.log, so agents can read it.
+  - command: pnpm start:fake 2>&1 | tee .dev-server.log
     split: horizontal
   - split: vertical
 

@@ -1,6 +1,6 @@
 # Fake backend (`src/fake/`, local dev only)
 
-`VITE_FAKE_BACKEND=true pnpm start` runs the app logged in to Jira and Bekk against in-memory fake data, with no `.env`. Use it for screenshots and layout checks.
+`pnpm start:fake` runs the app logged in to Jira and Bekk against in-memory fake data, with no `.env`. Use it for screenshots and layout checks.
 
 - **Gate:**
   - `isFakeBackend` (`src/Utils/envUtils.ts`) is `import.meta.env.DEV && VITE_FAKE_BACKEND === "true"`, so `pnpm build` can't turn it on. With the flag, `getConfigValue` falls back to placeholders for missing env vars.

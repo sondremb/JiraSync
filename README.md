@@ -16,7 +16,7 @@ To try the app without logins or configuration, run it against the fake backend,
 
 ```bash
 pnpm install
-VITE_FAKE_BACKEND=true pnpm start
+pnpm start:fake
 ```
 
 To run against the real Jira and Bekk, set up a `.env` first (see [Configuration](#configuration)) and run:
@@ -31,8 +31,8 @@ Real logins only work on `http://localhost:5173`, because the Jira and Entra red
 
 | Script                                 | Description                                                               |
 | -------------------------------------- | ------------------------------------------------------------------------- |
-| `pnpm start`                           | Start the Vite dev server                                                 |
-| `VITE_FAKE_BACKEND=true pnpm start`    | Start the dev server against the fake backend                             |
+| `pnpm start`                           | Start the Vite dev server against the real Jira and Bekk, on port 5173    |
+| `pnpm start:fake`                      | Start the dev server against the fake backend                             |
 | `pnpm build`                           | Type-check and build for production, then check no fake code is in `dist` |
 | `pnpm test`                            | Run the tests (Vitest)                                                    |
 | `pnpm lint`                            | Lint with oxlint                                                          |
