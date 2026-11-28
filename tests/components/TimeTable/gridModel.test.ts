@@ -8,6 +8,8 @@ import {
 import {
 	cellState,
 	toGridEntries,
+	toUnmatchedRows,
+	unmatchedCellState,
 } from "../../../src/components/TimeTable/gridModel";
 
 const monday = IsoDate.parse("2025-02-03");
@@ -87,6 +89,53 @@ describe("toGridEntries", () => {
 		expect(() => toGridEntries([first, second])).toThrow(
 			"inconsistent management",
 		);
+	});
+});
+
+describe("toUnmatchedRows", () => {
+	const otherIssue = 102 as JiraIssueId;
+
+	test("gives one row per issue with its Jira hours summed per day", () => {
+		const first = DayReport.empty(monday);
+		first.unmatchedJiraWorklogs.push(
+			{ issueId: otherIssue, date: monday, hoursWorked: 1 },
+			{ issueId: issue, date: monday, hoursWorked: 2 },
+			{ issueId: issue, date: monday, hoursWorked: 0.5 },
+		);
+		const second = DayReport.empty(tuesday);
+		second.unmatchedJiraWorklogs.push({
+			issueId: issue,
+			date: tuesday,
+			hoursWorked: 3,
+		});
+
+		expect(toUnmatchedRows([first, second])).toEqual([
+			{ issueId: issue, days: { [monday]: 2.5, [tuesday]: 3 } },
+			{ issueId: otherIssue, days: { [monday]: 1 } },
+		]);
+	});
+
+	test("ignores matched and unmanaged hours", () => {
+		const report = DayReport.empty(monday);
+		report.comparisons.set(managed, {
+			timecodeId: managed,
+			bekkHours: 1,
+			matchedWorklogs: [{ issueId: issue, date: monday, hoursWorked: 1 }],
+		});
+		report.unmanagedEntries.push({
+			timecodeId: unmanaged,
+			date: monday,
+			hoursWorked: 2,
+		});
+		expect(toUnmatchedRows([report])).toEqual([]);
+	});
+});
+
+describe("unmatchedCellState", () => {
+	test("a day with unmatched Jira hours is unmatched, without is empty", () => {
+		expect(unmatchedCellState(2)).toBe("unmatched");
+		expect(unmatchedCellState(undefined)).toBe("empty");
+		expect(unmatchedCellState(0)).toBe("empty");
 	});
 });
 

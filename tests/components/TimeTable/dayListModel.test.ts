@@ -122,15 +122,23 @@ describe("toDayList", () => {
 		expect(dayAt(list, tuesday).locked).toBe(false);
 	});
 
-	test("a day with only unmatched Jira worklogs has no lines", () => {
+	test("unmatched Jira worklogs are listed per issue on their day, not as timecode lines", () => {
+		const other = 102 as JiraIssueId;
 		const reports = emptyWeek();
-		reportOn(reports, monday).unmatchedJiraWorklogs.push({
-			issueId: issue,
-			date: monday,
-			hoursWorked: 2,
-		});
-		const day = dayAt(toDayList(reports, beforeWeek), monday);
+		reportOn(reports, monday).unmatchedJiraWorklogs.push(
+			{ issueId: other, date: monday, hoursWorked: 1 },
+			{ issueId: issue, date: monday, hoursWorked: 2 },
+			{ issueId: issue, date: monday, hoursWorked: 0.5 },
+		);
+		const list = toDayList(reports, beforeWeek);
+		const day = dayAt(list, monday);
 		expect(day.lines).toEqual([]);
+		expect(day.unmatched).toEqual([
+			{ issueId: issue, jiraHours: 2.5 },
+			{ issueId: other, jiraHours: 1 },
+		]);
+		expect(day.bekkHours).toBe(0);
+		expect(dayAt(list, tuesday).unmatched).toEqual([]);
 	});
 
 	test("one managed timecode gives one line with Jira hours and mismatch", () => {

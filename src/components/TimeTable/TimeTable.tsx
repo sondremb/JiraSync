@@ -3,8 +3,14 @@ import { LockDate } from "../../reconciliation/entities";
 import { Skeleton } from "@digdir/designsystemet-react";
 import { nb } from "date-fns/locale/nb";
 import { formatHours, IsoDate } from "../../date-time/IsoWeek";
-import { cellState, type GridEntry } from "./gridModel";
+import {
+	cellState,
+	unmatchedCellState,
+	type GridEntry,
+	type UnmatchedGridRow,
+} from "./gridModel";
 import { HoursCell } from "./HoursCell";
+import { JiraIssueName } from "./JiraIssueName";
 import { LockDateButton } from "./LockDateButton";
 import { StatusMark } from "./StatusMark";
 import { TimecodeName } from "./TimecodeName";
@@ -15,6 +21,8 @@ import { classNames } from "../../Utils/classNames";
 interface Props {
 	className?: string;
 	entries: GridEntry[];
+	/** Issues no rule matches, below the timecodes. Not in the Bekk totals. */
+	unmatched: UnmatchedGridRow[];
 	days: IsoDate[];
 	lockDate: LockDate;
 	/** Status dots on the totals row. */
@@ -31,12 +39,16 @@ const bekkHoursOn = (entries: GridEntry[], day: IsoDate) =>
 const weekBekkHours = (entry: GridEntry) =>
 	sum(Object.values(entry.days).map((day) => day?.bekkHours ?? 0));
 
+const weekJiraHours = (row: UnmatchedGridRow) =>
+	sum(Object.values(row.days).map((hours) => hours ?? 0));
+
 const SATURDAY = 6;
 
 /** The week as a grid of timecodes by days, for wide screens. */
 export const TimeTable: React.FC<Props> = ({
 	className,
 	entries,
+	unmatched,
 	days,
 	lockDate,
 	status,
@@ -115,6 +127,32 @@ export const TimeTable: React.FC<Props> = ({
 								</td>
 							</tr>
 						))}
+				{!pending &&
+					unmatched.map((row) => (
+						<tr
+							key={row.issueId}
+							className={styles["timeTable__row--unmatched"]}
+						>
+							<th scope="row" className={styles.timeTable__code}>
+								<JiraIssueName id={row.issueId} />
+								<span className={styles.timeTable__unmatchedLabel}>
+									Ingen regel
+								</span>
+							</th>
+							{days.map((day) => (
+								<td key={day} className={dayClass(day)}>
+									<HoursCell
+										state={unmatchedCellState(row.days[day])}
+										bekkHours={0}
+										jiraHours={row.days[day] ?? 0}
+									/>
+								</td>
+							))}
+							<td className={styles.timeTable__sum}>
+								{formatHours(weekJiraHours(row))}
+							</td>
+						</tr>
+					))}
 			</tbody>
 			{!pending && (
 				<tfoot>

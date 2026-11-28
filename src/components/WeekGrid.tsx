@@ -4,7 +4,7 @@ import { IsoDate, IsoWeek } from "../date-time/IsoWeek";
 import type { DayReport } from "../reconciliation/entities";
 import { TimeTable } from "./TimeTable/TimeTable";
 import { DayList } from "./TimeTable/DayList";
-import { toGridEntries } from "./TimeTable/gridModel";
+import { toGridEntries, toUnmatchedRows } from "./TimeTable/gridModel";
 import type { WeekStatus } from "./TimeTable/weekStatus";
 import styles from "./WeekGrid.module.css";
 
@@ -30,6 +30,7 @@ export const WeekGrid: React.FC<Props> = ({
 			pending={reports === undefined}
 			className={styles.weekGrid__table}
 			entries={reports ? toGridEntries(reports) : []}
+			unmatched={reports ? toUnmatchedRows(reports) : []}
 			days={reports ? reports.map((report) => report.date) : IsoWeek.days(week)}
 			lockDate={lockDate}
 			status={status}

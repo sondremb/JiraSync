@@ -48,6 +48,16 @@ export const HoursCell: React.FC<Props> = ({ state, bekkHours, jiraHours }) => {
 					<span className="ds-sr-only"> timer, stemmer med Jira</span>
 				</span>
 			);
+		case "unmatched":
+			return (
+				<span
+					className={`${styles.hoursCell} ${styles["hoursCell--unmatched"]}`}
+					title={`Jira: ${jira}, ingen regel`}
+				>
+					{jira}
+					<span className="ds-sr-only"> timer i Jira uten regel</span>
+				</span>
+			);
 		case "willChange":
 		case "lockedDiffers":
 			return (

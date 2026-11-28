@@ -45,6 +45,18 @@
 	color: var(--ds-color-neutral-text-subtle);
 }
 
+.timeTable__row--unmatched .timeTable__sum {
+	color: var(--ds-color-danger-text-default);
+}
+
+/* Under the issue title: why the row isn't a timecode. */
+.timeTable__unmatchedLabel {
+	display: block;
+	color: var(--ds-color-danger-text-default);
+	font-size: var(--ds-body-sm-font-size);
+	font-weight: var(--ds-font-weight-regular);
+}
+
 .timeTable tbody tr:hover > * {
 	background-color: var(--ds-color-accent-surface-tinted);
 }
