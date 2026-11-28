@@ -3,6 +3,7 @@ import {
 	ManagedTimecodeDayComparison,
 	type DayReport,
 	type BekkTimecodeId,
+	type JiraIssueId,
 } from "../../reconciliation/entities";
 
 export interface GridDay {
@@ -54,6 +55,30 @@ export function toGridEntries(reports: readonly DayReport[]): GridEntry[] {
 	return [...entries.values()];
 }
 
+/** Jira hours per day on one issue that no rule matches. */
+export interface UnmatchedGridRow {
+	issueId: JiraIssueId;
+	days: Partial<Record<IsoDate, number>>;
+}
+
+/** One row per issue with unmatched Jira worklogs, ordered by issue ID. */
+export function toUnmatchedRows(
+	reports: readonly DayReport[],
+): UnmatchedGridRow[] {
+	const rows = new Map<JiraIssueId, UnmatchedGridRow>();
+	for (const report of reports) {
+		for (const work of report.unmatchedJiraWorklogs) {
+			let row = rows.get(work.issueId);
+			if (!row) {
+				row = { issueId: work.issueId, days: {} };
+				rows.set(work.issueId, row);
+			}
+			row.days[report.date] = (row.days[report.date] ?? 0) + work.hoursWorked;
+		}
+	}
+	return [...rows.values()].sort((a, b) => a.issueId - b.issueId);
+}
+
 /**
  * What one timecode on one day shows:
  * - `empty`: no hours in either system.
@@ -61,13 +86,15 @@ export function toGridEntries(reports: readonly DayReport[]): GridEntry[] {
  * - `inSync`: Bekk matches Jira.
  * - `willChange`: Bekk differs from Jira, and syncing will fix it.
  * - `lockedDiffers`: Bekk differs from Jira, but the day is locked.
+ * - `unmatched`: Jira hours on an issue no rule matches, which syncing can't fix.
  */
 export type CellState =
 	| "empty"
 	| "unmanaged"
 	| "inSync"
 	| "willChange"
-	| "lockedDiffers";
+	| "lockedDiffers"
+	| "unmatched";
 
 export function cellState(
 	day: GridDay | undefined,
@@ -80,4 +107,9 @@ export function cellState(
 	if (!managed) return "unmanaged";
 	if (bekkHours === jiraHours) return "inSync";
 	return locked ? "lockedDiffers" : "willChange";
+}
+
+/** An unmatched issue's cell: its Jira hours that day, or nothing. */
+export function unmatchedCellState(hours: number | undefined): CellState {
+	return hours ? "unmatched" : "empty";
 }

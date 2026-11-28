@@ -116,6 +116,29 @@ function jiraHandlers(store: FakeStore) {
 		),
 
 		http.get(
+			jira("/rest/api/3/issue/:issueIdOrKey"),
+			jiraAuthorized(({ params }) => {
+				const idOrKey = String(params.issueIdOrKey);
+				const issue = store
+					.issues()
+					.find((i) => String(i.id) === idOrKey || i.key === idOrKey);
+				if (!issue) {
+					return HttpResponse.json(
+						{ errorMessages: [`No fake issue ${idOrKey}`] },
+						{ status: 404 },
+					);
+				}
+				return HttpResponse.json<
+					Jira<"/rest/api/3/issue/{issueIdOrKey}", "get">
+				>({
+					id: String(issue.id),
+					key: issue.key,
+					fields: { summary: issue.summary },
+				});
+			}),
+		),
+
+		http.get(
 			jira("/rest/api/3/issue/:issueIdOrKey/worklog"),
 			jiraAuthorized(({ request, params }) => {
 				const query = new URL(request.url).searchParams;

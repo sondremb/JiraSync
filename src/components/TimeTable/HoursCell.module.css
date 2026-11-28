@@ -31,6 +31,13 @@
 	font-size: 0.875rem;
 }
 
+/* Jira hours no rule matches: syncing can't fix them, so danger, not warning. */
+.hoursCell--unmatched {
+	background-color: var(--ds-color-danger-surface-tinted);
+	box-shadow: inset 0 0 0 1px var(--ds-color-danger-border-default);
+	color: var(--ds-color-danger-text-default);
+}
+
 /* Bekk hours struck through above the Jira hours they become. */
 .hoursCell--differs {
 	flex-direction: column;

@@ -1,11 +1,17 @@
 import { IsoDate } from "../../date-time/IsoWeek";
 import { LockDate } from "../../reconciliation/entities";
-import type { DayReport, BekkTimecodeId } from "../../reconciliation/entities";
+import type {
+	DayReport,
+	BekkTimecodeId,
+	JiraIssueId,
+} from "../../reconciliation/entities";
 import {
 	cellState,
 	toGridEntries,
+	toUnmatchedRows,
 	type CellState,
 	type GridEntry,
+	type UnmatchedGridRow,
 } from "./gridModel";
 
 /** One timecode on one day. */
@@ -16,6 +22,12 @@ export interface DayListLine {
 	/** Omitted for unmanaged timecodes, as on desktop. */
 	jiraHours?: number;
 	state: CellState;
+}
+
+/** Jira hours on one issue no rule matches, on one day. */
+export interface DayListUnmatched {
+	issueId: JiraIssueId;
+	jiraHours: number;
 }
 
 export interface DayListDay {
@@ -29,6 +41,8 @@ export interface DayListDay {
 	lockable: boolean;
 	/** Managed timecodes first. Empty when the day has no hours. */
 	lines: DayListLine[];
+	/** Issues no rule matches, shown below the lines, as on desktop. */
+	unmatched: DayListUnmatched[];
 }
 
 /** Saturday and Sunday without any hours, shown as one row. */
@@ -75,6 +89,7 @@ const toLine = (
 const toDay = (
 	report: DayReport,
 	entries: GridEntry[],
+	unmatchedRows: UnmatchedGridRow[],
 	lockDate: LockDate,
 ): DayListDay => {
 	const locked = LockDate.isLocked(lockDate, report.date);
@@ -88,12 +103,16 @@ const toDay = (
 		locked,
 		lockable: LockDate.canLockThrough(report.date),
 		lines,
+		unmatched: unmatchedRows.flatMap((row) => {
+			const jiraHours = row.days[report.date];
+			return jiraHours ? [{ issueId: row.issueId, jiraHours }] : [];
+		}),
 	};
 };
 
 /** Unmatched Jira worklogs count as hours, so a weekend with them still shows. */
-const isEmpty = (day: DayListDay, report: DayReport) =>
-	day.lines.length === 0 && report.unmatchedJiraWorklogs.length === 0;
+const isEmpty = (day: DayListDay) =>
+	day.lines.length === 0 && day.unmatched.length === 0;
 
 /** The mobile view of a week: one block per day, empty weekends collapsed. */
 export function toDayList(
@@ -103,7 +122,10 @@ export function toDayList(
 	const entries = toGridEntries(reports).sort(
 		(a, b) => Number(b.managed) - Number(a.managed),
 	);
-	const days = reports.map((report) => toDay(report, entries, lockDate));
+	const unmatched = toUnmatchedRows(reports);
+	const days = reports.map((report) =>
+		toDay(report, entries, unmatched, lockDate),
+	);
 
 	const items: DayListItem[] = [];
 	for (let i = 0; i < days.length; i++) {
@@ -113,8 +135,8 @@ export function toDayList(
 			next &&
 			IsoDate.weekday(day.date) === SATURDAY &&
 			IsoDate.weekday(next.date) === SUNDAY &&
-			isEmpty(day, reports[i]) &&
-			isEmpty(next, reports[i + 1])
+			isEmpty(day) &&
+			isEmpty(next)
 		) {
 			items.push({
 				kind: "weekend",

@@ -4,8 +4,14 @@ import { Heading, Paragraph, Skeleton } from "@digdir/designsystemet-react";
 import { nb } from "date-fns/locale/nb";
 import { formatHours, IsoDate } from "../../date-time/IsoWeek";
 import type { DayReport } from "../../reconciliation/entities";
-import { toDayList, type DayListDay, type DayListLine } from "./dayListModel";
+import {
+	toDayList,
+	type DayListDay,
+	type DayListLine,
+	type DayListUnmatched,
+} from "./dayListModel";
 import { HoursCell } from "./HoursCell";
+import { JiraIssueName } from "./JiraIssueName";
 import { LockDateButton } from "./LockDateButton";
 import { StatusMark } from "./StatusMark";
 import type { WeekStatus } from "./weekStatus";
@@ -124,10 +130,13 @@ const Day: React.FC<{
 					<LockDateButton day={day.date} onClick={() => onLockDate(day.date)} />
 				)}
 			</div>
-			{day.lines.length > 0 ? (
+			{day.lines.length > 0 || day.unmatched.length > 0 ? (
 				<ul className={styles.dayList__lines}>
 					{day.lines.map((line) => (
 						<Line key={line.id} line={line} />
+					))}
+					{day.unmatched.map((work) => (
+						<UnmatchedLine key={work.issueId} work={work} />
 					))}
 				</ul>
 			) : (
@@ -149,6 +158,16 @@ const Line: React.FC<{ line: DayListLine }> = ({ line }) => (
 			bekkHours={line.bekkHours}
 			jiraHours={line.jiraHours ?? 0}
 		/>
+	</li>
+);
+
+const UnmatchedLine: React.FC<{ work: DayListUnmatched }> = ({ work }) => (
+	<li className={styles.dayList__line}>
+		<span className={styles.dayList__timecode}>
+			<JiraIssueName id={work.issueId} />
+			<span className={styles.dayList__unmatchedLabel}>Ingen regel</span>
+		</span>
+		<HoursCell state="unmatched" bekkHours={0} jiraHours={work.jiraHours} />
 	</li>
 );
 
