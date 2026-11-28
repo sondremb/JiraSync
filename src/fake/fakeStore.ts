@@ -1,4 +1,4 @@
-import { IsoDate, IsoWeek } from "../date-time/IsoWeek";
+import { IsoDate, IsoMonth, IsoWeek } from "../date-time/IsoWeek";
 import {
 	fakeBekkEntries,
 	fakeIssues,
@@ -12,6 +12,11 @@ import {
 } from "./fixtures";
 import { matchesIssue, parseJql } from "./jql";
 import type { FakeScenario } from "./settings";
+import {
+	monthsClosedByLock,
+	type OvertimeSummary,
+	type SignedOvertime,
+} from "../overtime/overtime";
 
 export interface FakeWorklog {
 	id: number;
@@ -28,6 +33,17 @@ export interface FakeBekkEntry {
 	timecodeId: number;
 	hours: number;
 }
+
+/** Like Bekk: a month's overtime counts the ISO weeks whose Sunday is in the month. */
+const overtimeWeeks = (month: IsoMonth) => {
+	const sundays = IsoDate.range(
+		IsoMonth.firstDay(month),
+		IsoMonth.lastDay(month),
+	).filter((date) => IsoDate.weekday(date) === 7);
+	const week = (date: IsoDate) =>
+		IsoWeek.toParts(IsoWeek.fromIsoDate(date)).week;
+	return { fromWeek: week(sundays[0]), toWeek: week(sundays.at(-1)!) };
+};
 
 export interface JqlMatch {
 	matchedIssues: number[];
@@ -54,7 +70,10 @@ export interface FakeStore {
 	writeBekkHours(date: IsoDate, timecodeId: number, hours: number): string[];
 	/** `null` when the employee has never locked. */
 	lockDate(): IsoDate | null;
-	lockHours(lockDate: IsoDate): void;
+	/** Like Bekk: a lock that closes a month must sign its overtime. Returns validation messages, empty when locked. */
+	lockHours(lockDate: IsoDate, signedOvertime?: SignedOvertime): string[];
+	/** The month's overtime: November 2026's numbers from Bekk dev while unsigned, zero once signed. */
+	overtimeSummary(month: IsoMonth): OvertimeSummary;
 	timecodes(): readonly FakeTimecode[];
 	projects(): readonly { key: string; name: string }[];
 }
@@ -102,6 +121,8 @@ export function createFakeStore({
 			? null
 			: IsoWeek.sunday(IsoWeek.previous(currentWeek));
 
+	const signedMonths = new Set<IsoMonth>();
+
 	const inRange = (date: IsoDate, from: IsoDate, to: IsoDate) =>
 		date >= from && date <= to;
 
@@ -148,8 +169,45 @@ export function createFakeStore({
 			return [];
 		},
 		lockDate: () => lockDate,
-		lockHours: (date) => {
+		lockHours: (date, signedOvertime) => {
+			const closed = monthsClosedByLock(lockDate, date);
+			if (closed.length > 0 && !signedOvertime) {
+				return ["Signering av overtid må angis når måneden låses."];
+			}
+			if (closed.length > 1) {
+				return ["Overtid kan bare signeres for én måned om gangen."];
+			}
+			if (
+				signedOvertime &&
+				closed.length === 1 &&
+				closed[0] !== IsoMonth.fromParts(signedOvertime)
+			) {
+				return [`Overtiden må signeres for ${closed[0]}.`];
+			}
+			if (closed.length === 1 && signedOvertime) {
+				signedMonths.add(closed[0]);
+			}
 			lockDate = date;
+			return [];
+		},
+		overtimeSummary: (month) => {
+			const clearing = [7, 12].includes(IsoMonth.toParts(month).month)
+				? { halfYearClearing: { payoutHours: 2, deletedHours: 0 } }
+				: {};
+			return {
+				month,
+				...overtimeWeeks(month),
+				flexBalanceHours: -0.5,
+				overtimeHours: 9.5,
+				...(signedMonths.has(month)
+					? { mandatoryPayout: 0, mandatoryFlex: 0, allocatable: 0 }
+					: {
+							mandatoryPayout: 1.5,
+							mandatoryFlex: 0.5,
+							allocatable: 7.5,
+							...clearing,
+						}),
+			};
 		},
 		timecodes: () => fakeTimecodes,
 		projects: () => fakeProjects,

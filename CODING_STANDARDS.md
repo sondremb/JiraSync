@@ -10,8 +10,8 @@ Rules that take judgement to apply. Review checks every change against each one.
 
 ## Types
 
-- **Branded types for keys and dates.** Jira issue keys, ISO dates, ISO weeks and access tokens are typed `JiraIssueKey`, `IsoDate`, `IsoWeek` and `AccessToken` (`src/Utils/brandedTypes.ts`), branded where the value enters the app, so a plain `string` never stands in for one.
-- **Dates in Norway time.** Date and week handling goes through `src/date-time/IsoWeek.ts`, which works in the Norway timezone. Weeks are formatted `YYYY-Www`.
+- **Branded types for keys and dates.** Jira issue keys, ISO dates, ISO weeks, months and access tokens are typed `JiraIssueKey`, `IsoDate`, `IsoWeek`, `IsoMonth` and `AccessToken` (`src/Utils/brandedTypes.ts`), branded where the value enters the app, so a plain `string` never stands in for one.
+- **Dates in Norway time.** Date, week and month handling goes through `src/date-time/IsoWeek.ts`, which works in the Norway timezone. Weeks are formatted `YYYY-Www`, months `YYYY-MM`.
 
 ## React and data
 

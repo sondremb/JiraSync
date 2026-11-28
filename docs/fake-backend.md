@@ -18,6 +18,7 @@
     - two weeks back is in sync
   - The app opens on the week after the lock date, i.e. this week.
   - Writes and locking change `fakeStore.ts` in memory; a reload resets them.
+  - Every unsigned month has the same overtime (November 2026's from Bekk dev: 9.5 t, of which 0.5 t mandatory flex and 1.5 t mandatory payout), and July and December add a half-year flex clearing. Like Bekk, a lock that closes a month is rejected unless it signs that month's overtime. To see the overtime dialog, go to the week holding the month's last day and lock through it.
   - `jql.ts` evaluates only `project`, `component` and `key` clauses; other JQL fails loudly in `/jql/match`.
 - **Scenarios:**
   - Open `/__fake?scenario=<name>&next=<product URL>`, served by `vitePlugin.ts` outside the app and its router. It writes settings to sessionStorage (`settings.ts`), sets up the app's storage for the scenario (`scenarioSetup.ts`), and redirects to `next` (default `/`).

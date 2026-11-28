@@ -2,7 +2,15 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { bekkClient } from "./bekkclient";
 import { getEmployeeId } from "../login/bekk/bekkLogin";
 import { lockBekkHours } from "./lockBekkHours";
+import type { IsoDate } from "../date-time/IsoWeek";
+import type { SignedOvertime } from "../overtime/overtime";
 import { lockDateFromBekk } from "./lockDateFromBekk";
+
+export interface LockRequest {
+	lockDate: IsoDate;
+	/** Required when the lock closes a month. */
+	signedOvertime?: SignedOvertime;
+}
 
 export const useLockDate = () => {
 	const queryClient = useQueryClient();
@@ -21,7 +29,8 @@ export const useLockDate = () => {
 	});
 
 	const updateLockDate = useMutation({
-		mutationFn: lockBekkHours,
+		mutationFn: ({ lockDate, signedOvertime }: LockRequest) =>
+			lockBekkHours(lockDate, signedOvertime),
 		onSuccess: async () => {
 			await queryClient.invalidateQueries({ queryKey: ["bekk", "lockdate"] });
 		},

@@ -13,4 +13,9 @@ export const announcements: Announcement[] = [
 		date: "2026-11-19" as IsoDate,
 		text: "Jirasync har fått nytt utseende og bedre mobilstøtte",
 	},
+	{
+		id: "overtime-signing",
+		date: "2026-11-28" as IsoDate,
+		text: "Jirasync støtter nå signering av overtid ved slutten av måneden",
+	},
 ];
