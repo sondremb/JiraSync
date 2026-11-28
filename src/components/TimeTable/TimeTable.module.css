@@ -16,6 +16,8 @@
 	padding-block: var(--ds-size-3) var(--ds-size-1);
 	border-bottom-color: var(--ds-color-neutral-border-default);
 	font-weight: var(--ds-font-weight-regular);
+	/* Only lockable days have a lock button, so align the dates at the top. */
+	vertical-align: top;
 }
 
 .timeTable td > * {

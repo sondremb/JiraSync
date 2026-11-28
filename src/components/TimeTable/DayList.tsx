@@ -57,10 +57,15 @@ export const DayList: React.FC<Props> = ({
 								Lør–søn · ingen timer
 							</Paragraph>
 							{onLockDate && (
-								<LockDateButton
-									day={item.sunday}
-									onClick={() => onLockDate(item.sunday)}
-								/>
+								<span>
+									{item.lockableDays.map((day) => (
+										<LockDateButton
+											key={day}
+											day={day}
+											onClick={() => onLockDate(day)}
+										/>
+									))}
+								</span>
 							)}
 						</li>
 					),
@@ -115,7 +120,7 @@ const Day: React.FC<{
 					{dayStatus && <StatusMark status={dayStatus} />}
 					{formatHours(day.bekkHours)} t
 				</span>
-				{onLockDate && (
+				{onLockDate && day.lockable && (
 					<LockDateButton day={day.date} onClick={() => onLockDate(day.date)} />
 				)}
 			</div>

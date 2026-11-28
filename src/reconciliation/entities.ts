@@ -99,6 +99,12 @@ export const LockDate = {
 				return date <= lockDate.date;
 		}
 	},
+	/** Bekk only accepts a lock date on a Sunday or the last day of a month. */
+	canLockThrough(date: IsoDate): boolean {
+		return (
+			IsoDate.weekday(date) === 7 || IsoDate.addDays(date, 1).endsWith("-01")
+		);
+	},
 	/** The week to open on: the one holding the first unlocked day, or the week of `today` without a lock date. */
 	startWeek(lockDate: LockDate, today: Date): IsoWeek {
 		return lockDate.kind === "date"
