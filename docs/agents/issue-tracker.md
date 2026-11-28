@@ -20,13 +20,17 @@ File issues only into the user's own repo. Never file into `mattpocock/skills` (
 
 ## Starting an issue
 
-- **Work in a new worktree branched from `origin/main`**, named `<n>-<slug>`: see `docs/agents/worktrees.md`. Local `main` often lags behind merged PRs. If the user asks you to work in the current checkout instead, use `git fetch && git switch -c <n>-<slug> origin/main`.
+- **Work in a new worktree branched from `origin/main`**, on a branch named `<n>-<slug>`: see `docs/agents/worktrees.md`, which also covers renaming the branch of a workmux worktree. Local `main` often lags behind merged PRs. If the user asks you to work in the current checkout instead, use `git fetch && git switch -c <n>-<slug> origin/main`.
 - **Decisions made in chat**: when the user answers one of the issue's open questions in chat, post the answer on the issue (`gh issue comment <n>`), so the issue stays the spec a reviewer checks against.
 
 ## Creating a pull request
 
 - **Screenshots**: reference each image in the body as `![alt](./shot.png)` and pass `--attach ./shot.png` (once per image) to `gh pr create`/`gh pr edit` (`gh` 2.99+). gh uploads them and rewrites each reference to the uploaded URL, so the PR goes up with its images in place. Take the shots with `pnpm screenshot` (see `docs/fake-backend.md`).
 - **Departures from the issue**: when a commit deliberately does something different from what the issue asked, comment on the issue with what changed and why (`gh issue comment <n>`), so the issue stays the spec a reviewer checks against. List the departures in the PR body as well.
+
+## Handing off
+
+When the work is done and the PR is open, end with both links: the PR, and the app running from this worktree (`pnpm dev:url`, see `docs/agents/worktrees.md`). If no dev server is running, start one with `sh scripts/dev-server.sh fake`.
 
 ## Pull requests as a triage surface
 
