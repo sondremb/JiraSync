@@ -8,6 +8,9 @@ export type MessagePart = string | { week: IsoWeek; text: string };
 
 export interface MonthReviewMessage {
 	tone: Extract<StatusTone, "success" | "danger">;
+	/** What the month's status is, in bold. */
+	title: string;
+	/** The details after the title, if any. */
 	parts: MessagePart[];
 }
 
@@ -51,8 +54,10 @@ function capitalizeFirst(parts: MessagePart[]): MessagePart[] {
 }
 
 /**
- * The line under the status card: "Hele november stemmer", "November stemmer
- * ikke: sjekk uke 45 og 47. Uke 44 er låst", or "Kunne ikke sjekke november".
+ * The line under the status card: a headline ("Hele november stemmer",
+ * "November stemmer ikke", "Kunne ikke sjekke november") and, for a month out
+ * of sync, the weeks to check. Locked weeks are listed with the rest, since
+ * the mismatch is the problem, and then noted as needing unlocking first.
  */
 export function monthReviewMessage(
 	review: MonthReview | null,
@@ -61,21 +66,25 @@ export function monthReviewMessage(
 	const name = IsoMonth.name(review.month);
 	switch (review.kind) {
 		case "error":
-			return { tone: "danger", parts: [`Kunne ikke sjekke ${name}`] };
+			return { tone: "danger", title: `Kunne ikke sjekke ${name}`, parts: [] };
 		case "inSync":
-			return { tone: "success", parts: [`Hele ${name} stemmer`] };
+			return { tone: "success", title: `Hele ${name} stemmer`, parts: [] };
 		case "outOfSync": {
-			const toFix = review.weeks.filter((week) => !week.locked);
+			const parts: MessagePart[] = ["Sjekk ", ...weekList(review.weeks), "."];
 			const locked = review.weeks.filter((week) => week.locked);
-			const parts: MessagePart[] = [`${capitalize(name)} stemmer ikke: `];
-			if (toFix.length > 0) parts.push("sjekk ", ...weekList(toFix));
 			if (locked.length > 0) {
-				const list = weekList(locked);
-				if (toFix.length > 0) parts.push(". ", ...capitalizeFirst(list));
-				else parts.push(...list);
-				parts.push(" er låst");
+				const pronoun = locked.length === 1 ? "den" : "de";
+				parts.push(
+					" ",
+					...capitalizeFirst(weekList(locked)),
+					` er låst, så ${pronoun} må låses opp først.`,
+				);
 			}
-			return { tone: "danger", parts: mergeText(parts) };
+			return {
+				tone: "danger",
+				title: `${capitalize(name)} stemmer ikke`,
+				parts: mergeText(parts),
+			};
 		}
 	}
 }

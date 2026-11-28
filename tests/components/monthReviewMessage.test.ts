@@ -28,65 +28,60 @@ describe("monthReviewMessage", () => {
 	test("a month in sync", () => {
 		expect(monthReviewMessage({ kind: "inSync", month })).toEqual({
 			tone: "success",
-			parts: ["Hele november stemmer"],
+			title: "Hele november stemmer",
+			parts: [],
 		});
 	});
 
 	test("a month that couldn't be checked", () => {
 		expect(monthReviewMessage({ kind: "error", month })).toEqual({
 			tone: "danger",
-			parts: ["Kunne ikke sjekke november"],
+			title: "Kunne ikke sjekke november",
+			parts: [],
 		});
 	});
 
 	test("links every bad week", () => {
 		expect(outOfSync(week(45), week(46), week(47))).toEqual({
 			tone: "danger",
-			parts: [
-				"November stemmer ikke: sjekk uke ",
-				link(45),
-				", ",
-				link(46),
-				" og ",
-				link(47),
-			],
+			title: "November stemmer ikke",
+			parts: ["Sjekk uke ", link(45), ", ", link(46), " og ", link(47), "."],
 		});
 	});
 
 	test("calls the viewed week 'denne uken', without a link", () => {
 		expect(
 			outOfSync(week(45), week(46, { viewed: true }), week(47))?.parts,
-		).toEqual([
-			"November stemmer ikke: sjekk uke ",
-			link(45),
-			", denne uken og uke ",
-			link(47),
-		]);
+		).toEqual(["Sjekk uke ", link(45), ", denne uken og uke ", link(47), "."]);
 		expect(outOfSync(week(49, { viewed: true }))?.parts).toEqual([
-			"November stemmer ikke: sjekk denne uken",
+			"Sjekk denne uken.",
 		]);
 	});
 
-	test("calls out locked weeks after those to fix", () => {
+	test("lists locked weeks with the rest, then says they need unlocking", () => {
 		expect(
 			outOfSync(week(44, { locked: true }), week(49, { viewed: true }))?.parts,
 		).toEqual([
-			"November stemmer ikke: sjekk denne uken. Uke ",
+			"Sjekk uke ",
 			link(44),
-			" er låst",
+			" og denne uken. Uke ",
+			link(44),
+			" er låst, så den må låses opp først.",
 		]);
 	});
 
-	test("only locked weeks", () => {
+	test("several locked weeks", () => {
 		expect(
 			outOfSync(
 				week(47, { locked: true, viewed: true }),
 				week(48, { locked: true }),
 			)?.parts,
 		).toEqual([
-			"November stemmer ikke: denne uken og uke ",
+			"Sjekk denne uken og uke ",
 			link(48),
-			" er låst",
+			". Denne uken og uke ",
+			link(48),
+			" er låst, så de må låses opp først.",
 		]);
 	});
 });
