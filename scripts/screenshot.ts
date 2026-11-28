@@ -1,7 +1,8 @@
 // Takes a screenshot of the app running against the fake backend.
 // Starts its own Vite dev server on a free port, so no `pnpm start` is needed.
 // Usage: pnpm screenshot [--scenario default] [--width 1280] [--height 800]
-//          [--full-page] [--wait-for <selector>] <product URL> <out.png>
+//          [--full-page] [--wait-for <selector>] [--date YYYY-MM-DD]
+//          <product URL> <out.png>
 import { parseArgs } from "node:util";
 import { chromium } from "playwright";
 import { createServer } from "vite";
@@ -14,12 +15,15 @@ const { values, positionals } = parseArgs({
 		height: { type: "string", default: "800" },
 		"full-page": { type: "boolean", default: false },
 		"wait-for": { type: "string" },
+		date: { type: "string" },
 	},
 });
 const [url, out] = positionals;
-if (!url?.startsWith("/") || !out || positionals.length !== 2) {
+const dateIsValid =
+	values.date === undefined || /^\d{4}-\d{2}-\d{2}$/.test(values.date);
+if (!url?.startsWith("/") || !out || positionals.length !== 2 || !dateIsValid) {
 	console.error(
-		"Usage: pnpm screenshot [--scenario <name>] [--width <px>] [--height <px>] [--full-page] [--wait-for <selector>] <product URL starting with /> <out.png>",
+		"Usage: pnpm screenshot [--scenario <name>] [--width <px>] [--height <px>] [--full-page] [--wait-for <selector>] [--date YYYY-MM-DD] <product URL starting with /> <out.png>",
 	);
 	process.exit(2);
 }
@@ -47,6 +51,10 @@ try {
 		});
 		const errors: string[] = [];
 		page.on("pageerror", (error) => errors.push(error.message));
+		// The fake data is relative to today, so a date shows the app as on that
+		// day: noon in Norway, with timers still running.
+		if (values.date)
+			await page.clock.setFixedTime(new Date(`${values.date}T12:00:00+01:00`));
 
 		const entry = new URL("/__fake", base);
 		entry.searchParams.set("scenario", values.scenario);

@@ -13,6 +13,8 @@ import { useWeekSync } from "./useWeekSync";
 import { useOnScreen } from "../Utils/useOnScreen";
 import { OvertimeDialog } from "./OvertimeDialog";
 import { useLockFlow } from "./useLockFlow";
+import { useMonthReview } from "./useMonthReview";
+import { MonthReviewLine } from "./MonthReviewLine";
 import styles from "./WeeklyReconciliation.module.css";
 
 interface WeekNavigation {
@@ -23,6 +25,7 @@ interface WeekNavigation {
 
 interface Props extends WeekNavigation {
 	ruleset: Ruleset;
+	onShowWeek: (week: IsoWeek) => void;
 }
 
 export const WeeklyReconciliation: React.FC<Props> = ({
@@ -30,10 +33,12 @@ export const WeeklyReconciliation: React.FC<Props> = ({
 	ruleset,
 	onPreviousWeek,
 	onNextWeek,
+	onShowWeek,
 }) => {
 	const lockFlow = useLockFlow(week);
 	const { lockDate } = lockFlow;
 	const weekSync = useWeekSync(week, ruleset, lockDate);
+	const monthReview = useMonthReview(week, ruleset, lockDate);
 	const { data, error } = weekSync;
 	const status = data ? toWeekStatus(data, lockDate) : undefined;
 
@@ -52,6 +57,7 @@ export const WeeklyReconciliation: React.FC<Props> = ({
 				onSync={weekSync.syncNow}
 				onPreview={weekSync.showPreview}
 			/>
+			<MonthReviewLine message={monthReview} onShowWeek={onShowWeek} />
 			{error ? (
 				<Alert data-color="danger">En feil oppstod: {error.message}</Alert>
 			) : (

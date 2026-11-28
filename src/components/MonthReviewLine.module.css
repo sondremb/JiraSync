@@ -1,0 +1,26 @@
+/* A compact line, not an alert: the status mark carries the colour, the text
+ * stays readable. */
+.monthReview {
+	display: flex;
+	align-items: center;
+	margin-top: calc(-1 * var(--ds-size-3));
+	padding-inline: var(--ds-size-4);
+	font-size: var(--ds-body-sm-font-size);
+}
+
+.monthReview--success {
+	color: var(--ds-color-success-text-default);
+}
+
+.monthReview--danger {
+	color: var(--ds-color-danger-text-default);
+}
+
+/* A week link inside the sentence, as text rather than a button. */
+.monthReview__week {
+	padding: 0;
+	border: none;
+	background: none;
+	font: inherit;
+	cursor: pointer;
+}

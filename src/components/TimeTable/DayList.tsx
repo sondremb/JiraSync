@@ -18,6 +18,7 @@ import type { WeekStatus } from "./weekStatus";
 import { TimecodeName } from "./TimecodeName";
 import styles from "./DayList.module.css";
 import { classNames } from "../../Utils/classNames";
+import { capitalize } from "../../Utils/capitalize";
 
 interface Props {
 	className?: string;
@@ -83,9 +84,6 @@ export const DayList: React.FC<Props> = ({
 		</div>
 	);
 };
-
-const capitalize = (text: string) =>
-	text.charAt(0).toUpperCase() + text.slice(1);
 
 const weekdayName = (date: IsoDate) =>
 	capitalize(IsoDate.format(date, "EEEE", { locale: nb }));

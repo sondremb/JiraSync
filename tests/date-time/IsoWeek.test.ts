@@ -330,6 +330,24 @@ describe("IsoMonth", () => {
 		expect(IsoMonth.next(m("2026-12"))).toBe("2027-01");
 	});
 
+	test("Its weeks are every ISO week with a day in it, across the year", () => {
+		expect(IsoMonth.weeks(m("2026-11"))).toEqual([
+			"2026-W44",
+			"2026-W45",
+			"2026-W46",
+			"2026-W47",
+			"2026-W48",
+			"2026-W49",
+		]);
+		expect(IsoMonth.weeks(m("2026-12"))).toEqual([
+			"2026-W49",
+			"2026-W50",
+			"2026-W51",
+			"2026-W52",
+			"2026-W53",
+		]);
+	});
+
 	test("It names the month in Norwegian", () => {
 		expect(IsoMonth.name(m("2026-11"))).toBe("november");
 	});
